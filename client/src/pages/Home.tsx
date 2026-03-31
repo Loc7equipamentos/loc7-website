@@ -254,7 +254,7 @@ export default function Home() {
       </section>
 
       {/* ===== CAROUSEL SECTION - 3 IMAGES ===== */}
-      <section className="py-12 bg-[oklch(0.06_0_0)]">
+      <section className="py-8 bg-[oklch(0.06_0_0)]">
         <div className="container">
           <div className="mb-8">
             <span className="loc7-section-title text-lg">EQUIPAMENTOS POPULARES</span>
