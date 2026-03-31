@@ -113,7 +113,7 @@ export default function Navbar() {
               </div>
 
               {/* Category sub-nav - aligned with HOME */}
-              <div className="hidden md:block border-t border-[oklch(0.15_0_0)] bg-[oklch(0.06_0_0)] h-16">
+              <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] h-16">
                 <div className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide">
                   {categories.map((cat) => {
                     const Icon = cat.icon;
@@ -121,10 +121,10 @@ export default function Navbar() {
                       <Link
                         key={cat.name}
                         href={cat.href}
-                        className="flex items-center gap-2 px-4 py-2 text-[oklch(0.6_0_0)] hover:text-white transition-colors whitespace-nowrap text-sm"
+                        className="flex items-center gap-2 px-4 py-2 text-[oklch(0.75_0_0)] hover:text-[#FF0000] hover:bg-[oklch(0.1_0_0)] transition-all whitespace-nowrap text-sm rounded"
                       >
                         <Icon className="w-4 h-4" />
-                        <span style={{ fontFamily: 'Oswald, sans-serif' }} className="uppercase tracking-wide">
+                        <span style={{ fontFamily: 'Oswald, sans-serif' }} className="uppercase tracking-wide font-semibold">
                           {cat.name}
                         </span>
                       </Link>
