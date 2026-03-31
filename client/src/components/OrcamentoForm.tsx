@@ -1,14 +1,14 @@
 /*
  * LOC 7 — Formulário de Orçamento
  * Captura dados do cliente e envia para WhatsApp
- * Com seletor de categorias de equipamentos
+ * Com seletor de categorias e busca de equipamentos
  */
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageCircle, Check } from "lucide-react";
+import { MessageCircle, Check, Search, X } from "lucide-react";
 import { toast } from "sonner";
 
 const CATEGORIAS_EQUIPAMENTOS = [
@@ -24,6 +24,36 @@ const CATEGORIAS_EQUIPAMENTOS = [
   { id: "outro", label: "🔧 Outro", icon: "🔧" },
 ];
 
+const EQUIPAMENTOS_SUGERIDOS = [
+  { nome: "RED Komodo", categoria: "cameras" },
+  { nome: "Sony FX9", categoria: "cameras" },
+  { nome: "Canon R5C", categoria: "cameras" },
+  { nome: "Zeiss Prime Set", categoria: "lentes" },
+  { nome: "Cooke Anamorphic", categoria: "lentes" },
+  { nome: "Sigma Art Lenses", categoria: "lentes" },
+  { nome: "Aputure 600D", categoria: "iluminacao" },
+  { nome: "Kino Flo", categoria: "iluminacao" },
+  { nome: "Dedolight", categoria: "iluminacao" },
+  { nome: "Sennheiser Wireless", categoria: "audio" },
+  { nome: "Rode Microphone", categoria: "audio" },
+  { nome: "Shure Lavalier", categoria: "audio" },
+  { nome: "SmallHD Monitor", categoria: "monitores" },
+  { nome: "Atomos Ninja", categoria: "monitores" },
+  { nome: "Blackmagic Video Assist", categoria: "monitores" },
+  { nome: "Steadicam", categoria: "movimento" },
+  { nome: "Gimbal DJI", categoria: "movimento" },
+  { nome: "Dolly System", categoria: "movimento" },
+  { nome: "Wireless Follow Focus", categoria: "wireless" },
+  { nome: "Wireless Video Transmitter", categoria: "wireless" },
+  { nome: "Wireless Lens Control", categoria: "wireless" },
+  { nome: "Matte Box", categoria: "modificadores" },
+  { nome: "Follow Focus", categoria: "modificadores" },
+  { nome: "Lens Filters", categoria: "modificadores" },
+  { nome: "Crane", categoria: "maquinaria" },
+  { nome: "Jib Arm", categoria: "maquinaria" },
+  { nome: "Slider", categoria: "maquinaria" },
+];
+
 export default function OrcamentoForm() {
   const [formData, setFormData] = useState({
     nome: "",
@@ -37,7 +67,20 @@ export default function OrcamentoForm() {
     observacoes: "",
   });
 
+  const [buscaEquipamentos, setBuscaEquipamentos] = useState("");
+  const [equipamentosSelecionados, setEquipamentosSelecionados] = useState<
+    string[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Filtrar equipamentos baseado na busca
+  const equipamentosFiltrados = useMemo(() => {
+    if (!buscaEquipamentos.trim()) return [];
+
+    return EQUIPAMENTOS_SUGERIDOS.filter((eq) =>
+      eq.nome.toLowerCase().includes(buscaEquipamentos.toLowerCase())
+    ).slice(0, 8); // Limitar a 8 sugestões
+  }, [buscaEquipamentos]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -58,6 +101,19 @@ export default function OrcamentoForm() {
     }));
   };
 
+  const adicionarEquipamento = (equipamento: string) => {
+    if (!equipamentosSelecionados.includes(equipamento)) {
+      setEquipamentosSelecionados((prev) => [...prev, equipamento]);
+      setBuscaEquipamentos("");
+    }
+  };
+
+  const removerEquipamento = (equipamento: string) => {
+    setEquipamentosSelecionados((prev) =>
+      prev.filter((eq) => eq !== equipamento)
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -69,8 +125,14 @@ export default function OrcamentoForm() {
       return;
     }
 
-    if (formData.categorias.length === 0 && !formData.equipamentos) {
-      toast.error("Por favor, selecione categorias ou descreva os equipamentos");
+    if (
+      formData.categorias.length === 0 &&
+      equipamentosSelecionados.length === 0 &&
+      !formData.equipamentos
+    ) {
+      toast.error(
+        "Por favor, selecione categorias, equipamentos ou descreva suas necessidades"
+      );
       setIsLoading(false);
       return;
     }
@@ -82,6 +144,12 @@ export default function OrcamentoForm() {
         return categoria?.label || id;
       })
       .join(", ");
+
+    // Montar lista de equipamentos selecionados
+    const equipamentosTexto =
+      equipamentosSelecionados.length > 0
+        ? equipamentosSelecionados.join(", ")
+        : "Nenhum";
 
     // Montar mensagem para WhatsApp
     const mensagem = `
@@ -96,14 +164,17 @@ Empresa: ${formData.empresa || "N/A"}
 *Categorias de Interesse:*
 ${categoriasTexto || "Não especificadas"}
 
-*Equipamentos Específicos:*
-${formData.equipamentos || "Nenhum especificado"}
+*Equipamentos Selecionados:*
+${equipamentosTexto}
+
+*Observações Adicionais:*
+${formData.equipamentos || "Nenhuma"}
 
 *Período de Locação:*
 Data Início: ${formData.dataInicio || "N/A"}
 Data Fim: ${formData.dataFim || "N/A"}
 
-*Observações:*
+*Notas:*
 ${formData.observacoes || "Nenhuma"}
 
 ---
@@ -131,6 +202,8 @@ Enviado via formulário do site
       dataFim: "",
       observacoes: "",
     });
+    setEquipamentosSelecionados([]);
+    setBuscaEquipamentos("");
 
     toast.success("Redirecionando para WhatsApp...");
     setIsLoading(false);
@@ -236,16 +309,72 @@ Enviado via formulário do site
           </div>
         </div>
 
-        {/* Equipamentos Específicos */}
+        {/* Busca de Equipamentos */}
+        <div>
+          <label className="block text-sm font-semibold text-white mb-3">
+            Buscar Equipamentos Específicos
+          </label>
+          <div className="relative">
+            <div className="flex items-center bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] rounded-lg px-4 py-3">
+              <Search size={18} className="text-[oklch(0.5_0_0)] mr-2" />
+              <input
+                type="text"
+                value={buscaEquipamentos}
+                onChange={(e) => setBuscaEquipamentos(e.target.value)}
+                placeholder="Ex: RED, Zeiss, Aputure..."
+                className="flex-1 bg-transparent text-white placeholder:text-[oklch(0.5_0_0)] outline-none"
+              />
+            </div>
+
+            {/* Sugestões de Equipamentos */}
+            {buscaEquipamentos && equipamentosFiltrados.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] rounded-lg z-10 max-h-64 overflow-y-auto">
+                {equipamentosFiltrados.map((eq) => (
+                  <button
+                    key={eq.nome}
+                    type="button"
+                    onClick={() => adicionarEquipamento(eq.nome)}
+                    className="w-full text-left px-4 py-2 hover:bg-[oklch(0.15_0_0)] text-white text-sm transition-colors border-b border-[oklch(0.15_0_0)] last:border-b-0"
+                  >
+                    {eq.nome}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Equipamentos Selecionados */}
+          {equipamentosSelecionados.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {equipamentosSelecionados.map((eq) => (
+                <div
+                  key={eq}
+                  className="bg-[#FF0000] text-white px-3 py-1 rounded-full flex items-center gap-2 text-sm"
+                >
+                  {eq}
+                  <button
+                    type="button"
+                    onClick={() => removerEquipamento(eq)}
+                    className="hover:opacity-70 transition-opacity"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Observações Adicionais */}
         <div>
           <label className="block text-sm font-semibold text-white mb-2">
-            Equipamentos Específicos
+            Observações Adicionais
           </label>
           <Textarea
             name="equipamentos"
             value={formData.equipamentos}
             onChange={handleChange}
-            placeholder="Ex: 2x RED Komodo, 3x Lentes Zeiss, 1x Kit de Iluminação..."
+            placeholder="Descreva suas necessidades específicas, quantidades, prazos, etc..."
             className="bg-[oklch(0.12_0_0)] border-[oklch(0.2_0_0)] text-white placeholder:text-[oklch(0.5_0_0)] min-h-20"
           />
         </div>
@@ -278,10 +407,10 @@ Enviado via formulário do site
           </div>
         </div>
 
-        {/* Observações */}
+        {/* Notas Finais */}
         <div>
           <label className="block text-sm font-semibold text-white mb-2">
-            Observações Adicionais
+            Notas Finais
           </label>
           <Textarea
             name="observacoes"
