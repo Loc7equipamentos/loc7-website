@@ -1,0 +1,170 @@
+/*
+ * LOC 7 — Footer Component
+ * Cinema Noir Industrial style
+ * Dark footer with contact info, hours, social links
+ */
+
+import { Link } from "wouter";
+import { MapPin, Phone, Mail, Clock, Instagram, Youtube, Linkedin } from "lucide-react";
+
+export default function Footer() {
+  return (
+    <footer className="bg-[oklch(0.05_0_0)] border-t border-[oklch(0.15_0_0)]">
+      {/* Main footer */}
+      <div className="container py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          
+          {/* Brand */}
+          <div className="lg:col-span-1">
+            <div className="mb-6">
+              <span className="font-display text-3xl font-bold text-white tracking-wider uppercase">
+                LOC<span className="text-[oklch(0.45_0.25_25)]">7</span>
+              </span>
+              <p className="text-[0.6rem] tracking-[0.3em] text-[oklch(0.4_0_0)] uppercase font-mono-price mt-1">
+                EQUIPAMENTOS
+              </p>
+            </div>
+            <p className="text-[oklch(0.55_0_0)] text-sm leading-relaxed mb-6">
+              Locadora de equipamentos audiovisuais profissionais em São Paulo. Câmeras, lentes, iluminação e muito mais para sua produção.
+            </p>
+            <div className="flex items-center gap-3">
+              <a
+                href="https://instagram.com/loc7equipamentos"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] flex items-center justify-center hover:border-[oklch(0.45_0.25_25)] hover:text-[oklch(0.45_0.25_25)] transition-all text-[oklch(0.6_0_0)]"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href="https://youtube.com/@loc7equipamentos"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] flex items-center justify-center hover:border-[oklch(0.45_0.25_25)] hover:text-[oklch(0.45_0.25_25)] transition-all text-[oklch(0.6_0_0)]"
+              >
+                <Youtube className="w-4 h-4" />
+              </a>
+              <a
+                href="https://linkedin.com/company/loc7equipamentos"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] flex items-center justify-center hover:border-[oklch(0.45_0.25_25)] hover:text-[oklch(0.45_0.25_25)] transition-all text-[oklch(0.6_0_0)]"
+              >
+                <Linkedin className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+
+          {/* Quick links */}
+          <div>
+            <h4 className="font-display font-semibold text-white uppercase tracking-widest text-sm mb-6 pb-2 border-b border-[oklch(0.18_0_0)]">
+              Navegação
+            </h4>
+            <ul className="space-y-3">
+              {[
+                { name: "Home", href: "/" },
+                { name: "Catálogo", href: "/catalogo" },
+                { name: "Blog", href: "/blog" },
+                { name: "Portfólio", href: "/portfolio" },
+                { name: "Sobre Nós", href: "/sobre" },
+                { name: "Contato", href: "/contato" },
+              ].map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-[oklch(0.55_0_0)] hover:text-white text-sm transition-colors flex items-center gap-2 group"
+                  >
+                    <span className="w-1 h-1 bg-[oklch(0.45_0.25_25)] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Categories */}
+          <div>
+            <h4 className="font-display font-semibold text-white uppercase tracking-widest text-sm mb-6 pb-2 border-b border-[oklch(0.18_0_0)]">
+              Categorias
+            </h4>
+            <ul className="space-y-3">
+              {[
+                { name: "Câmeras", href: "/catalogo/cameras" },
+                { name: "Lentes", href: "/catalogo/lentes" },
+                { name: "Iluminação", href: "/catalogo/iluminacao" },
+                { name: "Áudio", href: "/catalogo/audio" },
+                { name: "Monitores", href: "/catalogo/monitores" },
+                { name: "Movimento", href: "/catalogo/movimento" },
+                { name: "Wireless", href: "/catalogo/wireless" },
+              ].map((cat) => (
+                <li key={cat.name}>
+                  <Link
+                    href={cat.href}
+                    className="text-[oklch(0.55_0_0)] hover:text-white text-sm transition-colors flex items-center gap-2 group"
+                  >
+                    <span className="w-1 h-1 bg-[oklch(0.45_0.25_25)] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {cat.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="font-display font-semibold text-white uppercase tracking-widest text-sm mb-6 pb-2 border-b border-[oklch(0.18_0_0)]">
+              Contato
+            </h4>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <MapPin className="w-4 h-4 text-[oklch(0.45_0.25_25)] mt-0.5 shrink-0" />
+                <span className="text-[oklch(0.55_0_0)] text-sm">
+                  São Paulo, SP<br />
+                  <span className="text-[oklch(0.4_0_0)] text-xs">Endereço completo disponível no contato</span>
+                </span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone className="w-4 h-4 text-[oklch(0.45_0.25_25)] shrink-0" />
+                <a href="tel:+5511999999999" className="text-[oklch(0.55_0_0)] hover:text-white text-sm transition-colors">
+                  +55 (11) 99999-9999
+                </a>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail className="w-4 h-4 text-[oklch(0.45_0.25_25)] shrink-0" />
+                <a href="mailto:contato@loc7equipamentos.com.br" className="text-[oklch(0.55_0_0)] hover:text-white text-sm transition-colors">
+                  contato@loc7equipamentos.com.br
+                </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <Clock className="w-4 h-4 text-[oklch(0.45_0.25_25)] mt-0.5 shrink-0" />
+                <div className="text-[oklch(0.55_0_0)] text-sm">
+                  <p>Seg–Sex: 09h–18h</p>
+                  <p>Sáb: 09h–13h</p>
+                  <p className="text-[oklch(0.4_0_0)] text-xs mt-1">Online: 09h–21h</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom bar */}
+      <div className="border-t border-[oklch(0.12_0_0)]">
+        <div className="container py-5 flex flex-col md:flex-row items-center justify-between gap-3">
+          <p className="text-[oklch(0.35_0_0)] text-xs font-mono-price">
+            © {new Date().getFullYear()} Loc 7 Equipamentos. Todos os direitos reservados.
+          </p>
+          <div className="flex items-center gap-4 text-xs text-[oklch(0.35_0_0)]">
+            <Link href="/politica-privacidade" className="hover:text-white transition-colors">
+              Política de Privacidade
+            </Link>
+            <span>|</span>
+            <Link href="/termos-uso" className="hover:text-white transition-colors">
+              Termos de Uso
+            </Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
