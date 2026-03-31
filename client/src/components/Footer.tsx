@@ -15,9 +15,10 @@ export default function Footer() {
         <div className="flex justify-center mb-12">
           <img
             src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/logo-Loc-7-para-google_4_b32d3981.jpg"
-            alt="Loc 7 Equipamentos"
+            alt="Loc 7 Rental House"
             className="h-20 w-auto"
           />
+          <p className="text-center text-[oklch(0.6_0_0)] text-sm mt-2" style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.05em' }}>RENTAL HOUSE</p>
         </div>
 
         {/* 3 Columns - Filmhouse style */}
