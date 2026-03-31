@@ -10,8 +10,8 @@ import { ChevronLeft, ChevronRight, MapPin, Zap, Star, ArrowRight, Play } from "
 
 // Hero images - alternating based on text
 const heroSlides = [
-  { text: "Equipamentos de Cinema", subtitle: "Câmeras, lentes e iluminação profissional", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00051_darkened_8a518622.webp" },
-  { text: "Lentes Cinema", subtitle: "Ópticas profissionais de alta qualidade", img: "" },
+  { text: "Equipamentos Cine e Broadcast", subtitle: "Câmeras, lentes e iluminação profissional", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00051_darkened_8a518622.webp" },
+  { text: "Lentes Cine e Foto", subtitle: "Ópticas profissionais de alta qualidade", img: "" },
   { text: "Iluminação Profissional", subtitle: "Equipamentos de iluminação de última geração", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00186_darkened_7ce023d4.webp" },
 ];
 
@@ -110,13 +110,13 @@ export default function Home() {
 
   const heroSlides = [
     {
-      title: "EQUIPAMENTOS\nDE CINEMA",
+      title: "EQUIPAMENTOS\nCINE E BROADCAST",
       subtitle: "Câmeras, lentes e iluminação profissional",
       cta: "Ver Catálogo",
       ctaHref: "/catalogo",
     },
     {
-      title: "LENTES\nCINEMA",
+      title: "LENTES\nCINE E FOTO",
       subtitle: "Sets completos para sua produção",
       cta: "Ver Lentes",
       ctaHref: "/catalogo/lentes",
@@ -288,7 +288,7 @@ export default function Home() {
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[oklch(0.15_0_0)]">
             {[
-              { icon: MapPin, title: "São Paulo, SP", desc: "Estrategicamente localizado no coração da cidade" },
+              { icon: MapPin, title: "São Paulo, SP", desc: "Estrategicamente no polo audiovisual de SP" },
               { icon: Zap, title: "100% Online", desc: "Faça sua reserva em poucos cliques, sem burocracia" },
               { icon: Star, title: "Equipamentos Premium", desc: "Os principais lançamentos do mercado audiovisual" },
             ].map((feat, i) => {
