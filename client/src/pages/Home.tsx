@@ -11,7 +11,7 @@ import { ChevronLeft, ChevronRight, MapPin, Zap, Star, ArrowRight, Play } from "
 // Hero images - alternating based on text
 const heroSlides = [
   { text: "Equipamentos de Cinema", subtitle: "Câmeras, lentes e iluminação profissional", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00051_darkened_8a518622.webp" },
-  { text: "Lentes Cinema", subtitle: "Ópticas profissionais de alta qualidade", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00186_darkened_7ce023d4.webp" },
+  { text: "Lentes Cinema", subtitle: "Ópticas profissionais de alta qualidade", img: "" },
   { text: "Iluminação Profissional", subtitle: "Equipamentos de iluminação de última geração", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00186_darkened_7ce023d4.webp" },
 ];
 
@@ -199,7 +199,7 @@ export default function Home() {
           {heroSlides.map((slide, i) => {
             const heroSlideData = [
               { img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00051_brightened_029b14bf.webp" },
-              { img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00395_brightened_39964b90.webp" },
+              { img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00394_darkened_19aead4d.webp" },
               { img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00358_brightened_afa8c25b.webp" },
             ];
             return (
@@ -278,8 +278,8 @@ export default function Home() {
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-          <span className="text-[oklch(0.4_0_0)] text-xs uppercase tracking-widest">Scroll</span>
-          <div className="w-px h-8 bg-gradient-to-b from-[oklch(0.4_0_0)] to-transparent" />
+          <span className="text-[oklch(0.65_0_0)] text-xs uppercase tracking-widest">Scroll</span>
+          <div className="w-px h-8 bg-gradient-to-b from-[oklch(0.65_0_0)] to-transparent" />
         </div>
       </section>
 

@@ -114,9 +114,9 @@ export default function Navbar() {
                       <Link
                         key={cat.name}
                         href={cat.href}
-                        className="flex items-center gap-2 px-4 py-2 text-[oklch(0.75_0_0)] hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all whitespace-nowrap text-sm rounded"
+                        className="flex items-center gap-2 px-4 py-2 text-white hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all whitespace-nowrap text-sm rounded hover:scale-105"
                       >
-                        <Icon className="w-6 h-6" />
+                        <Icon className="w-5 h-5 transition-transform duration-300 hover:scale-125" />
                         <span style={{ fontFamily: 'Oswald, sans-serif' }} className="uppercase tracking-wide font-semibold">
                           {cat.name}
                         </span>

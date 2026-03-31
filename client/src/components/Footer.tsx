@@ -20,8 +20,8 @@ export default function Footer() {
           {/* Column 1: CONTATO */}
           <div>
             <h4 
-              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#FF0000]"
-              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#FF0000' }}
+              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-white"
+              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: 'white' }}
             >
               Contato
             </h4>
@@ -50,8 +50,8 @@ export default function Footer() {
           {/* Column 2: HORÁRIO DE ATENDIMENTO */}
           <div>
             <h4 
-              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#FF0000]"
-              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#FF0000' }}
+              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-white"
+              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: 'white' }}
             >
               Horário de Atendimento
             </h4>
@@ -71,8 +71,8 @@ export default function Footer() {
           {/* Column 3: REDES SOCIAIS */}
           <div>
             <h4 
-              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#FF0000]"
-              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#FF0000' }}
+              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-white"
+              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: 'white' }}
             >
               Redes Sociais
             </h4>
@@ -117,8 +117,8 @@ export default function Footer() {
         {/* Google Maps */}
         <div className="mb-12">
           <h4 
-            className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#FF0000]"
-            style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#FF0000' }}
+            className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-white"
+            style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: 'white' }}
           >
             Localização
           </h4>
