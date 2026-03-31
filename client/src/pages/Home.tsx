@@ -213,7 +213,7 @@ export default function Home() {
               />
             );
           })}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/10" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/15" />
         </div>
 
