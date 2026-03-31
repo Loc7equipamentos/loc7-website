@@ -6,8 +6,6 @@
 
 import { useState } from "react";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from "lucide-react";
-import { MapView } from "@/components/Map";
-import OrcamentoForm from "@/components/OrcamentoForm";
 
 export default function Contato() {
   const [formData, setFormData] = useState({
@@ -69,14 +67,14 @@ export default function Contato() {
                   {
                     icon: Phone,
                     title: "Telefone / WhatsApp",
-                    content: "+55 (11) 99999-9999",
-                    link: "https://wa.me/message/WOIONHHSTABQF1",
+                    content: "11 99723-7850",
+                    link: "https://wa.me/5511997237850",
                   },
                   {
                     icon: Mail,
                     title: "E-mail",
-                    content: "contato@loc7equipamentos.com.br",
-                    link: "mailto:contato@loc7equipamentos.com.br",
+                    content: "loc7@loc7equipamentos.com.br",
+                    link: "mailto:loc7@loc7equipamentos.com.br",
                   },
                   {
                     icon: Clock,
@@ -123,12 +121,12 @@ export default function Contato() {
           {/* Contact form */}
           <div className="lg:col-span-2">
             {submitted ? (
-              <div className="bg-[oklch(0.1_0_0)] border border-[oklch(0.18_0_0)] p-12 text-center">
+              <div className="bg-[oklch(0.85_0_0)] border border-[oklch(0.8_0_0)] p-12 text-center">
                 <CheckCircle className="w-16 h-16 text-[oklch(0.45_0.25_25)] mx-auto mb-4" />
-                <h3 className="font-display font-bold text-white text-2xl uppercase tracking-wide mb-3">
+                <h3 className="font-display font-bold text-[oklch(0.2_0_0)] text-2xl uppercase tracking-wide mb-3">
                   MENSAGEM ENVIADA!
                 </h3>
-                <p className="text-[oklch(0.6_0_0)] mb-6">
+                <p className="text-[oklch(0.4_0_0)] mb-6">
                   Obrigado pelo contato! Nossa equipe retornará em até 24 horas úteis.
                 </p>
                 <button
@@ -139,8 +137,8 @@ export default function Contato() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="bg-[oklch(0.1_0_0)] border border-[oklch(0.18_0_0)] p-8">
-                <h2 className="font-display font-bold text-white text-xl uppercase tracking-wide mb-6">
+              <form onSubmit={handleSubmit} className="bg-[oklch(0.85_0_0)] border border-[oklch(0.8_0_0)] p-8">
+                <h2 className="font-display font-bold text-[oklch(0.2_0_0)] text-xl uppercase tracking-wide mb-6">
                   SOLICITAR ORÇAMENTO
                 </h2>
                 
@@ -152,7 +150,7 @@ export default function Contato() {
                     { name: "company", label: "Empresa / Produtora", type: "text", required: false },
                   ].map((field) => (
                     <div key={field.name}>
-                      <label className="block text-[oklch(0.6_0_0)] text-xs uppercase tracking-widest font-display font-semibold mb-2">
+                      <label className="block text-[oklch(0.3_0_0)] text-xs uppercase tracking-widest font-display font-semibold mb-2">
                         {field.label}
                       </label>
                       <input
@@ -161,7 +159,7 @@ export default function Contato() {
                         value={formData[field.name as keyof typeof formData]}
                         onChange={handleChange}
                         required={field.required}
-                        className="w-full bg-[oklch(0.08_0_0)] border border-[oklch(0.2_0_0)] text-white px-4 py-3 text-sm focus:outline-none focus:border-[oklch(0.45_0.25_25)] placeholder:text-[oklch(0.35_0_0)] transition-colors"
+                        className="w-full bg-white border border-[oklch(0.7_0_0)] text-[oklch(0.2_0_0)] px-4 py-3 text-sm focus:outline-none focus:border-[oklch(0.45_0.25_25)] placeholder:text-[oklch(0.5_0_0)] transition-colors"
                       />
                     </div>
                   ))}
@@ -169,15 +167,15 @@ export default function Contato() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-[oklch(0.6_0_0)] text-xs uppercase tracking-widest font-display font-semibold mb-2">
+                    <label className="block text-[oklch(0.3_0_0)] text-xs uppercase tracking-widest font-display font-semibold mb-2">
                       Assunto *
                     </label>
-                    <select
+                      <select
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="w-full bg-[oklch(0.08_0_0)] border border-[oklch(0.2_0_0)] text-white px-4 py-3 text-sm focus:outline-none focus:border-[oklch(0.45_0.25_25)] transition-colors"
+                      className="w-full bg-white border border-[oklch(0.7_0_0)] text-[oklch(0.2_0_0)] px-4 py-3 text-sm focus:outline-none focus:border-[oklch(0.45_0.25_25)] transition-colors"
                     >
                       <option value="">Selecione...</option>
                       <option value="orcamento">Solicitar Orçamento</option>
@@ -188,7 +186,7 @@ export default function Contato() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[oklch(0.6_0_0)] text-xs uppercase tracking-widest font-display font-semibold mb-2">
+                    <label className="block text-[oklch(0.3_0_0)] text-xs uppercase tracking-widest font-display font-semibold mb-2">
                       Data de Locação
                     </label>
                     <input
@@ -196,7 +194,7 @@ export default function Contato() {
                       name="date"
                       value={formData.date}
                       onChange={handleChange}
-                      className="w-full bg-[oklch(0.08_0_0)] border border-[oklch(0.2_0_0)] text-white px-4 py-3 text-sm focus:outline-none focus:border-[oklch(0.45_0.25_25)] transition-colors"
+                      className="w-full bg-white border border-[oklch(0.7_0_0)] text-[oklch(0.2_0_0)] px-4 py-3 text-sm focus:outline-none focus:border-[oklch(0.45_0.25_25)] transition-colors"
                     />
                   </div>
                 </div>
@@ -205,13 +203,13 @@ export default function Contato() {
                   <label className="block text-[oklch(0.6_0_0)] text-xs uppercase tracking-widest font-display font-semibold mb-2">
                     Equipamentos de Interesse
                   </label>
-                  <input
+                    <input
                     type="text"
                     name="equipment"
                     value={formData.equipment}
                     onChange={handleChange}
                     placeholder="Ex: Sony FX9, Zeiss Prime Set, Aputure 600d..."
-                    className="w-full bg-[oklch(0.08_0_0)] border border-[oklch(0.2_0_0)] text-white px-4 py-3 text-sm focus:outline-none focus:border-[oklch(0.45_0.25_25)] placeholder:text-[oklch(0.35_0_0)] transition-colors"
+                    className="w-full bg-white border border-[oklch(0.7_0_0)] text-[oklch(0.2_0_0)] px-4 py-3 text-sm focus:outline-none focus:border-[oklch(0.45_0.25_25)] placeholder:text-[oklch(0.5_0_0)] transition-colors"
                   />
                 </div>
 
@@ -226,7 +224,7 @@ export default function Contato() {
                     required
                     rows={5}
                     placeholder="Descreva seu projeto, necessidades e qualquer informação relevante..."
-                    className="w-full bg-[oklch(0.08_0_0)] border border-[oklch(0.2_0_0)] text-white px-4 py-3 text-sm focus:outline-none focus:border-[oklch(0.45_0.25_25)] placeholder:text-[oklch(0.35_0_0)] resize-none transition-colors"
+                    className="w-full bg-white border border-[oklch(0.7_0_0)] text-[oklch(0.2_0_0)] px-4 py-3 text-sm focus:outline-none focus:border-[oklch(0.45_0.25_25)] placeholder:text-[oklch(0.5_0_0)] resize-none transition-colors"
                   />
                 </div>
 
@@ -248,7 +246,7 @@ export default function Contato() {
                   )}
                 </button>
                 
-                <p className="text-[oklch(0.4_0_0)] text-xs mt-4 text-center">
+                <p className="text-[oklch(0.5_0_0)] text-xs mt-4 text-center">
                   Ao enviar, você concorda com nossa{" "}
                   <a href="/politica-privacidade" className="text-[oklch(0.45_0.25_25)] hover:text-white transition-colors">
                     Política de Privacidade
@@ -259,35 +257,7 @@ export default function Contato() {
           </div>
         </div>
 
-        {/* Orçamento Form */}
-        <div className="mt-12">
-          <div className="mb-6">
-            <span className="loc7-section-title text-base">FORMULÁRIO DE ORÇAMENTO</span>
-            <div className="loc7-red-line" />
-          </div>
-          <OrcamentoForm />
-        </div>
 
-        {/* Map */}
-        <div className="mt-12">
-          <div className="mb-6">
-            <span className="loc7-section-title text-base">NOSSA LOCALIZAÇÃO</span>
-            <div className="loc7-red-line" />
-          </div>
-          <div className="h-80 border border-[oklch(0.18_0_0)] overflow-hidden">
-            <MapView
-              onMapReady={(map) => {
-                const marker = new google.maps.Marker({
-                  position: { lat: -23.5643, lng: -46.6563 },
-                  map,
-                  title: "Loc 7 Equipamentos - Av. Imperatriz Leopoldina, 957",
-                });
-                map.setCenter({ lat: -23.5643, lng: -46.6563 });
-                map.setZoom(16);
-              }}
-            />
-          </div>
-        </div>
       </div>
     </div>
   );
