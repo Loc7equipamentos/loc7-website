@@ -283,6 +283,32 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===== FEATURES BAR ===== */}
+      <section className="bg-[oklch(0.06_0_0)] border-y border-[oklch(0.15_0_0)] -mt-16 relative z-20">
+        <div className="container">
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[oklch(0.15_0_0)]">
+            {[
+              { icon: MapPin, title: "São Paulo, SP", desc: "Estrategicamente localizado no coração da cidade" },
+              { icon: Zap, title: "100% Online", desc: "Faça sua reserva em poucos cliques, sem burocracia" },
+              { icon: Star, title: "Equipamentos Premium", desc: "Os principais lançamentos do mercado audiovisual" },
+            ].map((feat, i) => {
+              const Icon = feat.icon;
+              return (
+                <div key={i} className="flex items-center gap-4 px-6 py-5">
+                  <div className="w-10 h-10 border border-[oklch(0.45_0.25_25)] flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 text-[oklch(0.45_0.25_25)]" />
+                  </div>
+                  <div>
+                    <p className="font-display font-semibold text-white uppercase tracking-wide text-sm">{feat.title}</p>
+                    <p className="text-[oklch(0.5_0_0)] text-xs mt-0.5">{feat.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ===== CAROUSEL SECTION - 3 IMAGES ===== */}
       <section className="py-8 bg-[oklch(0.06_0_0)]">
         <div className="container">
@@ -348,34 +374,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ===== FEATURES BAR ===== */}
-      <section className="bg-[oklch(0.06_0_0)] border-y border-[oklch(0.15_0_0)] -mt-16 relative z-20">
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[oklch(0.15_0_0)]">
-            {[
-              { icon: MapPin, title: "São Paulo, SP", desc: "Estrategicamente localizado no coração da cidade" },
-              { icon: Zap, title: "100% Online", desc: "Faça sua reserva em poucos cliques, sem burocracia" },
-              { icon: Star, title: "Equipamentos Premium", desc: "Os principais lançamentos do mercado audiovisual" },
-            ].map((feat, i) => {
-              const Icon = feat.icon;
-              return (
-                <div key={i} className="flex items-center gap-4 px-6 py-5">
-                  <div className="w-10 h-10 border border-[oklch(0.45_0.25_25)] flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-[oklch(0.45_0.25_25)]" />
-                  </div>
-                  <div>
-                    <p className="font-display font-semibold text-white uppercase tracking-wide text-sm">{feat.title}</p>
-                    <p className="text-[oklch(0.5_0_0)] text-xs mt-0.5">{feat.desc}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-
 
       {/* ===== CATEGORIES GRID ===== */}
       <section
