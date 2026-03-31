@@ -364,39 +364,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== FEATURED PRODUCTS ===== */}
-      <section
-        id="featured"
-        ref={setSectionRef("featured")}
-        className="py-20"
-      >
-        <div className="container">
-          <div className={`mb-10 transition-all duration-700 ${isVisible.featured ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <span className="loc7-section-title text-lg">DESTAQUES</span>
-            <div className="loc7-red-line" />
-            <p className="text-[oklch(0.5_0_0)] text-sm mt-3">O que tá quente na cena! 🔥</p>
-          </div>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {featuredProducts.map((product, i) => (
-              <div
-                key={product.id}
-                className={`transition-all duration-500 ${isVisible.featured ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: `${i * 80}ms` }}
-              >
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </div>
-          
-          <div className="mt-8 flex justify-center">
-            <Link href="/catalogo" className="loc7-btn-outline flex items-center gap-2">
-              Ver Catálogo Completo
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
+
 
       {/* ===== CATEGORIES GRID ===== */}
       <section
@@ -437,32 +405,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== NEW PRODUCTS ===== */}
-      <section
-        id="new-products"
-        ref={setSectionRef("new-products")}
-        className="py-20 bg-[oklch(0.06_0_0)]"
-      >
-        <div className="container">
-          <div className={`mb-10 transition-all duration-700 ${isVisible['new-products'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <span className="loc7-section-title text-lg">NOVIDADES NO CATÁLOGO</span>
-            <div className="loc7-red-line" />
-            <p className="text-[oklch(0.5_0_0)] text-sm mt-3">As novidades mais recentes da casa!</p>
-          </div>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {newProducts.map((product, i) => (
-              <div
-                key={product.id}
-                className={`transition-all duration-500 ${isVisible['new-products'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* ===== BRANDS ===== */}
       <section className="py-10 border-y border-[oklch(0.15_0_0)] overflow-hidden">
