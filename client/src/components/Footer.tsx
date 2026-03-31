@@ -5,6 +5,7 @@
  */
 
 import { Link } from "wouter";
+import MapComponent from "./MapComponent";
 
 export default function Footer() {
   return (
@@ -118,6 +119,17 @@ export default function Footer() {
               </a>
             </div>
           </div>
+        </div>
+
+        {/* Google Maps */}
+        <div className="mb-12">
+          <h4 
+            className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#FF0000]"
+            style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#FF0000' }}
+          >
+            Localização
+          </h4>
+          <MapComponent />
         </div>
 
         {/* Endereço */}
