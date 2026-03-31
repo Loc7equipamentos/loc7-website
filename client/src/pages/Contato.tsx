@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from "lucide-react";
 import { MapView } from "@/components/Map";
+import OrcamentoForm from "@/components/OrcamentoForm";
 
 export default function Contato() {
   const [formData, setFormData] = useState({
@@ -256,6 +257,15 @@ export default function Contato() {
               </form>
             )}
           </div>
+        </div>
+
+        {/* Orçamento Form */}
+        <div className="mt-12">
+          <div className="mb-6">
+            <span className="loc7-section-title text-base">FORMULÁRIO DE ORÇAMENTO</span>
+            <div className="loc7-red-line" />
+          </div>
+          <OrcamentoForm />
         </div>
 
         {/* Map */}
