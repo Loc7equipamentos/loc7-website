@@ -15,6 +15,7 @@ import Footer from "./components/Footer";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import Home from "./pages/Home";
 import Catalogo from "./pages/Catalogo";
+import Servicos from "./pages/Servicos";
 import Contato from "./pages/Contato";
 import Blog from "./pages/Blog";
 import Portfolio from "./pages/Portfolio";
@@ -39,6 +40,7 @@ function Router() {
       <Route path="/" component={() => <Layout><Home /></Layout>} />
       <Route path="/catalogo" component={() => <Layout><Catalogo /></Layout>} />
       <Route path="/catalogo/:category" component={() => <Layout><Catalogo /></Layout>} />
+      <Route path="/servicos" component={() => <Layout><Servicos /></Layout>} />
       <Route path="/blog" component={() => <Layout><Blog /></Layout>} />
       <Route path="/portfolio" component={() => <Layout><Portfolio /></Layout>} />
       <Route path="/sobre" component={() => <Layout><Sobre /></Layout>} />

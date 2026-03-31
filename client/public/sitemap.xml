@@ -54,6 +54,14 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Serviços -->
+  <url>
+    <loc>https://loc7equip-dhufj7vw.manus.space/servicos</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Contato -->
   <url>
     <loc>https://loc7equip-dhufj7vw.manus.space/contato</loc>

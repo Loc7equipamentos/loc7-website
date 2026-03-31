@@ -23,6 +23,7 @@ const categories = [
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Locação", href: "/catalogo", hasDropdown: true },
+  { name: "Serviços", href: "/servicos" },
   { name: "Fale Conosco", href: "/contato" },
 ];
 
