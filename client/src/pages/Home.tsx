@@ -193,7 +193,7 @@ export default function Home() {
             <div className="mb-4 flex items-center gap-2">
               <span className="w-8 h-0.5 bg-[oklch(0.45_0.25_25)]" />
               <span className="text-[oklch(0.45_0.25_25)] text-xs uppercase tracking-widest font-display font-semibold">
-                São Paulo, SP
+                Locadora de equipamentos audiovisuais em São Paulo
               </span>
             </div>
             
