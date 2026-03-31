@@ -45,7 +45,7 @@ function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
         <img
           src={product.img}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:opacity-80 opacity-80 group-hover:opacity-100"
         />
         <div className="absolute top-2 left-2">
           <span className="loc7-category-badge">{product.badge}</span>
@@ -299,7 +299,7 @@ export default function Home() {
                 <img
                   src={cat.img}
                   alt={cat.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 brightness-50 group-hover:brightness-40"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:opacity-80 brightness-50 group-hover:brightness-40"
                 />
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <h3 className="font-display font-bold text-white text-3xl uppercase tracking-widest mb-2">
@@ -489,7 +489,7 @@ export default function Home() {
                 style={{ transitionDelay: `${i * 100}ms` }}
               >
                 <div className="overflow-hidden aspect-video">
-                  <img src={post.img} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-75 group-hover:brightness-90" />
+                  <img src={post.img} alt={post.title} className="w-full h-full object-cover group-hover:opacity-80 transition-transform duration-500 brightness-75 group-hover:brightness-90" />
                 </div>
                 <div className="p-4">
                   <div className="flex items-center gap-2 mb-2">

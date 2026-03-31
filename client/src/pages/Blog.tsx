@@ -124,7 +124,7 @@ export default function Blog() {
                 <img
                   src={featured.img}
                   alt={featured.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-50"
+                  className="w-full h-full object-cover group-hover:opacity-80 transition-transform duration-700 brightness-50"
                 />
               </div>
               <div className="absolute inset-0 flex items-end p-8 md:p-12">
@@ -165,7 +165,7 @@ export default function Blog() {
                 <img
                   src={post.img}
                   alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-60 group-hover:brightness-75"
+                  className="w-full h-full object-cover group-hover:opacity-80 transition-transform duration-500 brightness-60 group-hover:brightness-75"
                 />
               </div>
               <div className="p-5">

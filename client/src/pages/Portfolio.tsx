@@ -142,7 +142,7 @@ export default function Portfolio() {
                 <img
                   src={item.img}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-60 group-hover:brightness-75"
+                  className="w-full h-full object-cover group-hover:opacity-80 transition-transform duration-700 brightness-60 group-hover:brightness-75"
                 />
                 <div className="absolute top-3 left-3">
                   <span className="loc7-category-badge">{item.category}</span>

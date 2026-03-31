@@ -166,7 +166,7 @@ export default function Catalogo() {
                   <img
                     src={product.img}
                     alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:opacity-80 opacity-80 group-hover:opacity-100"
                   />
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     <span className="loc7-category-badge">{product.badge}</span>
