@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /*.json$
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+
+# Sitemaps
+Sitemap: https://loc7equip-dhufj7vw.manus.space/sitemap.xml
+Sitemap: https://dev.loc7.com.br/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1

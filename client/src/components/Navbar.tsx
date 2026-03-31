@@ -22,10 +22,8 @@ const categories = [
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Catálogo", href: "/catalogo", hasDropdown: true },
-  { name: "Blog", href: "/blog" },
-  { name: "Portfólio", href: "/portfolio" },
-  { name: "Sobre", href: "/sobre" },
+  { name: "Locação", href: "/catalogo", hasDropdown: true },
+  { name: "Fale Conosco", href: "/contato" },
 ];
 
 export default function Navbar() {
