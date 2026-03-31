@@ -52,12 +52,12 @@ const newProducts = [
 const brands = ["SONY", "CANON", "RED", "ARRI", "BLACKMAGIC", "APUTURE", "ZEISS", "DJI"];
 
 const testimonials = [
-  { name: "Rafael Mendes", role: "Diretor de Fotografia", text: "Equipamentos sempre em perfeito estado e atendimento impecável. A Loc 7 é minha primeira opção para qualquer produção.", stars: 5 },
-  { name: "Ana Beatriz", role: "Produtora Executiva", text: "Processo de locação super ágil e preços competitivos. Recomendo para qualquer profissional da área.", stars: 5 },
-  { name: "Carlos Eduardo", role: "Videomaker", text: "Catálogo incrível com equipamentos de última geração. Sempre encontro o que preciso para meus projetos.", stars: 5 },
-  { name: "Marina Silva", role: "Diretora de Arte", text: "Profissionalismo e qualidade impecáveis. Entrega rápida e suporte técnico excelente durante toda a produção.", stars: 5 },
-  { name: "Lucas Ferreira", role: "Cinematógrafo", text: "Melhor custo-benefício de São Paulo. Equipamentos premium com manutenção perfeita. Muito satisfeito!", stars: 5 },
-  { name: "Juliana Costa", role: "Produtora", text: "Atendimento personalizado e soluções criativas para cada projeto. A Loc 7 entende nossas necessidades.", stars: 5 },
+  { name: "Marcos Filho", role: "Cliente", text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.", stars: 5 },
+  { name: "Milennar Baby", role: "Local Guide", text: "Contamos com os serviços da Loc7 há 8 anos e sempre nos atendem prontamente com equipamentos sempre em ótimo estado e com preço justo. Recomendamos a Loc7 sempre!!!", stars: 5 },
+  { name: "Raquel Carneiro", role: "Cliente", text: "Loc 7 sempre entrega tudo que promete, equipamento e atendimento impecável!", stars: 5 },
+  { name: "Diogo Garcia de Menezes Santos", role: "Cliente", text: "Sempre solícitos e preocupados em nos proporcionar o melhor setup para a execução dos projetos na melhor excelência possível", stars: 5 },
+  { name: "Jeniffer Carvalho", role: "Cliente", text: "Minha experiência foi ótima, foram super solicitos e sempre dispostos a ajudar, super recomendo", stars: 5 },
+  { name: "Gabriel Silva", role: "Cliente", text: "Excelente atendimento, me ajudaram e tiraram todas minhas duvidas, otima localização!", stars: 5 },
 ];
 
 function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
@@ -445,33 +445,41 @@ export default function Home() {
             <p className="text-[oklch(0.5_0_0)] text-sm mt-3">O que nossos clientes dizem sobre a gente</p>
           </div>
 
-          <div className="relative max-w-3xl mx-auto">
-            {/* Testimonial Card */}
-            <div className={`p-8 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[300px] flex flex-col justify-between ${
-              isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}>
-              {/* Stars - Golden */}
-              <div className="flex gap-1 mb-6">
-                {[...Array(testimonials[testimonialIndex].stars)].map((_, j) => (
-                  <span key={j} className="text-3xl" style={{ color: '#FFD700' }}>★</span>
-                ))}
-              </div>
-              
-              {/* Testimonial Text */}
-              <p className="text-[oklch(0.7_0_0)] text-lg mb-8 leading-relaxed italic">
-                "{testimonials[testimonialIndex].text}"
-              </p>
-              
-              {/* Author */}
-              <div>
-                <p className="text-white font-semibold text-base">{testimonials[testimonialIndex].name}</p>
-                <p className="text-[oklch(0.5_0_0)] text-sm">{testimonials[testimonialIndex].role}</p>
-              </div>
+          <div className="relative">
+            {/* Grid de 3 Testimonials */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {testimonials.slice(testimonialIndex, testimonialIndex + 3).map((testimonial, i) => (
+                <div
+                  key={i}
+                  className={`p-6 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[280px] flex flex-col justify-between ${
+                    isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                  }`}
+                  style={{ transitionDelay: `${i * 100}ms` }}
+                >
+                  {/* Stars - Golden */}
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(testimonial.stars)].map((_, j) => (
+                      <span key={j} className="text-2xl" style={{ color: '#FFD700' }}>★</span>
+                    ))}
+                  </div>
+                  
+                  {/* Testimonial Text */}
+                  <p className="text-[oklch(0.7_0_0)] text-sm mb-4 leading-relaxed italic">
+                    "{testimonial.text}"
+                  </p>
+                  
+                  {/* Author */}
+                  <div>
+                    <p className="text-white font-semibold text-sm">{testimonial.name}</p>
+                    <p className="text-[oklch(0.5_0_0)] text-xs">{testimonial.role}</p>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            {/* Indicators */}
+            {/* Indicators - Grupos de 3 */}
             <div className="flex gap-2 justify-center mt-8">
-              {testimonials.map((_, i) => (
+              {[0, 3].map((i) => (
                 <button
                   key={i}
                   onClick={() => setTestimonialIndex(i)}
