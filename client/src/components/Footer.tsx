@@ -15,10 +15,9 @@ export default function Footer() {
         <div className="flex justify-center mb-12">
           <img
             src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/logo-Loc-7-para-google_4_b32d3981.jpg"
-            alt="Loc 7 Rental House"
+            alt="Loc 7 Equipamentos"
             className="h-20 w-auto"
           />
-          <p className="text-center text-[oklch(0.6_0_0)] text-sm mt-2" style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.05em' }}>RENTAL HOUSE</p>
         </div>
 
         {/* 3 Columns - Filmhouse style */}
@@ -27,26 +26,26 @@ export default function Footer() {
           {/* Column 1: CONTATO */}
           <div>
             <h4 
-              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#00FF00]"
-              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#00FF00' }}
+              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#FF0000]"
+              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#FF0000' }}
             >
               Contato
             </h4>
             <ul className="space-y-4">
               <li className="flex items-center gap-3">
-                <span className="text-[#00FF00]">📧</span>
+                <span className="text-white">📧</span>
                 <a 
                   href="mailto:loc7@loc7equipamentos.com.br" 
-                  className="text-[oklch(0.6_0_0)] hover:text-white text-sm transition-colors"
+                  className="text-white hover:text-[#FF0000] text-sm transition-colors font-medium"
                 >
                   loc7@loc7equipamentos.com.br
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <span className="text-[#00FF00]">📱</span>
+                <span className="text-white">📱</span>
                 <a 
                   href="tel:+5511997237850" 
-                  className="text-[oklch(0.6_0_0)] hover:text-white text-sm transition-colors"
+                  className="text-white hover:text-[#FF0000] text-sm transition-colors font-medium"
                 >
                   11 99723-7850 / WhatsApp
                 </a>
@@ -57,22 +56,19 @@ export default function Footer() {
           {/* Column 2: HORÁRIO DE ATENDIMENTO */}
           <div>
             <h4 
-              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#00FF00]"
-              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#00FF00' }}
+              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#FF0000]"
+              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#FF0000' }}
             >
               Horário de Atendimento
             </h4>
             <ul className="space-y-3 text-sm">
-              <li className="text-[oklch(0.6_0_0)]">
-                <strong className="text-white">Online:</strong> das 08h às 18h
+              <li className="text-white font-medium">
+                <strong>Seg-Sex:</strong> 08h às 18h
               </li>
-              <li className="text-[oklch(0.6_0_0)]">
-                <strong className="text-white">Seg-Sex:</strong> das 08h às 18h
+              <li className="text-white font-medium">
+                <strong>Sábado:</strong> 09h às 12h
               </li>
-              <li className="text-[oklch(0.6_0_0)]">
-                <strong className="text-white">Sábado:</strong> das 09h às 12h
-              </li>
-              <li className="text-[oklch(0.4_0_0)] text-xs">
+              <li className="text-[oklch(0.5_0_0)] text-xs">
                 Domingo/Feriados: Fechado
               </li>
             </ul>
@@ -81,8 +77,8 @@ export default function Footer() {
           {/* Column 3: REDES SOCIAIS */}
           <div>
             <h4 
-              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#00FF00]"
-              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#00FF00' }}
+              className="font-bold text-white uppercase tracking-wider text-sm mb-6 pb-2 border-b border-[#FF0000]"
+              style={{ fontFamily: 'Oswald, sans-serif', letterSpacing: '0.1em', color: '#FF0000' }}
             >
               Redes Sociais
             </h4>
@@ -91,7 +87,7 @@ export default function Footer() {
                 href="https://www.instagram.com/loc7equipamentos" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="w-10 h-10 bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] flex items-center justify-center hover:border-[#00FF00] hover:text-[#00FF00] transition-all text-[oklch(0.6_0_0)]"
+                className="w-10 h-10 bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] flex items-center justify-center hover:border-[#FF0000] hover:text-[#FF0000] transition-all text-white"
                 title="Instagram"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -102,7 +98,7 @@ export default function Footer() {
                 href="https://www.facebook.com/Loc7Equipamentos" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="w-10 h-10 bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] flex items-center justify-center hover:border-[#00FF00] hover:text-[#00FF00] transition-all text-[oklch(0.6_0_0)]"
+                className="w-10 h-10 bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] flex items-center justify-center hover:border-[#FF0000] hover:text-[#FF0000] transition-all text-white"
                 title="Facebook"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -113,7 +109,7 @@ export default function Footer() {
                 href="https://www.youtube.com/@loc7equipamentos" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="w-10 h-10 bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] flex items-center justify-center hover:border-[#00FF00] hover:text-[#00FF00] transition-all text-[oklch(0.6_0_0)]"
+                className="w-10 h-10 bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] flex items-center justify-center hover:border-[#FF0000] hover:text-[#FF0000] transition-all text-white"
                 title="YouTube"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

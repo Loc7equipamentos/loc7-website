@@ -93,7 +93,7 @@
   --sidebar-accent: oklch(0.15 0 0);
   --sidebar-accent-foreground: oklch(0.96 0 0);
   --sidebar-border: oklch(0.22 0 0);
-  --neon-green: #00FF00;
+  --neon-green: #FF0000;
   --neon-red: #FF0000;
   --neon-yellow: #FFFF00;
   --sidebar-ring: oklch(0.45 0.25 25);
@@ -366,18 +366,18 @@
 
   /* RED.com inspired grid lines */
   .loc7-grid-line {
-    border-color: #00FF00;
+    border-color: #FF0000;
     border-style: dashed;
   }
 
   .loc7-grid-horizontal {
-    border-top: 2px dashed #00FF00;
-    border-bottom: 2px dashed #00FF00;
+    border-top: 2px dashed #FF0000;
+    border-bottom: 2px dashed #FF0000;
   }
 
   .loc7-grid-vertical {
-    border-left: 2px dashed #00FF00;
-    border-right: 2px dashed #00FF00;
+    border-left: 2px dashed #FF0000;
+    border-right: 2px dashed #FF0000;
   }
 
   /* Neon badges */
@@ -409,8 +409,8 @@
 
   /* Neon border effect */
   .loc7-neon-border {
-    border: 2px solid #00FF00;
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5), inset 0 0 10px rgba(0, 255, 0, 0.1);
+    border: 2px solid #FF0000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5), inset 0 0 10px rgba(255, 0, 0, 0.1);
   }
 
   .loc7-neon-border-red {

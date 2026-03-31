@@ -158,7 +158,7 @@ export default function Home() {
             <div className="mb-8 md:mb-12">
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/logo-Loc-7-para-google_4_b32d3981.jpg"
-                alt="Loc 7 Rental House"
+                alt="Loc 7 Equipamentos"
                 className="h-24 md:h-32 w-auto"
               />
             </div>

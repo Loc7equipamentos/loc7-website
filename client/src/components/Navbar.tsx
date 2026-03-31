@@ -46,17 +46,7 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Top bar */}
-      <div className="bg-[oklch(0.05_0_0)] border-b border-[oklch(0.18_0_0)] py-1.5 hidden md:block">
-        <div className="container flex items-center justify-between text-xs text-[oklch(0.55_0_0)]" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-          <span>📍 São Paulo, SP — Atendimento: Seg-Sex 09h-18h | Sáb 09h-13h</span>
-          <div className="flex items-center gap-4">
-            <a href="https://instagram.com/loc7equipamentos" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
-            <a href="https://youtube.com/@loc7equipamentos" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
-            <a href="https://wa.me/message/WOIONHHSTABQF1" target="_blank" rel="noopener noreferrer" className="text-[oklch(0.45_0.25_25)] hover:text-[oklch(0.55_0.25_25)] transition-colors font-semibold">WhatsApp</a>
-          </div>
-        </div>
-      </div>
+
 
       {/* Main navbar */}
       <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-[oklch(0.06_0_0)] shadow-2xl shadow-black/50' : 'bg-[oklch(0.08_0_0)]'} border-b border-[oklch(0.18_0_0)]`}>
