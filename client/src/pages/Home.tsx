@@ -15,11 +15,15 @@ const LIGHTING_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/d
 const ABOUT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/about-section-6t4vsfoEi8VscrkczqbQpH.webp";
 
 const carouselImages = [
-  { id: 1, title: "RED Komodo 6K", category: "Câmera", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80" },
-  { id: 2, title: "Zeiss Supreme Prime Set", category: "Lentes", img: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=800&q=80" },
-  { id: 3, title: "Aputure 600D Pro", category: "Iluminação", img: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=800&q=80" },
-  { id: 4, title: "Sony FX9 6K", category: "Câmera", img: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=800&q=80" },
-  { id: 5, title: "Canon C300 Mark III", category: "Câmera", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80" },
+  { id: 1, title: "RED Komodo 6K", category: "Câmera", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&h=400&q=80" },
+  { id: 2, title: "Zeiss Supreme Prime Set", category: "Lentes", img: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=600&h=400&q=80" },
+  { id: 3, title: "Aputure 600D Pro", category: "Iluminação", img: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=600&h=400&q=80" },
+  { id: 4, title: "Sony FX9 6K", category: "Câmera", img: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=600&h=400&q=80" },
+  { id: 5, title: "Canon C300 Mark III", category: "Câmera", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&h=400&q=80" },
+  { id: 6, title: "DZO Pictor Zoom", category: "Lentes", img: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=600&h=400&q=80" },
+  { id: 7, title: "Godox AD600 Pro", category: "Flash", img: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=600&h=400&q=80" },
+  { id: 8, title: "Blackmagic Pyxis 6K", category: "Câmera", img: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=600&h=400&q=80" },
+  { id: 9, title: "Leitz Cine Hektor", category: "Lentes", img: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=600&h=400&q=80" },
 ];
 
 const featuredProducts = [
@@ -152,11 +156,19 @@ export default function Home() {
   };
 
   const nextCarousel = () => {
-    setCarouselIndex(prev => (prev + 1) % carouselImages.length);
+    setCarouselIndex(prev => (prev + 3) % carouselImages.length);
   };
 
   const prevCarousel = () => {
-    setCarouselIndex(prev => (prev - 1 + carouselImages.length) % carouselImages.length);
+    setCarouselIndex(prev => (prev - 3 + carouselImages.length) % carouselImages.length);
+  };
+
+  const getVisibleImages = () => {
+    const visible = [];
+    for (let i = 0; i < 3; i++) {
+      visible.push(carouselImages[(carouselIndex + i) % carouselImages.length]);
+    }
+    return visible;
   };
 
   return (
@@ -241,8 +253,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== CAROUSEL SECTION ===== */}
-      <section className="py-16 bg-[oklch(0.06_0_0)] border-y border-[oklch(0.15_0_0)]">
+      {/* ===== CAROUSEL SECTION - 3 IMAGES ===== */}
+      <section className="py-12 bg-[oklch(0.06_0_0)]">
         <div className="container">
           <div className="mb-8">
             <span className="loc7-section-title text-lg">EQUIPAMENTOS POPULARES</span>
@@ -250,73 +262,58 @@ export default function Home() {
           </div>
 
           <div className="relative group">
-            {/* Carousel Container */}
-            <div className="relative overflow-hidden rounded-lg aspect-video bg-[oklch(0.08_0_0)]">
-              {carouselImages.map((image, i) => (
+            {/* 3-Image Carousel */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {getVisibleImages().map((image, i) => (
                 <div
-                  key={image.id}
-                  className={`absolute inset-0 transition-opacity duration-700 ${
-                    i === carouselIndex ? 'opacity-100' : 'opacity-0'
-                  }`}
+                  key={`${carouselIndex}-${i}`}
+                  className="relative overflow-hidden rounded-lg aspect-video bg-[oklch(0.08_0_0)] group/card transition-all duration-500 hover:shadow-lg hover:shadow-[#FF0000]/20"
                 >
                   <img
                     src={image.img}
                     alt={image.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover/card:opacity-80 transition-opacity duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                   
                   {/* Image Info */}
-                  <div className="absolute bottom-0 left-0 right-0 p-8">
-                    <p className="text-[oklch(0.45_0.25_25)] text-sm uppercase tracking-widest font-display font-semibold mb-2">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover/card:translate-y-0 transition-transform duration-300">
+                    <p className="text-[oklch(0.45_0.25_25)] text-xs uppercase tracking-widest font-display font-semibold mb-1">
                       {image.category}
                     </p>
-                    <h2 className="text-white text-3xl md:text-4xl font-bold font-display mb-4">
+                    <h3 className="text-white text-sm font-bold font-display mb-2 line-clamp-2">
                       {image.title}
-                    </h2>
+                    </h3>
                     <a
                       href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Gostaria de solicitar um orçamento."
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="loc7-btn-primary inline-flex items-center gap-2 text-base"
+                      className="loc7-btn-primary inline-flex items-center gap-1 text-xs py-1 px-3"
                     >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                       </svg>
-                      Solicitar Orçamento
+                      Orçar
                     </a>
                   </div>
                 </div>
               ))}
+            </div>
 
-              {/* Navigation Buttons */}
+            {/* Navigation Buttons */}
+            <div className="flex gap-4 justify-center">
               <button
                 onClick={prevCarousel}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-[#FF0000] text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                className="bg-black/50 hover:bg-[#FF0000] text-white p-2 rounded-full transition-all"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={nextCarousel}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-[#FF0000] text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                className="bg-black/50 hover:bg-[#FF0000] text-white p-2 rounded-full transition-all"
               >
-                <ChevronRight className="w-6 h-6" />
+                <ChevronRight className="w-5 h-5" />
               </button>
-            </div>
-
-            {/* Carousel Indicators */}
-            <div className="flex gap-2 mt-4 justify-center">
-              {carouselImages.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCarouselIndex(i)}
-                  className={`h-1 transition-all duration-300 ${
-                    i === carouselIndex
-                      ? 'w-8 bg-[#FF0000]'
-                      : 'w-2 bg-[oklch(0.3_0_0)] hover:bg-[oklch(0.4_0_0)]'
-                  }`}
-                />
-              ))}
             </div>
           </div>
         </div>
