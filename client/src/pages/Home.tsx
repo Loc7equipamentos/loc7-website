@@ -284,7 +284,7 @@ export default function Home() {
       </section>
 
       {/* ===== FEATURES BAR ===== */}
-      <section className="bg-[oklch(0.06_0_0)] border-y border-[oklch(0.15_0_0)] -mt-16 relative z-20">
+      <section className="bg-[oklch(0.06_0_0)] border-y border-[oklch(0.15_0_0)] -mt-32 relative z-20">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[oklch(0.15_0_0)]">
             {[
