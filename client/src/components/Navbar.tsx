@@ -57,7 +57,7 @@ export default function Navbar() {
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/logo-Loc-7-para-google_4_b32d3981.jpg"
                 alt="Loc 7 Equipamentos"
-                className="h-12 w-auto md:h-16 lg:h-20"
+                className="h-14 w-auto md:h-20 lg:h-24"
               />
             </Link>
 
@@ -114,7 +114,7 @@ export default function Navbar() {
         {/* Category sub-nav */}
         <div className="hidden md:block border-t border-[oklch(0.15_0_0)] bg-[oklch(0.06_0_0)]">
           <div className="container">
-            <div className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide">
+            <div className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide justify-end">
               {categories.map((cat) => {
                 const Icon = cat.icon;
                 return (
