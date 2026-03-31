@@ -1,14 +1,28 @@
 /*
  * LOC 7 — Formulário de Orçamento
  * Captura dados do cliente e envia para WhatsApp
+ * Com seletor de categorias de equipamentos
  */
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Check } from "lucide-react";
 import { toast } from "sonner";
+
+const CATEGORIAS_EQUIPAMENTOS = [
+  { id: "cameras", label: "📷 Câmeras", icon: "📷" },
+  { id: "lentes", label: "🔍 Lentes", icon: "🔍" },
+  { id: "iluminacao", label: "💡 Iluminação", icon: "💡" },
+  { id: "audio", label: "🎤 Áudio", icon: "🎤" },
+  { id: "monitores", label: "📺 Monitores", icon: "📺" },
+  { id: "movimento", label: "🎬 Movimento", icon: "🎬" },
+  { id: "wireless", label: "📡 Wireless", icon: "📡" },
+  { id: "modificadores", label: "🎨 Modificadores", icon: "🎨" },
+  { id: "maquinaria", label: "⚙️ Maquinaria", icon: "⚙️" },
+  { id: "outro", label: "🔧 Outro", icon: "🔧" },
+];
 
 export default function OrcamentoForm() {
   const [formData, setFormData] = useState({
@@ -16,6 +30,7 @@ export default function OrcamentoForm() {
     email: "",
     telefone: "",
     empresa: "",
+    categorias: [] as string[],
     equipamentos: "",
     dataInicio: "",
     dataFim: "",
@@ -34,16 +49,39 @@ export default function OrcamentoForm() {
     }));
   };
 
+  const toggleCategoria = (categoriaId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      categorias: prev.categorias.includes(categoriaId)
+        ? prev.categorias.filter((id) => id !== categoriaId)
+        : [...prev.categorias, categoriaId],
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     // Validar campos obrigatórios
-    if (!formData.nome || !formData.telefone || !formData.equipamentos) {
-      toast.error("Por favor, preencha todos os campos obrigatórios");
+    if (!formData.nome || !formData.telefone) {
+      toast.error("Por favor, preencha nome e telefone");
       setIsLoading(false);
       return;
     }
+
+    if (formData.categorias.length === 0 && !formData.equipamentos) {
+      toast.error("Por favor, selecione categorias ou descreva os equipamentos");
+      setIsLoading(false);
+      return;
+    }
+
+    // Montar lista de categorias selecionadas
+    const categoriasTexto = formData.categorias
+      .map((id) => {
+        const categoria = CATEGORIAS_EQUIPAMENTOS.find((c) => c.id === id);
+        return categoria?.label || id;
+      })
+      .join(", ");
 
     // Montar mensagem para WhatsApp
     const mensagem = `
@@ -55,8 +93,13 @@ Email: ${formData.email}
 Telefone: ${formData.telefone}
 Empresa: ${formData.empresa || "N/A"}
 
-*Detalhes do Pedido:*
-Equipamentos: ${formData.equipamentos}
+*Categorias de Interesse:*
+${categoriasTexto || "Não especificadas"}
+
+*Equipamentos Específicos:*
+${formData.equipamentos || "Nenhum especificado"}
+
+*Período de Locação:*
 Data Início: ${formData.dataInicio || "N/A"}
 Data Fim: ${formData.dataFim || "N/A"}
 
@@ -82,6 +125,7 @@ Enviado via formulário do site
       email: "",
       telefone: "",
       empresa: "",
+      categorias: [],
       equipamentos: "",
       dataInicio: "",
       dataFim: "",
@@ -93,7 +137,7 @@ Enviado via formulário do site
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-[oklch(0.08_0_0)] rounded-lg border border-[oklch(0.15_0_0)]">
+    <div className="w-full max-w-4xl mx-auto p-6 bg-[oklch(0.08_0_0)] rounded-lg border border-[oklch(0.15_0_0)]">
       <h2 className="text-2xl font-bold text-white mb-2 font-oswald uppercase">
         Solicite seu Orçamento
       </h2>
@@ -101,7 +145,7 @@ Enviado via formulário do site
         Preencha o formulário abaixo e envie direto para nosso WhatsApp
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Linha 1: Nome e Email */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -164,18 +208,45 @@ Enviado via formulário do site
           </div>
         </div>
 
-        {/* Equipamentos */}
+        {/* Seletor de Categorias */}
+        <div>
+          <label className="block text-sm font-semibold text-white mb-3">
+            Categorias de Equipamentos *
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {CATEGORIAS_EQUIPAMENTOS.map((categoria) => (
+              <button
+                key={categoria.id}
+                type="button"
+                onClick={() => toggleCategoria(categoria.id)}
+                className={`p-3 rounded-lg border-2 transition-all flex items-center justify-between ${
+                  formData.categorias.includes(categoria.id)
+                    ? "border-[#FF0000] bg-[oklch(0.15_0_0)]"
+                    : "border-[oklch(0.2_0_0)] bg-[oklch(0.12_0_0)] hover:border-[oklch(0.3_0_0)]"
+                }`}
+              >
+                <span className="text-sm font-semibold text-white text-left flex-1">
+                  {categoria.label}
+                </span>
+                {formData.categorias.includes(categoria.id) && (
+                  <Check size={16} className="text-[#FF0000] flex-shrink-0" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Equipamentos Específicos */}
         <div>
           <label className="block text-sm font-semibold text-white mb-2">
-            Equipamentos Desejados *
+            Equipamentos Específicos
           </label>
           <Textarea
             name="equipamentos"
             value={formData.equipamentos}
             onChange={handleChange}
             placeholder="Ex: 2x RED Komodo, 3x Lentes Zeiss, 1x Kit de Iluminação..."
-            className="bg-[oklch(0.12_0_0)] border-[oklch(0.2_0_0)] text-white placeholder:text-[oklch(0.5_0_0)] min-h-24"
-            required
+            className="bg-[oklch(0.12_0_0)] border-[oklch(0.2_0_0)] text-white placeholder:text-[oklch(0.5_0_0)] min-h-20"
           />
         </div>
 
@@ -225,7 +296,7 @@ Enviado via formulário do site
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-[#25D366] hover:bg-[#20ba58] text-black font-bold py-3 rounded-lg flex items-center justify-center gap-2 uppercase font-oswald tracking-wider"
+          className="w-full bg-[#FF0000] hover:bg-[#cc0000] text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 uppercase font-oswald tracking-wider"
         >
           <MessageCircle size={20} />
           {isLoading ? "Enviando..." : "Enviar para WhatsApp"}
