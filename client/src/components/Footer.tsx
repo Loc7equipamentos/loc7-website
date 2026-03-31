@@ -62,7 +62,7 @@ export default function Footer() {
               <li className="text-white font-medium">
                 <strong>Sábado:</strong> 09h às 12h
               </li>
-              <li className="text-[oklch(0.5_0_0)] text-xs">
+              <li className="text-white text-xs">
                 Domingo/Feriados: Fechado
               </li>
             </ul>
@@ -127,9 +127,9 @@ export default function Footer() {
 
         {/* Endereço */}
         <div className="text-center mb-8">
-          <p className="text-[oklch(0.6_0_0)] text-sm">
+          <p className="text-white text-sm">
             📍 Av. Imperatriz Leopoldina, 957 — Sala 1611, Vila Leopoldia<br />
-            <span className="text-[oklch(0.4_0_0)] text-xs">São Paulo, SP — CEP: 05305-011</span>
+            <span className="text-white text-xs">São Paulo, SP — CEP: 05305-011</span>
           </p>
         </div>
       </div>
