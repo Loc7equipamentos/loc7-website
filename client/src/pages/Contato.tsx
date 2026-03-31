@@ -63,7 +63,7 @@ export default function Contato() {
                   {
                     icon: MapPin,
                     title: "Localização",
-                    content: "São Paulo, SP\nEndereço completo disponível\napós confirmação de agendamento",
+                    content: "Av. Imperatriz Leopoldina, 957\nSala 1611, Vila Leopoldia\nSão Paulo, SP — CEP: 05305-011",
                   },
                   {
                     icon: Phone,
@@ -268,12 +268,12 @@ export default function Contato() {
             <MapView
               onMapReady={(map) => {
                 const marker = new google.maps.Marker({
-                  position: { lat: -23.5614, lng: -46.6558 },
+                  position: { lat: -23.5643, lng: -46.6563 },
                   map,
-                  title: "Loc 7 Equipamentos",
+                  title: "Loc 7 Equipamentos - Av. Imperatriz Leopoldina, 957",
                 });
-                map.setCenter({ lat: -23.5614, lng: -46.6558 });
-                map.setZoom(15);
+                map.setCenter({ lat: -23.5643, lng: -46.6563 });
+                map.setZoom(16);
               }}
             />
           </div>

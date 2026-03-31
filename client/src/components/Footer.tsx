@@ -17,12 +17,11 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="mb-6">
-              <span className="font-display text-3xl font-bold text-white tracking-wider uppercase">
-                LOC<span className="text-[oklch(0.45_0.25_25)]">7</span>
-              </span>
-              <p className="text-[0.6rem] tracking-[0.3em] text-[oklch(0.4_0_0)] uppercase font-mono-price mt-1">
-                EQUIPAMENTOS
-              </p>
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/logo-Loc-7-para-google_4_b32d3981.jpg"
+                alt="Loc 7 Equipamentos"
+                className="h-16 w-auto mb-4"
+              />
             </div>
             <p className="text-[oklch(0.55_0_0)] text-sm leading-relaxed mb-6">
               Locadora de equipamentos audiovisuais profissionais em São Paulo. Câmeras, lentes, iluminação e muito mais para sua produção.
@@ -119,8 +118,8 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-[oklch(0.45_0.25_25)] mt-0.5 shrink-0" />
                 <span className="text-[oklch(0.55_0_0)] text-sm">
-                  São Paulo, SP<br />
-                  <span className="text-[oklch(0.4_0_0)] text-xs">Endereço completo disponível no contato</span>
+                  Av. Imperatriz Leopoldina, 957<br />
+                  <span className="text-[oklch(0.4_0_0)] text-xs">Sala 1611, Vila Leopoldia, São Paulo — CEP: 05305-011</span>
                 </span>
               </li>
               <li className="flex items-center gap-3">

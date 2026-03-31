@@ -65,14 +65,11 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="relative">
-                <span className="font-display text-2xl font-bold text-white tracking-wider uppercase">
-                  LOC<span className="text-[oklch(0.45_0.25_25)]">7</span>
-                </span>
-                <span className="block text-[0.55rem] tracking-[0.3em] text-[oklch(0.5_0_0)] uppercase font-mono-price mt-[-4px]">
-                  EQUIPAMENTOS
-                </span>
-              </div>
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/logo-Loc-7-para-google_4_b32d3981.jpg"
+                alt="Loc 7 Equipamentos"
+                className="h-12 w-auto"
+              />
             </Link>
 
             {/* Desktop nav */}
