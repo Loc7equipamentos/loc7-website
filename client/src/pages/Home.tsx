@@ -154,15 +154,6 @@ export default function Home() {
         {/* Content */}
         <div className="relative z-10 container h-full flex items-center">
           <div className="max-w-2xl">
-            {/* Logo grande na home */}
-            <div className="mb-8 md:mb-12">
-              <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/logo-Loc-7-para-google_4_b32d3981.jpg"
-                alt="Loc 7 Equipamentos"
-                className="h-24 md:h-32 w-auto"
-              />
-            </div>
-            
             <div className="mb-4 flex items-center gap-2">
               <span className="w-8 h-0.5 bg-[oklch(0.45_0.25_25)]" />
               <span className="text-[oklch(0.45_0.25_25)] text-xs uppercase tracking-widest font-display font-semibold">
