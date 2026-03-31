@@ -11,8 +11,8 @@ import { ChevronLeft, ChevronRight, MapPin, Zap, Star, ArrowRight, Play } from "
 // Hero images - alternating based on text
 const heroSlides = [
   { text: "Equipamentos de Cinema", subtitle: "Câmeras, lentes e iluminação profissional", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00051_darkened_8a518622.webp" },
-  { text: "Lentes Cinema", subtitle: "Ópticas profissionais de alta qualidade", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00395_f1ee3c98.webp" },
-  { text: "Iluminação Profissional", subtitle: "Equipamentos de iluminação de última geração", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00358_3e802492.webp" },
+  { text: "Lentes Cinema", subtitle: "Ópticas profissionais de alta qualidade", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00186_darkened_7ce023d4.webp" },
+  { text: "Iluminação Profissional", subtitle: "Equipamentos de iluminação de última geração", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00186_darkened_7ce023d4.webp" },
 ];
 
 const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/hero-banner-BC5ruXNS748J9BcSVbhSGK.webp";
@@ -193,7 +193,7 @@ export default function Home() {
     <div className="min-h-screen bg-[oklch(0.08_0_0)]">
       
       {/* ===== HERO SECTION ===== */}
-      <section className="relative h-[85vh] min-h-[500px] overflow-hidden">
+      <section className="relative h-[70vh] min-h-[400px] overflow-hidden">
         {/* Background - Alternating Images */}
         <div className="absolute inset-0">
           {heroSlides.map((slide, i) => {
@@ -213,16 +213,16 @@ export default function Home() {
               />
             );
           })}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/15" />
         </div>
 
         {/* Content */}
         <div className="relative z-10 container h-full flex items-center">
           <div className="max-w-2xl">
-            <div className="mb-4 flex items-center gap-2">
-              <span className="w-8 h-0.5 bg-[oklch(0.45_0.25_25)]" />
-              <span className="text-[oklch(0.45_0.25_25)] text-xs uppercase tracking-widest font-display font-semibold">
+            <div className="mb-6 flex items-center gap-3">
+              <span className="w-12 h-1 bg-[oklch(0.45_0.25_25)]" />
+              <span className="text-[oklch(0.45_0.25_25)] text-sm uppercase tracking-widest font-display font-bold">
                 Locadora de equipamentos audiovisuais em São Paulo
               </span>
             </div>
@@ -284,7 +284,7 @@ export default function Home() {
       </section>
 
       {/* ===== FEATURES BAR ===== */}
-      <section className="bg-[oklch(0.06_0_0)] border-y border-[oklch(0.15_0_0)] -mt-32 relative z-20">
+      <section className="bg-[oklch(0.06_0_0)] border-y border-[oklch(0.15_0_0)]">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[oklch(0.15_0_0)]">
             {[

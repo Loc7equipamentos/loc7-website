@@ -291,11 +291,11 @@
     background: oklch(0.08 0 0);
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(0.25 0 0);
+    background: oklch(0.45 0 0);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.45 0.25 25);
+    background: oklch(0.60 0 0);
   }
 }
 
