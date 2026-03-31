@@ -9,7 +9,11 @@ export default function MapComponent() {
       <iframe
         width="100%"
         height="400"
-        style={{ border: 0, borderRadius: "0.5rem" }}
+        style={{ 
+          border: 0, 
+          borderRadius: "0.5rem",
+          filter: "invert(1) hue-rotate(180deg)"
+        }}
         loading="lazy"
         allowFullScreen={true}
         referrerPolicy="no-referrer-when-downgrade"
