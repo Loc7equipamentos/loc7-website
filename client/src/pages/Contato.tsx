@@ -69,7 +69,7 @@ export default function Contato() {
                     icon: Phone,
                     title: "Telefone / WhatsApp",
                     content: "+55 (11) 99999-9999",
-                    link: "https://wa.me/5511999999999",
+                    link: "https://wa.me/message/WOIONHHSTABQF1",
                   },
                   {
                     icon: Mail,
@@ -107,7 +107,7 @@ export default function Contato() {
 
             {/* WhatsApp direct */}
             <a
-              href="https://wa.me/5511999999999?text=Olá! Gostaria de solicitar um orçamento de locação de equipamentos."
+              href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Gostaria de solicitar um orçamento de locação de equipamentos."
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 w-full bg-[#25D366] hover:bg-[#1ebe5a] text-white font-display font-bold uppercase tracking-widest py-4 transition-colors text-sm"

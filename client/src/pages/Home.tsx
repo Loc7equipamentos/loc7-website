@@ -52,7 +52,7 @@ function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
           <a
-            href={`https://wa.me/5511999999999?text=Olá! Tenho interesse em alugar: ${product.name}`}
+            href={`https://wa.me/message/WOIONHHSTABQF1?text=Olá! Tenho interesse em alugar: ${product.name}`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full loc7-btn-primary text-xs py-2 text-center flex items-center justify-center gap-2"
@@ -181,7 +181,7 @@ export default function Home() {
                         <ArrowRight className="w-4 h-4" />
                       </Link>
                       <a
-                        href="https://wa.me/5511999999999?text=Olá! Gostaria de solicitar um orçamento."
+                        href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Gostaria de solicitar um orçamento."
                         target="_blank"
                         rel="noopener noreferrer"
                         className="loc7-btn-outline flex items-center gap-2 text-base"
@@ -520,7 +520,7 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <a
-              href="https://wa.me/5511999999999?text=Olá! Gostaria de solicitar um orçamento para locação de equipamentos."
+              href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Gostaria de solicitar um orçamento para locação de equipamentos."
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white text-[oklch(0.45_0.25_25)] font-display font-bold uppercase tracking-widest px-8 py-4 text-base hover:bg-[oklch(0.95_0_0)] transition-colors flex items-center gap-2"

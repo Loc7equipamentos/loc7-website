@@ -213,7 +213,7 @@ export default function Portfolio() {
               Ver Catálogo <ArrowRight className="w-4 h-4" />
             </Link>
             <a
-              href="https://wa.me/5511999999999"
+              href="https://wa.me/message/WOIONHHSTABQF1"
               target="_blank"
               rel="noopener noreferrer"
               className="loc7-btn-outline flex items-center gap-2"

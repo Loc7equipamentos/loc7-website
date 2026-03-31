@@ -133,7 +133,7 @@ export default function Sobre() {
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <a
-                href="https://wa.me/5511999999999"
+                href="https://wa.me/message/WOIONHHSTABQF1"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white text-[oklch(0.45_0.25_25)] font-display font-bold uppercase tracking-widest px-8 py-4 hover:bg-[oklch(0.95_0_0)] transition-colors"

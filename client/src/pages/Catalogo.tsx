@@ -176,7 +176,7 @@ export default function Catalogo() {
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
                     <a
-                      href={`https://wa.me/5511999999999?text=Olá! Tenho interesse em alugar: ${product.name}`}
+                      href={`https://wa.me/message/WOIONHHSTABQF1?text=Olá! Tenho interesse em alugar: ${product.name}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full loc7-btn-primary text-xs py-2 text-center"
@@ -224,7 +224,7 @@ export default function Catalogo() {
             Entre em contato pelo WhatsApp e nossa equipe irá ajudá-lo a encontrar o equipamento ideal para seu projeto.
           </p>
           <a
-            href="https://wa.me/5511999999999?text=Olá! Estou procurando um equipamento específico e gostaria de ajuda."
+            href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Estou procurando um equipamento específico e gostaria de ajuda."
             target="_blank"
             rel="noopener noreferrer"
             className="loc7-btn-primary inline-flex items-center gap-2 text-base"

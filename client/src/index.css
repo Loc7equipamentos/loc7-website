@@ -93,6 +93,9 @@
   --sidebar-accent: oklch(0.15 0 0);
   --sidebar-accent-foreground: oklch(0.96 0 0);
   --sidebar-border: oklch(0.22 0 0);
+  --neon-green: #00FF00;
+  --neon-red: #FF0000;
+  --neon-yellow: #FFFF00;
   --sidebar-ring: oklch(0.45 0.25 25);
 }
 
@@ -359,3 +362,58 @@
   max-width: 280px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
+
+
+  /* RED.com inspired grid lines */
+  .loc7-grid-line {
+    border-color: #00FF00;
+    border-style: dashed;
+  }
+
+  .loc7-grid-horizontal {
+    border-top: 2px dashed #00FF00;
+    border-bottom: 2px dashed #00FF00;
+  }
+
+  .loc7-grid-vertical {
+    border-left: 2px dashed #00FF00;
+    border-right: 2px dashed #00FF00;
+  }
+
+  /* Neon badges */
+  .loc7-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 2px;
+  }
+
+  .loc7-badge-green {
+    background-color: #00FF00;
+    color: #000000;
+  }
+
+  .loc7-badge-red {
+    background-color: #FF0000;
+    color: #000000;
+  }
+
+  .loc7-badge-yellow {
+    background-color: #FFFF00;
+    color: #000000;
+  }
+
+  /* Neon border effect */
+  .loc7-neon-border {
+    border: 2px solid #00FF00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5), inset 0 0 10px rgba(0, 255, 0, 0.1);
+  }
+
+  .loc7-neon-border-red {
+    border: 2px solid #FF0000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5), inset 0 0 10px rgba(255, 0, 0, 0.1);
+  }

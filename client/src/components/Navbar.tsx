@@ -54,7 +54,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             <a href="https://instagram.com/loc7equipamentos" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
             <a href="https://youtube.com/@loc7equipamentos" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
-            <a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer" className="text-[oklch(0.45_0.25_25)] hover:text-[oklch(0.55_0.25_25)] transition-colors font-semibold">WhatsApp</a>
+            <a href="https://wa.me/message/WOIONHHSTABQF1" target="_blank" rel="noopener noreferrer" className="text-[oklch(0.45_0.25_25)] hover:text-[oklch(0.55_0.25_25)] transition-colors font-semibold">WhatsApp</a>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ export default function Navbar() {
                 Fale Conosco
               </Link>
               <a
-                href="https://wa.me/5511999999999?text=Olá! Gostaria de solicitar um orçamento."
+                href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Gostaria de solicitar um orçamento."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="loc7-btn-primary text-sm py-2 px-4 flex items-center gap-2"
@@ -163,7 +163,7 @@ export default function Navbar() {
                   Fale Conosco
                 </Link>
                 <a
-                  href="https://wa.me/5511999999999?text=Olá! Gostaria de solicitar um orçamento."
+                  href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Gostaria de solicitar um orçamento."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="loc7-btn-primary text-center py-3 flex items-center justify-center gap-2"
