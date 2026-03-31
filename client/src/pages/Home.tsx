@@ -8,6 +8,13 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { ChevronLeft, ChevronRight, MapPin, Zap, Star, ArrowRight, Play } from "lucide-react";
 
+// Hero images - alternating based on text
+const heroSlides = [
+  { text: "Equipamentos de Cinema", subtitle: "Câmeras, lentes e iluminação profissional", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00051_darkened_8a518622.webp" },
+  { text: "Lentes Cinema", subtitle: "Ópticas profissionais de alta qualidade", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00395_f1ee3c98.webp" },
+  { text: "Iluminação Profissional", subtitle: "Equipamentos de iluminação de última geração", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00358_3e802492.webp" },
+];
+
 const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/hero-banner-BC5ruXNS748J9BcSVbhSGK.webp";
 const CAMERAS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/cameras-category-CAmby3gUvFFiGLofYZBGb5.webp";
 const LENSES_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/lenses-category-XS4B4DC95N5eLapVz3paDn.webp";
@@ -176,13 +183,25 @@ export default function Home() {
       
       {/* ===== HERO SECTION ===== */}
       <section className="relative h-[85vh] min-h-[500px] overflow-hidden">
-        {/* Background */}
+        {/* Background - Alternating Images */}
         <div className="absolute inset-0">
-          <img
-            src={HERO_IMAGE}
-            alt="Equipamentos audiovisuais"
-            className="w-full h-full object-cover"
-          />
+          {heroSlides.map((slide, i) => {
+            const heroSlideData = [
+              { img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00051_darkened_8a518622.webp" },
+              { img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00395_f1ee3c98.webp" },
+              { img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00358_3e802492.webp" },
+            ];
+            return (
+              <img
+                key={i}
+                src={heroSlideData[i]?.img}
+                alt={slide.title}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                  i === currentSlide ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
+            );
+          })}
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
         </div>
