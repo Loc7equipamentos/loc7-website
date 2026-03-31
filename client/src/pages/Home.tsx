@@ -55,6 +55,9 @@ const testimonials = [
   { name: "Rafael Mendes", role: "Diretor de Fotografia", text: "Equipamentos sempre em perfeito estado e atendimento impecável. A Loc 7 é minha primeira opção para qualquer produção.", stars: 5 },
   { name: "Ana Beatriz", role: "Produtora Executiva", text: "Processo de locação super ágil e preços competitivos. Recomendo para qualquer profissional da área.", stars: 5 },
   { name: "Carlos Eduardo", role: "Videomaker", text: "Catálogo incrível com equipamentos de última geração. Sempre encontro o que preciso para meus projetos.", stars: 5 },
+  { name: "Marina Silva", role: "Diretora de Arte", text: "Profissionalismo e qualidade impecáveis. Entrega rápida e suporte técnico excelente durante toda a produção.", stars: 5 },
+  { name: "Lucas Ferreira", role: "Cinematógrafo", text: "Melhor custo-benefício de São Paulo. Equipamentos premium com manutenção perfeita. Muito satisfeito!", stars: 5 },
+  { name: "Juliana Costa", role: "Produtora", text: "Atendimento personalizado e soluções criativas para cada projeto. A Loc 7 entende nossas necessidades.", stars: 5 },
 ];
 
 function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
@@ -101,6 +104,7 @@ function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [isVisible, setIsVisible] = useState<Record<string, boolean>>({});
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -126,11 +130,18 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % heroSlides.length);
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+    return () => clearInterval(interval);
+  }, [heroSlides.length]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
 
   useEffect(() => {
     const carouselTimer = setInterval(() => {
@@ -434,29 +445,44 @@ export default function Home() {
             <p className="text-[oklch(0.5_0_0)] text-sm mt-3">O que nossos clientes dizem sobre a gente</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, i) => (
-              <div
-                key={i}
-                className={`p-6 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 ${
-                  isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                }`}
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.stars)].map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-[#FF0000] text-[#FF0000]" />
-                  ))}
-                </div>
-                <p className="text-[oklch(0.7_0_0)] text-sm mb-4 leading-relaxed">
-                  "{testimonial.text}"
-                </p>
-                <div>
-                  <p className="text-white font-semibold text-sm">{testimonial.name}</p>
-                  <p className="text-[oklch(0.5_0_0)] text-xs">{testimonial.role}</p>
-                </div>
+          <div className="relative max-w-3xl mx-auto">
+            {/* Testimonial Card */}
+            <div className={`p-8 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[300px] flex flex-col justify-between ${
+              isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}>
+              {/* Stars - Golden */}
+              <div className="flex gap-1 mb-6">
+                {[...Array(testimonials[testimonialIndex].stars)].map((_, j) => (
+                  <span key={j} className="text-3xl" style={{ color: '#FFD700' }}>★</span>
+                ))}
               </div>
-            ))}
+              
+              {/* Testimonial Text */}
+              <p className="text-[oklch(0.7_0_0)] text-lg mb-8 leading-relaxed italic">
+                "{testimonials[testimonialIndex].text}"
+              </p>
+              
+              {/* Author */}
+              <div>
+                <p className="text-white font-semibold text-base">{testimonials[testimonialIndex].name}</p>
+                <p className="text-[oklch(0.5_0_0)] text-sm">{testimonials[testimonialIndex].role}</p>
+              </div>
+            </div>
+
+            {/* Indicators */}
+            <div className="flex gap-2 justify-center mt-8">
+              {testimonials.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setTestimonialIndex(i)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === testimonialIndex
+                      ? 'w-8 bg-[#FF0000]'
+                      : 'w-2 bg-[oklch(0.3_0_0)] hover:bg-[oklch(0.4_0_0)]'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>

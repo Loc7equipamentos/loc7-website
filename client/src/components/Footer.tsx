@@ -12,14 +12,7 @@ export default function Footer() {
     <footer className="bg-[oklch(0.05_0_0)] border-t border-[oklch(0.15_0_0)]">
       {/* Main footer */}
       <div className="container py-16">
-        {/* Logo centered */}
-        <div className="flex justify-center mb-12">
-          <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/logo-Loc-7-para-google_4_b32d3981.jpg"
-            alt="Loc 7 Equipamentos"
-            className="h-20 w-auto"
-          />
-        </div>
+
 
         {/* 3 Columns - Filmhouse style */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12 border-b border-[oklch(0.15_0_0)] pb-12">
