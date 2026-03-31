@@ -7,7 +7,8 @@ import { useEffect, useRef } from "react";
 
 export default function MapComponent() {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
+  const mapInstance = useRef<any>(null);
+  const googleRef = useRef<any>(null);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -126,11 +127,13 @@ export default function MapComponent() {
       `,
     });
 
-    infoWindow.open(mapInstance.current, new window.google.maps.Marker({
+    const marker = new window.google.maps.Marker({
       position: location,
       map: mapInstance.current,
       visible: false,
-    }));
+    });
+
+    infoWindow.open(mapInstance.current, marker);
 
   }, []);
 
