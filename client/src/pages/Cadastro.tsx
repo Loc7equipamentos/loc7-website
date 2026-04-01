@@ -199,6 +199,26 @@ export default function Cadastro() {
           <p className="text-white">Preencha o formulário abaixo para se cadastrar na Loc 7</p>
         </div>
 
+        {/* Informações Importantes */}
+        <div className="mb-8 space-y-4">
+          <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
+            <h3 className="font-bold text-red-700 mb-2">⚠️ ATENÇÃO!</h3>
+            <p className="text-black text-sm">
+              O cadastro ocorre em horário comercial: <strong>de segunda à sexta-feira, das 09:00 às 17:00 hs</strong>. Prazo de aprovação de até <strong>1 hora</strong> a partir do recebimento dos dados, junto com os documentos solicitados.
+            </p>
+          </div>
+          <div className="bg-blue-50 border-2 border-blue-500 rounded-lg p-4">
+            <p className="text-black text-sm">
+              <strong>*</strong> Indica uma pergunta obrigatória
+            </p>
+          </div>
+          <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4">
+            <p className="text-black text-sm">
+              <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
+            </p>
+          </div>
+        </div>
+
         <Card className="bg-gray-50 border-gray-200 p-8">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)}>
             <TabsList className="grid w-full grid-cols-2 bg-white mb-8 gap-4">
