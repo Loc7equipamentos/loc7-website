@@ -201,20 +201,15 @@ export default function Cadastro() {
 
         {/* Informações Importantes */}
         <div className="mb-8 space-y-4">
-          <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
+          <div className="bg-white border-2 border-red-500 rounded-lg p-4">
             <h3 className="font-bold text-red-700 mb-2">⚠️ ATENÇÃO!</h3>
             <p className="text-black text-sm">
               O cadastro ocorre em horário comercial: <strong>de segunda à sexta-feira, das 09:00 às 17:00 hs</strong>. Prazo de aprovação de até <strong>1 hora</strong> a partir do recebimento dos dados, junto com os documentos solicitados.
             </p>
           </div>
-          <div className="bg-blue-50 border-2 border-blue-500 rounded-lg p-4">
+          <div className="bg-white border-2 border-red-500 rounded-lg p-4">
             <p className="text-black text-sm">
               <strong>*</strong> Indica uma pergunta obrigatória
-            </p>
-          </div>
-          <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4">
-            <p className="text-black text-sm">
-              <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
             </p>
           </div>
         </div>
@@ -618,6 +613,13 @@ export default function Cadastro() {
                   </div>
                 </div>
 
+                {/* Caixa de Pagamento */}
+                <div className="mb-8 bg-white border-2 border-green-500 rounded-lg p-4">
+                  <p className="text-black text-sm">
+                    <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
+                  </p>
+                </div>
+
                 {/* Botão Enviar */}
                 <div className="flex gap-4">
                   <Button
@@ -1011,13 +1013,11 @@ export default function Cadastro() {
                   </div>
                 </div>
 
-                {/* Seção 7: Formas de Pagamento */}
-                <div className="mb-8 bg-gray-50 p-4 rounded-md">
-                  <h2 className="text-xl font-bold text-white mb-4">7. FORMAS DE PAGAMENTO</h2>
-                  <ul className="text-gray-700 text-sm space-y-2">
-                    <li>• O pagamento da primeira locação deve ser feito à vista. A VISTA, via PIX ou dinheiro.</li>
-                    <li>• Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.</li>
-                  </ul>
+                {/* Caixa de Pagamento */}
+                <div className="mb-8 bg-white border-2 border-green-500 rounded-lg p-4">
+                  <p className="text-black text-sm">
+                    <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
+                  </p>
                 </div>
 
                 {/* Botão Enviar */}
