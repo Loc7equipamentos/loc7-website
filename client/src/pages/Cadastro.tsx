@@ -22,6 +22,8 @@ export default function Cadastro() {
   const [pjData, setPjData] = useState<FormData>({});
   const [pfSubmitting, setPfSubmitting] = useState(false);
   const [pjSubmitting, setPjSubmitting] = useState(false);
+  const [showSocialDialogPF, setShowSocialDialogPF] = useState(false);
+  const [showSocialDialogPJ, setShowSocialDialogPJ] = useState(false);
 
   // Campos obrigatórios PF
   const pfRequiredFields = [
@@ -336,7 +338,7 @@ export default function Cadastro() {
                       onChange={handlePFChange}
                       placeholder="SP"
                     />
-                    <Dialog>
+                    <Dialog open={showSocialDialogPF} onOpenChange={setShowSocialDialogPF}>
                       <DialogTrigger asChild>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">Rede Social</label>
@@ -357,7 +359,10 @@ export default function Cadastro() {
                             <button
                               key={network}
                               type="button"
-                              onClick={() => handlePFChange('redeSocial', network)}
+                              onClick={() => {
+                                handlePFChange('redeSocial', network);
+                                setShowSocialDialogPF(false);
+                              }}
                               className={`p-3 border-2 rounded-md transition text-center font-semibold ${
                                 pfData.redeSocial === network
                                   ? 'bg-black text-white border-black'
@@ -753,14 +758,43 @@ export default function Cadastro() {
                       onChange={handlePJChange}
                       placeholder="(Opcional)"
                     />
-                    <FormField
-                      label="Rede Social"
-                      name="redeSocial"
-                      error={pjErrors.redeSocial}
-                      value={pjData.redeSocial}
-                      onChange={handlePJChange}
-                      placeholder="(Opcional)"
-                    />
+                    <Dialog open={showSocialDialogPJ} onOpenChange={setShowSocialDialogPJ}>
+                      <DialogTrigger asChild>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Rede Social</label>
+                          <button
+                            type="button"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md text-left bg-white text-gray-700 hover:bg-gray-50 transition"
+                          >
+                            {pjData.redeSocial ? pjData.redeSocial : 'Selecionar rede social (Opcional)'}
+                          </button>
+                        </div>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Selecione uma Rede Social</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid grid-cols-2 gap-3">
+                          {['Instagram', 'Facebook', 'LinkedIn'].map((network) => (
+                            <button
+                              key={network}
+                              type="button"
+                              onClick={() => {
+                                handlePJChange('redeSocial', network);
+                                setShowSocialDialogPJ(false);
+                              }}
+                              className={`p-3 border-2 rounded-md transition text-center font-semibold ${
+                                pjData.redeSocial === network
+                                  ? 'bg-black text-white border-black'
+                                  : 'bg-white text-black border-gray-300 hover:border-black hover:bg-gray-50'
+                              }`}
+                            >
+                              {network}
+                            </button>
+                          ))}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
 
