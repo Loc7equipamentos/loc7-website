@@ -217,10 +217,10 @@ export default function Cadastro() {
         <Card className="bg-transparent border-transparent p-8">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)}>
             <TabsList className="grid w-full grid-cols-2 bg-transparent mb-8 gap-4">
-              <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=active]:border-2 !data-[state=active]:border-black !data-[state=inactive]:bg-transparent !data-[state=inactive]:border-2 !data-[state=inactive]:border-white !data-[state=inactive]:text-white !font-bold text-lg">
+              <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=active]:border-2 !data-[state=active]:border-black !data-[state=inactive]:bg-transparent !data-[state=inactive]:border-2 !data-[state=inactive]:border-white !data-[state=inactive]:text-white !font-bold text-lg hover:bg-white/10 hover:border-white transition-all duration-200">
                 Pessoa Física
               </TabsTrigger>
-              <TabsTrigger value="pj" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=active]:border-2 !data-[state=active]:border-black !data-[state=inactive]:bg-transparent !data-[state=inactive]:border-2 !data-[state=inactive]:border-white !data-[state=inactive]:text-white !font-bold text-lg">
+              <TabsTrigger value="pj" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=active]:border-2 !data-[state=active]:border-black !data-[state=inactive]:bg-transparent !data-[state=inactive]:border-2 !data-[state=inactive]:border-white !data-[state=inactive]:text-white !font-bold text-lg hover:bg-white/10 hover:border-white transition-all duration-200">
                 Pessoa Jurídica
               </TabsTrigger>
             </TabsList>
