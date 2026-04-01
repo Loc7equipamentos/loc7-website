@@ -217,10 +217,10 @@ export default function Cadastro() {
         <Card className="bg-transparent border-transparent p-8">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)}>
             <TabsList className="grid w-full grid-cols-2 bg-transparent mb-8 gap-4">
-              <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-transparent !data-[state=inactive]:border-2 !data-[state=inactive]:border-white !data-[state=inactive]:text-white !font-bold">
+              <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-transparent !data-[state=inactive]:border !data-[state=inactive]:border-white/50 !data-[state=inactive]:text-white !font-bold">
                 Pessoa Física
               </TabsTrigger>
-              <TabsTrigger value="pj" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-transparent !data-[state=inactive]:border-2 !data-[state=inactive]:border-white !data-[state=inactive]:text-white !font-bold">
+              <TabsTrigger value="pj" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-transparent !data-[state=inactive]:border !data-[state=inactive]:border-white/50 !data-[state=inactive]:text-white !font-bold">
                 Pessoa Jurídica
               </TabsTrigger>
             </TabsList>
@@ -543,7 +543,7 @@ export default function Cadastro() {
                       placeholder="(Opcional)"                    />
                   </div>
                   <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
+                      <label className="block text-sm font-medium text-white mb-3">
                         Estudante
                         <span className="text-red-600 ml-1">*</span>
                       </label>
@@ -554,7 +554,7 @@ export default function Cadastro() {
                           className={`px-6 py-2 rounded border-2 font-semibold transition ${
                             pfData.estudante === "sim"
                               ? "bg-black text-white border-black"
-                              : "bg-white text-white border-black"
+                              : "bg-transparent text-white border-white/50"
                           }`}
                         >
                           Sim
@@ -565,7 +565,7 @@ export default function Cadastro() {
                           className={`px-6 py-2 rounded border-2 font-semibold transition ${
                             pfData.estudante === "nao"
                               ? "bg-black text-white border-black"
-                              : "bg-white text-white border-black"
+                              : "bg-transparent text-white border-white/50"
                           }`}
                         >
                           Não
