@@ -614,8 +614,8 @@ export default function Cadastro() {
                 </div>
 
                 {/* Caixa de Pagamento */}
-                <div className="mb-8 bg-white border-2 border-green-500 rounded-lg p-4">
-                  <p className="text-black text-sm">
+                <div className="mb-8 bg-white border border-green-300 rounded-lg p-3">
+                  <p className="text-gray-600 text-xs">
                     <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
                   </p>
                 </div>
@@ -1014,8 +1014,8 @@ export default function Cadastro() {
                 </div>
 
                 {/* Caixa de Pagamento */}
-                <div className="mb-8 bg-white border-2 border-green-500 rounded-lg p-4">
-                  <p className="text-black text-sm">
+                <div className="mb-8 bg-white border border-green-300 rounded-lg p-3">
+                  <p className="text-gray-600 text-xs">
                     <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
                   </p>
                 </div>
