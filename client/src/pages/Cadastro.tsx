@@ -201,20 +201,20 @@ export default function Cadastro() {
 
         {/* Informações Importantes */}
         <div className="mb-8 space-y-4">
-          <div className="bg-white border border-red-400 rounded-lg p-4">
+          <div className="bg-red-50 border border-red-400 rounded-lg p-4">
             <h3 className="font-bold text-red-700 mb-2">⚠️ ATENÇÃO!</h3>
             <p className="text-black text-sm">
               O cadastro ocorre em horário comercial: <strong>de segunda à sexta-feira, das 09:00 às 17:00 hs</strong>. Prazo de aprovação de até <strong>1 hora</strong> a partir do recebimento dos dados, junto com os documentos solicitados.
             </p>
           </div>
-          <div className="bg-white border border-red-400 rounded-lg p-4">
+          <div className="bg-red-50 border border-red-400 rounded-lg p-4">
             <p className="text-black text-sm">
               <strong>*</strong> Indica uma pergunta obrigatória
             </p>
           </div>
         </div>
 
-        <Card className="bg-gray-50 border-gray-200 p-8">
+        <Card className="bg-white/50 border-gray-200 p-8">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)}>
             <TabsList className="grid w-full grid-cols-2 bg-white mb-8 gap-4">
               <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-white !data-[state=inactive]:border-2 !data-[state=inactive]:border-black !data-[state=inactive]:text-black !font-bold">
