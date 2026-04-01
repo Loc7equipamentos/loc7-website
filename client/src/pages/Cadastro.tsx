@@ -216,11 +216,11 @@ export default function Cadastro() {
 
         <Card className="bg-transparent border-transparent p-8">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)}>
-            <TabsList className="grid w-full grid-cols-2 bg-white mb-8 gap-4">
-              <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-white !data-[state=inactive]:border-2 !data-[state=inactive]:border-black !data-[state=inactive]:text-white !font-bold">
+            <TabsList className="grid w-full grid-cols-2 bg-transparent mb-8 gap-4">
+              <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-transparent !data-[state=inactive]:border-2 !data-[state=inactive]:border-white !data-[state=inactive]:text-white !font-bold">
                 Pessoa Física
               </TabsTrigger>
-              <TabsTrigger value="pj" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-white !data-[state=inactive]:border-2 !data-[state=inactive]:border-black !data-[state=inactive]:text-white !font-bold">
+              <TabsTrigger value="pj" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-transparent !data-[state=inactive]:border-2 !data-[state=inactive]:border-white !data-[state=inactive]:text-white !font-bold">
                 Pessoa Jurídica
               </TabsTrigger>
             </TabsList>
@@ -398,7 +398,7 @@ export default function Cadastro() {
                   <p className="text-gray-600 text-sm mb-4">(Preferência na área audiovisual: Locadoras, fornecedores)</p>
                   
                   {/* Referência 1 */}
-                  <div className="bg-gray-50 p-4 rounded-md mb-4">
+                  <div className="bg-transparent p-4 rounded-md mb-4">
                     <h3 className="text-white font-semibold mb-3">Referência 1</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
@@ -448,7 +448,7 @@ export default function Cadastro() {
                   </div>
 
                   {/* Referência 2 */}
-                  <div className="bg-gray-50 p-4 rounded-md mb-4">
+                  <div className="bg-transparent p-4 rounded-md mb-4">
                     <h3 className="text-white font-semibold mb-3">Referência 2 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
@@ -476,7 +476,7 @@ export default function Cadastro() {
                   </div>
 
                   {/* Referência 3 */}
-                  <div className="bg-gray-50 p-4 rounded-md">
+                  <div className="bg-transparent p-4 rounded-md">
                     <h3 className="text-white font-semibold mb-3">Referência 3 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
@@ -767,7 +767,7 @@ export default function Cadastro() {
                   </h2>
                   
                   {/* Proprietário 1 */}
-                  <div className="bg-gray-50 p-4 rounded-md mb-4">
+                  <div className="bg-transparent p-4 rounded-md mb-4">
                     <h3 className="text-white font-semibold mb-3">Proprietário 1</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
@@ -807,7 +807,7 @@ export default function Cadastro() {
                   </div>
 
                   {/* Proprietário 2 */}
-                  <div className="bg-gray-50 p-4 rounded-md">
+                  <div className="bg-transparent p-4 rounded-md">
                     <h3 className="text-white font-semibold mb-3">Proprietário 2 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
@@ -850,7 +850,7 @@ export default function Cadastro() {
                   </h2>
                   
                   {/* Referência 1 */}
-                  <div className="bg-gray-50 p-4 rounded-md mb-4">
+                  <div className="bg-transparent p-4 rounded-md mb-4">
                     <h3 className="text-white font-semibold mb-3">Referência 1</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
@@ -881,7 +881,7 @@ export default function Cadastro() {
                   </div>
 
                   {/* Referência 2 */}
-                  <div className="bg-gray-50 p-4 rounded-md">
+                  <div className="bg-transparent p-4 rounded-md">
                     <h3 className="text-white font-semibold mb-3">Referência 2 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
