@@ -54,37 +54,37 @@ const productions = [
   {
     id: 1,
     title: "TV Globo Videogame Verão",
-    image: "https://cdn.manus.space/webdev/producao_1_tv_globo_videogame.webp",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_1_tv_globo_videogame_981c2434.webp",
     description: "Produção profissional com câmera, monitor e equipamentos de transmissão",
   },
   {
     id: 2,
     title: "TV Globo BBB Brasil",
-    image: "https://cdn.manus.space/webdev/producao_2_tv_globo_bbb.webp",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_2_tv_globo_bbb_39ebfbed.webp",
     description: "Produção BBB com câmera profissional e carro da marca",
   },
   {
     id: 3,
     title: "TV Globo The Voice Brasil",
-    image: "https://cdn.manus.space/webdev/producao_3_tv_globo_voice.webp",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_3_tv_globo_voice_0f3b03bb.webp",
     description: "Câmera profissional com microfone e cenário do The Voice",
   },
   {
     id: 4,
     title: "Multishow Show Slash",
-    image: "https://cdn.manus.space/webdev/producao_4_multishow_slash.webp",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_4_multishow_slash_fe669ec8.webp",
     description: "Show do Slash com iluminação profissional e transmissão ao vivo",
   },
   {
     id: 5,
     title: "Live Alphabeto",
-    image: "https://cdn.manus.space/webdev/producao_5_live_alphabeto.webp",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_5_live_alphabeto_d8e3b0fd.webp",
     description: "Transmissão ao vivo com múltiplas câmeras, monitores e iluminação profissional",
   },
   {
     id: 6,
     title: "SporTV Futebol",
-    image: "https://cdn.manus.space/webdev/producao_6_sportv_futebol.jpg",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_6_sportv_futebol_55247cbd.jpg",
     description: "Transmissão de futebol com câmera de movimento profissional no estádio",
   },
 ];
@@ -148,7 +148,7 @@ export default function Servicos() {
               className="w-full h-auto"
               style={{ aspectRatio: "16 / 9" }}
             >
-              <source src="https://cdn.manus.space/webdev/video_servicos_16x9.mp4" type="video/mp4" />
+              <source src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/video_servicos_16x9_373937ef.mp4" type="video/mp4" />
               Seu navegador não suporta o elemento de vídeo.
             </video>
           </div>
