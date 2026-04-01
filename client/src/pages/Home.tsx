@@ -49,7 +49,7 @@ const newProducts = [
   { id: 10, name: "Blackmagic Pyxis 6K", category: "CÂMERA", price: "R$ 900,00", badge: "FULLFRAME", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80" },
 ];
 
-const brands = ["SONY", "CANON", "RED", "ARRI", "BLACKMAGIC", "APUTURE", "ZEISS", "DJI", "RODE", "HOLLYLAND", "ATOMOS", "SENNHEISER", "SMALLHD", "TILTA", "TUFFEN"];
+const brands = ["SONY", "CANON", "RED", "ARRI", "BLACKMAGIC", "APUTURE", "ZEISS", "DJI", "RODE", "HOLLYLAND", "ATOMOS", "SENNHEISER", "SMALLHD", "TILTA", "TIFFEN"];
 
 const testimonials = [
   { name: "Marcos Filho", role: "Cliente", text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.", stars: 5 },
