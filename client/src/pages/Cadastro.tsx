@@ -91,6 +91,42 @@ export default function Cadastro() {
     return undefined;
   };
 
+  const searchCEP = async (cep: string, isFormType: 'pf' | 'pj') => {
+    const cleanCEP = cep.replace(/\D/g, '');
+    if (cleanCEP.length !== 8) return;
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cleanCEP}/json/`);
+      const data = await response.json();
+
+      if (data.erro) {
+        console.log('CEP nao encontrado');
+        return;
+      }
+
+      const updateData = {
+        endereco: data.logradouro,
+        bairro: data.bairro,
+        cidade: data.localidade,
+        uf: data.uf
+      };
+
+      if (isFormType === 'pf') {
+        setPfData(prev => ({ ...prev, ...updateData }));
+        if (data.uf) {
+          setPfCidades(estadosCidades[data.uf] || []);
+        }
+      } else {
+        setPjData(prev => ({ ...prev, ...updateData }));
+        if (data.uf) {
+          setPjCidades(estadosCidades[data.uf] || []);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao buscar CEP:', error);
+    }
+  };
+
   const validatePF = () => {
     const errors: FormError = {};
     pfRequiredFields.forEach(field => {
@@ -122,6 +158,9 @@ export default function Cadastro() {
       setPfCidades(estadosCidades[value] || []);
       setPfData(prev => ({ ...prev, cidade: '' }));
     }
+    if (field === 'cep' && value.replace(/\D/g, '').length === 8) {
+      searchCEP(value, 'pf');
+    }
   };
 
   const handlePJChange = (field: string, value: any) => {
@@ -132,6 +171,9 @@ export default function Cadastro() {
     if (field === 'uf' && value) {
       setPjCidades(estadosCidades[value] || []);
       setPjData(prev => ({ ...prev, cidade: '' }));
+    }
+    if (field === 'cep' && value.replace(/\D/g, '').length === 8) {
+      searchCEP(value, 'pj');
     }
   };
 
