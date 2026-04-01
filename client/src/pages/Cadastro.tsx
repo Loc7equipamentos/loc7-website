@@ -198,9 +198,9 @@ export default function Cadastro() {
           <p className="text-gray-400">Preencha o formulário abaixo para se cadastrar na Loc 7</p>
         </div>
 
-        <Card className="bg-[oklch(0.12_0_0)] border-[oklch(0.25_0_0)] p-8">
+        <Card className="bg-[oklch(0.25_0_0)] border-[oklch(0.25_0_0)] p-8">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)}>
-            <TabsList className="grid w-full grid-cols-2 bg-[oklch(0.18_0_0)] mb-8">
+            <TabsList className="grid w-full grid-cols-2 bg-[oklch(0.20_0_0)] mb-8">
               <TabsTrigger value="pf" className="data-[state=active]:bg-red-600">
                 Pessoa Física
               </TabsTrigger>
@@ -382,7 +382,7 @@ export default function Cadastro() {
                   <p className="text-gray-400 text-sm mb-4">(Preferência na área audiovisual: Locadoras, fornecedores)</p>
                   
                   {/* Referência 1 */}
-                  <div className="bg-[oklch(0.18_0_0)] p-4 rounded-md mb-4">
+                  <div className="bg-[oklch(0.22_0_0)] p-4 rounded-md mb-4">
                     <h3 className="text-white font-semibold mb-3">Referência 1</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
@@ -413,7 +413,7 @@ export default function Cadastro() {
                   </div>
 
                   {/* Referência 2 */}
-                  <div className="bg-[oklch(0.18_0_0)] p-4 rounded-md mb-4">
+                  <div className="bg-[oklch(0.22_0_0)] p-4 rounded-md mb-4">
                     <h3 className="text-white font-semibold mb-3">Referência 2 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
@@ -441,7 +441,7 @@ export default function Cadastro() {
                   </div>
 
                   {/* Referência 3 */}
-                  <div className="bg-[oklch(0.18_0_0)] p-4 rounded-md">
+                  <div className="bg-[oklch(0.22_0_0)] p-4 rounded-md">
                     <h3 className="text-white font-semibold mb-3">Referência 3 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
@@ -718,7 +718,7 @@ export default function Cadastro() {
                   </h2>
                   
                   {/* Proprietário 1 */}
-                  <div className="bg-[oklch(0.18_0_0)] p-4 rounded-md mb-4">
+                  <div className="bg-[oklch(0.22_0_0)] p-4 rounded-md mb-4">
                     <h3 className="text-white font-semibold mb-3">Proprietário 1</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
@@ -758,7 +758,7 @@ export default function Cadastro() {
                   </div>
 
                   {/* Proprietário 2 */}
-                  <div className="bg-[oklch(0.18_0_0)] p-4 rounded-md">
+                  <div className="bg-[oklch(0.22_0_0)] p-4 rounded-md">
                     <h3 className="text-white font-semibold mb-3">Proprietário 2 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
@@ -801,7 +801,7 @@ export default function Cadastro() {
                   </h2>
                   
                   {/* Referência 1 */}
-                  <div className="bg-[oklch(0.18_0_0)] p-4 rounded-md mb-4">
+                  <div className="bg-[oklch(0.22_0_0)] p-4 rounded-md mb-4">
                     <h3 className="text-white font-semibold mb-3">Referência 1</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
@@ -832,7 +832,7 @@ export default function Cadastro() {
                   </div>
 
                   {/* Referência 2 */}
-                  <div className="bg-[oklch(0.18_0_0)] p-4 rounded-md">
+                  <div className="bg-[oklch(0.22_0_0)] p-4 rounded-md">
                     <h3 className="text-white font-semibold mb-3">Referência 2 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
@@ -965,7 +965,7 @@ export default function Cadastro() {
                 </div>
 
                 {/* Seção 7: Formas de Pagamento */}
-                <div className="mb-8 bg-[oklch(0.18_0_0)] p-4 rounded-md">
+                <div className="mb-8 bg-[oklch(0.22_0_0)] p-4 rounded-md">
                   <h2 className="text-xl font-bold text-white mb-4">7. FORMAS DE PAGAMENTO</h2>
                   <ul className="text-gray-400 text-sm space-y-2">
                     <li>• O pagamento da primeira locação deve ser feito à vista. A VISTA, via PIX ou dinheiro.</li>
