@@ -395,10 +395,10 @@ export default function Cadastro() {
                       />
                       <FormField
                         label="Nome do Contato"
-                        name="contato1"
+                        name="nomeContato1"
                         required
-                        error={pfErrors.contato1}
-                        value={pfData.contato1}
+                        error={pfErrors.nomeContato1}
+                        value={pfData.nomeContato1}
                         onChange={handlePFChange}
                       />
                       <FormField
@@ -411,6 +411,23 @@ export default function Cadastro() {
                       />
                     </div>
                   </div>
+                  
+                  <FormField
+                    label="Nome da Mãe"
+                    name="nomeMae"
+                    required
+                    error={pfErrors.nomeMae}
+                    value={pfData.nomeMae}
+                    onChange={handlePFChange}
+                  />
+                  <FormField
+                    label="Nome do Pai"
+                    name="nomePai"
+                    required
+                    error={pfErrors.nomePai}
+                    value={pfData.nomePai}
+                    onChange={handlePFChange}
+                  />
 
                   {/* Referência 2 */}
                   <div className="bg-gray-50 p-4 rounded-md mb-4">
@@ -512,14 +529,31 @@ export default function Cadastro() {
                         Estudante
                         <span className="text-red-600 ml-1">*</span>
                       </label>
-                      <FormField
-                        name="estudante"
-                        type="radio"
-                        required
-                        error={pfErrors.estudante}
-                        value={pfData.estudante}
-                        onChange={handlePFChange}
-                      />
+                      <div className="flex gap-6">
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="estudante"
+                            value="sim"
+                            checked={pfData.estudante === "sim"}
+                            onChange={(e) => handlePFChange("estudante", e.target.value)}
+                            className="mr-2"
+                          />
+                          Sim
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="estudante"
+                            value="nao"
+                            checked={pfData.estudante === "nao"}
+                            onChange={(e) => handlePFChange("estudante", e.target.value)}
+                            className="mr-2"
+                          />
+                          Não
+                        </label>
+                      </div>
+                      {pfErrors.estudante && <span className="text-red-600 text-sm">{pfErrors.estudante}</span>}
                     </div>
                     <FormField
                       label="Nome do Pai"
