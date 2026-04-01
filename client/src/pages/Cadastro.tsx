@@ -24,6 +24,8 @@ export default function Cadastro() {
   const [pjSubmitting, setPjSubmitting] = useState(false);
   const [socialDialogOpen, setSocialDialogOpen] = useState(false);
   const [socialDialogOpenPJ, setSocialDialogOpenPJ] = useState(false);
+  const [pfSuccess, setPfSuccess] = useState(false);
+  const [pjSuccess, setPjSuccess] = useState(false);
 
   const pfRequiredFields = ['dataCadastro', 'nomeCompleto', 'cpf', 'dataNascimento', 'nomeMae', 'endereco', 'numero', 'bairro', 'cep', 'cidade', 'uf', 'telefone', 'email', 'empresa1', 'nomeContato1', 'telefoneDdd1', 'rg', 'cnhValida', 'redeSocial', 'documento1'];
 
@@ -96,9 +98,10 @@ export default function Cadastro() {
       setPfSubmitting(true);
       setTimeout(() => {
         console.log('PF Data:', pfData);
-        alert('Cadastro PF enviado com sucesso!');
+        setPfSuccess(true);
         setPfSubmitting(false);
         setPfData({});
+        setTimeout(() => setPfSuccess(false), 5000);
       }, 1000);
     }
   };
@@ -109,9 +112,10 @@ export default function Cadastro() {
       setPjSubmitting(true);
       setTimeout(() => {
         console.log('PJ Data:', pjData);
-        alert('Cadastro PJ enviado com sucesso!');
+        setPjSuccess(true);
         setPjSubmitting(false);
         setPjData({});
+        setTimeout(() => setPjSuccess(false), 5000);
       }, 1000);
     }
   };
@@ -423,6 +427,18 @@ export default function Cadastro() {
                   {pfSubmitting ? 'Enviando...' : 'ENVIAR CADASTRO'}
                 </Button>
 
+                {pfSuccess && (
+                  <div className="border-2 border-green-500 rounded-md p-6 bg-green-50/10">
+                    <div className="flex items-center gap-4">
+                      <div className="text-4xl text-green-400">✓</div>
+                      <div>
+                        <h3 className="text-xl font-bold text-green-400 mb-2">Cadastro Enviado com Sucesso!</h3>
+                        <p className="text-white text-sm">Seu cadastro foi recebido. Você receberá um e-mail de confirmação em breve.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="border border-green-300 rounded-md p-3 bg-transparent">
                   <p className="text-white text-xs">
                     <span className="font-bold">Pagamento:</span> O Pagamento da primeira locação deve ser feito À VISTA, via PIX ou dinheiro. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
@@ -517,6 +533,18 @@ export default function Cadastro() {
                 <Button type="submit" disabled={pjSubmitting} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-md">
                   {pjSubmitting ? 'Enviando...' : 'ENVIAR CADASTRO'}
                 </Button>
+
+                {pjSuccess && (
+                  <div className="border-2 border-green-500 rounded-md p-6 bg-green-50/10">
+                    <div className="flex items-center gap-4">
+                      <div className="text-4xl text-green-400">✓</div>
+                      <div>
+                        <h3 className="text-xl font-bold text-green-400 mb-2">Cadastro Enviado com Sucesso!</h3>
+                        <p className="text-white text-sm">Seu cadastro foi recebido. Você receberá um e-mail de confirmação em breve.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="border border-green-300 rounded-md p-3 bg-transparent">
                   <p className="text-white text-xs">
