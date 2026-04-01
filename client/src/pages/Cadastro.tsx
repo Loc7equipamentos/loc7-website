@@ -14,6 +14,39 @@ interface FormData {
   [key: string]: any;
 }
 
+// Estados brasileiros e suas cidades
+const estadosCidades: { [key: string]: string[] } = {
+  'AC': ['Rio Branco', 'Cruzeiro do Sul'],
+  'AL': ['Maceió', 'Rio Largo', 'Marechal Deodoro'],
+  'AP': ['Macapá', 'Santana'],
+  'AM': ['Manaus', 'Itacoatiara', 'Parintins'],
+  'BA': ['Salvador', 'Feira de Santana', 'Vitória da Conquista', 'Ilhéus', 'Jequié'],
+  'CE': ['Fortaleza', 'Caucaia', 'Juazeiro do Norte', 'Maracanaú'],
+  'DF': ['Brasília'],
+  'ES': ['Vitória', 'Vila Velha', 'Serra', 'Cariacica'],
+  'GO': ['Goiânia', 'Aparecida de Goiânia', 'Anápolis', 'Rio Verde'],
+  'MA': ['São Luís', 'Imperatriz', 'Caxias'],
+  'MT': ['Cuiabá', 'Várzea Grande', 'Rondonópolis', 'Sinop'],
+  'MS': ['Campo Grande', 'Dourados', 'Três Lagoas'],
+  'MG': ['Belo Horizonte', 'Uberlândia', 'Contagem', 'Juiz de Fora', 'Montes Claros'],
+  'PA': ['Belém', 'Ananindeua', 'Santarém', 'Marabá'],
+  'PB': ['João Pessoa', 'Campina Grande', 'Santa Rita'],
+  'PR': ['Curitiba', 'Londrina', 'Maringá', 'Ponta Grossa', 'Cascavel'],
+  'PE': ['Recife', 'Jaboatão dos Guararapes', 'Olinda', 'Caruaru'],
+  'PI': ['Teresina', 'Parnaíba', 'Picos'],
+  'RJ': ['Rio de Janeiro', 'Niterói', 'Duque de Caxias', 'São Gonçalo', 'Nova Iguaçu'],
+  'RN': ['Natal', 'Mossoró', 'Parnamirim'],
+  'RS': ['Porto Alegre', 'Caxias do Sul', 'Pelotas', 'Santa Maria', 'Novo Hamburgo'],
+  'RO': ['Porto Velho', 'Ji-Paraná', 'Ariquemes'],
+  'RR': ['Boa Vista', 'Rorainópolis'],
+  'SC': ['Florianópolis', 'Joinville', 'Blumenau', 'Itajaí'],
+  'SP': ['São Paulo', 'Campinas', 'Santos', 'Sorocaba', 'Ribeirão Preto', 'Piracicaba'],
+  'SE': ['Aracaju', 'Lagarto'],
+  'TO': ['Palmas', 'Araguaína']
+};
+
+const estados = Object.keys(estadosCidades).sort();
+
 export default function Cadastro() {
   const [activeTab, setActiveTab] = useState<FormType>('pf');
   const [pfErrors, setPfErrors] = useState<FormError>({});
@@ -26,6 +59,8 @@ export default function Cadastro() {
   const [socialDialogOpenPJ, setSocialDialogOpenPJ] = useState(false);
   const [pfSuccess, setPfSuccess] = useState(false);
   const [pjSuccess, setPjSuccess] = useState(false);
+  const [pfCidades, setPfCidades] = useState<string[]>([]);
+  const [pjCidades, setPjCidades] = useState<string[]>([]);
 
   const pfRequiredFields = ['dataCadastro', 'nomeCompleto', 'cpf', 'dataNascimento', 'nomeMae', 'endereco', 'numero', 'bairro', 'cep', 'cidade', 'uf', 'telefone', 'email', 'empresa1', 'nomeContato1', 'telefoneDdd1', 'rg', 'cnhValida', 'redeSocial', 'documento1'];
 
@@ -83,12 +118,20 @@ export default function Cadastro() {
     if (pfErrors[field]) {
       setPfErrors({ ...pfErrors, [field]: '' });
     }
+    if (field === 'uf' && value) {
+      setPfCidades(estadosCidades[value] || []);
+      setPfData(prev => ({ ...prev, cidade: '' }));
+    }
   };
 
   const handlePJChange = (field: string, value: any) => {
     setPjData({ ...pjData, [field]: value });
     if (pjErrors[field]) {
       setPjErrors({ ...pjErrors, [field]: '' });
+    }
+    if (field === 'uf' && value) {
+      setPjCidades(estadosCidades[value] || []);
+      setPjData(prev => ({ ...prev, cidade: '' }));
     }
   };
 
@@ -145,7 +188,19 @@ export default function Cadastro() {
         {label}
         {required && <span className="text-red-600 ml-1">*</span>}
       </label>
-      {type === 'textarea' ? (
+      {type === 'select' ? (
+        <select
+          name={name}
+          value={value || ''}
+          onChange={(e) => onChange(name, e.target.value)}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black ${error ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+        >
+          <option value="">Selecione...</option>
+          {placeholder && placeholder.map((opt: string) => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+      ) : type === 'textarea' ? (
         <textarea
           name={name}
           value={value || ''}
@@ -309,8 +364,8 @@ export default function Cadastro() {
                     <FormField label="CEP" name="cep" required value={pfData.cep} onChange={handlePFChange} error={pfErrors.cep} placeholder="00000-000" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Cidade" name="cidade" required value={pfData.cidade} onChange={handlePFChange} error={pfErrors.cidade} placeholder="Cidade" />
-                    <FormField label="UF (Estado)" name="uf" required value={pfData.uf} onChange={handlePFChange} error={pfErrors.uf} placeholder="SP" />
+                    <FormField label="UF (Estado)" name="uf" type="select" required value={pfData.uf} onChange={handlePFChange} error={pfErrors.uf} placeholder={estados} />
+                    <FormField label="Cidade" name="cidade" type="select" required value={pfData.cidade} onChange={handlePFChange} error={pfErrors.cidade} placeholder={pfCidades} />
                   </div>
                   <FormField label="Rede Social" name="redeSocial" required value={pfData.redeSocial} onChange={handlePFChange} error={pfErrors.redeSocial} placeholder="(Opcional)" />
                 </div>
@@ -483,8 +538,8 @@ export default function Cadastro() {
                     <FormField label="CEP" name="cep" required value={pjData.cep} onChange={handlePJChange} error={pjErrors.cep} placeholder="00000-000" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Cidade" name="cidade" required value={pjData.cidade} onChange={handlePJChange} error={pjErrors.cidade} placeholder="Cidade" />
-                    <FormField label="UF (Estado)" name="uf" required value={pjData.uf} onChange={handlePJChange} error={pjErrors.uf} placeholder="SP" />
+                    <FormField label="UF (Estado)" name="uf" type="select" required value={pjData.uf} onChange={handlePJChange} error={pjErrors.uf} placeholder={estados} />
+                    <FormField label="Cidade" name="cidade" type="select" required value={pjData.cidade} onChange={handlePJChange} error={pjErrors.cidade} placeholder={pjCidades} />
                   </div>
                   <FormField label="Rede Social" name="redeSocial" required value={pjData.redeSocial} onChange={handlePJChange} error={pjErrors.redeSocial} placeholder="(Opcional)" />
                 </div>
