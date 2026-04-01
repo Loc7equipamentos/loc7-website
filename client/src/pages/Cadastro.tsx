@@ -217,10 +217,10 @@ export default function Cadastro() {
         <Card className="bg-transparent border-transparent p-8">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)}>
             <TabsList className="grid w-full grid-cols-2 bg-transparent mb-8 gap-4">
-              <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-transparent !data-[state=inactive]:border !data-[state=inactive]:border-white/50 !data-[state=inactive]:text-white !font-bold">
+              <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=active]:border-2 !data-[state=active]:border-black !data-[state=inactive]:bg-transparent !data-[state=inactive]:border-2 !data-[state=inactive]:border-white !data-[state=inactive]:text-white !font-bold">
                 Pessoa Física
               </TabsTrigger>
-              <TabsTrigger value="pj" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-transparent !data-[state=inactive]:border !data-[state=inactive]:border-white/50 !data-[state=inactive]:text-white !font-bold">
+              <TabsTrigger value="pj" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=active]:border-2 !data-[state=active]:border-black !data-[state=inactive]:bg-transparent !data-[state=inactive]:border-2 !data-[state=inactive]:border-white !data-[state=inactive]:text-white !font-bold">
                 Pessoa Jurídica
               </TabsTrigger>
             </TabsList>
@@ -625,8 +625,8 @@ export default function Cadastro() {
                 </div>
 
                 {/* Caixa de Pagamento */}
-                <div className="mb-8 bg-white border border-green-300 rounded-lg p-3">
-                  <p className="text-gray-600 text-xs">
+                <div className="mb-8 bg-transparent border border-green-300 rounded-lg p-3">
+                  <p className="text-white text-xs">
                     <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
                   </p>
                 </div>
@@ -1025,8 +1025,8 @@ export default function Cadastro() {
                 </div>
 
                 {/* Caixa de Pagamento */}
-                <div className="mb-8 bg-white border border-green-300 rounded-lg p-3">
-                  <p className="text-gray-600 text-xs">
+                <div className="mb-8 bg-transparent border border-green-300 rounded-lg p-3">
+                  <p className="text-white text-xs">
                     <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
                   </p>
                 </div>
