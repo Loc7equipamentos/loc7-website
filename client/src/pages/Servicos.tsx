@@ -144,12 +144,15 @@ export default function Servicos() {
             <video
               width="100%"
               height="auto"
-              controls
+              autoPlay
+              muted
+              loop
+              playsInline
               className="w-full h-auto"
               style={{ aspectRatio: "16 / 9" }}
             >
               <source src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/video_servicos_16x9_373937ef.mp4" type="video/mp4" />
-              Seu navegador não suporta o elemento de vídeo.
+              Seu navegador nao suporta o elemento de video.
             </video>
           </div>
         </div>
