@@ -195,16 +195,16 @@ export default function Cadastro() {
       <div className="container max-w-4xl mx-auto px-4">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-black mb-2">CADASTRE-SE</h1>
-          <p className="text-gray-600">Preencha o formulário abaixo para se cadastrar na Loc 7</p>
+          <p className="text-white">Preencha o formulário abaixo para se cadastrar na Loc 7</p>
         </div>
 
         <Card className="bg-gray-50 border-gray-200 p-8">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)}>
             <TabsList className="grid w-full grid-cols-2 bg-white mb-8 gap-4">
-              <TabsTrigger value="pf" className="data-[state=active]:bg-gray-400 data-[state=active]:text-white data-[state=inactive]:bg-white data-[state=inactive]:border data-[state=inactive]:border-black data-[state=inactive]:text-gray-600 font-bold">
+              <TabsTrigger value="pf" className="data-[state=active]:bg-gray-500 data-[state=active]:text-white data-[state=inactive]:bg-white data-[state=inactive]:border-2 data-[state=inactive]:border-black data-[state=inactive]:text-gray-600 font-bold">
                 Pessoa Física
               </TabsTrigger>
-              <TabsTrigger value="pj" className="data-[state=active]:bg-gray-400 data-[state=active]:text-white data-[state=inactive]:bg-white data-[state=inactive]:border data-[state=inactive]:border-black data-[state=inactive]:text-gray-600 font-bold">
+              <TabsTrigger value="pj" className="data-[state=active]:bg-gray-500 data-[state=active]:text-white data-[state=inactive]:bg-white data-[state=inactive]:border-2 data-[state=inactive]:border-black data-[state=inactive]:text-gray-600 font-bold">
                 Pessoa Jurídica
               </TabsTrigger>
             </TabsList>
