@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 type FormType = 'pf' | 'pj';
 
@@ -335,14 +336,36 @@ export default function Cadastro() {
                       onChange={handlePFChange}
                       placeholder="SP"
                     />
-                    <FormField
-                      label="Rede Social"
-                      name="redeSocial"
-                      error={pfErrors.redeSocial}
-                      value={pfData.redeSocial}
-                      onChange={handlePFChange}
-                      placeholder="(Opcional)"
-                    />
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Rede Social</label>
+                          <button
+                            type="button"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md text-left bg-white text-gray-700 hover:bg-gray-50 transition"
+                          >
+                            {pfData.redeSocial ? pfData.redeSocial : 'Selecionar rede social (Opcional)'}
+                          </button>
+                        </div>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Selecione uma Rede Social</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid grid-cols-2 gap-3">
+                          {['Instagram', 'Facebook', 'LinkedIn', 'Twitter/X', 'TikTok', 'YouTube'].map((network) => (
+                            <button
+                              key={network}
+                              type="button"
+                              onClick={() => handlePFChange('redeSocial', network)}
+                              className="p-3 border-2 border-gray-300 rounded-md hover:border-black hover:bg-gray-50 transition text-center font-semibold"
+                            >
+                              {network}
+                            </button>
+                          ))}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
 
@@ -412,22 +435,24 @@ export default function Cadastro() {
                     </div>
                   </div>
                   
-                  <FormField
-                    label="Nome da Mãe"
-                    name="nomeMae"
-                    required
-                    error={pfErrors.nomeMae}
-                    value={pfData.nomeMae}
-                    onChange={handlePFChange}
-                  />
-                  <FormField
-                    label="Nome do Pai"
-                    name="nomePai"
-                    required
-                    error={pfErrors.nomePai}
-                    value={pfData.nomePai}
-                    onChange={handlePFChange}
-                  />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      label="Nome da Mãe"
+                      name="nomeMae"
+                      required
+                      error={pfErrors.nomeMae}
+                      value={pfData.nomeMae}
+                      onChange={handlePFChange}
+                    />
+                    <FormField
+                      label="Nome do Pai"
+                      name="nomePai"
+                      required
+                      error={pfErrors.nomePai}
+                      value={pfData.nomePai}
+                      onChange={handlePFChange}
+                    />
+                  </div>
 
                   {/* Referência 2 */}
                   <div className="bg-gray-50 p-4 rounded-md mb-4">
@@ -522,49 +547,39 @@ export default function Cadastro() {
                       error={pfErrors.qualAssociacao}
                       value={pfData.qualAssociacao}
                       onChange={handlePFChange}
-                      placeholder="(Opcional)"
-                    />
-                    <div className="md:col-span-2">
+                      placeholder="(Opcional)"                    />
+                  </div>
+                  <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-3">
                         Estudante
                         <span className="text-red-600 ml-1">*</span>
                       </label>
                       <div className="flex gap-6">
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="estudante"
-                            value="sim"
-                            checked={pfData.estudante === "sim"}
-                            onChange={(e) => handlePFChange("estudante", e.target.value)}
-                            className="mr-2"
-                          />
+                        <button
+                          type="button"
+                          onClick={() => handlePFChange("estudante", "sim")}
+                          className={`px-6 py-2 rounded border-2 font-semibold transition ${
+                            pfData.estudante === "sim"
+                              ? "bg-black text-white border-black"
+                              : "bg-white text-black border-black"
+                          }`}
+                        >
                           Sim
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="estudante"
-                            value="nao"
-                            checked={pfData.estudante === "nao"}
-                            onChange={(e) => handlePFChange("estudante", e.target.value)}
-                            className="mr-2"
-                          />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handlePFChange("estudante", "nao")}
+                          className={`px-6 py-2 rounded border-2 font-semibold transition ${
+                            pfData.estudante === "nao"
+                              ? "bg-black text-white border-black"
+                              : "bg-white text-black border-black"
+                          }`}
+                        >
                           Não
-                        </label>
+                        </button>
                       </div>
                       {pfErrors.estudante && <span className="text-red-600 text-sm">{pfErrors.estudante}</span>}
                     </div>
-                    <FormField
-                      label="Nome do Pai"
-                      name="nomePai"
-                      required
-                      error={pfErrors.nomePai}
-                      value={pfData.nomePai}
-                      onChange={handlePFChange}
-                      placeholder="Digite o nome do pai"
-                    />
-                  </div>
                 </div>
 
                 {/* Seção 6: Documentos */}
