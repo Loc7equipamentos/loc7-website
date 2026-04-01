@@ -115,7 +115,7 @@ export default function Cadastro() {
     placeholder = ''
   }: any) => (
     <div className="mb-4">
-      <label className="block text-sm font-medium text-black mb-1">
+      <label className="block text-sm font-medium text-white mb-1">
         {label}
         {required && <span className="text-red-600 ml-1">*</span>}
       </label>
@@ -195,32 +195,32 @@ export default function Cadastro() {
     <div className="min-h-screen bg-black pt-32 pb-16">
       <div className="container max-w-4xl mx-auto px-4">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-black mb-2">CADASTRE-SE</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">CADASTRE-SE</h1>
           <p className="text-white">Preencha o formulário abaixo para se cadastrar na Loc 7</p>
         </div>
 
         {/* Informações Importantes */}
         <div className="mb-8 space-y-4">
-          <div className="bg-red-50 border border-red-400 rounded-lg p-4">
-            <h3 className="font-bold text-red-700 mb-2">⚠️ ATENÇÃO!</h3>
-            <p className="text-black text-sm">
+          <div className="bg-transparent border border-red-500 rounded-lg p-4">
+            <h3 className="font-bold text-red-400 mb-2">⚠️ ATENÇÃO!</h3>
+            <p className="text-white text-sm">
               O cadastro ocorre em horário comercial: <strong>de segunda à sexta-feira, das 09:00 às 17:00 hs</strong>. Prazo de aprovação de até <strong>1 hora</strong> a partir do recebimento dos dados, junto com os documentos solicitados.
             </p>
           </div>
-          <div className="bg-red-50 border border-red-400 rounded-lg p-4">
-            <p className="text-black text-sm">
+          <div className="bg-transparent border border-red-500 rounded-lg p-4">
+            <p className="text-white text-sm">
               <strong>*</strong> Indica uma pergunta obrigatória
             </p>
           </div>
         </div>
 
-        <Card className="bg-white/50 border-gray-200 p-8">
+        <Card className="bg-transparent border-transparent p-8">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)}>
             <TabsList className="grid w-full grid-cols-2 bg-white mb-8 gap-4">
-              <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-white !data-[state=inactive]:border-2 !data-[state=inactive]:border-black !data-[state=inactive]:text-black !font-bold">
+              <TabsTrigger value="pf" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-white !data-[state=inactive]:border-2 !data-[state=inactive]:border-black !data-[state=inactive]:text-white !font-bold">
                 Pessoa Física
               </TabsTrigger>
-              <TabsTrigger value="pj" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-white !data-[state=inactive]:border-2 !data-[state=inactive]:border-black !data-[state=inactive]:text-black !font-bold">
+              <TabsTrigger value="pj" className="!data-[state=active]:bg-black !data-[state=active]:text-white !data-[state=inactive]:bg-white !data-[state=inactive]:border-2 !data-[state=inactive]:border-black !data-[state=inactive]:text-white !font-bold">
                 Pessoa Jurídica
               </TabsTrigger>
             </TabsList>
@@ -230,7 +230,7 @@ export default function Cadastro() {
               <form onSubmit={handlePFSubmit}>
                 {/* Seção 1: Informações Gerais */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     1. INFORMAÇÕES GERAIS
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -293,7 +293,7 @@ export default function Cadastro() {
 
                 {/* Seção 2: Endereço */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     2. ENDEREÇO
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -364,7 +364,7 @@ export default function Cadastro() {
 
                 {/* Seção 3: Contato */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     3. CONTATO
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -392,14 +392,14 @@ export default function Cadastro() {
 
                 {/* Seção 4: Referências Comerciais */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     4. REFERÊNCIAS COMERCIAIS
                   </h2>
                   <p className="text-gray-600 text-sm mb-4">(Preferência na área audiovisual: Locadoras, fornecedores)</p>
                   
                   {/* Referência 1 */}
                   <div className="bg-gray-50 p-4 rounded-md mb-4">
-                    <h3 className="text-black font-semibold mb-3">Referência 1</h3>
+                    <h3 className="text-white font-semibold mb-3">Referência 1</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         label="Empresa"
@@ -449,7 +449,7 @@ export default function Cadastro() {
 
                   {/* Referência 2 */}
                   <div className="bg-gray-50 p-4 rounded-md mb-4">
-                    <h3 className="text-black font-semibold mb-3">Referência 2 (Opcional)</h3>
+                    <h3 className="text-white font-semibold mb-3">Referência 2 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         label="Empresa"
@@ -477,7 +477,7 @@ export default function Cadastro() {
 
                   {/* Referência 3 */}
                   <div className="bg-gray-50 p-4 rounded-md">
-                    <h3 className="text-black font-semibold mb-3">Referência 3 (Opcional)</h3>
+                    <h3 className="text-white font-semibold mb-3">Referência 3 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         label="Empresa"
@@ -506,7 +506,7 @@ export default function Cadastro() {
 
                 {/* Seção 5: Informações Adicionais */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     5. INFORMAÇÕES ADICIONAIS
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -554,7 +554,7 @@ export default function Cadastro() {
                           className={`px-6 py-2 rounded border-2 font-semibold transition ${
                             pfData.estudante === "sim"
                               ? "bg-black text-white border-black"
-                              : "bg-white text-black border-black"
+                              : "bg-white text-white border-black"
                           }`}
                         >
                           Sim
@@ -565,7 +565,7 @@ export default function Cadastro() {
                           className={`px-6 py-2 rounded border-2 font-semibold transition ${
                             pfData.estudante === "nao"
                               ? "bg-black text-white border-black"
-                              : "bg-white text-black border-black"
+                              : "bg-white text-white border-black"
                           }`}
                         >
                           Não
@@ -577,7 +577,7 @@ export default function Cadastro() {
 
                 {/* Seção 6: Documentos */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     6. DOCUMENTOS NECESSÁRIOS
                   </h2>
                   <p className="text-gray-600 text-sm mb-4">Serão necessários UP-loads de documentos</p>
@@ -638,7 +638,7 @@ export default function Cadastro() {
               <form onSubmit={handlePJSubmit}>
                 {/* Seção 1: Informações Gerais */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     1. INFORMAÇÕES GERAIS PARA FATURAMENTO
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -684,7 +684,7 @@ export default function Cadastro() {
 
                 {/* Seção 2: Endereço */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     2. ENDEREÇOS PARA ENTREGAS E COBRANÇAS
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -762,13 +762,13 @@ export default function Cadastro() {
 
                 {/* Seção 3: Proprietários */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     3. DADOS DO(S) PROPRIETÁRIO(S) DA EMPRESA
                   </h2>
                   
                   {/* Proprietário 1 */}
                   <div className="bg-gray-50 p-4 rounded-md mb-4">
-                    <h3 className="text-black font-semibold mb-3">Proprietário 1</h3>
+                    <h3 className="text-white font-semibold mb-3">Proprietário 1</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         label="Nome Completo"
@@ -808,7 +808,7 @@ export default function Cadastro() {
 
                   {/* Proprietário 2 */}
                   <div className="bg-gray-50 p-4 rounded-md">
-                    <h3 className="text-black font-semibold mb-3">Proprietário 2 (Opcional)</h3>
+                    <h3 className="text-white font-semibold mb-3">Proprietário 2 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         label="Nome Completo"
@@ -845,13 +845,13 @@ export default function Cadastro() {
 
                 {/* Seção 4: Referências Comerciais */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     4. REFERÊNCIAS COMERCIAIS
                   </h2>
                   
                   {/* Referência 1 */}
                   <div className="bg-gray-50 p-4 rounded-md mb-4">
-                    <h3 className="text-black font-semibold mb-3">Referência 1</h3>
+                    <h3 className="text-white font-semibold mb-3">Referência 1</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         label="Empresa"
@@ -882,7 +882,7 @@ export default function Cadastro() {
 
                   {/* Referência 2 */}
                   <div className="bg-gray-50 p-4 rounded-md">
-                    <h3 className="text-black font-semibold mb-3">Referência 2 (Opcional)</h3>
+                    <h3 className="text-white font-semibold mb-3">Referência 2 (Opcional)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         label="Empresa"
@@ -911,7 +911,7 @@ export default function Cadastro() {
 
                 {/* Seção 5: Informações da Empresa */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     5. INFORMAÇÕES DA EMPRESA
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -977,7 +977,7 @@ export default function Cadastro() {
 
                 {/* Seção 6: Documentos */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-black mb-4 pb-2 border-b border-gray-300">
+                  <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     6. DOCUMENTOS NECESSÁRIOS
                   </h2>
                   <p className="text-gray-600 text-sm mb-4">Serão necessários UP-loads de documentos</p>
