@@ -113,7 +113,7 @@ export default function Navbar() {
                         href={cat.href}
                         className="flex items-center gap-2 px-4 py-2 text-white hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all whitespace-nowrap text-sm rounded hover:scale-105"
                       >
-                        <Icon className="w-5 h-5 transition-transform duration-300 hover:scale-125" />
+                        <Icon className="w-7 h-7 transition-transform duration-300 hover:scale-125" />
                         <span style={{ fontFamily: 'Oswald, sans-serif' }} className="uppercase tracking-wide font-semibold">
                           {cat.name}
                         </span>
@@ -165,7 +165,7 @@ export default function Navbar() {
                       href={cat.href}
                       className="flex flex-col items-center gap-1 p-3 bg-[oklch(0.1_0_0)] rounded border border-[oklch(0.18_0_0)]"
                     >
-                      <Icon className="w-5 h-5 text-[oklch(0.45_0.25_25)]" />
+                      <Icon className="w-8 h-8 text-[oklch(0.45_0.25_25)] transition-transform duration-300 hover:scale-125" />
                       <span className="text-[0.6rem] uppercase tracking-wider text-[oklch(0.7_0_0)]" style={{ fontFamily: 'Oswald, sans-serif' }}>
                         {cat.name}
                       </span>
