@@ -395,7 +395,7 @@ export default function Cadastro() {
                   <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     4. REFERÊNCIAS COMERCIAIS
                   </h2>
-                  <p className="text-gray-600 text-sm mb-4">(Preferência na área audiovisual: Locadoras, fornecedores)</p>
+                  <p className="text-white text-base mb-4 font-medium">(Preferência na área audiovisual: Locadoras, fornecedores)</p>
                   
                   {/* Referência 1 */}
                   <div className="bg-transparent p-4 rounded-md mb-4">
@@ -580,7 +580,7 @@ export default function Cadastro() {
                   <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     6. DOCUMENTOS NECESSÁRIOS
                   </h2>
-                  <p className="text-gray-600 text-sm mb-4">Serão necessários UP-loads de documentos</p>
+                  <p className="text-white text-base mb-4 font-medium">Serão necessários UP-loads de documentos</p>
                   <div className="grid grid-cols-1 gap-4">
                     <FormField
                       label="RG ou CNH"
@@ -980,7 +980,7 @@ export default function Cadastro() {
                   <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-300">
                     6. DOCUMENTOS NECESSÁRIOS
                   </h2>
-                  <p className="text-gray-600 text-sm mb-4">Serão necessários UP-loads de documentos</p>
+                  <p className="text-white text-base mb-4 font-medium">Serão necessários UP-loads de documentos</p>
                   <div className="grid grid-cols-1 gap-4">
                     <FormField
                       label="Última Alteração Contratual"
