@@ -424,7 +424,14 @@ export default function Cadastro() {
                 </div>
 
                 <Button type="submit" disabled={pfSubmitting} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-md">
-                  {pfSubmitting ? 'Enviando...' : 'ENVIAR CADASTRO'}
+                  {pfSubmitting ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Enviando...</span>
+                    </div>
+                  ) : (
+                    'ENVIAR CADASTRO'
+                  )}
                 </Button>
 
                 {pfSuccess && (
@@ -531,7 +538,14 @@ export default function Cadastro() {
                 </div>
 
                 <Button type="submit" disabled={pjSubmitting} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-md">
-                  {pjSubmitting ? 'Enviando...' : 'ENVIAR CADASTRO'}
+                  {pjSubmitting ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Enviando...</span>
+                    </div>
+                  ) : (
+                    'ENVIAR CADASTRO'
+                  )}
                 </Button>
 
                 {pjSuccess && (
