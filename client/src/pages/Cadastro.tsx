@@ -201,10 +201,10 @@ export default function Cadastro() {
         <Card className="bg-gray-50 border-gray-200 p-8">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)}>
             <TabsList className="grid w-full grid-cols-2 bg-gray-100 mb-8">
-              <TabsTrigger value="pf" className="data-[state=active]:bg-red-600 text-black font-bold data-[state=inactive]:text-black data-[state=inactive]:font-bold">
+              <TabsTrigger value="pf" className="data-[state=active]:bg-black data-[state=active]:text-white data-[state=inactive]:bg-white data-[state=inactive]:border data-[state=inactive]:border-black data-[state=inactive]:text-black font-bold">
                 Pessoa Física
               </TabsTrigger>
-              <TabsTrigger value="pj" className="data-[state=active]:bg-red-600 text-black font-bold data-[state=inactive]:text-black data-[state=inactive]:font-bold">
+              <TabsTrigger value="pj" className="data-[state=active]:bg-black data-[state=active]:text-white data-[state=inactive]:bg-white data-[state=inactive]:border data-[state=inactive]:border-black data-[state=inactive]:text-black font-bold">
                 Pessoa Jurídica
               </TabsTrigger>
             </TabsList>
