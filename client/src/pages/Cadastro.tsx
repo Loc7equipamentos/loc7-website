@@ -353,7 +353,7 @@ export default function Cadastro() {
                           <DialogTitle>Selecione uma Rede Social</DialogTitle>
                         </DialogHeader>
                         <div className="grid grid-cols-2 gap-3">
-                          {['Instagram', 'Facebook', 'LinkedIn', 'Twitter/X', 'TikTok', 'YouTube'].map((network) => (
+                          {['Instagram', 'Facebook', 'LinkedIn'].map((network) => (
                             <button
                               key={network}
                               type="button"
