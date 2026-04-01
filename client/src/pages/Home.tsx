@@ -329,7 +329,7 @@ export default function Home() {
       <section className="py-8 bg-gradient-to-b from-[oklch(0.06_0_0)] to-[oklch(0.22_0_0)] cement-texture">
         <div className="container">
           <div className="mb-8">
-            <span className="loc7-section-title text-lg">EQUIPAMENTOS POPULARES</span>
+            <span className="loc7-section-title text-lg">DESTAQUES</span>
             <div className="loc7-red-line" />
           </div>
 
