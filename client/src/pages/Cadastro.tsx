@@ -201,13 +201,13 @@ export default function Cadastro() {
 
         {/* Informações Importantes */}
         <div className="mb-8 space-y-4">
-          <div className="bg-white border-2 border-red-500 rounded-lg p-4">
+          <div className="bg-white border border-red-400 rounded-lg p-4">
             <h3 className="font-bold text-red-700 mb-2">⚠️ ATENÇÃO!</h3>
             <p className="text-black text-sm">
               O cadastro ocorre em horário comercial: <strong>de segunda à sexta-feira, das 09:00 às 17:00 hs</strong>. Prazo de aprovação de até <strong>1 hora</strong> a partir do recebimento dos dados, junto com os documentos solicitados.
             </p>
           </div>
-          <div className="bg-white border-2 border-red-500 rounded-lg p-4">
+          <div className="bg-white border border-red-400 rounded-lg p-4">
             <p className="text-black text-sm">
               <strong>*</strong> Indica uma pergunta obrigatória
             </p>
@@ -613,15 +613,8 @@ export default function Cadastro() {
                   </div>
                 </div>
 
-                {/* Caixa de Pagamento */}
-                <div className="mb-8 bg-white border border-green-300 rounded-lg p-3">
-                  <p className="text-gray-600 text-xs">
-                    <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
-                  </p>
-                </div>
-
                 {/* Botão Enviar */}
-                <div className="flex gap-4">
+                <div className="flex gap-4 mb-8">
                   <Button
                     type="submit"
                     disabled={pfSubmitting}
@@ -629,6 +622,13 @@ export default function Cadastro() {
                   >
                     {pfSubmitting ? 'Enviando...' : 'ENVIAR CADASTRO'}
                   </Button>
+                </div>
+
+                {/* Caixa de Pagamento */}
+                <div className="mb-8 bg-white border border-green-300 rounded-lg p-3">
+                  <p className="text-gray-600 text-xs">
+                    <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
+                  </p>
                 </div>
               </form>
             </TabsContent>
@@ -1013,15 +1013,8 @@ export default function Cadastro() {
                   </div>
                 </div>
 
-                {/* Caixa de Pagamento */}
-                <div className="mb-8 bg-white border border-green-300 rounded-lg p-3">
-                  <p className="text-gray-600 text-xs">
-                    <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
-                  </p>
-                </div>
-
                 {/* Botão Enviar */}
-                <div className="flex gap-4">
+                <div className="flex gap-4 mb-8">
                   <Button
                     type="submit"
                     disabled={pjSubmitting}
@@ -1029,6 +1022,13 @@ export default function Cadastro() {
                   >
                     {pjSubmitting ? 'Enviando...' : 'ENVIAR CADASTRO'}
                   </Button>
+                </div>
+
+                {/* Caixa de Pagamento */}
+                <div className="mb-8 bg-white border border-green-300 rounded-lg p-3">
+                  <p className="text-gray-600 text-xs">
+                    <strong>Pagamento:</strong> O pagamento da primeira locação deve ser feito <strong>À VISTA, via PIX ou dinheiro</strong>. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
+                  </p>
                 </div>
               </form>
             </TabsContent>
