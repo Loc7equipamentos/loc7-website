@@ -442,3 +442,88 @@
 .animate-marquee {
   animation: marquee 30s linear infinite;
 }
+
+/* Brand Font Classes */
+@import url('https://fonts.googleapis.com/css2?family=Futura:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+.font-sony {
+  font-family: 'Futura', 'Century Gothic', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.font-canon {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.font-red {
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.font-arri {
+  font-family: 'Futura', 'Century Gothic', sans-serif;
+  letter-spacing: 0.06em;
+}
+
+.font-blackmagic {
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.font-aputure {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.font-zeiss {
+  font-family: 'Futura', 'Century Gothic', sans-serif;
+  letter-spacing: 0.07em;
+}
+
+.font-dji {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.font-rode {
+  font-family: 'Futura', 'Century Gothic', sans-serif;
+  letter-spacing: 0.06em;
+}
+
+.font-hollyland {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.font-atomos {
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.08em;
+}
+
+.font-sennheiser {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  letter-spacing: 0.06em;
+}
+
+.font-smallhd {
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.07em;
+}
+
+.font-tilta {
+  font-family: 'Futura', 'Century Gothic', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.font-tiffen {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  letter-spacing: 0.06em;
+}

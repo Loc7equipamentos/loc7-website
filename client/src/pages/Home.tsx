@@ -49,7 +49,23 @@ const newProducts = [
   { id: 10, name: "Blackmagic Pyxis 6K", category: "CÂMERA", price: "R$ 900,00", badge: "FULLFRAME", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80" },
 ];
 
-const brands = ["SONY", "CANON", "RED", "ARRI", "BLACKMAGIC", "APUTURE", "ZEISS", "DJI", "RODE", "HOLLYLAND", "ATOMOS", "SENNHEISER", "SMALLHD", "TILTA", "TIFFEN"];
+const brands = [
+  { name: "SONY", fontClass: "font-sony" },
+  { name: "CANON", fontClass: "font-canon" },
+  { name: "RED", fontClass: "font-red" },
+  { name: "ARRI", fontClass: "font-arri" },
+  { name: "BLACKMAGIC", fontClass: "font-blackmagic" },
+  { name: "APUTURE", fontClass: "font-aputure" },
+  { name: "ZEISS", fontClass: "font-zeiss" },
+  { name: "DJI", fontClass: "font-dji" },
+  { name: "RODE", fontClass: "font-rode" },
+  { name: "HOLLYLAND", fontClass: "font-hollyland" },
+  { name: "ATOMOS", fontClass: "font-atomos" },
+  { name: "SENNHEISER", fontClass: "font-sennheiser" },
+  { name: "SMALLHD", fontClass: "font-smallhd" },
+  { name: "TILTA", fontClass: "font-tilta" },
+  { name: "TIFFEN", fontClass: "font-tiffen" },
+];
 
 const testimonials = [
   { name: "Marcos Filho", role: "Cliente", text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.", stars: 5 },
@@ -422,9 +438,9 @@ export default function Home() {
           {[...brands, ...brands].map((brand, i) => (
             <span
               key={i}
-              className="text-[oklch(0.45_0_0)] text-2xl font-display font-bold uppercase tracking-widest"
+              className={`text-[oklch(0.45_0_0)] text-2xl font-bold uppercase tracking-widest flex-shrink-0 ${brand.fontClass}`}
             >
-              {brand}
+              {brand.name}
             </span>
           ))}
         </div>
