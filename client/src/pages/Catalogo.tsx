@@ -67,16 +67,16 @@ export default function Catalogo() {
         {/* Search and controls */}
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[oklch(0.45_0_0)]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Buscar equipamentos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[oklch(0.12_0_0)] border border-[oklch(0.2_0_0)] text-white pl-10 pr-4 py-3 focus:outline-none focus:border-[oklch(0.45_0.25_25)] placeholder:text-[oklch(0.4_0_0)] text-sm"
+              className="w-full bg-white border border-gray-300 text-black pl-10 pr-4 py-3 focus:outline-none focus:border-gray-400 placeholder:text-gray-500 text-sm"
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[oklch(0.45_0_0)] hover:text-white">
+              <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
                 <X className="w-4 h-4" />
               </button>
             )}
