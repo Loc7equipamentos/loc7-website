@@ -358,7 +358,11 @@ export default function Cadastro() {
                               key={network}
                               type="button"
                               onClick={() => handlePFChange('redeSocial', network)}
-                              className="p-3 border-2 border-gray-300 rounded-md hover:border-black hover:bg-gray-50 transition text-center font-semibold"
+                              className={`p-3 border-2 rounded-md transition text-center font-semibold ${
+                                pfData.redeSocial === network
+                                  ? 'bg-black text-white border-black'
+                                  : 'bg-white text-black border-gray-300 hover:border-black hover:bg-gray-50'
+                              }`}
                             >
                               {network}
                             </button>
