@@ -1,10 +1,11 @@
 /*
  * LOC 7 — Página Serviços
  * Cinema Noir Industrial style
- * Serviços de locação, consultoria e suporte
+ * Vídeo 16:9 + Carrossel de produções + Serviços
  */
 
-import { Truck, Headphones, Users, Zap, Shield, Clock } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Truck, Headphones, Users, Zap, Shield, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const services = [
@@ -49,13 +50,69 @@ const benefits = [
   "Sem taxas ocultas",
 ];
 
+const productions = [
+  {
+    id: 1,
+    title: "TV Globo Videogame Verão",
+    image: "https://cdn.manus.space/webdev/producao_1_tv_globo_videogame.webp",
+    description: "Produção profissional com câmera, monitor e equipamentos de transmissão",
+  },
+  {
+    id: 2,
+    title: "TV Globo BBB Brasil",
+    image: "https://cdn.manus.space/webdev/producao_2_tv_globo_bbb.webp",
+    description: "Produção BBB com câmera profissional e carro da marca",
+  },
+  {
+    id: 3,
+    title: "TV Globo The Voice Brasil",
+    image: "https://cdn.manus.space/webdev/producao_3_tv_globo_voice.webp",
+    description: "Câmera profissional com microfone e cenário do The Voice",
+  },
+  {
+    id: 4,
+    title: "Multishow Show Slash",
+    image: "https://cdn.manus.space/webdev/producao_4_multishow_slash.webp",
+    description: "Show do Slash com iluminação profissional e transmissão ao vivo",
+  },
+  {
+    id: 5,
+    title: "Live Alphabeto",
+    image: "https://cdn.manus.space/webdev/producao_5_live_alphabeto.webp",
+    description: "Transmissão ao vivo com múltiplas câmeras, monitores e iluminação profissional",
+  },
+  {
+    id: 6,
+    title: "SporTV Futebol",
+    image: "https://cdn.manus.space/webdev/producao_6_sportv_futebol.jpg",
+    description: "Transmissão de futebol com câmera de movimento profissional no estádio",
+  },
+];
+
 export default function Servicos() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % productions.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + productions.length) % productions.length);
+  };
+
+  useEffect(() => {
+    if (carouselRef.current) {
+      carouselRef.current.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }
+  }, [currentSlide]);
+
   return (
     <div className="min-h-screen bg-[oklch(0.08_0_0)] text-white">
-      {/* Hero Section */}
+      {/* Hero Section with Video */}
       <section className="relative py-20 md:py-32 border-b border-[oklch(0.15_0_0)]">
         <div className="container">
-          <div className="max-w-3xl">
+          <div className="max-w-3xl mb-12">
             <h1
               className="text-5xl md:text-6xl font-bold mb-6 leading-tight"
               style={{ fontFamily: "Oswald, sans-serif" }}
@@ -79,6 +136,100 @@ export default function Servicos() {
               >
                 Ver Catálogo
               </Button>
+            </div>
+          </div>
+
+          {/* Video Player */}
+          <div className="relative w-full bg-[oklch(0.12_0_0)] border border-[oklch(0.18_0_0)] rounded-lg overflow-hidden">
+            <video
+              width="100%"
+              height="auto"
+              controls
+              className="w-full h-auto"
+              style={{ aspectRatio: "16 / 9" }}
+            >
+              <source src="https://cdn.manus.space/webdev/video_servicos_16x9.mp4" type="video/mp4" />
+              Seu navegador não suporta o elemento de vídeo.
+            </video>
+          </div>
+        </div>
+      </section>
+
+      {/* Productions Carousel */}
+      <section className="py-20 md:py-32 border-b border-[oklch(0.15_0_0)]">
+        <div className="container">
+          <h2
+            className="text-4xl md:text-5xl font-bold mb-16 text-center"
+            style={{ fontFamily: "Oswald, sans-serif" }}
+          >
+            Nossos Trabalhos
+          </h2>
+
+          {/* Carousel Container */}
+          <div className="relative">
+            <div className="overflow-hidden rounded-lg border border-[oklch(0.18_0_0)]">
+              <div
+                ref={carouselRef}
+                className="flex transition-transform duration-500 ease-out"
+              >
+                {productions.map((production) => (
+                  <div
+                    key={production.id}
+                    className="w-full flex-shrink-0"
+                  >
+                    <div className="relative bg-[oklch(0.12_0_0)] aspect-video overflow-hidden">
+                      <img
+                        src={production.image}
+                        alt={production.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
+                        <h3
+                          className="text-3xl md:text-4xl font-bold mb-2"
+                          style={{ fontFamily: "Oswald, sans-serif" }}
+                        >
+                          {production.title}
+                        </h3>
+                        <p className="text-lg text-[oklch(0.7_0_0)]">
+                          {production.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Buttons */}
+            <button
+              onClick={prevSlide}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-[#E31010] hover:bg-[#DC2626] text-white p-3 rounded-full transition-all duration-300 shadow-lg"
+              aria-label="Slide anterior"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-[#E31010] hover:bg-[#DC2626] text-white p-3 rounded-full transition-all duration-300 shadow-lg"
+              aria-label="Próximo slide"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+
+            {/* Slide Indicators */}
+            <div className="flex justify-center gap-2 mt-6">
+              {productions.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentSlide
+                      ? "bg-[#E31010] w-8"
+                      : "bg-[oklch(0.3_0_0)] hover:bg-[oklch(0.4_0_0)]"
+                  }`}
+                  aria-label={`Ir para slide ${index + 1}`}
+                />
+              ))}
             </div>
           </div>
         </div>
