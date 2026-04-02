@@ -6,34 +6,46 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, Camera, Aperture, Zap, Mic, Monitor, Move, Radio, Package, Clapperboard } from "lucide-react";
 
-const categories = [
-  { name: "Áudio", href: "/catalogo/audio" },
-  { name: "Câmeras", href: "/catalogo/cameras" },
-  { name: "Câmeras PTZ", href: "/catalogo/cameras-ptz" },
-  { name: "Computadores e Tablets", href: "/catalogo/computadores" },
-  { name: "Comunicadores", href: "/catalogo/comunicadores" },
-  { name: "Conversores / Distribuidores", href: "/catalogo/conversores" },
-  { name: "Estabilizadores", href: "/catalogo/estabilizadores" },
-  { name: "Filtros", href: "/catalogo/filtros" },
-  { name: "Follow Focus", href: "/catalogo/follow-focus" },
-  { name: "Gravadores", href: "/catalogo/gravadores" },
-  { name: "HDs e Cartões de Memória", href: "/catalogo/hds-cartoes" },
-  { name: "Lentes Broadcast", href: "/catalogo/lentes-broadcast" },
-  { name: "Lentes E-Mount", href: "/catalogo/lentes-e-mount" },
-  { name: "Lentes EF-Mount", href: "/catalogo/lentes-ef-mount" },
-  { name: "Lentes PL-Mount", href: "/catalogo/lentes-pl-mount" },
-  { name: "Lentes RF-Mount", href: "/catalogo/lentes-rf-mount" },
-  { name: "Lentes", href: "/catalogo/lentes" },
-  { name: "Maquinária", href: "/catalogo/maquinaria" },
-  { name: "Mattebox", href: "/catalogo/mattebox" },
-  { name: "Monitores", href: "/catalogo/monitores" },
-  { name: "Suporte e Movimento", href: "/catalogo/movimento" },
-  { name: "Switches", href: "/catalogo/switches" },
-  { name: "Tele-Prompter", href: "/catalogo/tele-prompter" },
-  { name: "Transmissores", href: "/catalogo/transmissores" },
-  { name: "Tripés", href: "/catalogo/tripes" },
+const submenuCategories = [
+  { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
+  { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
+  { name: "Iluminação", icon: Zap, href: "/catalogo/iluminacao" },
+  { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
+  { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
+  { name: "Movimento", icon: Move, href: "/catalogo/movimento" },
+  { name: "Wireless", icon: Radio, href: "/catalogo/wireless" },
+  { name: "Modificadores", icon: Package, href: "/catalogo/modificadores" },
+  { name: "Maquinária", icon: Clapperboard, href: "/catalogo/maquinaria" },
+];
+
+const dropdownCategories = [
+  { name: "ÁUDIO", href: "/catalogo/audio" },
+  { name: "CÂMERAS", href: "/catalogo/cameras" },
+  { name: "CÂMERAS PTZ", href: "/catalogo/cameras-ptz" },
+  { name: "COMPUTADORES E TABLETS", href: "/catalogo/computadores" },
+  { name: "COMUNICADORES", href: "/catalogo/comunicadores" },
+  { name: "CONVERSORES / DISTRIBUIDORES", href: "/catalogo/conversores" },
+  { name: "ESTABILIZADORES", href: "/catalogo/estabilizadores" },
+  { name: "FILTROS", href: "/catalogo/filtros" },
+  { name: "FOLLOW FOCUS", href: "/catalogo/follow-focus" },
+  { name: "GRAVADORES", href: "/catalogo/gravadores" },
+  { name: "HDS E CARTÕES DE MEMÓRIA", href: "/catalogo/hds-cartoes" },
+  { name: "LENTES BROADCAST", href: "/catalogo/lentes-broadcast" },
+  { name: "LENTES E-MOUNT", href: "/catalogo/lentes-e-mount" },
+  { name: "LENTES EF-MOUNT", href: "/catalogo/lentes-ef-mount" },
+  { name: "LENTES PL-MOUNT", href: "/catalogo/lentes-pl-mount" },
+  { name: "LENTES RF-MOUNT", href: "/catalogo/lentes-rf-mount" },
+  { name: "LENTES", href: "/catalogo/lentes" },
+  { name: "MAQUINÁRIA", href: "/catalogo/maquinaria" },
+  { name: "MATTEBOX", href: "/catalogo/mattebox" },
+  { name: "MONITORES", href: "/catalogo/monitores" },
+  { name: "SUPORTE E MOVIMENTO", href: "/catalogo/movimento" },
+  { name: "SWITCHES", href: "/catalogo/switches" },
+  { name: "TELE-PROMPTER", href: "/catalogo/tele-prompter" },
+  { name: "TRANSMISSORES", href: "/catalogo/transmissores" },
+  { name: "TRIPÉS", href: "/catalogo/tripes" },
 ];
 
 const navLinks = [
@@ -65,7 +77,7 @@ export default function Navbar() {
       <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-[oklch(0.06_0_0)] shadow-2xl shadow-black/50' : 'bg-[oklch(0.08_0_0)]'} border-b border-[oklch(0.18_0_0)]`}>
         <div className="container">
           <div className="flex items-stretch justify-between">
-            {/* Logo - spans navbar + submenu height */}
+            {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group pr-8">
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/logo-Loc-7-para-google_4_b32d3981.jpg"
@@ -74,7 +86,7 @@ export default function Navbar() {
               />
             </Link>
 
-            {/* Right side: nav + submenu */}
+            {/* Right side: nav */}
             <div className="flex flex-col flex-1 relative">
               {/* Main nav */}
               <div className="flex items-center justify-center h-16 flex-1">
@@ -92,7 +104,6 @@ export default function Navbar() {
                           className={`loc7-nav-link flex items-center gap-1 ${location.startsWith('/catalogo') ? 'active' : ''}`}
                         >
                           {link.name}
-                          <ChevronDown className="w-4 h-4" />
                         </button>
                       ) : (
                         <Link href={link.href} className={`loc7-nav-link ${location === link.href ? 'active' : ''}`}>
@@ -126,8 +137,8 @@ export default function Navbar() {
                   onMouseEnter={() => setIsCatalogOpen(true)}
                   onMouseLeave={() => setIsCatalogOpen(false)}
                 >
-                  <div className="flex flex-col py-2 max-h-96 overflow-y-auto">
-                    {categories.map((cat) => (
+                  <div className="flex flex-col py-2">
+                    {dropdownCategories.map((cat) => (
                       <Link
                         key={cat.name}
                         href={cat.href}
@@ -140,20 +151,24 @@ export default function Navbar() {
                 </div>
               )}
 
-              {/* Submenu horizontal - RESTAURADO */}
+              {/* Submenu horizontal - ORIGINAL COM ÍCONES */}
               <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] h-16">
-                <div className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide justify-center">
-                  {categories.slice(0, 9).map((cat) => (
-                    <Link
-                      key={cat.name}
-                      href={cat.href}
-                      className="px-3 py-2 text-white hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all whitespace-nowrap text-xs rounded hover:scale-105"
-                    >
-                      <span style={{ fontFamily: 'Oswald, sans-serif' }} className="uppercase tracking-wide font-semibold">
-                        {cat.name}
-                      </span>
-                    </Link>
-                  ))}
+                <div className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide">
+                  {submenuCategories.map((cat) => {
+                    const Icon = cat.icon;
+                    return (
+                      <Link
+                        key={cat.name}
+                        href={cat.href}
+                        className="flex items-center gap-2 px-4 py-2 text-white hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all whitespace-nowrap text-sm rounded hover:scale-105"
+                      >
+                        <Icon className="w-7 h-7 transition-transform duration-300 hover:scale-125" />
+                        <span style={{ fontFamily: 'Oswald, sans-serif' }} className="uppercase tracking-wide font-semibold">
+                          {cat.name}
+                        </span>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -191,17 +206,21 @@ export default function Navbar() {
               </div>
               {/* Mobile categories */}
               <div className="pt-4 grid grid-cols-3 gap-2">
-                {categories.slice(0, 9).map((cat) => (
-                  <Link
-                    key={cat.name}
-                    href={cat.href}
-                    className="flex flex-col items-center gap-1 p-3 bg-[oklch(0.1_0_0)] rounded border border-[oklch(0.18_0_0)]"
-                  >
-                    <span className="text-[0.6rem] uppercase tracking-wider text-[oklch(0.7_0_0)]" style={{ fontFamily: 'Oswald, sans-serif' }}>
-                      {cat.name}
-                    </span>
-                  </Link>
-                ))}
+                {submenuCategories.map((cat) => {
+                  const Icon = cat.icon;
+                  return (
+                    <Link
+                      key={cat.name}
+                      href={cat.href}
+                      className="flex flex-col items-center gap-1 p-3 bg-[oklch(0.1_0_0)] rounded border border-[oklch(0.18_0_0)]"
+                    >
+                      <Icon className="w-8 h-8 text-[oklch(0.45_0.25_25)] transition-transform duration-300 hover:scale-125" />
+                      <span className="text-[0.6rem] uppercase tracking-wider text-[oklch(0.7_0_0)]" style={{ fontFamily: 'Oswald, sans-serif' }}>
+                        {cat.name}
+                      </span>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>
