@@ -127,7 +127,7 @@ export default function Navbar() {
               {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
               {isCatalogOpen && (
                 <div 
-                  className="absolute left-[300px] top-32 w-64 bg-black border border-[oklch(0.2_0_0)] shadow-2xl z-40"
+                  className="absolute left-[280px] top-32 w-64 bg-black border border-[oklch(0.2_0_0)] shadow-2xl z-40"
                   onMouseEnter={() => setIsCatalogOpen(true)}
                   onMouseLeave={() => setIsCatalogOpen(false)}
                 >
