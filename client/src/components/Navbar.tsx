@@ -119,14 +119,16 @@ export default function Navbar() {
                                 className="px-4 py-3 text-white font-bold transition-transform duration-200 text-sm tracking-wide text-center border-b last:border-b-0"
                                 style={{ borderColor: '#615e5e' }}
                                 onMouseEnter={(e) => {
-                                  e.currentTarget.style.transform = 'scale(1.2)';
+                                  e.currentTarget.style.transform = 'scale(1.35)';
                                   e.currentTarget.style.color = '#ffffff';
-                                  e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.5)';
+                                  e.currentTarget.style.textShadow = '0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4)';
+                                  e.currentTarget.style.fontWeight = '900';
                                 }}
                                 onMouseLeave={(e) => {
                                   e.currentTarget.style.transform = 'scale(1)';
                                   e.currentTarget.style.color = '#ffffff';
                                   e.currentTarget.style.textShadow = 'none';
+                                  e.currentTarget.style.fontWeight = 'bold';
                                 }}
                               >
                                 {cat.name}
