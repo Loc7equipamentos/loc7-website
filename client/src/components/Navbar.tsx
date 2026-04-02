@@ -108,14 +108,14 @@ export default function Navbar() {
                       {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
                       {link.hasDropdown && isCatalogOpen && (
                         <div 
-                          className="absolute left-1/2 transform -translate-x-1/2 top-full mt-0 w-64 bg-gray-200 border border-gray-300 shadow-2xl z-40"
+                          className="absolute left-1/2 transform -translate-x-1/2 top-full mt-0 w-64 bg-red-600/30 border border-red-500/50 shadow-2xl z-40 backdrop-blur-sm"
                         >
                           <div className="flex flex-col">
                             {dropdownCategories.map((cat) => (
                               <Link
                                 key={cat.name}
                                 href={cat.href}
-                                className="px-4 py-3 text-black hover:bg-gray-300 transition-all duration-200 text-sm font-bold tracking-wide text-center border-b border-gray-300 last:border-b-0 cursor-pointer"
+                                className="px-4 py-3 text-white font-bold hover:bg-red-600/50 transition-all duration-200 text-sm tracking-wide text-center border-b border-red-500/30 last:border-b-0"
                               >
                                 {cat.name}
                               </Link>
