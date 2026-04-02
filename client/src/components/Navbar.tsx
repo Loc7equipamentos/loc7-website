@@ -6,18 +6,34 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, ChevronDown, Camera, Aperture, Zap, Mic, Monitor, Move, Radio, Package, Clapperboard } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const categories = [
-  { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
-  { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
-  { name: "Iluminação", icon: Zap, href: "/catalogo/iluminacao" },
-  { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
-  { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
-  { name: "Movimento", icon: Move, href: "/catalogo/movimento" },
-  { name: "Wireless", icon: Radio, href: "/catalogo/wireless" },
-  { name: "Modificadores", icon: Package, href: "/catalogo/modificadores" },
-  { name: "Maquinária", icon: Clapperboard, href: "/catalogo/maquinaria" },
+  { name: "Áudio", href: "/catalogo/audio" },
+  { name: "Câmeras", href: "/catalogo/cameras" },
+  { name: "Câmeras PTZ", href: "/catalogo/cameras-ptz" },
+  { name: "Computadores e Tablets", href: "/catalogo/computadores" },
+  { name: "Comunicadores", href: "/catalogo/comunicadores" },
+  { name: "Conversores / Distribuidores", href: "/catalogo/conversores" },
+  { name: "Estabilizadores", href: "/catalogo/estabilizadores" },
+  { name: "Filtros", href: "/catalogo/filtros" },
+  { name: "Follow Focus", href: "/catalogo/follow-focus" },
+  { name: "Gravadores", href: "/catalogo/gravadores" },
+  { name: "HDs e Cartões de Memória", href: "/catalogo/hds-cartoes" },
+  { name: "Lentes Broadcast", href: "/catalogo/lentes-broadcast" },
+  { name: "Lentes E-Mount", href: "/catalogo/lentes-e-mount" },
+  { name: "Lentes EF-Mount", href: "/catalogo/lentes-ef-mount" },
+  { name: "Lentes PL-Mount", href: "/catalogo/lentes-pl-mount" },
+  { name: "Lentes RF-Mount", href: "/catalogo/lentes-rf-mount" },
+  { name: "Lentes", href: "/catalogo/lentes" },
+  { name: "Maquinária", href: "/catalogo/maquinaria" },
+  { name: "Mattebox", href: "/catalogo/mattebox" },
+  { name: "Monitores", href: "/catalogo/monitores" },
+  { name: "Suporte e Movimento", href: "/catalogo/movimento" },
+  { name: "Switches", href: "/catalogo/switches" },
+  { name: "Tele-Prompter", href: "/catalogo/tele-prompter" },
+  { name: "Transmissores", href: "/catalogo/transmissores" },
+  { name: "Tripés", href: "/catalogo/tripes" },
 ];
 
 const navLinks = [
@@ -59,18 +75,21 @@ export default function Navbar() {
             </Link>
 
             {/* Right side: nav + submenu */}
-            <div className="flex flex-col flex-1">
+            <div className="flex flex-col flex-1 relative">
               {/* Main nav */}
               <div className="flex items-center justify-center h-16 flex-1">
                 {/* Desktop nav - Centralizado */}
                 <div className="hidden md:flex items-center gap-24 justify-center flex-1">
                   {navLinks.map((link) => (
-                    <div key={link.name} className="relative group whitespace-nowrap">
+                    <div 
+                      key={link.name} 
+                      className="relative group whitespace-nowrap"
+                      onMouseEnter={() => link.hasDropdown && setIsCatalogOpen(true)}
+                      onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
+                    >
                       {link.hasDropdown ? (
                         <button
                           className={`loc7-nav-link flex items-center gap-1 ${location.startsWith('/catalogo') ? 'active' : ''}`}
-                          onMouseEnter={() => setIsCatalogOpen(true)}
-                          onMouseLeave={() => setIsCatalogOpen(false)}
                         >
                           {link.name}
                         </button>
@@ -99,26 +118,28 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {/* Category sub-nav - aligned with HOME */}
-              <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] h-16">
-                <div className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide">
-                  {categories.map((cat) => {
-                    const Icon = cat.icon;
-                    return (
+              {/* Category sub-nav - Dropdown vertical conforme Filmhouse */}
+              {isCatalogOpen && (
+                <div 
+                  className="fixed left-0 top-16 w-64 max-h-96 border-r border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] animate-in fade-in duration-200 z-40 overflow-y-auto"
+                  onMouseEnter={() => setIsCatalogOpen(true)}
+                  onMouseLeave={() => setIsCatalogOpen(false)}
+                >
+                  <div className="flex flex-col py-2">
+                    {categories.map((cat) => (
                       <Link
                         key={cat.name}
                         href={cat.href}
-                        className="flex items-center gap-2 px-4 py-2 text-white hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all whitespace-nowrap text-sm rounded hover:scale-105"
+                        className="px-4 py-2 text-white hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all text-sm cursor-pointer border-b border-[oklch(0.15_0_0)]"
                       >
-                        <Icon className="w-7 h-7 transition-transform duration-300 hover:scale-125" />
-                        <span style={{ fontFamily: 'Oswald, sans-serif' }} className="uppercase tracking-wide font-semibold">
+                        <span style={{ fontFamily: 'Oswald, sans-serif' }} className="tracking-wide font-semibold">
                           {cat.name}
                         </span>
                       </Link>
-                    );
-                  })}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -154,21 +175,17 @@ export default function Navbar() {
               </div>
               {/* Mobile categories */}
               <div className="pt-4 grid grid-cols-3 gap-2">
-                {categories.map((cat) => {
-                  const Icon = cat.icon;
-                  return (
-                    <Link
-                      key={cat.name}
-                      href={cat.href}
-                      className="flex flex-col items-center gap-1 p-3 bg-[oklch(0.1_0_0)] rounded border border-[oklch(0.18_0_0)]"
-                    >
-                      <Icon className="w-8 h-8 text-[oklch(0.45_0.25_25)] transition-transform duration-300 hover:scale-125" />
-                      <span className="text-[0.6rem] uppercase tracking-wider text-[oklch(0.7_0_0)]" style={{ fontFamily: 'Oswald, sans-serif' }}>
-                        {cat.name}
-                      </span>
-                    </Link>
-                  );
-                })}
+                {categories.slice(0, 9).map((cat) => (
+                  <Link
+                    key={cat.name}
+                    href={cat.href}
+                    className="flex flex-col items-center gap-1 p-3 bg-[oklch(0.1_0_0)] rounded border border-[oklch(0.18_0_0)]"
+                  >
+                    <span className="text-[0.6rem] uppercase tracking-wider text-[oklch(0.7_0_0)]" style={{ fontFamily: 'Oswald, sans-serif' }}>
+                      {cat.name}
+                    </span>
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
