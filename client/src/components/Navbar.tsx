@@ -136,7 +136,7 @@ export default function Navbar() {
                       <Link
                         key={cat.name}
                         href={cat.href}
-                        className="py-2.5 text-white hover:bg-[oklch(0.15_0_0)] transition-colors duration-200 text-sm font-bold tracking-wide flex justify-center w-full"
+                        className="px-4 py-2.5 text-white hover:bg-[oklch(0.15_0_0)] transition-colors duration-200 text-sm font-bold tracking-wide"
                       >
                         {cat.name}
                       </Link>
