@@ -39,11 +39,19 @@ export default function MapComponent() {
               transform: translateY(0);
             }
             50% {
-              transform: translateY(-20px);
+              transform: translateY(-8px);
+            }
+          }
+          @keyframes flip {
+            0%, 100% {
+              transform: rotateY(0deg);
+            }
+            50% {
+              transform: rotateY(180deg);
             }
           }
           .pin-bounce {
-            animation: bounce 1.5s ease-in-out infinite;
+            animation: bounce 1.5s ease-in-out infinite, flip 2s ease-in-out infinite;
           }
         `}</style>
 
