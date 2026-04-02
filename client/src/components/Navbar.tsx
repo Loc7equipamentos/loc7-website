@@ -124,10 +124,10 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {/* Dropdown vertical - Centralizado abaixo de LOCAÇÃO */}
+              {/* Dropdown vertical - Alinhado verticalmente abaixo de LOCAÇÃO */}
               {isCatalogOpen && (
                 <div 
-                  className="absolute left-1/2 transform -translate-x-1/2 top-32 w-56 bg-black border border-[oklch(0.2_0_0)] shadow-2xl z-40 overflow-hidden"
+                  className="absolute left-[calc(50%-28px)] top-32 w-56 bg-black border border-[oklch(0.2_0_0)] shadow-2xl z-40 overflow-hidden"
                   onMouseEnter={() => setIsCatalogOpen(true)}
                   onMouseLeave={() => setIsCatalogOpen(false)}
                 >
