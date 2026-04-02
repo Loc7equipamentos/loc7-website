@@ -54,11 +54,11 @@ export default function MapComponent() {
             filter: "drop-shadow(0 0 16px rgba(255, 0, 0, 0.7))"
           }}
         >
-          {/* Custom Loc 7 Pin - ~2cm diameter (90px ≈ 2cm at 96dpi) */}
+          {/* Custom Loc 7 Pin - Novo design com efeito bounce */}
           <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/PINMAPALOC7SITE_e5a2dc07.webp"
+            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/pin_endereco_loc7_e8ed08e6.png"
             alt="Loc 7 Pin"
-            className="w-24 h-24 object-contain drop-shadow-lg"
+            className="w-28 h-28 object-contain drop-shadow-lg"
             style={{
               filter: "drop-shadow(0 0 12px rgba(255, 0, 0, 0.6))"
             }}
