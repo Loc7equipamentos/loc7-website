@@ -126,14 +126,13 @@ export default function Navbar() {
                               <Link
                                 key={cat.name}
                                 href={cat.href}
-                                className="px-4 py-3 text-white font-bold transition-transform duration-200 text-sm tracking-wide text-center border-b last:border-b-0"
-                                style={{ borderColor: '#615e5e' }}
+                                className="px-4 py-3 text-white font-bold transition-transform duration-200 text-sm tracking-wide text-center"
                                 onMouseEnter={(e) => {
                                   let scale = 1.35;
                                   if (['COMPUTADORES E TABLETS', 'HDS E CARTÕES DE MEMÓRIA'].includes(cat.name)) scale = 1.15;
                                   e.currentTarget.style.transform = `scale(${scale})`;
                                   e.currentTarget.style.color = '#ffffff';
-                                  e.currentTarget.style.textShadow = '0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4)';
+                                  e.currentTarget.style.textShadow = '0 0 8px rgba(255, 255, 255, 0.4)';
                                   e.currentTarget.style.fontWeight = '900';
                                 }}
                                 onMouseLeave={(e) => {
