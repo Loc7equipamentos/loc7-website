@@ -85,7 +85,7 @@ export default function Navbar() {
               {/* Main nav */}
               <div className="flex items-center justify-center h-16 flex-1">
                 {/* Desktop nav - Centralizado */}
-                <div className="hidden md:flex items-center gap-24 justify-center flex-1">
+                <div className="hidden md:flex items-center gap-24 justify-center flex-1 relative">
                   {navLinks.map((link) => (
                     <div 
                       key={link.name} 
@@ -103,6 +103,25 @@ export default function Navbar() {
                         <Link href={link.href} className={`loc7-nav-link ${location === link.href ? 'active' : ''}`}>
                           {link.name}
                         </Link>
+                      )}
+                      
+                      {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
+                      {link.hasDropdown && isCatalogOpen && (
+                        <div 
+                          className="absolute left-1/2 transform -translate-x-1/2 top-full mt-0 w-64 bg-black border border-[oklch(0.2_0_0)] shadow-2xl z-40"
+                        >
+                          <div className="flex flex-col">
+                            {dropdownCategories.map((cat) => (
+                              <Link
+                                key={cat.name}
+                                href={cat.href}
+                                className="px-4 py-3 text-white hover:bg-[oklch(0.15_0_0)] transition-colors duration-200 text-sm font-bold tracking-wide text-center border-b border-[oklch(0.12_0_0)] last:border-b-0"
+                              >
+                                {cat.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -124,26 +143,7 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
-              {isCatalogOpen && (
-                <div 
-                  className="absolute left-[280px] top-32 w-64 bg-black border border-[oklch(0.2_0_0)] shadow-2xl z-40"
-                  onMouseEnter={() => setIsCatalogOpen(true)}
-                  onMouseLeave={() => setIsCatalogOpen(false)}
-                >
-                  <div className="flex flex-col">
-                    {dropdownCategories.map((cat) => (
-                      <Link
-                        key={cat.name}
-                        href={cat.href}
-                        className="px-4 py-3 text-white hover:bg-[oklch(0.15_0_0)] transition-colors duration-200 text-sm font-bold tracking-wide text-center border-b border-[oklch(0.12_0_0)] last:border-b-0"
-                      >
-                        {cat.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
+
 
               {/* Submenu horizontal - ORIGINAL COM ÍCONES */}
               <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] h-16">
