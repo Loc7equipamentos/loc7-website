@@ -108,7 +108,7 @@ export default function Navbar() {
                       {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
                       {link.hasDropdown && isCatalogOpen && (
                         <div 
-                          className="absolute left-1/2 transform -translate-x-1/2 top-full mt-0 w-64 shadow-2xl z-40"
+                          className="absolute left-1/2 transform -translate-x-1/2 top-full mt-0 w-64 shadow-2xl z-50 overflow-hidden"
                           style={{ backgroundColor: '#615e5e', borderColor: '#615e5e' }}
                         >
                           <div className="flex flex-col">
