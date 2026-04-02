@@ -11,8 +11,7 @@ export default function MapComponent() {
         height="400"
         style={{ 
           border: 0, 
-          borderRadius: "0.5rem",
-          filter: "invert(1) hue-rotate(180deg)"
+          borderRadius: "0.5rem"
         }}
         loading="lazy"
         allowFullScreen={true}
