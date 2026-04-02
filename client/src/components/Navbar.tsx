@@ -73,7 +73,6 @@ export default function Navbar() {
                           onMouseLeave={() => setIsCatalogOpen(false)}
                         >
                           {link.name}
-                          <ChevronDown className="w-3 h-3" />
                         </button>
                       ) : (
                         <Link href={link.href} className={`loc7-nav-link ${location === link.href ? 'active' : ''}`}>
