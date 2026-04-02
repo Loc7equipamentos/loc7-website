@@ -109,17 +109,17 @@ export default function Navbar() {
                       {link.hasDropdown && isCatalogOpen && (
                         <div 
                           className="absolute left-1/2 transform -translate-x-1/2 top-full mt-0 w-64 shadow-2xl z-40"
-                          style={{ backgroundColor: '#73817b', borderColor: '#73817b' }}
+                          style={{ backgroundColor: '#615e5e', borderColor: '#615e5e' }}
                         >
                           <div className="flex flex-col">
                             {dropdownCategories.map((cat) => (
                               <Link
                                 key={cat.name}
                                 href={cat.href}
-                                className="px-4 py-3 text-white font-bold transition-all duration-200 text-sm tracking-wide text-center border-b last:border-b-0"
-                                style={{ borderColor: '#73817b' }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#6a7573'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                className="px-4 py-3 text-white font-bold transition-transform duration-200 text-sm tracking-wide text-center border-b last:border-b-0"
+                                style={{ borderColor: '#615e5e' }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                               >
                                 {cat.name}
                               </Link>
