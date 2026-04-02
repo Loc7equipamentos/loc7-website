@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 
 const categories = [
   { name: "Áudio", href: "/catalogo/audio" },
@@ -92,6 +92,7 @@ export default function Navbar() {
                           className={`loc7-nav-link flex items-center gap-1 ${location.startsWith('/catalogo') ? 'active' : ''}`}
                         >
                           {link.name}
+                          <ChevronDown className="w-4 h-4" />
                         </button>
                       ) : (
                         <Link href={link.href} className={`loc7-nav-link ${location === link.href ? 'active' : ''}`}>
@@ -118,28 +119,43 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {/* Category sub-nav - Dropdown vertical conforme Filmhouse */}
+              {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
               {isCatalogOpen && (
                 <div 
-                  className="fixed left-0 top-16 w-64 max-h-96 border-r border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] animate-in fade-in duration-200 z-40 overflow-y-auto"
+                  className="absolute left-1/2 transform -translate-x-1/2 top-16 w-56 bg-black border border-[oklch(0.2_0_0)] rounded-lg shadow-2xl z-40 overflow-hidden"
                   onMouseEnter={() => setIsCatalogOpen(true)}
                   onMouseLeave={() => setIsCatalogOpen(false)}
                 >
-                  <div className="flex flex-col py-2">
+                  <div className="flex flex-col py-2 max-h-96 overflow-y-auto">
                     {categories.map((cat) => (
                       <Link
                         key={cat.name}
                         href={cat.href}
-                        className="px-4 py-2 text-white hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all text-sm cursor-pointer border-b border-[oklch(0.15_0_0)]"
+                        className="px-4 py-2.5 text-white hover:bg-[oklch(0.15_0_0)] transition-colors duration-200 text-sm font-bold tracking-wide"
                       >
-                        <span style={{ fontFamily: 'Oswald, sans-serif' }} className="tracking-wide font-semibold">
-                          {cat.name}
-                        </span>
+                        {cat.name}
                       </Link>
                     ))}
                   </div>
                 </div>
               )}
+
+              {/* Submenu horizontal - RESTAURADO */}
+              <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] h-16">
+                <div className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide justify-center">
+                  {categories.slice(0, 9).map((cat) => (
+                    <Link
+                      key={cat.name}
+                      href={cat.href}
+                      className="px-3 py-2 text-white hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all whitespace-nowrap text-xs rounded hover:scale-105"
+                    >
+                      <span style={{ fontFamily: 'Oswald, sans-serif' }} className="uppercase tracking-wide font-semibold">
+                        {cat.name}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
