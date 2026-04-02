@@ -58,7 +58,7 @@ export default function MapComponent() {
           <img
             src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/pin_endereco_loc7_e8ed08e6.png"
             alt="Loc 7 Pin"
-            className="w-28 h-28 object-contain drop-shadow-lg"
+            className="w-24 h-24 object-contain drop-shadow-lg"
             style={{
               filter: "drop-shadow(0 0 12px rgba(255, 0, 0, 0.6))"
             }}
