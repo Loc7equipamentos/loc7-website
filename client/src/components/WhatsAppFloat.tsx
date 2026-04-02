@@ -85,22 +85,22 @@ export default function WhatsAppFloat() {
       
       {/* Chat window */}
       {isChatOpen && (
-        <div className="w-80 bg-[oklch(0.1_0_0)] border border-[oklch(0.22_0_0)] rounded-lg shadow-2xl shadow-black/70 overflow-hidden animate-fade-in-up">
+        <div className="w-80 bg-white border border-gray-200 rounded-lg shadow-2xl shadow-black/70 overflow-hidden animate-fade-in-up">
           {/* Chat header */}
-          <div className="bg-[oklch(0.08_0_0)] border-b border-[oklch(0.18_0_0)] p-3 flex items-center justify-between">
+          <div className="bg-gray-100 border-b border-gray-200 p-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[oklch(0.45_0.25_25)] rounded-full flex items-center justify-center">
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-white text-sm font-semibold" style={{ fontFamily: 'Oswald, sans-serif' }}>Assistente Loc 7</p>
+                <p className="text-gray-800 text-sm font-semibold" style={{ fontFamily: 'Oswald, sans-serif' }}>Assistente Loc 7</p>
                 <div className="flex items-center gap-1">
                   <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-[oklch(0.5_0_0)] text-xs">Online agora</span>
+                  <span className="text-gray-500 text-xs">Online agora</span>
                 </div>
               </div>
             </div>
-            <button onClick={() => setIsChatOpen(false)} className="text-[oklch(0.5_0_0)] hover:text-white transition-colors">
+            <button onClick={() => setIsChatOpen(false)} className="text-gray-500 hover:text-gray-800 transition-colors">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -112,7 +112,7 @@ export default function WhatsAppFloat() {
                 <div className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
                   msg.role === "user"
                     ? "bg-[oklch(0.45_0.25_25)] text-white"
-                    : "bg-[oklch(0.15_0_0)] text-[oklch(0.85_0_0)] border border-[oklch(0.2_0_0)]"
+                    : "bg-gray-100 text-gray-800 border border-gray-200"
                 }`}>
                   {msg.content}
                 </div>
@@ -120,11 +120,11 @@ export default function WhatsAppFloat() {
             ))}
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-[oklch(0.15_0_0)] border border-[oklch(0.2_0_0)] rounded-lg px-3 py-2">
+                <div className="bg-gray-100 border border-gray-200 rounded-lg px-3 py-2">
                   <div className="flex gap-1">
-                    <span className="w-1.5 h-1.5 bg-[oklch(0.5_0_0)] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="w-1.5 h-1.5 bg-[oklch(0.5_0_0)] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="w-1.5 h-1.5 bg-[oklch(0.5_0_0)] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                   </div>
                 </div>
               </div>
@@ -138,7 +138,7 @@ export default function WhatsAppFloat() {
               <button
                 key={reply}
                 onClick={() => sendMessage(reply)}
-                className="text-xs bg-[oklch(0.15_0_0)] border border-[oklch(0.22_0_0)] text-[oklch(0.7_0_0)] hover:border-[oklch(0.45_0.25_25)] hover:text-white px-2 py-1 rounded transition-all"
+                className="text-xs bg-gray-100 border border-gray-300 text-gray-700 hover:border-[oklch(0.45_0.25_25)] hover:bg-gray-200 px-2 py-1 rounded transition-all"
               >
                 {reply}
               </button>
@@ -146,14 +146,14 @@ export default function WhatsAppFloat() {
           </div>
 
           {/* Input */}
-          <div className="border-t border-[oklch(0.18_0_0)] p-3 flex gap-2">
+          <div className="border-t border-gray-200 p-3 flex gap-2">
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Digite sua mensagem..."
-              className="flex-1 bg-[oklch(0.15_0_0)] border border-[oklch(0.22_0_0)] text-white text-sm px-3 py-2 rounded focus:outline-none focus:border-[oklch(0.45_0.25_25)] placeholder:text-[oklch(0.4_0_0)]"
+              className="flex-1 bg-gray-50 border border-gray-300 text-gray-800 text-sm px-3 py-2 rounded focus:outline-none focus:border-[oklch(0.45_0.25_25)] placeholder:text-gray-400"
             />
             <button
               onClick={() => sendMessage(inputValue)}
@@ -164,7 +164,7 @@ export default function WhatsAppFloat() {
           </div>
 
           {/* WhatsApp link */}
-          <div className="border-t border-[oklch(0.18_0_0)] p-3">
+          <div className="border-t border-gray-200 p-3">
             <a
               href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Vim pelo site e gostaria de um orçamento."
               target="_blank"
@@ -184,8 +184,8 @@ export default function WhatsAppFloat() {
       {/* Bubble hint with CTA */}
       {showBubble && !isChatOpen && (
         <div className="chatbot-bubble animate-fade-in-up">
-          <p className="text-sm font-medium text-white mb-1">Posso ajudar? 💬</p>
-          <p className="text-xs text-[oklch(0.6_0_0)]">Clique para falar com nosso assistente</p>
+          <p className="text-sm font-medium text-gray-800 mb-1">Posso ajudar? 💬</p>
+          <p className="text-xs text-gray-600">Clique para falar com nosso assistente</p>
         </div>
       )}
 
