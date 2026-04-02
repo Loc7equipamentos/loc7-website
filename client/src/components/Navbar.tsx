@@ -45,7 +45,7 @@ const dropdownCategories = [
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Locação", href: "/catalogo", hasDropdown: true },
-  { name: "Serviços", href: "/servicos" },
+  { name: "Produção", href: "/producao" },
 ];
 
 export default function Navbar() {
