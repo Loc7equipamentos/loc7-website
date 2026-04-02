@@ -25,7 +25,7 @@ const dropdownCategories = [
   { name: "CÂMERAS", href: "/catalogo/cameras" },
   { name: "COMPUTADORES E TABLETS", href: "/catalogo/computadores" },
   { name: "COMUNICADORES", href: "/catalogo/comunicadores" },
-  { name: "CONVERSORES / DISTRIBUIDORES", href: "/catalogo/conversores" },
+  { name: "CONVERSORES", href: "/catalogo/conversores" },
   { name: "ESTABILIZADORES", href: "/catalogo/estabilizadores" },
   { name: "FILTROS", href: "/catalogo/filtros" },
   { name: "FOLLOW FOCUS", href: "/catalogo/follow-focus" },
@@ -120,8 +120,7 @@ export default function Navbar() {
                                 style={{ borderColor: '#615e5e' }}
                                 onMouseEnter={(e) => {
                                   let scale = 1.35;
-                                  if (cat.name === 'CONVERSORES / DISTRIBUIDORES') scale = 1.05;
-                                  else if (['COMPUTADORES E TABLETS', 'HDS E CARTÕES DE MEMÓRIA'].includes(cat.name)) scale = 1.15;
+                                  if (['COMPUTADORES E TABLETS', 'HDS E CARTÕES DE MEMÓRIA'].includes(cat.name)) scale = 1.15;
                                   e.currentTarget.style.transform = `scale(${scale})`;
                                   e.currentTarget.style.color = '#ffffff';
                                   e.currentTarget.style.textShadow = '0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4)';
