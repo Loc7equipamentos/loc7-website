@@ -171,12 +171,8 @@ export default function Navbar() {
 
 
               {/* Submenu horizontal - ORIGINAL COM ÍCONES */}
-              <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] h-auto">
+              <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] h-16">
                 <div className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide">
-                  {/* Label PRINCIPAIS CATEGORIAS */}
-                  <div className="px-4 py-2 text-xs text-gray-400" style={{ fontFamily: 'Oswald, sans-serif' }}>
-                    PRINCIPAIS CATEGORIAS
-                  </div>
                   {submenuCategories.map((cat) => {
                     const Icon = cat.icon;
                     return (
