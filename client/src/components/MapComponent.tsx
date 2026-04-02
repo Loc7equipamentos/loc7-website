@@ -51,16 +51,16 @@ export default function MapComponent() {
           className="pin-bounce relative flex items-center justify-center cursor-pointer group"
           style={{
             pointerEvents: "auto",
-            filter: "drop-shadow(0 0 8px rgba(255, 0, 0, 0.6))"
+            filter: "drop-shadow(0 0 3px rgba(255, 0, 0, 0.3))"
           }}
         >
           {/* Custom Loc 7 Pin - Novo design com efeito bounce */}
           <img
             src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/pin_endereco_loc7_e8ed08e6.png"
             alt="Loc 7 Pin"
-            className="w-16 h-16 object-contain drop-shadow-lg"
+            className="w-14 h-14 object-contain drop-shadow-lg"
             style={{
-              filter: "drop-shadow(0 0 6px rgba(255, 0, 0, 0.5))"
+              filter: "drop-shadow(0 0 2px rgba(255, 0, 0, 0.2))"
             }}
           />
         </div>
