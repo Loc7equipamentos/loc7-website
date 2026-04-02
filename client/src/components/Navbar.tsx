@@ -76,7 +76,7 @@ export default function Navbar() {
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/logo-Loc-7-para-google_4_b32d3981.jpg"
                 alt="Loc 7 Equipamentos"
-                className="h-48 w-auto"
+                className="h-56 w-auto"
               />
             </Link>
 
