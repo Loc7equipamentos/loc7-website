@@ -124,14 +124,14 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {/* Dropdown vertical - Alinhado à esquerda de LOCAÇÃO */}
+              {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
               {isCatalogOpen && (
                 <div 
-                  className="absolute left-[440px] top-32 w-56 bg-black border border-[oklch(0.2_0_0)] shadow-2xl z-40"
+                  className="absolute left-[300px] top-32 w-64 bg-black border border-[oklch(0.2_0_0)] shadow-2xl z-40"
                   onMouseEnter={() => setIsCatalogOpen(true)}
                   onMouseLeave={() => setIsCatalogOpen(false)}
                 >
-                  <div className="flex flex-col max-h-96 overflow-y-hidden">
+                  <div className="flex flex-col">
                     {dropdownCategories.map((cat) => (
                       <Link
                         key={cat.name}
