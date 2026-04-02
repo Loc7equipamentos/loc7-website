@@ -127,16 +127,17 @@ export default function Navbar() {
               {/* Dropdown vertical - Alinhado à esquerda de LOCAÇÃO */}
               {isCatalogOpen && (
                 <div 
-                  className="absolute left-[420px] top-32 w-56 bg-black border border-[oklch(0.2_0_0)] shadow-2xl z-40 overflow-hidden"
+                  className="absolute left-[420px] top-32 w-56 bg-black border border-[oklch(0.2_0_0)] shadow-2xl z-40"
                   onMouseEnter={() => setIsCatalogOpen(true)}
                   onMouseLeave={() => setIsCatalogOpen(false)}
+                  style={{ maxHeight: '400px', overflowY: 'auto' }}
                 >
-                  <div className="flex flex-col py-2">
+                  <div className="flex flex-col">
                     {dropdownCategories.map((cat) => (
                       <Link
                         key={cat.name}
                         href={cat.href}
-                        className="py-2.5 text-white hover:bg-[oklch(0.15_0_0)] transition-colors duration-200 text-sm font-bold tracking-wide flex items-center justify-center w-full"
+                        className="px-4 py-3 text-white hover:bg-[oklch(0.15_0_0)] transition-colors duration-200 text-sm font-bold tracking-wide text-center border-b border-[oklch(0.12_0_0)] last:border-b-0"
                       >
                         {cat.name}
                       </Link>
