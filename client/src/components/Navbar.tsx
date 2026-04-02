@@ -118,8 +118,16 @@ export default function Navbar() {
                                 href={cat.href}
                                 className="px-4 py-3 text-white font-bold transition-transform duration-200 text-sm tracking-wide text-center border-b last:border-b-0"
                                 style={{ borderColor: '#615e5e' }}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.transform = 'scale(1.2)';
+                                  e.currentTarget.style.color = '#ffffff';
+                                  e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.5)';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.transform = 'scale(1)';
+                                  e.currentTarget.style.color = '#ffffff';
+                                  e.currentTarget.style.textShadow = 'none';
+                                }}
                               >
                                 {cat.name}
                               </Link>
