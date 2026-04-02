@@ -51,7 +51,7 @@ export default function MapComponent() {
           className="pin-bounce relative flex items-center justify-center cursor-pointer group"
           style={{
             pointerEvents: "auto",
-            filter: "drop-shadow(0 0 16px rgba(255, 0, 0, 0.7))"
+            filter: "drop-shadow(0 0 8px rgba(255, 0, 0, 0.6))"
           }}
         >
           {/* Custom Loc 7 Pin - Novo design com efeito bounce */}
@@ -60,7 +60,7 @@ export default function MapComponent() {
             alt="Loc 7 Pin"
             className="w-16 h-16 object-contain drop-shadow-lg"
             style={{
-              filter: "drop-shadow(0 0 12px rgba(255, 0, 0, 0.6))"
+              filter: "drop-shadow(0 0 6px rgba(255, 0, 0, 0.5))"
             }}
           />
         </div>
