@@ -109,7 +109,17 @@ export default function Navbar() {
                       {link.hasDropdown && isCatalogOpen && (
                         <div 
                           className="absolute left-1/2 transform -translate-x-1/2 top-full mt-0 w-64 shadow-2xl z-50 overflow-hidden"
-                          style={{ backgroundColor: '#615e5e', borderColor: '#615e5e' }}
+                          style={{
+                            backgroundColor: '#615e5e',
+                            borderColor: '#615e5e',
+                            backgroundImage: `
+                              linear-gradient(to right, rgba(0,0,0,0.5), transparent 30%, transparent 70%, rgba(0,0,0,0.5)),
+                              linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 30%, transparent 70%, rgba(0,0,0,0.5))
+                            `,
+                            backgroundSize: '100% 100%, 100% 100%',
+                            backgroundPosition: '0 0, 0 0',
+                            backgroundRepeat: 'no-repeat, no-repeat'
+                          }}
                         >
                           <div className="flex flex-col">
                             {dropdownCategories.map((cat) => (
