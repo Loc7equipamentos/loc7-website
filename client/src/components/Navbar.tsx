@@ -119,7 +119,9 @@ export default function Navbar() {
                                 className="px-4 py-3 text-white font-bold transition-transform duration-200 text-sm tracking-wide text-center border-b last:border-b-0"
                                 style={{ borderColor: '#615e5e' }}
                                 onMouseEnter={(e) => {
-                                  e.currentTarget.style.transform = 'scale(1.35)';
+                                  const longNames = ['COMPUTADORES E TABLETS', 'CONVERSORES / DISTRIBUIDORES', 'HDS E CARTÕES DE MEMÓRIA'];
+                                  const scale = longNames.includes(cat.name) ? 1.15 : 1.35;
+                                  e.currentTarget.style.transform = `scale(${scale})`;
                                   e.currentTarget.style.color = '#ffffff';
                                   e.currentTarget.style.textShadow = '0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4)';
                                   e.currentTarget.style.fontWeight = '900';
