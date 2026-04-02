@@ -63,7 +63,7 @@ export default function Navbar() {
               {/* Main nav */}
               <div className="flex items-center justify-center h-16 flex-1">
                 {/* Desktop nav - Centralizado */}
-                <div className="hidden md:flex items-center gap-6 justify-center flex-1">
+                <div className="hidden md:flex items-center gap-12 justify-center flex-1">
                   {navLinks.map((link) => (
                     <div key={link.name} className="relative group whitespace-nowrap">
                       {link.hasDropdown ? (
