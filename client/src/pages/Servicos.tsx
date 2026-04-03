@@ -55,37 +55,37 @@ const productions = [
     id: 1,
     title: "TV Globo Videogame Verão",
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_1_tv_globo_videogame_981c2434.webp",
-    description: "Produção profissional com câmera, monitor e equipamentos de transmissão",
+    description: "Produção completa com câmeras, áudio, luz, movimento e toda equipe operacional",
   },
   {
     id: 2,
-    title: "TV Globo BBB Brasil",
+    title: "TV Globo Big Brother Brasil",
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_2_tv_globo_bbb_39ebfbed.webp",
-    description: "Produção BBB com câmera profissional e carro da marca",
+    description: "Produção completa com câmeras, áudio, luz, movimento e toda equipe operacional",
   },
   {
     id: 3,
     title: "TV Globo The Voice Brasil",
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_3_tv_globo_voice_0f3b03bb.webp",
-    description: "Câmera profissional com microfone e cenário do The Voice",
+    description: "Produção completa com câmeras, áudio, luz, movimento e toda equipe operacional",
   },
   {
     id: 4,
     title: "Multishow Show Slash",
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_4_multishow_slash_fe669ec8.webp",
-    description: "Show do Slash com iluminação profissional e transmissão ao vivo",
+    description: "Produção completa com câmeras, áudio, luz, movimento e toda equipe operacional",
   },
   {
     id: 5,
     title: "Live Alphabeto",
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_5_live_alphabeto_d8e3b0fd.webp",
-    description: "Transmissão ao vivo com múltiplas câmeras, monitores e iluminação profissional",
+    description: "Produção completa com câmeras, áudio, luz, movimento e toda equipe operacional",
   },
   {
     id: 6,
     title: "SporTV Futebol",
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/producao_6_sportv_futebol_55247cbd.jpg",
-    description: "Transmissão de futebol com câmera de movimento profissional no estádio",
+    description: "Produção completa com câmeras, áudio, luz, movimento e toda equipe operacional",
   },
 ];
 
@@ -109,51 +109,54 @@ export default function Servicos() {
 
   return (
     <div className="min-h-screen bg-[oklch(0.08_0_0)] text-white">
-      {/* Hero Section with Video */}
-      <section className="relative py-20 md:py-32 border-b border-[oklch(0.15_0_0)]">
-        <div className="container">
-          <div className="max-w-3xl mb-12">
-            <h1
-              className="text-5xl md:text-6xl font-bold mb-6 leading-tight"
-              style={{ fontFamily: "Oswald, sans-serif" }}
-            >
-              Serviços Profissionais
-            </h1>
-            <p className="text-lg text-[oklch(0.6_0_0)] mb-8">
-              Locação de equipamentos audiovisuais com suporte técnico completo. Tudo que você precisa para sua produção de sucesso.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                onClick={() => window.location.href = "https://wa.me/message/WOIONHHSTABQF1"}
-                className="bg-[#25D366] hover:bg-[#20BA5C] text-white font-semibold"
-              >
-                Solicitar Orçamento
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => window.location.href = "/catalogo"}
-                className="border-white text-white hover:bg-white hover:text-black"
-              >
-                Ver Catálogo
-              </Button>
+      {/* Hero Section with Video - Full Width */}
+      <section className="relative w-screen left-1/2 right-1/2 -mx-[50vw] border-b border-[oklch(0.15_0_0)]">
+        {/* Video Player - Full Width */}
+        <div className="relative w-full bg-[oklch(0.12_0_0)] overflow-hidden">
+          <video
+            width="100%"
+            height="auto"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-screen block"
+            style={{ aspectRatio: "16 / 9", objectFit: "cover", maxHeight: "100vh" }}
+          >
+            <source src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/video_servicos_16x9_373937ef.mp4" type="video/mp4" />
+            Seu navegador nao suporta o elemento de video.
+          </video>
+          
+          {/* Overlay with Text */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent flex flex-col justify-center">
+            <div className="container">
+              <div className="max-w-2xl">
+                <h1
+                  className="text-4xl md:text-5xl font-semibold mb-6 leading-tight tracking-tight text-white"
+                  style={{ fontFamily: "Oswald, sans-serif" }}
+                >
+                  Serviços de Produção
+                </h1>
+                <p className="text-base md:text-lg text-[oklch(0.85_0_0)] mb-8 leading-relaxed max-w-xl">
+                  Soluções completas em produção audiovisual. Equipamentos profissionais, equipe especializada e suporte técnico 24/7 para suas produções.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    onClick={() => window.location.href = "https://wa.me/message/WOIONHHSTABQF1"}
+                    className="bg-[#25D366] hover:bg-[#20BA5C] text-white font-semibold w-fit"
+                  >
+                    Solicitar Orçamento
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => window.location.href = "/catalogo"}
+                    className="border-white text-white hover:bg-white hover:text-black w-fit"
+                  >
+                    Ver Catálogo
+                  </Button>
+                </div>
+              </div>
             </div>
-          </div>
-
-          {/* Video Player */}
-          <div className="relative w-full bg-[oklch(0.12_0_0)] border border-[oklch(0.18_0_0)] rounded-lg overflow-hidden">
-            <video
-              width="100%"
-              height="auto"
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-full h-auto"
-              style={{ aspectRatio: "16 / 9" }}
-            >
-              <source src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/video_servicos_16x9_373937ef.mp4" type="video/mp4" />
-              Seu navegador nao suporta o elemento de video.
-            </video>
           </div>
         </div>
       </section>
@@ -162,10 +165,10 @@ export default function Servicos() {
       <section className="py-20 md:py-32 border-b border-[oklch(0.15_0_0)]">
         <div className="container">
           <h2
-            className="text-4xl md:text-5xl font-bold mb-16 text-center"
+            className="text-2xl md:text-3xl font-semibold mb-12 text-center tracking-wide"
             style={{ fontFamily: "Oswald, sans-serif" }}
           >
-            Nossos Trabalhos
+            Portfolio de Produções
           </h2>
 
           {/* Carousel Container */}
@@ -188,12 +191,12 @@ export default function Servicos() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-8">
                         <h3
-                          className="text-3xl md:text-4xl font-bold mb-2"
+                          className="text-xl md:text-2xl font-semibold mb-2"
                           style={{ fontFamily: "Oswald, sans-serif" }}
                         >
                           {production.title}
                         </h3>
-                        <p className="text-lg text-[oklch(0.7_0_0)]">
+                        <p className="text-sm md:text-base text-[oklch(0.65_0_0)] font-light tracking-wide leading-relaxed">
                           {production.description}
                         </p>
                       </div>
@@ -206,17 +209,17 @@ export default function Servicos() {
             {/* Navigation Buttons */}
             <button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-[#E31010] hover:bg-[#DC2626] text-white p-3 rounded-full transition-all duration-300 shadow-lg"
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition-all duration-300 opacity-60 hover:opacity-100"
               aria-label="Slide anterior"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-[#E31010] hover:bg-[#DC2626] text-white p-3 rounded-full transition-all duration-300 shadow-lg"
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition-all duration-300 opacity-60 hover:opacity-100"
               aria-label="Próximo slide"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-5 h-5" />
             </button>
 
             {/* Slide Indicators */}

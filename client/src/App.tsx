@@ -42,6 +42,7 @@ function Router() {
       <Route path="/catalogo" component={() => <Layout><Catalogo /></Layout>} />
       <Route path="/catalogo/:category" component={() => <Layout><Catalogo /></Layout>} />
       <Route path="/servicos" component={() => <Layout><Servicos /></Layout>} />
+      <Route path="/producao" component={() => <Layout><Servicos /></Layout>} />
       <Route path="/blog" component={() => <Layout><Blog /></Layout>} />
       <Route path="/portfolio" component={() => <Layout><Portfolio /></Layout>} />
       <Route path="/sobre" component={() => <Layout><Sobre /></Layout>} />

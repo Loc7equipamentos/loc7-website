@@ -294,8 +294,8 @@ export default function Home() {
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-          <span className="text-[oklch(0.65_0_0)] text-xs uppercase tracking-widest">Scroll</span>
-          <div className="w-px h-8 bg-gradient-to-b from-[oklch(0.65_0_0)] to-transparent" />
+          <span className="text-[oklch(0.8_0_0)] text-xs uppercase tracking-widest font-semibold">Scroll</span>
+          <div className="w-px h-8 bg-gradient-to-b from-[oklch(0.8_0_0)] to-transparent" />
         </div>
       </section>
 
@@ -305,7 +305,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[oklch(0.15_0_0)]">
             {[
               { icon: MapPin, title: "São Paulo, SP", desc: "Estrategicamente no polo audiovisual de SP" },
-              { icon: Zap, title: "100% Online", desc: "Faça sua reserva em poucos cliques, sem burocracia" },
+              { icon: Zap, title: "RESERVE ONLINE", desc: "Faça sua reserva em poucos cliques, sem burocracia" },
               { icon: Star, title: "Equipamentos Premium", desc: "Os principais lançamentos do mercado audiovisual" },
             ].map((feat, i) => {
               const Icon = feat.icon;
@@ -413,8 +413,13 @@ export default function Home() {
                 <img
                   src={cat.img}
                   alt={cat.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:opacity-80 brightness-50 group-hover:brightness-40"
+                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:opacity-80 ${
+                    i === 0 || i === 1 ? 'brightness-75 group-hover:brightness-65' : 'brightness-50 group-hover:brightness-40'
+                  }`}
                 />
+                {i === 1 && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/30 pointer-events-none" />
+                )}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <h3 className="font-display font-bold text-white text-3xl uppercase tracking-widest mb-2">
                     {cat.title}
