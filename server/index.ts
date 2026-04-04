@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { handleFormSubmissionPF, handleFormSubmissionPJ } from "./form-submission";
 import { setupAdminRoutes, addCadastroToStore } from "./admin-routes";
+import { setupAdminAuthRoutes } from "./admin-auth";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,8 @@ async function startServer() {
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+  // Setup admin auth routes
+  setupAdminAuthRoutes(app);
   // Setup admin routes
   setupAdminRoutes(app);
 

@@ -1,7 +1,7 @@
 import { sendEmail } from './email';
 import { generatePDFPF, generatePDFPJ, FormDataPF, FormDataPJ } from './pdf-generator';
 import { uploadPDFToS3 } from './s3-storage';
-import { notifyAdminNewCadastro, notifyClientCadastroConfirmation } from './notifications';
+import { notifyAdminNewCadastro, notifyClientCadastroConfirmation } from './notifications-simple';
 
 export async function handleFormSubmissionPF(data: FormDataPF, clientEmail: string): Promise<boolean> {
   try {
@@ -121,10 +121,11 @@ export async function handleFormSubmissionPF(data: FormDataPF, clientEmail: stri
 
     // Enviar notificações
     if (adminEmailPrimary) {
+      const adminPhone = process.env.ADMIN_WHATSAPP_PHONE || '+5511919671611';
       // Notificar admin via WhatsApp
-      await notifyAdminNewCadastro('pf', data.nomeCompleto, data.email, data.telefone);
+      await notifyAdminNewCadastro('pf', data.nomeCompleto, data.email, data.telefone, adminPhone);
       // Notificar cliente via WhatsApp
-      await notifyClientCadastroConfirmation(data.nomeCompleto, data.telefone, 'pf');
+      await notifyClientCadastroConfirmation(data.nomeCompleto, data.telefone);
     }
 
     return adminEmailPrimary;
@@ -252,10 +253,11 @@ export async function handleFormSubmissionPJ(data: FormDataPJ, clientEmail: stri
 
     // Enviar notificações
     if (adminEmailPrimary) {
+      const adminPhone = process.env.ADMIN_WHATSAPP_PHONE || '+5511919671611';
       // Notificar admin via WhatsApp
-      await notifyAdminNewCadastro('pj', data.nomeCompleto, data.email, data.telefone);
+      await notifyAdminNewCadastro('pj', data.nomeCompleto, data.email, data.telefone, adminPhone);
       // Notificar cliente via WhatsApp
-      await notifyClientCadastroConfirmation(data.nomeCompleto, data.telefone, 'pj');
+      await notifyClientCadastroConfirmation(data.nomeCompleto, data.telefone);
     }
 
     return adminEmailPrimary;
