@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { Search, SlidersHorizontal, X, ArrowRight } from "lucide-react";
+import ProductModal from "@/components/ProductModal";
 
 const categories = ["Todos", "Câmeras", "Lentes", "Iluminação", "Áudio", "Monitores", "Movimento", "Wireless", "Modificadores"];
 const brands = ["Todas", "Sony", "Canon", "RED", "Blackmagic", "Arri", "Aputure", "Zeiss", "DJI", "Godox"];
@@ -36,6 +37,8 @@ export default function Catalogo() {
   const [priceRange, setPriceRange] = useState([0, 3000]);
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState("relevance");
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const filtered = allProducts.filter(p => {
     const matchCat = selectedCategory === "Todos" || p.category === selectedCategory;
@@ -174,14 +177,23 @@ export default function Catalogo() {
                       <span className="text-[0.6rem] font-display font-bold uppercase tracking-widest bg-[oklch(0.45_0.25_25)] text-white px-1.5 py-0.5">NOVO</span>
                     )}
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-end gap-2 p-3">
+                    <button
+                      onClick={() => {
+                        setSelectedProduct(product);
+                        setModalOpen(true);
+                      }}
+                      className="w-full loc7-btn-primary text-xs py-2 text-center"
+                    >
+                      Ver Detalhes
+                    </button>
                     <a
                       href={`https://wa.me/message/WOIONHHSTABQF1?text=Olá! Tenho interesse em alugar: ${product.name}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full loc7-btn-primary text-xs py-2 text-center"
+                      className="w-full loc7-btn-outline text-xs py-2 text-center"
                     >
-                      Orçamento WhatsApp
+                      WhatsApp
                     </a>
                   </div>
                 </div>
@@ -236,6 +248,13 @@ export default function Catalogo() {
           </a>
         </div>
       </div>
+
+      {/* Product Modal */}
+      <ProductModal
+        product={selectedProduct}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+      />
     </div>
   );
 }

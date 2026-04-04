@@ -12,7 +12,7 @@ import { ChevronLeft, ChevronRight, MapPin, Zap, Star, ArrowRight, Play } from "
 const heroSlides = [
   { text: "Equipamentos Cine e Broadcast", subtitle: "Câmeras, lentes e iluminação profissional", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00051_darkened_8a518622.webp" },
   { text: "Lentes Cine e Foto", subtitle: "Ópticas profissionais de alta qualidade", img: "" },
-  { text: "Iluminação Profissional", subtitle: "Equipamentos de iluminação de última geração", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00186_darkened_7ce023d4.webp" },
+  { text: "Iluminação Profissional", subtitle: "Do estúdio às externas", img: "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00186_darkened_7ce023d4.webp" },
 ];
 
 const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/hero-banner-BC5ruXNS748J9BcSVbhSGK.webp";
