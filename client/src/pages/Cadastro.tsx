@@ -55,16 +55,26 @@ export default function Cadastro() {
   const [pjData, setPjData] = useState<FormData>({});
   const [pfSubmitting, setPfSubmitting] = useState(false);
   const [pjSubmitting, setPjSubmitting] = useState(false);
-  const [socialDialogOpen, setSocialDialogOpen] = useState(false);
-  const [socialDialogOpenPJ, setSocialDialogOpenPJ] = useState(false);
   const [pfSuccess, setPfSuccess] = useState(false);
   const [pjSuccess, setPjSuccess] = useState(false);
   const [pfCidades, setPfCidades] = useState<string[]>([]);
   const [pjCidades, setPjCidades] = useState<string[]>([]);
 
-  const pfRequiredFields = ['dataCadastro', 'nomeCompleto', 'cpf', 'dataNascimento', 'nomeMae', 'endereco', 'numero', 'bairro', 'cep', 'cidade', 'uf', 'telefone', 'email', 'empresa1', 'nomeContato1', 'telefoneDdd1', 'rg', 'cnhValida', 'redeSocial', 'documento1'];
+  // PESSOA FÍSICA - Required fields
+  const pfRequiredFields = [
+    'dataCadastro', 'nomeCompleto', 'cpf', 'rg', 'dataNascimento', 'nomeMae',
+    'telefone', 'email', 'endereco', 'numero', 'bairro', 'cep', 'cidade', 'uf',
+    'empresa1', 'nomeContato1', 'telefoneDdd1',
+    'documento1'
+  ];
 
-  const pjRequiredFields = ['dataCadastro', 'nomeCompleto', 'cpf', 'dataNascimento', 'nomeMae', 'endereco', 'numero', 'bairro', 'cep', 'cidade', 'uf', 'telefone', 'email', 'empresa1', 'nomeContato1', 'telefoneDdd1', 'razaoSocial', 'dataFundacao', 'ocupacao', 'ramoAtividade', 'redeSocial', 'documento1'];
+  // PESSOA JURÍDICA - Required fields
+  const pjRequiredFields = [
+    'dataCadastro', 'contato', 'telefonePJ', 'emailPJ',
+    'nomeProprietario1', 'dataNascimentoProprietario1', 'rgProprietario1', 'cpfProprietario1',
+    'empresa1', 'nomeContato1', 'telefoneDdd1',
+    'ultimaAlteracao', 'cartaoCNPJ', 'comprovante'
+  ];
 
   const formatMask = (value: string, mask: string): string => {
     const digits = value.replace(/\D/g, '');
@@ -84,10 +94,10 @@ export default function Cadastro() {
   };
 
   const getMask = (fieldName: string): string | undefined => {
-    if (fieldName === 'cpf') return '999.999.999-99';
-    if (fieldName === 'rg') return '99.999.999-9';
+    if (fieldName === 'cpf' || fieldName === 'cpfProprietario1' || fieldName === 'cpfProprietario2') return '999.999.999-99';
+    if (fieldName === 'rg' || fieldName === 'rgProprietario1' || fieldName === 'rgProprietario2') return '99.999.999-9';
     if (fieldName === 'cnpj') return '99.999.999/9999-99';
-    if (fieldName === 'telefone' || fieldName === 'telefoneDdd' || fieldName === 'telefoneDdd1') return '(99) 99999-9999';
+    if (fieldName.includes('telefone') || fieldName.includes('Ddd')) return '(99) 99999-9999';
     if (fieldName === 'cep') return '99999-999';
     return undefined;
   };
@@ -220,15 +230,6 @@ export default function Cadastro() {
     }
   };
 
-  const getMask2 = (fieldName: string): string | undefined => {
-    if (fieldName === 'cpf') return '999.999.999-99';
-    if (fieldName === 'rg') return '99.999.999-9';
-    if (fieldName === 'cnpj') return '99.999.999/9999-99';
-    if (fieldName === 'telefone' || fieldName === 'telefoneDdd') return '(99) 99999-9999';
-    if (fieldName === 'cep') return '99999-999';
-    return undefined;
-  };
-
   const FormField = ({ 
     label, 
     name, 
@@ -239,7 +240,7 @@ export default function Cadastro() {
     onChange,
     placeholder = ''
   }: any) => {
-    const mask = getMask2(name);
+    const mask = getMask(name);
     return (
     <div className="mb-4">
       <label className="block text-sm font-medium text-white mb-1">
@@ -289,56 +290,20 @@ export default function Cadastro() {
             error ? 'border-red-500 bg-red-50' : 'border-gray-300'
           }`}
         />
-      ) : mask ? (
-        <input
-          type="text"
-          name={name}
-          value={value || ''}
-          onChange={(e) => {
-            const rawValue = e.target.value;
-            const digits = rawValue.replace(/\D/g, '');
-            const formatted = formatMask(digits, mask);
-            onChange(name, formatted);
-          }}
-          placeholder={placeholder}
-          maxLength={mask.length}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
-            error ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
-        />
-      ) : type === 'radio' ? (
-        <div className="flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name={name}
-              value="sim"
-              checked={value === 'sim'}
-              onChange={(e) => onChange(name, e.target.value)}
-              className="mr-2"
-            />
-            Sim
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name={name}
-              value="nao"
-              checked={value === 'nao'}
-              onChange={(e) => onChange(name, e.target.value)}
-              className="mr-2"
-            />
-            Não
-          </label>
-        </div>
       ) : (
         <input
           type={type}
           name={name}
           value={value || ''}
-          onChange={(e) => onChange(name, e.target.value)}
+          onChange={(e) => {
+            let val = e.target.value;
+            if (mask) {
+              val = formatMask(val, mask);
+            }
+            onChange(name, val);
+          }}
           placeholder={placeholder}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black ${
             error ? 'border-red-500 bg-red-50' : 'border-gray-300'
           }`}
         />
@@ -349,52 +314,23 @@ export default function Cadastro() {
   };
 
   return (
-    <div className="min-h-screen bg-black pt-32 pb-16">
-      <div className="container max-w-4xl mx-auto px-4">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">CADASTRE-SE</h1>
-          <p className="text-white">Preencha o formulário abaixo para se cadastrar na Loc 7</p>
-        </div>
-
-        <div className="mb-6 border border-red-400 rounded-md p-4 bg-transparent">
-          <p className="text-white text-sm">
-            <span className="text-red-600 font-bold">⚠️ ATENÇÃO!</span> O cadastro ocorre em horário comercial: de segunda à sexta-feira, das 09:00 às 17:00 hs. Prazo de aprovação de até 1 hora a partir do recebimento dos dados, junto com os documentos solicitados.
-          </p>
-        </div>
-
-        <div className="mb-6 border border-red-400 rounded-md p-4 bg-transparent">
-          <p className="text-white text-sm">
-            <span className="text-red-600 font-bold">*</span> Indica uma pergunta obrigatória
-          </p>
-        </div>
-
-        <Card className="bg-white/0 border-0">
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FormType)} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 gap-4 bg-transparent mb-6">
-              <TabsTrigger 
-                value="pf" 
-                className={`border-2 border-white font-bold text-lg transition-all duration-200 hover:bg-white/10 ${
-                  activeTab === 'pf' 
-                    ? 'bg-black text-white' 
-                    : 'bg-transparent text-black'
-                }`}
-              >
-                Pessoa Física
+    <div className="min-h-screen bg-[oklch(0.08_0_0)] py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white/5 border border-[oklch(0.15_0_0)] p-8">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FormType)} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-[oklch(0.1_0_0)] border border-[oklch(0.15_0_0)] mb-8">
+              <TabsTrigger value="pf" className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-white">
+                PESSOA FÍSICA
               </TabsTrigger>
-              <TabsTrigger 
-                value="pj" 
-                className={`border-2 border-white font-bold text-lg transition-all duration-200 hover:bg-white/10 ${
-                  activeTab === 'pj' 
-                    ? 'bg-black text-white' 
-                    : 'bg-transparent text-black'
-                }`}
-              >
-                Pessoa Jurídica
+              <TabsTrigger value="pj" className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-white">
+                PESSOA JURÍDICA
               </TabsTrigger>
             </TabsList>
 
+            {/* ===== PESSOA FÍSICA ===== */}
             <TabsContent value="pf">
               <form onSubmit={handlePFSubmit} className="space-y-6">
+                {/* Seção 1: Informações Gerais */}
                 <div className="bg-white/0 border-0 p-6">
                   <h2 className="text-2xl font-bold text-white mb-4">1. INFORMAÇÕES GERAIS</h2>
                   <div className="grid grid-cols-2 gap-4">
@@ -403,81 +339,57 @@ export default function Cadastro() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <FormField label="CPF" name="cpf" required value={pfData.cpf} onChange={handlePFChange} error={pfErrors.cpf} />
-                    <FormField label="RG" name="rg" value={pfData.rg} onChange={handlePFChange} />
+                    <FormField label="RG" name="rg" required value={pfData.rg} onChange={handlePFChange} error={pfErrors.rg} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Data de Nascimento" name="dataNascimento" type="date" required value={pfData.dataNascimento} onChange={handlePFChange} error={pfErrors.dataNascimento} />
+                    <FormField label="Data de Nascimento" name="dataNascimento" type="date" required value={pfData.dataNascimento} onChange={handlePFChange} error={pfErrors.dataNascimento} placeholder="Ex. xx/xx/xxxx" />
                     <FormField label="Nome da Mãe" name="nomeMae" required value={pfData.nomeMae} onChange={handlePFChange} error={pfErrors.nomeMae} />
                   </div>
                 </div>
 
+                {/* Seção 2: Endereço */}
                 <div className="bg-white/0 border-0 p-6">
                   <h2 className="text-2xl font-bold text-white mb-4">2. ENDEREÇO</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Endereço" name="endereco" required value={pfData.endereco} onChange={handlePFChange} error={pfErrors.endereco} placeholder="Rua, Avenida, etc." />
-                    <FormField label="Número" name="numero" required value={pfData.numero} onChange={handlePFChange} error={pfErrors.numero} placeholder="Número" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Bairro" name="bairro" required value={pfData.bairro} onChange={handlePFChange} error={pfErrors.bairro} placeholder="Bairro" />
-                    <FormField label="CEP" name="cep" required value={pfData.cep} onChange={handlePFChange} error={pfErrors.cep} placeholder="00000-000" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="UF (Estado)" name="uf" type="select" required value={pfData.uf} onChange={handlePFChange} error={pfErrors.uf} placeholder={estados} />
-                    <FormField label="Cidade" name="cidade" type="select" required value={pfData.cidade} onChange={handlePFChange} error={pfErrors.cidade} placeholder={pfCidades} />
-                  </div>
-                  <FormField label="Rede Social" name="redeSocial" required value={pfData.redeSocial} onChange={handlePFChange} error={pfErrors.redeSocial} placeholder="(Opcional)" />
-                </div>
-
-                <div className="bg-white/0 border-0 p-6">
-                  <h2 className="text-2xl font-bold text-white mb-4">3. CONTATO</h2>
                   <div className="grid grid-cols-2 gap-4">
                     <FormField label="Telefone (com DDD)" name="telefone" required value={pfData.telefone} onChange={handlePFChange} error={pfErrors.telefone} placeholder="(11) 99999-9999" />
                     <FormField label="E-mail" name="email" type="email" required value={pfData.email} onChange={handlePFChange} error={pfErrors.email} placeholder="seu@email.com" />
                   </div>
-                </div>
-
-                <div className="bg-white/0 border-0 p-6">
-                  <h2 className="text-2xl font-bold text-white mb-4">4. REFERÊNCIAS COMERCIAIS</h2>
-                  <p className="text-white text-sm font-medium mb-4">(Preferência na área audiovisual: Locadoras, fornecedores)</p>
-                  
-                  <div className="mb-6">
-                    <h3 className="text-lg font-bold text-white mb-3">Referência 1</h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <FormField label="Empresa" name="empresa1" required value={pfData.empresa1} onChange={handlePFChange} error={pfErrors.empresa1} />
-                      <FormField label="Nome do Contato" name="nomeContato1" required value={pfData.nomeContato1} onChange={handlePFChange} error={pfErrors.nomeContato1} />
-                      <FormField label="Telefone (com DDD)" name="telefoneDdd1" required value={pfData.telefoneDdd1} onChange={handlePFChange} error={pfErrors.telefoneDdd1} />
-                    </div>
-                  </div>
-
+                  <FormField label="Rede Social" name="redeSocial" value={pfData.redeSocial} onChange={handlePFChange} />
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Nome da Mãe" name="nomeMaeRef" value={pfData.nomeMaeRef} onChange={handlePFChange} />
-                    <FormField label="Nome do Pai" name="nomePaiRef" value={pfData.nomePaiRef} onChange={handlePFChange} />
+                    <FormField label="Endereço" name="endereco" required value={pfData.endereco} onChange={handlePFChange} error={pfErrors.endereco} placeholder="Rua, Avenida, etc." />
+                    <FormField label="Número" name="numero" required value={pfData.numero} onChange={handlePFChange} error={pfErrors.numero} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField label="Bairro" name="bairro" required value={pfData.bairro} onChange={handlePFChange} error={pfErrors.bairro} />
+                    <FormField label="CEP" name="cep" required value={pfData.cep} onChange={handlePFChange} error={pfErrors.cep} placeholder="00000-000" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField label="Cidade" name="cidade" required value={pfData.cidade} onChange={handlePFChange} error={pfErrors.cidade} />
+                    <FormField label="UF (Estado)" name="uf" type="select" required value={pfData.uf} onChange={handlePFChange} error={pfErrors.uf} placeholder={estados} />
                   </div>
                 </div>
 
+                {/* Seção 3: Ocupação e Ramo */}
                 <div className="bg-white/0 border-0 p-6">
-                  <h2 className="text-2xl font-bold text-white mb-4">5. INFORMAÇÕES ADICIONAIS</h2>
+                  <h2 className="text-2xl font-bold text-white mb-4">3. INFORMAÇÕES ADICIONAIS</h2>
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Ocupação Profissional" name="ocupacao" value={pfData.ocupacao} onChange={handlePFChange} placeholder="(Opcional)" />
-                    <FormField label="Ramo de Atividade" name="ramoAtividade" value={pfData.ramoAtividade} onChange={handlePFChange} placeholder="(Opcional)" />
+                    <FormField label="Ocupação Profissional (Caso possua)" name="ocupacao" value={pfData.ocupacao} onChange={handlePFChange} />
+                    <FormField label="Ramo de Atividade (Caso possua)" name="ramoAtividade" value={pfData.ramoAtividade} onChange={handlePFChange} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Pertence a alguma associação (ABPRO ABPTV, etc.)" name="pertenceAssociacao" value={pfData.pertenceAssociacao} onChange={handlePFChange} placeholder="(Opcional)" />
-                    <FormField label="Qual Associação" name="qualAssociacao" value={pfData.qualAssociacao} onChange={handlePFChange} placeholder="(Opcional)" />
+                    <FormField label="Pertence a Alguma Associação (APRO, ABPTV, etc...)" name="associacao" value={pfData.associacao} onChange={handlePFChange} placeholder="Descrição (opcional)" />
+                    <FormField label="Qual Associação" name="qualAssociacao" value={pfData.qualAssociacao} onChange={handlePFChange} />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-white mb-2">
-                      Estudante
-                      <span className="text-red-600 ml-1">*</span>
-                    </label>
+                    <label className="block text-sm font-medium text-white mb-2">Estudante *</label>
                     <div className="flex gap-4">
                       <button
                         type="button"
                         onClick={() => handlePFChange('estudante', 'sim')}
                         className={`px-6 py-2 border-2 font-bold transition-all duration-200 ${
                           pfData.estudante === 'sim'
-                            ? 'bg-black text-white border-black'
-                            : 'bg-transparent text-black border-black'
+                            ? 'bg-red-600 text-white border-red-600'
+                            : 'bg-transparent text-white border-white'
                         }`}
                       >
                         Sim
@@ -487,53 +399,67 @@ export default function Cadastro() {
                         onClick={() => handlePFChange('estudante', 'nao')}
                         className={`px-6 py-2 border-2 font-bold transition-all duration-200 ${
                           pfData.estudante === 'nao'
-                            ? 'bg-black text-white border-black'
-                            : 'bg-transparent text-black border-black'
+                            ? 'bg-red-600 text-white border-red-600'
+                            : 'bg-transparent text-white border-white'
                         }`}
                       >
                         Não
                       </button>
                     </div>
                   </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-white mb-2">
-                      CNH Válida
-                      <span className="text-red-600 ml-1">*</span>
-                    </label>
-                    <div className="flex gap-4">
-                      <button
-                        type="button"
-                        onClick={() => handlePFChange('cnhValida', 'sim')}
-                        className={`px-6 py-2 border-2 font-bold transition-all duration-200 ${
-                          pfData.cnhValida === 'sim'
-                            ? 'bg-black text-white border-black'
-                            : 'bg-transparent text-black border-black'
-                        }`}
-                      >
-                        Sim
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handlePFChange('cnhValida', 'nao')}
-                        className={`px-6 py-2 border-2 font-bold transition-all duration-200 ${
-                          pfData.cnhValida === 'nao'
-                            ? 'bg-black text-white border-black'
-                            : 'bg-transparent text-black border-black'
-                        }`}
-                      >
-                        Não
-                      </button>
+                  <FormField label="Nome do Pai" name="nomePai" required value={pfData.nomePai} onChange={handlePFChange} error={pfErrors.nomePai} />
+                </div>
+
+                {/* Seção 4: Referências Comerciais */}
+                <div className="bg-white/0 border-0 p-6">
+                  <h2 className="text-2xl font-bold text-white mb-4">4. REFERÊNCIAS COMERCIAIS</h2>
+                  <p className="text-white text-sm font-medium mb-4">(Preferência na área audiovisual: Locadoras, fornecedores)</p>
+                  
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-3">Referência 1</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField label="Empresa" name="empresa1" required value={pfData.empresa1} onChange={handlePFChange} error={pfErrors.empresa1} />
+                      <FormField label="Nome do Contato" name="nomeContato1" required value={pfData.nomeContato1} onChange={handlePFChange} error={pfErrors.nomeContato1} />
+                      <FormField label="Telefone com DDD" name="telefoneDdd1" required value={pfData.telefoneDdd1} onChange={handlePFChange} error={pfErrors.telefoneDdd1} />
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-3">Referência 2</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField label="Empresa" name="empresa2" value={pfData.empresa2} onChange={handlePFChange} />
+                      <FormField label="Nome do Contato" name="nomeContato2" value={pfData.nomeContato2} onChange={handlePFChange} />
+                      <FormField label="Telefone com DDD" name="telefoneDdd2" value={pfData.telefoneDdd2} onChange={handlePFChange} />
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-3">Referência 3</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField label="Empresa" name="empresa3" value={pfData.empresa3} onChange={handlePFChange} />
+                      <FormField label="Nome do Contato" name="nomeContato3" value={pfData.nomeContato3} onChange={handlePFChange} />
+                      <FormField label="Telefone com DDD" name="telefoneDdd3" value={pfData.telefoneDdd3} onChange={handlePFChange} />
                     </div>
                   </div>
                 </div>
 
+                {/* Seção 5: Documentos */}
                 <div className="bg-white/0 border-0 p-6">
-                  <h2 className="text-2xl font-bold text-white mb-4">6. DOCUMENTOS NECESSÁRIOS</h2>
+                  <h2 className="text-2xl font-bold text-white mb-4">5. DOCUMENTOS NECESSÁRIOS</h2>
                   <p className="text-white text-sm font-medium mb-4">Serão necessários UP-loads de documentos</p>
                   <FormField label="RG ou CNH" name="documento1" type="file" required value={pfData.documento1} onChange={handlePFChange} error={pfErrors.documento1} />
                   <FormField label="CPF ou CNH" name="documento2" type="file" value={pfData.documento2} onChange={handlePFChange} />
                   <FormField label="Comprovante de Residência" name="documento3" type="file" value={pfData.documento3} onChange={handlePFChange} />
-                  <p className="text-gray-400 text-xs mt-2">(Água, luz, internet/ Atual / máximo 3 meses)</p>
+                  <p className="text-gray-400 text-xs mt-2">(Água, luz, internet / Atual / máximo 3 meses)</p>
+                </div>
+
+                {/* Seção 6: Formas de Pagamento */}
+                <div className="bg-white/0 border-0 p-6">
+                  <h2 className="text-2xl font-bold text-white mb-4">6. FORMAS DE PAGAMENTO</h2>
+                  <ul className="text-white text-sm space-y-2">
+                    <li>• O Pagamento da primeira locação deve ser feito À VISTA, via PIX ou dinheiro.</li>
+                    <li>• Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.</li>
+                  </ul>
                 </div>
 
                 <Button type="submit" disabled={pfSubmitting} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-md">
@@ -558,96 +484,154 @@ export default function Cadastro() {
                     </div>
                   </div>
                 )}
-
-                <div className="border border-green-300 rounded-md p-3 bg-transparent">
-                  <p className="text-white text-xs">
-                    <span className="font-bold">Pagamento:</span> O Pagamento da primeira locação deve ser feito À VISTA, via PIX ou dinheiro. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
-                  </p>
-                </div>
               </form>
             </TabsContent>
 
+            {/* ===== PESSOA JURÍDICA ===== */}
             <TabsContent value="pj">
               <form onSubmit={handlePJSubmit} className="space-y-6">
+                {/* Seção 1: Informações Gerais para Faturamento */}
                 <div className="bg-white/0 border-0 p-6">
-                  <h2 className="text-2xl font-bold text-white mb-4">1. INFORMAÇÕES GERAIS</h2>
+                  <h2 className="text-2xl font-bold text-white mb-4">1. INFORMAÇÕES GERAIS PARA FATURAMENTO</h2>
+                  <p className="text-white text-sm font-medium mb-4">Descrição (opcional)</p>
                   <div className="grid grid-cols-2 gap-4">
                     <FormField label="Data do Cadastro" name="dataCadastro" type="date" required value={pjData.dataCadastro} onChange={handlePJChange} error={pjErrors.dataCadastro} />
-                    <FormField label="Nome Completo" name="nomeCompleto" required value={pjData.nomeCompleto} onChange={handlePJChange} error={pjErrors.nomeCompleto} />
+                    <FormField label="Contato / Nome Completo" name="contato" required value={pjData.contato} onChange={handlePJChange} error={pjErrors.contato} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField label="CPF" name="cpf" required value={pjData.cpf} onChange={handlePJChange} error={pjErrors.cpf} />
-                    <FormField label="RG" name="rg" value={pjData.rg} onChange={handlePJChange} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Data de Nascimento" name="dataNascimento" type="date" required value={pjData.dataNascimento} onChange={handlePJChange} error={pjErrors.dataNascimento} />
-                    <FormField label="Nome da Mãe" name="nomeMae" required value={pjData.nomeMae} onChange={handlePJChange} error={pjErrors.nomeMae} />
+                    <FormField label="Telefone (com DDD)" name="telefonePJ" required value={pjData.telefonePJ} onChange={handlePJChange} error={pjErrors.telefonePJ} placeholder="(11) 99999-9999" />
+                    <FormField label="E-mail" name="emailPJ" type="email" required value={pjData.emailPJ} onChange={handlePJChange} error={pjErrors.emailPJ} placeholder="seu@email.com" />
                   </div>
                 </div>
 
+                {/* Seção 2: Contatos Adicionais */}
                 <div className="bg-white/0 border-0 p-6">
-                  <h2 className="text-2xl font-bold text-white mb-4">2. ENDEREÇO</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Endereço" name="endereco" required value={pjData.endereco} onChange={handlePJChange} error={pjErrors.endereco} placeholder="Rua, Avenida, etc." />
-                    <FormField label="Número" name="numero" required value={pjData.numero} onChange={handlePJChange} error={pjErrors.numero} placeholder="Número" />
+                  <h2 className="text-2xl font-bold text-white mb-4">2. CONTATOS ADICIONAIS</h2>
+                  
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-3">Contato 1</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField label="Contato/Nome" name="contatoNome1" value={pjData.contatoNome1} onChange={handlePJChange} />
+                      <FormField label="Telefone" name="contatoTelefone1" value={pjData.contatoTelefone1} onChange={handlePJChange} />
+                      <FormField label="Empresa" name="contatoEmpresa1" value={pjData.contatoEmpresa1} onChange={handlePJChange} />
+                    </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Bairro" name="bairro" required value={pjData.bairro} onChange={handlePJChange} error={pjErrors.bairro} placeholder="Bairro" />
-                    <FormField label="CEP" name="cep" required value={pjData.cep} onChange={handlePJChange} error={pjErrors.cep} placeholder="00000-000" />
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-3">Contato 2</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField label="Contato/Nome" name="contatoNome2" value={pjData.contatoNome2} onChange={handlePJChange} />
+                      <FormField label="Telefone" name="contatoTelefone2" value={pjData.contatoTelefone2} onChange={handlePJChange} />
+                      <FormField label="Empresa" name="contatoEmpresa2" value={pjData.contatoEmpresa2} onChange={handlePJChange} />
+                    </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="UF (Estado)" name="uf" type="select" required value={pjData.uf} onChange={handlePJChange} error={pjErrors.uf} placeholder={estados} />
-                    <FormField label="Cidade" name="cidade" type="select" required value={pjData.cidade} onChange={handlePJChange} error={pjErrors.cidade} placeholder={pjCidades} />
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-3">Contato 3</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField label="Contato/Nome" name="contatoNome3" value={pjData.contatoNome3} onChange={handlePJChange} />
+                      <FormField label="Telefone" name="contatoTelefone3" value={pjData.contatoTelefone3} onChange={handlePJChange} />
+                      <FormField label="Empresa" name="contatoEmpresa3" value={pjData.contatoEmpresa3} onChange={handlePJChange} />
+                    </div>
                   </div>
-                  <FormField label="Rede Social" name="redeSocial" required value={pjData.redeSocial} onChange={handlePJChange} error={pjErrors.redeSocial} placeholder="(Opcional)" />
                 </div>
 
+                {/* Seção 3: Dados dos Proprietários */}
                 <div className="bg-white/0 border-0 p-6">
-                  <h2 className="text-2xl font-bold text-white mb-4">3. CONTATO</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Telefone (com DDD)" name="telefone" required value={pjData.telefone} onChange={handlePJChange} error={pjErrors.telefone} placeholder="(11) 99999-9999" />
-                    <FormField label="E-mail" name="email" type="email" required value={pjData.email} onChange={handlePJChange} error={pjErrors.email} placeholder="seu@email.com" />
+                  <h2 className="text-2xl font-bold text-white mb-4">3. DADOS DO(S) PROPRIETÁRIO(S) DA EMPRESA</h2>
+                  <p className="text-white text-sm font-medium mb-4">Descrição (opcional)</p>
+                  
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-3">Proprietário 1</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField label="Nome Completo" name="nomeProprietario1" required value={pjData.nomeProprietario1} onChange={handlePJChange} error={pjErrors.nomeProprietario1} />
+                      <FormField label="Data de Nascimento" name="dataNascimentoProprietario1" type="date" required value={pjData.dataNascimentoProprietario1} onChange={handlePJChange} error={pjErrors.dataNascimentoProprietario1} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField label="RG" name="rgProprietario1" required value={pjData.rgProprietario1} onChange={handlePJChange} error={pjErrors.rgProprietario1} />
+                      <FormField label="CPF" name="cpfProprietario1" required value={pjData.cpfProprietario1} onChange={handlePJChange} error={pjErrors.cpfProprietario1} />
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-3">Proprietário 2</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField label="Nome Completo" name="nomeProprietario2" value={pjData.nomeProprietario2} onChange={handlePJChange} />
+                      <FormField label="Data de Nascimento" name="dataNascimentoProprietario2" type="date" value={pjData.dataNascimentoProprietario2} onChange={handlePJChange} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField label="RG" name="rgProprietario2" value={pjData.rgProprietario2} onChange={handlePJChange} />
+                      <FormField label="CPF" name="cpfProprietario2" value={pjData.cpfProprietario2} onChange={handlePJChange} />
+                    </div>
                   </div>
                 </div>
 
+                {/* Seção 4: Referências Comerciais */}
                 <div className="bg-white/0 border-0 p-6">
                   <h2 className="text-2xl font-bold text-white mb-4">4. REFERÊNCIAS COMERCIAIS</h2>
-                  <p className="text-white text-sm font-medium mb-4">(Preferência na área audiovisual: Locadoras, fornecedores)</p>
+                  <p className="text-white text-sm font-medium mb-4">Informações necessárias</p>
                   
                   <div className="mb-6">
                     <h3 className="text-lg font-bold text-white mb-3">Referência 1</h3>
                     <div className="grid grid-cols-3 gap-4">
                       <FormField label="Empresa" name="empresa1" required value={pjData.empresa1} onChange={handlePJChange} error={pjErrors.empresa1} />
-                      <FormField label="Nome do Contato" name="nomeContato1" required value={pjData.nomeContato1} onChange={handlePJChange} error={pjErrors.nomeContato1} />
-                      <FormField label="Telefone (com DDD)" name="telefoneDdd1" required value={pjData.telefoneDdd1} onChange={handlePJChange} error={pjErrors.telefoneDdd1} />
+                      <FormField label="Contato/Nome" name="nomeContato1" required value={pjData.nomeContato1} onChange={handlePJChange} error={pjErrors.nomeContato1} />
+                      <FormField label="Telefone" name="telefoneDdd1" required value={pjData.telefoneDdd1} onChange={handlePJChange} error={pjErrors.telefoneDdd1} />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Nome da Mãe" name="nomeMaeRef" value={pjData.nomeMaeRef} onChange={handlePJChange} />
-                    <FormField label="Nome do Pai" name="nomePaiRef" value={pjData.nomePaiRef} onChange={handlePJChange} />
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-3">Referência 2</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField label="Empresa" name="empresa2" value={pjData.empresa2} onChange={handlePJChange} />
+                      <FormField label="Contato/Nome" name="nomeContato2" value={pjData.nomeContato2} onChange={handlePJChange} />
+                      <FormField label="Telefone" name="telefoneDdd2" value={pjData.telefoneDdd2} onChange={handlePJChange} />
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-white mb-3">Referência 3</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField label="Empresa" name="empresa3" value={pjData.empresa3} onChange={handlePJChange} />
+                      <FormField label="Contato/Nome" name="nomeContato3" value={pjData.nomeContato3} onChange={handlePJChange} />
+                      <FormField label="Telefone" name="telefoneDdd3" value={pjData.telefoneDdd3} onChange={handlePJChange} />
+                    </div>
                   </div>
                 </div>
 
+                {/* Seção 5: Endereços para Entregas e Cobranças */}
                 <div className="bg-white/0 border-0 p-6">
-                  <h2 className="text-2xl font-bold text-white mb-4">5. INFORMAÇÕES DA EMPRESA</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Razão Social" name="razaoSocial" required value={pjData.razaoSocial} onChange={handlePJChange} error={pjErrors.razaoSocial} />
-                    <FormField label="Data de Fundação" name="dataFundacao" type="date" required value={pjData.dataFundacao} onChange={handlePJChange} error={pjErrors.dataFundacao} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField label="Ocupação Profissional" name="ocupacao" required value={pjData.ocupacao} onChange={handlePJChange} error={pjErrors.ocupacao} />
-                    <FormField label="Ramo de Atividade" name="ramoAtividade" required value={pjData.ramoAtividade} onChange={handlePJChange} error={pjErrors.ramoAtividade} />
+                  <h2 className="text-2xl font-bold text-white mb-4">5. ENDEREÇOS PARA ENTREGAS E COBRANÇAS</h2>
+                  <p className="text-white text-sm font-medium mb-4">(Caso não seja o mesmo)</p>
+                  <p className="text-white text-sm font-medium mb-4">Descrição (opcional)</p>
+                  
+                  <FormField label="Endereço" name="enderecoEntrega" value={pjData.enderecoEntrega} onChange={handlePJChange} />
+                  <FormField label="Complemento (Caso possua)" name="complementoEntrega" value={pjData.complementoEntrega} onChange={handlePJChange} />
+                  <FormField label="Bairro" name="bairroEntrega" value={pjData.bairroEntrega} onChange={handlePJChange} />
+                  <div className="grid grid-cols-3 gap-4">
+                    <FormField label="CEP" name="cepEntrega" value={pjData.cepEntrega} onChange={handlePJChange} />
+                    <FormField label="Cidade" name="cidadeEntrega" value={pjData.cidadeEntrega} onChange={handlePJChange} />
+                    <FormField label="UF (Estado)" name="ufEntrega" value={pjData.ufEntrega} onChange={handlePJChange} />
                   </div>
                 </div>
 
+                {/* Seção 6: Documentos */}
                 <div className="bg-white/0 border-0 p-6">
                   <h2 className="text-2xl font-bold text-white mb-4">6. DOCUMENTOS NECESSÁRIOS</h2>
                   <p className="text-white text-sm font-medium mb-4">Serão necessários UP-loads de documentos</p>
-                  <FormField label="Última Alteração Contratual" name="documento1" type="file" required value={pjData.documento1} onChange={handlePJChange} error={pjErrors.documento1} />
-                  <FormField label="Cartão CNPJ" name="documento2" type="file" value={pjData.documento2} onChange={handlePJChange} />
-                  <FormField label="Comprovante de Residência" name="documento3" type="file" value={pjData.documento3} onChange={handlePJChange} />
-                  <p className="text-gray-400 text-xs mt-2">(Água, luz, internet/ Atual / máximo 3 meses)</p>
+                  <FormField label="Última Alteração Contratual" name="ultimaAlteracao" type="file" required value={pjData.ultimaAlteracao} onChange={handlePJChange} error={pjErrors.ultimaAlteracao} />
+                  <FormField label="Cartão do CNPJ Atualizado" name="cartaoCNPJ" type="file" required value={pjData.cartaoCNPJ} onChange={handlePJChange} error={pjErrors.cartaoCNPJ} />
+                  <FormField label="Comprovante de Endereço Recente" name="comprovante" type="file" required value={pjData.comprovante} onChange={handlePJChange} error={pjErrors.comprovante} />
+                  <p className="text-gray-400 text-xs mt-2">(Água ou luz ou telefone fixo)</p>
+                </div>
+
+                {/* Seção 7: Formas de Pagamento */}
+                <div className="bg-white/0 border-0 p-6">
+                  <h2 className="text-2xl font-bold text-white mb-4">7. FORMAS DE PAGAMENTO</h2>
+                  <ul className="text-white text-sm space-y-2">
+                    <li>• O Pagamento da primeira locação deve ser feito À VISTA, via PIX ou dinheiro.</li>
+                    <li>• Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.</li>
+                  </ul>
                 </div>
 
                 <Button type="submit" disabled={pjSubmitting} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-md">
@@ -672,12 +656,6 @@ export default function Cadastro() {
                     </div>
                   </div>
                 )}
-
-                <div className="border border-green-300 rounded-md p-3 bg-transparent">
-                  <p className="text-white text-xs">
-                    <span className="font-bold">Pagamento:</span> O Pagamento da primeira locação deve ser feito À VISTA, via PIX ou dinheiro. Pagamentos via cartão de crédito estão sujeitos a taxas das operadoras.
-                  </p>
-                </div>
               </form>
             </TabsContent>
           </Tabs>
