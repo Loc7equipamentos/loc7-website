@@ -21,6 +21,7 @@ import Blog from "./pages/Blog";
 import Portfolio from "./pages/Portfolio";
 import Sobre from "./pages/Sobre";
 import Cadastro from "./pages/Cadastro";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -48,6 +49,7 @@ function Router() {
       <Route path="/sobre" component={() => <Layout><Sobre /></Layout>} />
       <Route path="/contato" component={() => <Layout><Contato /></Layout>} />
       <Route path="/cadastro" component={() => <Layout><Cadastro /></Layout>} />
+      <Route path="/admin" component={() => <AdminDashboard />} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

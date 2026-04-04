@@ -1,15 +1,31 @@
 import { sendEmail } from './email';
 import { generatePDFPF, generatePDFPJ, FormDataPF, FormDataPJ } from './pdf-generator';
+import { uploadPDFToS3 } from './s3-storage';
+import { notifyAdminNewCadastro, notifyClientCadastroConfirmation } from './notifications';
 
 export async function handleFormSubmissionPF(data: FormDataPF, clientEmail: string): Promise<boolean> {
   try {
     // Gerar PDF
     const pdfBuffer = await generatePDFPF(data);
+    const fileName = `Cadastro_PF_${data.cpf.replace(/\D/g, '')}.pdf`;
+
+    // Salvar PDF em S3
+    const s3Result = await uploadPDFToS3(
+      pdfBuffer,
+      fileName,
+      'pf',
+      clientEmail,
+      data.nomeCompleto
+    );
+
+    if (s3Result) {
+      console.log(`PDF salvo em S3: ${s3Result.url}`);
+    }
 
     // Preparar anexos (documentos do cliente)
     const attachments: Array<{ filename: string; content: Buffer; contentType: string }> = [
       {
-        filename: `Cadastro_PF_${data.cpf.replace(/\D/g, '')}.pdf`,
+        filename: fileName,
         content: pdfBuffer,
         contentType: 'application/pdf',
       },
@@ -103,6 +119,14 @@ export async function handleFormSubmissionPF(data: FormDataPF, clientEmail: stri
       attachments,
     });
 
+    // Enviar notificações
+    if (adminEmailPrimary) {
+      // Notificar admin via WhatsApp
+      await notifyAdminNewCadastro('pf', data.nomeCompleto, data.email, data.telefone);
+      // Notificar cliente via WhatsApp
+      await notifyClientCadastroConfirmation(data.nomeCompleto, data.telefone, 'pf');
+    }
+
     return adminEmailPrimary;
   } catch (error) {
     console.error('Erro ao processar cadastro PF:', error);
@@ -114,11 +138,25 @@ export async function handleFormSubmissionPJ(data: FormDataPJ, clientEmail: stri
   try {
     // Gerar PDF
     const pdfBuffer = await generatePDFPJ(data);
+    const fileName = `Cadastro_PJ_${data.razaoSocial.replace(/\s+/g, '_')}.pdf`;
+
+    // Salvar PDF em S3
+    const s3Result = await uploadPDFToS3(
+      pdfBuffer,
+      fileName,
+      'pj',
+      clientEmail,
+      data.nomeCompleto
+    );
+
+    if (s3Result) {
+      console.log(`PDF salvo em S3: ${s3Result.url}`);
+    }
 
     // Preparar anexos
     const attachments: Array<{ filename: string; content: Buffer; contentType: string }> = [
       {
-        filename: `Cadastro_PJ_${data.razaoSocial.replace(/\s+/g, '_')}.pdf`,
+        filename: fileName,
         content: pdfBuffer,
         contentType: 'application/pdf',
       },
@@ -211,6 +249,14 @@ export async function handleFormSubmissionPJ(data: FormDataPJ, clientEmail: stri
       html: adminEmailHtml,
       attachments,
     });
+
+    // Enviar notificações
+    if (adminEmailPrimary) {
+      // Notificar admin via WhatsApp
+      await notifyAdminNewCadastro('pj', data.nomeCompleto, data.email, data.telefone);
+      // Notificar cliente via WhatsApp
+      await notifyClientCadastroConfirmation(data.nomeCompleto, data.telefone, 'pj');
+    }
 
     return adminEmailPrimary;
   } catch (error) {

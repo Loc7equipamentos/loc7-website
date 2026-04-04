@@ -3,6 +3,7 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { handleFormSubmissionPF, handleFormSubmissionPJ } from "./form-submission";
+import { setupAdminRoutes, addCadastroToStore } from "./admin-routes";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +22,9 @@ async function startServer() {
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+  // Setup admin routes
+  setupAdminRoutes(app);
+
   // Rota para submissão de formulário PF
   app.post('/api/submit-form-pf', async (req, res) => {
     try {
@@ -33,6 +37,8 @@ async function startServer() {
       const success = await handleFormSubmissionPF(data, email);
       
       if (success) {
+        // Adicionar ao store do admin
+        addCadastroToStore('pf', data.nomeCompleto, email, data.telefone, 'pdf-url-placeholder');
         res.json({ success: true, message: 'Formulário enviado com sucesso!' });
       } else {
         res.status(500).json({ error: 'Erro ao enviar formulário' });
@@ -55,6 +61,8 @@ async function startServer() {
       const success = await handleFormSubmissionPJ(data, email);
       
       if (success) {
+        // Adicionar ao store do admin
+        addCadastroToStore('pj', data.nomeCompleto, email, data.telefone, 'pdf-url-placeholder');
         res.json({ success: true, message: 'Formulário enviado com sucesso!' });
       } else {
         res.status(500).json({ error: 'Erro ao enviar formulário' });
