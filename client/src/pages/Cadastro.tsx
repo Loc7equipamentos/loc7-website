@@ -196,13 +196,29 @@ export default function Cadastro() {
     e.preventDefault();
     if (validatePF()) {
       setPfSubmitting(true);
-      setTimeout(() => {
-        console.log('PF Data:', pfData);
-        setPfSuccess(true);
+      try {
+        const response = await fetch('/api/submit-form-pf', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            data: pfData,
+            email: pfData.email,
+          }),
+        });
+
+        if (response.ok) {
+          setPfSuccess(true);
+          setPfData({});
+          setTimeout(() => setPfSuccess(false), 5000);
+        } else {
+          setPfErrors({ submit: 'Erro ao enviar formulario. Tente novamente.' });
+        }
+      } catch (error) {
+        console.error('Erro ao enviar:', error);
+        setPfErrors({ submit: 'Erro de conexao. Tente novamente.' });
+      } finally {
         setPfSubmitting(false);
-        setPfData({});
-        setTimeout(() => setPfSuccess(false), 5000);
-      }, 1000);
+      }
     }
   };
 
@@ -210,13 +226,29 @@ export default function Cadastro() {
     e.preventDefault();
     if (validatePJ()) {
       setPjSubmitting(true);
-      setTimeout(() => {
-        console.log('PJ Data:', pjData);
-        setPjSuccess(true);
+      try {
+        const response = await fetch('/api/submit-form-pj', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            data: pjData,
+            email: pjData.email,
+          }),
+        });
+
+        if (response.ok) {
+          setPjSuccess(true);
+          setPjData({});
+          setTimeout(() => setPjSuccess(false), 5000);
+        } else {
+          setPjErrors({ submit: 'Erro ao enviar formulario. Tente novamente.' });
+        }
+      } catch (error) {
+        console.error('Erro ao enviar:', error);
+        setPjErrors({ submit: 'Erro de conexao. Tente novamente.' });
+      } finally {
         setPjSubmitting(false);
-        setPjData({});
-        setTimeout(() => setPjSuccess(false), 5000);
-      }, 1000);
+      }
     }
   };
 
