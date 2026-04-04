@@ -98,16 +98,6 @@ export default function AdminLogin() {
           >
             {loading ? 'Conectando...' : 'Entrar'}
           </Button>
-
-          {/* Link Esqueci Senha */}
-          <div className="text-center mt-4">
-            <a
-              href="/admin-forgot-password"
-              className="text-blue-400 hover:text-blue-300 text-sm transition"
-            >
-              Esqueci minha senha
-            </a>
-          </div>
         </form>
 
         {/* Informações */}
