@@ -85,6 +85,7 @@ export default function Cadastro() {
 
   const getMask = (fieldName: string): string | undefined => {
     if (fieldName === 'cpf') return '999.999.999-99';
+    if (fieldName === 'rg') return '99.999.999-9';
     if (fieldName === 'cnpj') return '99.999.999/9999-99';
     if (fieldName === 'telefone' || fieldName === 'telefoneDdd' || fieldName === 'telefoneDdd1') return '(99) 99999-9999';
     if (fieldName === 'cep') return '99999-999';
@@ -134,6 +135,13 @@ export default function Cadastro() {
         errors[field] = 'Campo obrigatório';
       }
     });
+    
+    // Validar que pelo menos 1 referência comercial está preenchida
+    const hasReference = pfData.empresa1 || pfData.empresa2 || pfData.empresa3;
+    if (!hasReference) {
+      errors['referencias'] = 'Pelo menos 1 referência comercial é obrigatória';
+    }
+    
     setPfErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -145,6 +153,13 @@ export default function Cadastro() {
         errors[field] = 'Campo obrigatório';
       }
     });
+    
+    // Validar que pelo menos 1 referência comercial está preenchida
+    const hasReference = pjData.empresa1 || pjData.empresa2 || pjData.empresa3;
+    if (!hasReference) {
+      errors['referencias'] = 'Pelo menos 1 referência comercial é obrigatória';
+    }
+    
     setPjErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -207,6 +222,7 @@ export default function Cadastro() {
 
   const getMask2 = (fieldName: string): string | undefined => {
     if (fieldName === 'cpf') return '999.999.999-99';
+    if (fieldName === 'rg') return '99.999.999-9';
     if (fieldName === 'cnpj') return '99.999.999/9999-99';
     if (fieldName === 'telefone' || fieldName === 'telefoneDdd') return '(99) 99999-9999';
     if (fieldName === 'cep') return '99999-999';
