@@ -1,7 +1,8 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 type FormType = 'pf' | 'pj';
 
@@ -46,88 +47,6 @@ const estadosCidades: { [key: string]: string[] } = {
 
 const estados = Object.keys(estadosCidades).sort();
 
-const FormField = ({ 
-  label, 
-  name, 
-  type = 'text', 
-  required = false, 
-  error, 
-  value, 
-  onChange,
-  placeholder = '',
-  options = []
-}: any) => {
-  const handleChange = useCallback((e: any) => {
-    let val = e.target.value;
-    onChange(name, val);
-  }, [name, onChange]);
-
-  return (
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-white mb-1">
-        {label}
-        {required && <span className="text-red-600 ml-1">*</span>}
-      </label>
-      {type === 'select' ? (
-        <select
-          name={name}
-          value={value || ''}
-          onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black ${error ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
-        >
-          <option value="">Selecione...</option>
-          {options.map((opt: string) => (
-            <option key={opt} value={opt}>{opt}</option>
-          ))}
-        </select>
-      ) : type === 'textarea' ? (
-        <textarea
-          name={name}
-          value={value || ''}
-          onChange={handleChange}
-          placeholder={placeholder}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
-            error ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
-          rows={4}
-        />
-      ) : type === 'file' ? (
-        <input
-          type="file"
-          name={name}
-          onChange={(e) => onChange(name, e.target.files?.[0])}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
-            error ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
-          accept=".pdf,.jpg,.jpeg,.png"
-        />
-      ) : type === 'date' ? (
-        <input
-          type="date"
-          name={name}
-          value={value || ''}
-          onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
-            error ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
-        />
-      ) : (
-        <input
-          type={type}
-          name={name}
-          value={value || ''}
-          onChange={handleChange}
-          placeholder={placeholder}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black ${
-            error ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
-        />
-      )}
-      {error && <p className="text-red-600 text-xs mt-1">{error}</p>}
-    </div>
-  );
-};
-
 export default function Cadastro() {
   const [activeTab, setActiveTab] = useState<FormType>('pf');
   const [pfErrors, setPfErrors] = useState<FormError>({});
@@ -141,21 +60,49 @@ export default function Cadastro() {
   const [pfCidades, setPfCidades] = useState<string[]>([]);
   const [pjCidades, setPjCidades] = useState<string[]>([]);
 
-  const pfRequiredFields = useMemo(() => [
+  // PESSOA FÍSICA - Required fields
+  const pfRequiredFields = [
     'dataCadastro', 'nomeCompleto', 'cpf', 'rg', 'dataNascimento', 'nomeMae',
     'telefone', 'email', 'endereco', 'numero', 'bairro', 'cep', 'cidade', 'uf',
     'empresa1', 'nomeContato1', 'telefoneDdd1',
     'documento1'
-  ], []);
+  ];
 
-  const pjRequiredFields = useMemo(() => [
+  // PESSOA JURÍDICA - Required fields
+  const pjRequiredFields = [
     'dataCadastro', 'contato', 'telefonePJ', 'emailPJ',
     'nomeProprietario1', 'dataNascimentoProprietario1', 'rgProprietario1', 'cpfProprietario1',
     'empresa1', 'nomeContato1', 'telefoneDdd1',
     'ultimaAlteracao', 'cartaoCNPJ', 'comprovante'
-  ], []);
+  ];
 
-  const searchCEP = useCallback(async (cep: string, isFormType: 'pf' | 'pj') => {
+  const formatMask = (value: string, mask: string): string => {
+    const digits = value.replace(/\D/g, '');
+    let formatted = '';
+    let digitIndex = 0;
+
+    for (let i = 0; i < mask.length && digitIndex < digits.length; i++) {
+      if (mask[i] === '9') {
+        formatted += digits[digitIndex];
+        digitIndex++;
+      } else {
+        formatted += mask[i];
+      }
+    }
+
+    return formatted.substring(0, mask.length);
+  };
+
+  const getMask = (fieldName: string): string | undefined => {
+    if (fieldName === 'cpf' || fieldName === 'cpfProprietario1' || fieldName === 'cpfProprietario2') return '999.999.999-99';
+    if (fieldName === 'rg' || fieldName === 'rgProprietario1' || fieldName === 'rgProprietario2') return '99.999.999-9';
+    if (fieldName === 'cnpj') return '99.999.999/9999-99';
+    if (fieldName.includes('telefone') || fieldName.includes('Ddd')) return '(99) 99999-9999';
+    if (fieldName === 'cep') return '99999-999';
+    return undefined;
+  };
+
+  const searchCEP = async (cep: string, isFormType: 'pf' | 'pj') => {
     const cleanCEP = cep.replace(/\D/g, '');
     if (cleanCEP.length !== 8) return;
 
@@ -189,9 +136,9 @@ export default function Cadastro() {
     } catch (error) {
       console.error('Erro ao buscar CEP:', error);
     }
-  }, []);
+  };
 
-  const validatePF = useCallback(() => {
+  const validatePF = () => {
     const errors: FormError = {};
     pfRequiredFields.forEach(field => {
       if (!pfData[field]) {
@@ -199,6 +146,7 @@ export default function Cadastro() {
       }
     });
     
+    // Validar que pelo menos 1 referência comercial está preenchida
     const hasReference = pfData.empresa1 || pfData.empresa2 || pfData.empresa3;
     if (!hasReference) {
       errors['referencias'] = 'Pelo menos 1 referência comercial é obrigatória';
@@ -206,9 +154,9 @@ export default function Cadastro() {
     
     setPfErrors(errors);
     return Object.keys(errors).length === 0;
-  }, [pfData, pfRequiredFields]);
+  };
 
-  const validatePJ = useCallback(() => {
+  const validatePJ = () => {
     const errors: FormError = {};
     pjRequiredFields.forEach(field => {
       if (!pjData[field]) {
@@ -216,6 +164,7 @@ export default function Cadastro() {
       }
     });
     
+    // Validar que pelo menos 1 referência comercial está preenchida
     const hasReference = pjData.empresa1 || pjData.empresa2 || pjData.empresa3;
     if (!hasReference) {
       errors['referencias'] = 'Pelo menos 1 referência comercial é obrigatória';
@@ -223,12 +172,12 @@ export default function Cadastro() {
     
     setPjErrors(errors);
     return Object.keys(errors).length === 0;
-  }, [pjData, pjRequiredFields]);
+  };
 
-  const handlePFChange = useCallback((field: string, value: any) => {
-    setPfData(prev => ({ ...prev, [field]: value }));
+  const handlePFChange = (field: string, value: any) => {
+    setPfData({ ...pfData, [field]: value });
     if (pfErrors[field]) {
-      setPfErrors(prev => ({ ...prev, [field]: '' }));
+      setPfErrors({ ...pfErrors, [field]: '' });
     }
     if (field === 'uf' && value) {
       setPfCidades(estadosCidades[value] || []);
@@ -237,12 +186,12 @@ export default function Cadastro() {
     if (field === 'cep' && value.replace(/\D/g, '').length === 8) {
       searchCEP(value, 'pf');
     }
-  }, [pfErrors, searchCEP]);
+  };
 
-  const handlePJChange = useCallback((field: string, value: any) => {
-    setPjData(prev => ({ ...prev, [field]: value }));
+  const handlePJChange = (field: string, value: any) => {
+    setPjData({ ...pjData, [field]: value });
     if (pjErrors[field]) {
-      setPjErrors(prev => ({ ...prev, [field]: '' }));
+      setPjErrors({ ...pjErrors, [field]: '' });
     }
     if (field === 'uf' && value) {
       setPjCidades(estadosCidades[value] || []);
@@ -251,9 +200,9 @@ export default function Cadastro() {
     if (field === 'cep' && value.replace(/\D/g, '').length === 8) {
       searchCEP(value, 'pj');
     }
-  }, [pjErrors, searchCEP]);
+  };
 
-  const handlePFSubmit = useCallback(async (e: React.FormEvent) => {
+  const handlePFSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validatePF()) {
       setPfSubmitting(true);
@@ -265,9 +214,9 @@ export default function Cadastro() {
         setTimeout(() => setPfSuccess(false), 5000);
       }, 1000);
     }
-  }, [validatePF, pfData]);
+  };
 
-  const handlePJSubmit = useCallback(async (e: React.FormEvent) => {
+  const handlePJSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validatePJ()) {
       setPjSubmitting(true);
@@ -279,7 +228,90 @@ export default function Cadastro() {
         setTimeout(() => setPjSuccess(false), 5000);
       }, 1000);
     }
-  }, [validatePJ, pjData]);
+  };
+
+  const FormField = ({ 
+    label, 
+    name, 
+    type = 'text', 
+    required = false, 
+    error, 
+    value, 
+    onChange,
+    placeholder = ''
+  }: any) => {
+    const mask = getMask(name);
+    return (
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-white mb-1">
+        {label}
+        {required && <span className="text-red-600 ml-1">*</span>}
+      </label>
+      {type === 'select' ? (
+        <select
+          name={name}
+          value={value || ''}
+          onChange={(e) => onChange(name, e.target.value)}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black ${error ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+        >
+          <option value="">Selecione...</option>
+          {placeholder && placeholder.map((opt: string) => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+      ) : type === 'textarea' ? (
+        <textarea
+          name={name}
+          value={value || ''}
+          onChange={(e) => onChange(name, e.target.value)}
+          placeholder={placeholder}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
+            error ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
+          rows={4}
+        />
+      ) : type === 'file' ? (
+        <input
+          type="file"
+          name={name}
+          onChange={(e) => onChange(name, e.target.files?.[0])}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
+            error ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
+          accept=".pdf,.jpg,.jpeg,.png"
+        />
+      ) : type === 'date' ? (
+        <input
+          type="date"
+          name={name}
+          value={value || ''}
+          onChange={(e) => onChange(name, e.target.value)}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
+            error ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
+        />
+      ) : (
+        <input
+          type={type}
+          name={name}
+          value={value || ''}
+          onChange={(e) => {
+            let val = e.target.value;
+            if (mask) {
+              val = formatMask(val, mask);
+            }
+            onChange(name, val);
+          }}
+          placeholder={placeholder}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black ${
+            error ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
+        />
+      )}
+      {error && <p className="text-red-600 text-xs mt-1">{error}</p>}
+    </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[oklch(0.08_0_0)] py-12 px-4">
@@ -333,11 +365,11 @@ export default function Cadastro() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <FormField label="Cidade" name="cidade" required value={pfData.cidade} onChange={handlePFChange} error={pfErrors.cidade} />
-                    <FormField label="UF (Estado)" name="uf" type="select" required value={pfData.uf} onChange={handlePFChange} error={pfErrors.uf} options={estados} />
+                    <FormField label="UF (Estado)" name="uf" type="select" required value={pfData.uf} onChange={handlePFChange} error={pfErrors.uf} placeholder={estados} />
                   </div>
                 </div>
 
-                {/* Seção 3: Informações Adicionais */}
+                {/* Seção 3: Ocupação e Ramo */}
                 <div className="bg-white/0 border-0 p-6">
                   <h2 className="text-2xl font-bold text-white mb-4">3. INFORMAÇÕES ADICIONAIS</h2>
                   <div className="grid grid-cols-2 gap-4">
