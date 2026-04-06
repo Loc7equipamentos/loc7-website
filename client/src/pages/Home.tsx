@@ -437,55 +437,7 @@ export default function Home() {
 
 
 
-      {/* ===== CLIENTS ===== */}
-      <section className="py-16 bg-[oklch(0.08_0_0)] border-b border-[oklch(0.15_0_0)]">
-        <div className="container">
-          <div className="text-center mb-12">
-            <span className="loc7-section-title text-lg">CLIENTES</span>
-            <div className="loc7-red-line mx-auto" />
-            <p className="text-[oklch(0.5_0_0)] text-sm mt-3">Confiança de grandes produtoras e emissoras</p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-items-center">
-            {/* TV Globo */}
-            <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
-              <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/rZjUsXiiUSg0_64759b6c.png"
-                alt="TV Globo"
-                className="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity duration-300"
-              />
-            </div>
-            
-            {/* Multishow */}
-            <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
-              <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/aXzIbfu8r1Jl_8c062083.png"
-                alt="Multishow"
-                className="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity duration-300"
-              />
-            </div>
-            
-            {/* SporTV */}
-            <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
-              <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/raZRe9yIQ4W6_5ab3e16e.png"
-                alt="SporTV"
-                className="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity duration-300"
-              />
-            </div>
-            
-            {/* Placeholder 4 */}
-            <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
-              <span className="text-[oklch(0.45_0_0)] text-sm font-semibold opacity-50">+ Clientes</span>
-            </div>
-            
-            {/* Placeholder 5 */}
-            <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
-              <span className="text-[oklch(0.45_0_0)] text-sm font-semibold opacity-50">+ Clientes</span>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* ===== BRANDS ===== */}
       <section className="py-10 border-y border-[oklch(0.15_0_0)] overflow-hidden bg-gradient-to-b from-[oklch(0.22_0_0)] to-[oklch(0.25_0_0)] cement-texture">
