@@ -472,7 +472,7 @@ export default function Home() {
               {testimonials.slice(testimonialIndex, testimonialIndex + 3).map((testimonial, i) => (
                 <div
                   key={i}
-                  className={`p-6 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[320px] flex flex-col justify-between hover:border-[oklch(0.45_0.25_25)] hover:shadow-lg hover:shadow-[oklch(0.45_0.25_25)]/20 ${
+                  className={`p-6 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[320px] flex flex-col justify-between ${
                     isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                   }`}
                   style={{ transitionDelay: `${i * 100}ms` }}
@@ -494,7 +494,7 @@ export default function Home() {
                     <img
                       src={testimonial.avatar}
                       alt={testimonial.name}
-                      className="w-12 h-12 rounded-full border border-[oklch(0.45_0.25_25)]"
+                      className="w-12 h-12 rounded-full border-2 border-white"
                     />
                     <div>
                       <p className="text-white font-semibold text-sm">{testimonial.name}</p>
@@ -510,9 +510,9 @@ export default function Home() {
               {/* Left Arrow */}
               <button
                 onClick={() => setTestimonialIndex((prev) => (prev === 0 ? 3 : 0))}
-                className="p-2 rounded-full border border-[oklch(0.3_0_0)] hover:border-[oklch(0.45_0.25_25)] hover:bg-[oklch(0.45_0.25_25)]/10 transition-all duration-300"
+                className="p-2 rounded-full border border-white hover:border-white hover:bg-white/10 transition-all duration-300"
               >
-                <ChevronLeft className="w-5 h-5 text-[oklch(0.7_0_0)]" />
+                <ChevronLeft className="w-5 h-5 text-white" />
               </button>
               
               {/* Indicators - Grupos de 3 */}
@@ -523,8 +523,8 @@ export default function Home() {
                     onClick={() => setTestimonialIndex(i)}
                     className={`h-2 rounded-full transition-all duration-300 ${
                       i === testimonialIndex
-                        ? 'w-8 bg-[#FF0000]'
-                        : 'w-2 bg-[oklch(0.3_0_0)] hover:bg-[oklch(0.4_0_0)]'
+                        ? 'w-8 bg-white'
+                        : 'w-2 bg-[oklch(0.3_0_0)] hover:bg-white'
                     }`}
                   />
                 ))}
@@ -533,9 +533,9 @@ export default function Home() {
               {/* Right Arrow */}
               <button
                 onClick={() => setTestimonialIndex((prev) => (prev === 0 ? 3 : 0))}
-                className="p-2 rounded-full border border-[oklch(0.3_0_0)] hover:border-[oklch(0.45_0.25_25)] hover:bg-[oklch(0.45_0.25_25)]/10 transition-all duration-300"
+                className="p-2 rounded-full border border-white hover:border-white hover:bg-white/10 transition-all duration-300"
               >
-                <ChevronRight className="w-5 h-5 text-[oklch(0.7_0_0)]" />
+                <ChevronRight className="w-5 h-5 text-white" />
               </button>
             </div>
           </div>
