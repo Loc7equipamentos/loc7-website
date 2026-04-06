@@ -18,11 +18,6 @@ async function startServer() {
 
   app.use(express.static(staticPath));
 
-  // Serve admin.html for /admin route
-  app.get("/admin", (_req, res) => {
-    res.sendFile(path.join(staticPath, "admin.html"));
-  });
-
   // Handle client-side routing - serve index.html for all routes
   app.get("*", (_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));

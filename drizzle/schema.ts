@@ -1,33 +1,54 @@
-import { sqliteTable, integer, text, real, int } from 'drizzle-orm/sqlite-core';
+import { mysqlTable, varchar, text, int, decimal, datetime, boolean, json, enum as mysqlEnum } from 'drizzle-orm/mysql-core';
+import { relations } from 'drizzle-orm';
 
-export const categories = sqliteTable('categories', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  name: text('name').notNull(),
-  slug: text('slug').notNull().unique(),
+// Tabela de Categorias
+export const categories = mysqlTable('categories', {
+  id: int('id').primaryKey().autoincrement(),
+  name: varchar('name', { length: 255 }).notNull().unique(),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
   description: text('description'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).defaultNow(),
+  createdAt: datetime('created_at').defaultNow(),
+  updatedAt: datetime('updated_at').defaultNow().onUpdateNow(),
 });
 
-export const products = sqliteTable('products', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  categoryId: integer('category_id').notNull(),
-  name: text('name').notNull(),
-  model: text('model').notNull(),
-  brand: text('brand').notNull(),
+// Tabela de Produtos (Equipamentos)
+export const products = mysqlTable('products', {
+  id: int('id').primaryKey().autoincrement(),
+  categoryId: int('category_id').notNull(),
+  name: varchar('name', { length: 255 }).notNull(),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
+  brand: varchar('brand', { length: 255 }),
+  model: varchar('model', { length: 255 }),
   description: text('description'),
-  price: real('price').notNull(),
-  image: text('image'),
-  specifications: text('specifications'), // JSON string
-  accessories: text('accessories'), // JSON string
-  inStock: integer('in_stock', { mode: 'boolean' }).default(true),
-  createdAt: integer('created_at', { mode: 'timestamp' }).defaultNow(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).defaultNow(),
+  shortDescription: varchar('short_description', { length: 500 }),
+  pricePerDay: decimal('price_per_day', { precision: 10, scale: 2 }).notNull(),
+  pricePerWeek: decimal('price_per_week', { precision: 10, scale: 2 }),
+  pricePerMonth: decimal('price_per_month', { precision: 10, scale: 2 }),
+  mainImage: varchar('main_image', { length: 500 }),
+  images: json('images').$type<string[]>().default([]),
+  specifications: json('specifications').$type<Record<string, string>>().default({}),
+  whatIncludes: json('what_includes').$type<string[]>().default([]),
+  available: boolean('available').default(true),
+  quantity: int('quantity').default(1),
+  createdAt: datetime('created_at').defaultNow(),
+  updatedAt: datetime('updated_at').defaultNow().onUpdateNow(),
 });
 
-export const images = sqliteTable('images', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  productId: integer('product_id').notNull(),
-  url: text('url').notNull(),
-  alt: text('alt'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).defaultNow(),
-});
+// Relações
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  products: many(products),
+}));
+
+export const productsRelations = relations(products, ({ one }) => ({
+  category: one(categories, {
+    fields: [products.categoryId],
+    references: [categories.id],
+  }),
+}));
+
+// Types exportados
+export type Category = typeof categories.$inferSelect;
+export type NewCategory = typeof categories.$inferInsert;
+
+export type Product = typeof products.$inferSelect;
+export type NewProduct = typeof products.$inferInsert;
