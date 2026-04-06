@@ -12,6 +12,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Footer from "./components/Footer";
 import WhatsAppFloat from "./components/WhatsAppFloat";
+import Home from "./pages/Home";
 import Servicos from "./pages/Servicos";
 import Contato from "./pages/Contato";
 import Blog from "./pages/Blog";
@@ -40,7 +41,7 @@ function App() {
           <Toaster />
           <Router>
             <Layout>
-              <Route path="/" component={Servicos} />
+              <Route path="/" component={Home} />
               <Route path="/servicos" component={Servicos} />
               <Route path="/producao" component={Servicos} />
               <Route path="/blog" component={Blog} />
