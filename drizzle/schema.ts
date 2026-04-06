@@ -1,5 +1,6 @@
-import { mysqlTable, varchar, text, int, decimal, datetime, boolean, json, enum as mysqlEnum } from 'drizzle-orm/mysql-core';
+import { mysqlTable, varchar, text, int, decimal, datetime, boolean, json } from 'drizzle-orm/mysql-core';
 import { relations } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
 // Tabela de Categorias
 export const categories = mysqlTable('categories', {
@@ -7,8 +8,8 @@ export const categories = mysqlTable('categories', {
   name: varchar('name', { length: 255 }).notNull().unique(),
   slug: varchar('slug', { length: 255 }).notNull().unique(),
   description: text('description'),
-  createdAt: datetime('created_at').defaultNow(),
-  updatedAt: datetime('updated_at').defaultNow().onUpdateNow(),
+  createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: datetime('updated_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
 // Tabela de Produtos (Equipamentos)
@@ -30,8 +31,8 @@ export const products = mysqlTable('products', {
   whatIncludes: json('what_includes').$type<string[]>().default([]),
   available: boolean('available').default(true),
   quantity: int('quantity').default(1),
-  createdAt: datetime('created_at').defaultNow(),
-  updatedAt: datetime('updated_at').defaultNow().onUpdateNow(),
+  createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: datetime('updated_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
 // Relações
