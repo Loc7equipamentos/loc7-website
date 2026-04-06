@@ -68,12 +68,12 @@ const brands = [
 ];
 
 const testimonials = [
-  { name: "Marcos Filho", role: "Cliente", text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.", stars: 5, avatar: "https://i.pravatar.cc/150?img=1" },
-  { name: "Milennar Baby", role: "Local Guide", text: "Contamos com os serviços da Loc7 há 8 anos e sempre nos atendem prontamente com equipamentos sempre em ótimo estado e com preço justo. Recomendamos a Loc7 sempre!!!", stars: 5, avatar: "https://i.pravatar.cc/150?img=2" },
-  { name: "Raquel Carneiro", role: "Cliente", text: "Loc 7 sempre entrega tudo que promete, equipamento e atendimento impecável!", stars: 5, avatar: "https://i.pravatar.cc/150?img=3" },
-  { name: "Diogo Garcia de Menezes Santos", role: "Cliente", text: "Sempre solícitos e preocupados em nos proporcionar o melhor setup para a execução dos projetos na melhor excelência possível", stars: 5, avatar: "https://i.pravatar.cc/150?img=4" },
-  { name: "Jeniffer Carvalho", role: "Cliente", text: "Minha experiência foi ótima, foram super solicitos e sempre dispostos a ajudar, super recomendo", stars: 5, avatar: "https://i.pravatar.cc/150?img=5" },
-  { name: "Gabriel Silva", role: "Cliente", text: "Excelente atendimento, me ajudaram e tiraram todas minhas duvidas, otima localização!", stars: 5, avatar: "https://i.pravatar.cc/150?img=6" },
+  { name: "Marcos Filho", role: "Cliente", text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marcos" },
+  { name: "Milennar Baby", role: "Local Guide", text: "Contamos com os serviços da Loc7 há 8 anos e sempre nos atendem prontamente com equipamentos sempre em ótimo estado e com preço justo. Recomendamos a Loc7 sempre!!!", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Milennar" },
+  { name: "Raquel Carneiro", role: "Cliente", text: "Loc 7 sempre entrega tudo que promete, equipamento e atendimento impecável!", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Raquel" },
+  { name: "Diogo Garcia de Menezes Santos", role: "Cliente", text: "Sempre solícitos e preocupados em nos proporcionar o melhor setup para a execução dos projetos na melhor excelência possível", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Diogo" },
+  { name: "Jeniffer Carvalho", role: "Cliente", text: "Minha experiência foi ótima, foram super solicitos e sempre dispostos a ajudar, super recomendo", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jeniffer" },
+  { name: "Gabriel Silva", role: "Cliente", text: "Excelente atendimento, me ajudaram e tiraram todas minhas duvidas, otima localização!", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Gabriel" },
 ];
 
 function ProductCard({ product }: { product: typeof featuredProducts[0] }) {

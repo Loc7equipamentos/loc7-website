@@ -150,13 +150,7 @@ export default function Navbar() {
                       )}
                     </div>
                   ))}
-                  {/* CTA - Cadastre-se com estilo do menu */}
-                  <Link
-                    href="/cadastro"
-                    className="loc7-nav-link"
-                  >
-                    Cadastre-se
-                  </Link>
+
                 </div>
 
                 {/* Mobile menu button */}
@@ -208,9 +202,6 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="pt-4 flex flex-col gap-3">
-                <Link href="/cadastro" className="loc7-btn-outline text-center py-3">
-                  Cadastre-se
-                </Link>
                 <a
                   href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Gostaria de solicitar um orçamento."
                   target="_blank"
