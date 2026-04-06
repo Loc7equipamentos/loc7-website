@@ -154,10 +154,10 @@ export default function Home() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
+      setTestimonialIndex((prev) => (prev === 0 ? 3 : 0));
     }, 6000);
     return () => clearInterval(interval);
-  }, [testimonials.length]);
+  }, []);
 
   useEffect(() => {
     const carouselTimer = setInterval(() => {
