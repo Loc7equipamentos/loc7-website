@@ -68,12 +68,12 @@ const brands = [
 ];
 
 const testimonials = [
-  { name: "Marcos Filho", role: "Cliente", text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.", stars: 5 },
-  { name: "Milennar Baby", role: "Local Guide", text: "Contamos com os serviços da Loc7 há 8 anos e sempre nos atendem prontamente com equipamentos sempre em ótimo estado e com preço justo. Recomendamos a Loc7 sempre!!!", stars: 5 },
-  { name: "Raquel Carneiro", role: "Cliente", text: "Loc 7 sempre entrega tudo que promete, equipamento e atendimento impecável!", stars: 5 },
-  { name: "Diogo Garcia de Menezes Santos", role: "Cliente", text: "Sempre solícitos e preocupados em nos proporcionar o melhor setup para a execução dos projetos na melhor excelência possível", stars: 5 },
-  { name: "Jeniffer Carvalho", role: "Cliente", text: "Minha experiência foi ótima, foram super solicitos e sempre dispostos a ajudar, super recomendo", stars: 5 },
-  { name: "Gabriel Silva", role: "Cliente", text: "Excelente atendimento, me ajudaram e tiraram todas minhas duvidas, otima localização!", stars: 5 },
+  { name: "Marcos Filho", role: "Cliente", text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.", stars: 5, avatar: "https://i.pravatar.cc/150?img=1" },
+  { name: "Milennar Baby", role: "Local Guide", text: "Contamos com os serviços da Loc7 há 8 anos e sempre nos atendem prontamente com equipamentos sempre em ótimo estado e com preço justo. Recomendamos a Loc7 sempre!!!", stars: 5, avatar: "https://i.pravatar.cc/150?img=2" },
+  { name: "Raquel Carneiro", role: "Cliente", text: "Loc 7 sempre entrega tudo que promete, equipamento e atendimento impecável!", stars: 5, avatar: "https://i.pravatar.cc/150?img=3" },
+  { name: "Diogo Garcia de Menezes Santos", role: "Cliente", text: "Sempre solícitos e preocupados em nos proporcionar o melhor setup para a execução dos projetos na melhor excelência possível", stars: 5, avatar: "https://i.pravatar.cc/150?img=4" },
+  { name: "Jeniffer Carvalho", role: "Cliente", text: "Minha experiência foi ótima, foram super solicitos e sempre dispostos a ajudar, super recomendo", stars: 5, avatar: "https://i.pravatar.cc/150?img=5" },
+  { name: "Gabriel Silva", role: "Cliente", text: "Excelente atendimento, me ajudaram e tiraram todas minhas duvidas, otima localização!", stars: 5, avatar: "https://i.pravatar.cc/150?img=6" },
 ];
 
 function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
@@ -472,45 +472,71 @@ export default function Home() {
               {testimonials.slice(testimonialIndex, testimonialIndex + 3).map((testimonial, i) => (
                 <div
                   key={i}
-                  className={`p-6 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[280px] flex flex-col justify-between ${
+                  className={`p-6 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[320px] flex flex-col justify-between hover:border-[oklch(0.45_0.25_25)] hover:shadow-lg hover:shadow-[oklch(0.45_0.25_25)]/20 ${
                     isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                   }`}
                   style={{ transitionDelay: `${i * 100}ms` }}
                 >
-                  {/* Stars - Golden */}
-                  <div className="flex gap-1 mb-4">
+                  {/* Stars - Golden - Larger */}
+                  <div className="flex gap-2 mb-6">
                     {[...Array(testimonial.stars)].map((_, j) => (
-                      <span key={j} className="text-2xl" style={{ color: '#FFD700' }}>★</span>
+                      <span key={j} className="text-4xl" style={{ color: '#FFD700' }}>★</span>
                     ))}
                   </div>
                   
                   {/* Testimonial Text */}
-                  <p className="text-[oklch(0.7_0_0)] text-sm mb-4 leading-relaxed italic">
+                  <p className="text-[oklch(0.7_0_0)] text-sm mb-6 leading-relaxed italic flex-grow">
                     "{testimonial.text}"
                   </p>
                   
-                  {/* Author */}
-                  <div>
-                    <p className="text-white font-semibold text-sm">{testimonial.name}</p>
-                    <p className="text-[oklch(0.5_0_0)] text-xs">{testimonial.role}</p>
+                  {/* Author with Avatar */}
+                  <div className="flex items-center gap-4 pt-4 border-t border-[oklch(0.15_0_0)]">
+                    <img
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      className="w-12 h-12 rounded-full border border-[oklch(0.45_0.25_25)]"
+                    />
+                    <div>
+                      <p className="text-white font-semibold text-sm">{testimonial.name}</p>
+                      <p className="text-[oklch(0.5_0_0)] text-xs">{testimonial.role}</p>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Indicators - Grupos de 3 */}
-            <div className="flex gap-2 justify-center mt-8">
-              {[0, 3].map((i) => (
-                <button
-                  key={i}
-                  onClick={() => setTestimonialIndex(i)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    i === testimonialIndex
-                      ? 'w-8 bg-[#FF0000]'
-                      : 'w-2 bg-[oklch(0.3_0_0)] hover:bg-[oklch(0.4_0_0)]'
-                  }`}
-                />
-              ))}
+            {/* Navigation Controls */}
+            <div className="flex gap-4 justify-center items-center mt-8">
+              {/* Left Arrow */}
+              <button
+                onClick={() => setTestimonialIndex((prev) => (prev === 0 ? 3 : 0))}
+                className="p-2 rounded-full border border-[oklch(0.3_0_0)] hover:border-[oklch(0.45_0.25_25)] hover:bg-[oklch(0.45_0.25_25)]/10 transition-all duration-300"
+              >
+                <ChevronLeft className="w-5 h-5 text-[oklch(0.7_0_0)]" />
+              </button>
+              
+              {/* Indicators - Grupos de 3 */}
+              <div className="flex gap-2">
+                {[0, 3].map((i) => (
+                  <button
+                    key={i}
+                    onClick={() => setTestimonialIndex(i)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      i === testimonialIndex
+                        ? 'w-8 bg-[#FF0000]'
+                        : 'w-2 bg-[oklch(0.3_0_0)] hover:bg-[oklch(0.4_0_0)]'
+                    }`}
+                  />
+                ))}
+              </div>
+              
+              {/* Right Arrow */}
+              <button
+                onClick={() => setTestimonialIndex((prev) => (prev === 0 ? 3 : 0))}
+                className="p-2 rounded-full border border-[oklch(0.3_0_0)] hover:border-[oklch(0.45_0.25_25)] hover:bg-[oklch(0.45_0.25_25)]/10 transition-all duration-300"
+              >
+                <ChevronRight className="w-5 h-5 text-[oklch(0.7_0_0)]" />
+              </button>
             </div>
           </div>
         </div>
