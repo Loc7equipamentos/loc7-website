@@ -67,14 +67,7 @@ const brands = [
   { name: "TIFFEN", fontClass: "font-tiffen" },
 ];
 
-const testimonials = [
-  { name: "Marcos Filho", role: "Cliente", text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.", stars: 5 },
-  { name: "Milennar Baby", role: "Local Guide", text: "Contamos com os serviços da Loc7 há 8 anos e sempre nos atendem prontamente com equipamentos sempre em ótimo estado e com preço justo. Recomendamos a Loc7 sempre!!!", stars: 5 },
-  { name: "Raquel Carneiro", role: "Cliente", text: "Loc 7 sempre entrega tudo que promete, equipamento e atendimento impecável!", stars: 5 },
-  { name: "Diogo Garcia de Menezes Santos", role: "Cliente", text: "Sempre solícitos e preocupados em nos proporcionar o melhor setup para a execução dos projetos na melhor excelência possível", stars: 5 },
-  { name: "Jeniffer Carvalho", role: "Cliente", text: "Minha experiência foi ótima, foram super solicitos e sempre dispostos a ajudar, super recomendo", stars: 5 },
-  { name: "Gabriel Silva", role: "Cliente", text: "Excelente atendimento, me ajudaram e tiraram todas minhas duvidas, otima localização!", stars: 5 },
-];
+
 
 function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
   return (
@@ -120,7 +113,7 @@ function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [testimonialIndex, setTestimonialIndex] = useState(0);
+
   const [isVisible, setIsVisible] = useState<Record<string, boolean>>({});
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -152,12 +145,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [heroSlides.length]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [testimonials.length]);
+
 
   useEffect(() => {
     const carouselTimer = setInterval(() => {
@@ -209,7 +197,7 @@ export default function Home() {
     <div className="min-h-screen bg-[oklch(0.08_0_0)]">
       
       {/* ===== HERO SECTION ===== */}
-      <section className="relative h-[70vh] min-h-[400px] overflow-hidden">
+      <section className="hero-section relative h-[70vh] min-h-[400px] overflow-hidden">
         {/* Background - Alternating Images */}
         <div className="absolute inset-0">
           {heroSlides.map((slide, i) => {
@@ -326,7 +314,7 @@ export default function Home() {
       </section>
 
       {/* ===== CAROUSEL SECTION - 3 IMAGES ===== */}
-      <section className="py-8 bg-gradient-to-b from-[oklch(0.06_0_0)] to-[oklch(0.22_0_0)] cement-texture">
+      <section className="featured-carousel py-8 bg-gradient-to-b from-[oklch(0.06_0_0)] to-[oklch(0.22_0_0)] cement-texture">
         <div className="container">
           <div className="mb-8">
             <span className="loc7-section-title text-lg">DESTAQUES</span>
@@ -501,68 +489,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== TESTIMONIALS ===== */}
-      <section
-        id="testimonials"
-        ref={setSectionRef("testimonials")}
-        className="py-20 bg-gradient-to-b from-[oklch(0.25_0_0)] to-[oklch(0.22_0_0)] cement-texture"
-      >
-        <div className="container">
-          <div className={`mb-12 transition-all duration-700 ${isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <span className="loc7-section-title text-lg">DEPOIMENTOS</span>
-            <div className="loc7-red-line" />
-            <p className="text-[oklch(0.5_0_0)] text-sm mt-3">O que nossos clientes dizem sobre a gente</p>
-          </div>
 
-          <div className="relative">
-            {/* Grid de 3 Testimonials */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {testimonials.slice(testimonialIndex, testimonialIndex + 3).map((testimonial, i) => (
-                <div
-                  key={i}
-                  className={`p-6 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[280px] flex flex-col justify-between ${
-                    isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                  }`}
-                  style={{ transitionDelay: `${i * 100}ms` }}
-                >
-                  {/* Stars - Golden */}
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(testimonial.stars)].map((_, j) => (
-                      <span key={j} className="text-2xl" style={{ color: '#FFD700' }}>★</span>
-                    ))}
-                  </div>
-                  
-                  {/* Testimonial Text */}
-                  <p className="text-[oklch(0.7_0_0)] text-sm mb-4 leading-relaxed italic">
-                    "{testimonial.text}"
-                  </p>
-                  
-                  {/* Author */}
-                  <div>
-                    <p className="text-white font-semibold text-sm">{testimonial.name}</p>
-                    <p className="text-[oklch(0.5_0_0)] text-xs">{testimonial.role}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Indicators - Grupos de 3 */}
-            <div className="flex gap-2 justify-center mt-8">
-              {[0, 3].map((i) => (
-                <button
-                  key={i}
-                  onClick={() => setTestimonialIndex(i)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    i === testimonialIndex
-                      ? 'w-8 bg-[#FF0000]'
-                      : 'w-2 bg-[oklch(0.3_0_0)] hover:bg-[oklch(0.4_0_0)]'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
 
     </div>

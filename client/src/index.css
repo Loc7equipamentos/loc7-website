@@ -527,3 +527,163 @@
   font-family: 'Helvetica Neue', 'Arial', sans-serif;
   letter-spacing: 0.06em;
 }
+
+
+/* ===== RESPONSIVE DESIGN - MOBILE FIRST ===== */
+
+/* Desktop (1024px+) - Show all sections */
+@media (min-width: 1024px) {
+  /* Hero section visible */
+  .hero-section {
+    display: block;
+  }
+
+  /* Featured products carousel visible */
+  .featured-carousel {
+    display: block;
+  }
+
+  /* Testimonials section visible */
+  .testimonials-section {
+    display: block;
+  }
+
+  /* Categories grid shows all items */
+  .categories-grid {
+    display: grid;
+  }
+
+  /* WhatsApp button - larger size */
+  .whatsapp-float {
+    width: 60px;
+    height: 60px;
+    bottom: 30px;
+    right: 30px;
+  }
+
+  .whatsapp-float svg {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Tablet (768px - 1023px) - Show most sections */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Hero section visible */
+  .hero-section {
+    display: block;
+  }
+
+  /* Featured products carousel visible */
+  .featured-carousel {
+    display: block;
+  }
+
+  /* Testimonials section visible */
+  .testimonials-section {
+    display: block;
+  }
+
+  /* Categories grid shows all items */
+  .categories-grid {
+    display: grid;
+  }
+
+  /* WhatsApp button - medium size */
+  .whatsapp-float {
+    width: 55px;
+    height: 55px;
+    bottom: 25px;
+    right: 25px;
+  }
+
+  .whatsapp-float svg {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Mobile (< 768px) - Hide hero, featured, testimonials - Start with categories */
+@media (max-width: 767px) {
+  /* Hide hero section on mobile */
+  .hero-section {
+    display: none;
+  }
+
+  /* Hide featured products carousel on mobile */
+  .featured-carousel {
+    display: none;
+  }
+
+  /* Hide testimonials section on mobile */
+  .testimonials-section {
+    display: none;
+  }
+
+  /* Categories grid shows all items */
+  .categories-grid {
+    display: grid;
+  }
+
+  /* WhatsApp button - smaller size */
+  .whatsapp-float {
+    width: 50px;
+    height: 50px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .whatsapp-float svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Adjust padding for mobile */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Reduce font sizes on mobile */
+  h1 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem) !important;
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 3vw, 2rem) !important;
+  }
+
+  /* Adjust section padding */
+  section {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+}
+
+/* Small Mobile (< 480px) - Extra adjustments */
+@media (max-width: 479px) {
+  /* WhatsApp button - extra small */
+  .whatsapp-float {
+    width: 48px;
+    height: 48px;
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .whatsapp-float svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Reduce container padding further */
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Reduce section padding */
+  section {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+}

@@ -9,15 +9,15 @@ import { Link, useLocation } from "wouter";
 import { Menu, X, Camera, Aperture, Zap, Mic, Monitor, Move, Radio, Package, Clapperboard } from "lucide-react";
 
 const submenuCategories = [
-  { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
-  { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
-  { name: "Iluminação", icon: Zap, href: "/catalogo/iluminacao" },
-  { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
-  { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
-  { name: "Movimento", icon: Move, href: "/catalogo/movimento" },
-  { name: "Wireless", icon: Radio, href: "/catalogo/wireless" },
-  { name: "Modificadores", icon: Package, href: "/catalogo/modificadores" },
-  { name: "Maquinária", icon: Clapperboard, href: "/catalogo/maquinaria" },
+  { name: "Câmeras", icon: Camera, href: "/locacao/cameras" },
+  { name: "Lentes", icon: Aperture, href: "/locacao/lentes" },
+  { name: "Iluminação", icon: Zap, href: "/locacao/iluminacao" },
+  { name: "Áudio", icon: Mic, href: "/locacao/audio" },
+  { name: "Monitores", icon: Monitor, href: "/locacao/monitores" },
+  { name: "Movimento", icon: Move, href: "/locacao/movimento" },
+  { name: "Wireless", icon: Radio, href: "/locacao/wireless" },
+  { name: "Modificadores", icon: Package, href: "/locacao/modificadores" },
+  { name: "Maquinária", icon: Clapperboard, href: "/locacao/maquinaria" },
 ];
 
 const dropdownCategories = [
@@ -44,7 +44,7 @@ const dropdownCategories = [
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Locação", href: "/catalogo", hasDropdown: true },
+  { name: "Locação", href: "/locacao", hasDropdown: true },
   { name: "Produção", href: "/producao" },
 ];
 

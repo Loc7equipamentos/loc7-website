@@ -14,6 +14,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import Home from "./pages/Home";
+import Locacao from "./pages/Locacao";
 import Catalogo from "./pages/Catalogo";
 import Servicos from "./pages/Servicos";
 import Contato from "./pages/Contato";
@@ -39,6 +40,8 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={() => <Layout><Home /></Layout>} />
+      <Route path="/locacao" component={() => <Layout><Locacao /></Layout>} />
+      <Route path="/locacao/:category" component={() => <Layout><Locacao /></Layout>} />
       <Route path="/catalogo" component={() => <Layout><Catalogo /></Layout>} />
       <Route path="/catalogo/:category" component={() => <Layout><Catalogo /></Layout>} />
       <Route path="/servicos" component={() => <Layout><Servicos /></Layout>} />

@@ -9,7 +9,7 @@ export default function WhatsAppFloat() {
       href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Gostaria de um orçamento."
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-8 z-50 hover:scale-110 active:scale-95 transition-transform" style={{ right: '-2rem' }}
+      className="whatsapp-float fixed z-50 hover:scale-110 active:scale-95 transition-transform" style={{ right: '-2rem' }}
       title="Posso ajudar?"
     >
       <img
