@@ -68,12 +68,12 @@ const brands = [
 ];
 
 const testimonials = [
-  { name: "Marcos Filho", role: "Cliente", text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marcos" },
-  { name: "Milennar Baby", role: "Local Guide", text: "Contamos com os serviços da Loc7 há 8 anos e sempre nos atendem prontamente com equipamentos sempre em ótimo estado e com preço justo. Recomendamos a Loc7 sempre!!!", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Milennar" },
-  { name: "Raquel Carneiro", role: "Cliente", text: "Loc 7 sempre entrega tudo que promete, equipamento e atendimento impecável!", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Raquel" },
-  { name: "Diogo Garcia de Menezes Santos", role: "Cliente", text: "Sempre solícitos e preocupados em nos proporcionar o melhor setup para a execução dos projetos na melhor excelência possível", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Diogo" },
-  { name: "Jeniffer Carvalho", role: "Cliente", text: "Minha experiência foi ótima, foram super solicitos e sempre dispostos a ajudar, super recomendo", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jeniffer" },
-  { name: "Gabriel Silva", role: "Cliente", text: "Excelente atendimento, me ajudaram e tiraram todas minhas duvidas, otima localização!", stars: 5, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Gabriel" },
+  { name: "Marcos Filho", role: "Cliente", text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.", stars: 5 },
+  { name: "Milennar Baby", role: "Local Guide", text: "Contamos com os serviços da Loc7 há 8 anos e sempre nos atendem prontamente com equipamentos sempre em ótimo estado e com preço justo. Recomendamos a Loc7 sempre!!!", stars: 5 },
+  { name: "Raquel Carneiro", role: "Cliente", text: "Loc 7 sempre entrega tudo que promete, equipamento e atendimento impecável!", stars: 5 },
+  { name: "Diogo Garcia de Menezes Santos", role: "Cliente", text: "Sempre solícitos e preocupados em nos proporcionar o melhor setup para a execução dos projetos na melhor excelência possível", stars: 5 },
+  { name: "Jeniffer Carvalho", role: "Cliente", text: "Minha experiência foi ótima, foram super solicitos e sempre dispostos a ajudar, super recomendo", stars: 5 },
+  { name: "Gabriel Silva", role: "Cliente", text: "Excelente atendimento, me ajudaram e tiraram todas minhas duvidas, otima localização!", stars: 5 },
 ];
 
 function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
@@ -154,10 +154,10 @@ export default function Home() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTestimonialIndex((prev) => (prev === 0 ? 3 : 0));
+      setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonials.length]);
 
   useEffect(() => {
     const carouselTimer = setInterval(() => {
@@ -437,7 +437,55 @@ export default function Home() {
 
 
 
-
+      {/* ===== CLIENTS ===== */}
+      <section className="py-16 bg-[oklch(0.08_0_0)] border-b border-[oklch(0.15_0_0)]">
+        <div className="container">
+          <div className="text-center mb-12">
+            <span className="loc7-section-title text-lg">CLIENTES</span>
+            <div className="loc7-red-line mx-auto" />
+            <p className="text-[oklch(0.5_0_0)] text-sm mt-3">Confiança de grandes produtoras e emissoras</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-items-center">
+            {/* TV Globo */}
+            <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/rZjUsXiiUSg0_64759b6c.png"
+                alt="TV Globo"
+                className="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+              />
+            </div>
+            
+            {/* Multishow */}
+            <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/aXzIbfu8r1Jl_8c062083.png"
+                alt="Multishow"
+                className="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+              />
+            </div>
+            
+            {/* SporTV */}
+            <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/raZRe9yIQ4W6_5ab3e16e.png"
+                alt="SporTV"
+                className="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+              />
+            </div>
+            
+            {/* Placeholder 4 */}
+            <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
+              <span className="text-[oklch(0.45_0_0)] text-sm font-semibold opacity-50">+ Clientes</span>
+            </div>
+            
+            {/* Placeholder 5 */}
+            <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
+              <span className="text-[oklch(0.45_0_0)] text-sm font-semibold opacity-50">+ Clientes</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ===== BRANDS ===== */}
       <section className="py-10 border-y border-[oklch(0.15_0_0)] overflow-hidden bg-gradient-to-b from-[oklch(0.22_0_0)] to-[oklch(0.25_0_0)] cement-texture">
@@ -472,71 +520,45 @@ export default function Home() {
               {testimonials.slice(testimonialIndex, testimonialIndex + 3).map((testimonial, i) => (
                 <div
                   key={i}
-                  className={`p-6 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[320px] flex flex-col justify-between ${
+                  className={`p-6 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[280px] flex flex-col justify-between ${
                     isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                   }`}
                   style={{ transitionDelay: `${i * 100}ms` }}
                 >
-                  {/* Author with Avatar - TOP */}
-                  <div className="flex flex-col items-center gap-3 mb-6 pb-4 border-b border-[oklch(0.15_0_0)]">
-                    <img
-                      src={testimonial.avatar}
-                      alt={testimonial.name}
-                      className="w-16 h-16 rounded-full border-2 border-white"
-                    />
-                    <div className="text-center">
-                      <p className="text-white font-semibold text-sm">{testimonial.name}</p>
-                      <p className="text-[oklch(0.5_0_0)] text-xs">{testimonial.role}</p>
-                    </div>
-                  </div>
-                  
-                  {/* Stars - Golden - Larger */}
-                  <div className="flex gap-2 mb-6 justify-center">
+                  {/* Stars - Golden */}
+                  <div className="flex gap-1 mb-4">
                     {[...Array(testimonial.stars)].map((_, j) => (
-                      <span key={j} className="text-4xl" style={{ color: '#FFD700' }}>★</span>
+                      <span key={j} className="text-2xl" style={{ color: '#FFD700' }}>★</span>
                     ))}
                   </div>
                   
                   {/* Testimonial Text */}
-                  <p className="text-[oklch(0.7_0_0)] text-sm leading-relaxed italic flex-grow text-center">
+                  <p className="text-[oklch(0.7_0_0)] text-sm mb-4 leading-relaxed italic">
                     "{testimonial.text}"
                   </p>
+                  
+                  {/* Author */}
+                  <div>
+                    <p className="text-white font-semibold text-sm">{testimonial.name}</p>
+                    <p className="text-[oklch(0.5_0_0)] text-xs">{testimonial.role}</p>
+                  </div>
                 </div>
               ))}
             </div>
 
-            {/* Navigation Controls */}
-            <div className="flex gap-4 justify-center items-center mt-8">
-              {/* Left Arrow */}
-              <button
-                onClick={() => setTestimonialIndex((prev) => (prev === 0 ? 3 : 0))}
-                className="p-2 rounded-full border border-white hover:border-white hover:bg-white/10 transition-all duration-300"
-              >
-                <ChevronLeft className="w-5 h-5 text-white" />
-              </button>
-              
-              {/* Indicators - Grupos de 3 */}
-              <div className="flex gap-2">
-                {[0, 3].map((i) => (
-                  <button
-                    key={i}
-                    onClick={() => setTestimonialIndex(i)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      i === testimonialIndex
-                        ? 'w-8 bg-white'
-                        : 'w-2 bg-[oklch(0.3_0_0)] hover:bg-white'
-                    }`}
-                  />
-                ))}
-              </div>
-              
-              {/* Right Arrow */}
-              <button
-                onClick={() => setTestimonialIndex((prev) => (prev === 0 ? 3 : 0))}
-                className="p-2 rounded-full border border-white hover:border-white hover:bg-white/10 transition-all duration-300"
-              >
-                <ChevronRight className="w-5 h-5 text-white" />
-              </button>
+            {/* Indicators - Grupos de 3 */}
+            <div className="flex gap-2 justify-center mt-8">
+              {[0, 3].map((i) => (
+                <button
+                  key={i}
+                  onClick={() => setTestimonialIndex(i)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === testimonialIndex
+                      ? 'w-8 bg-[#FF0000]'
+                      : 'w-2 bg-[oklch(0.3_0_0)] hover:bg-[oklch(0.4_0_0)]'
+                  }`}
+                />
+              ))}
             </div>
           </div>
         </div>
