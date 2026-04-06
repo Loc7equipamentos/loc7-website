@@ -477,30 +477,30 @@ export default function Home() {
                   }`}
                   style={{ transitionDelay: `${i * 100}ms` }}
                 >
+                  {/* Author with Avatar - TOP */}
+                  <div className="flex flex-col items-center gap-3 mb-6 pb-4 border-b border-[oklch(0.15_0_0)]">
+                    <img
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      className="w-16 h-16 rounded-full border-2 border-white"
+                    />
+                    <div className="text-center">
+                      <p className="text-white font-semibold text-sm">{testimonial.name}</p>
+                      <p className="text-[oklch(0.5_0_0)] text-xs">{testimonial.role}</p>
+                    </div>
+                  </div>
+                  
                   {/* Stars - Golden - Larger */}
-                  <div className="flex gap-2 mb-6">
+                  <div className="flex gap-2 mb-6 justify-center">
                     {[...Array(testimonial.stars)].map((_, j) => (
                       <span key={j} className="text-4xl" style={{ color: '#FFD700' }}>★</span>
                     ))}
                   </div>
                   
                   {/* Testimonial Text */}
-                  <p className="text-[oklch(0.7_0_0)] text-sm mb-6 leading-relaxed italic flex-grow">
+                  <p className="text-[oklch(0.7_0_0)] text-sm leading-relaxed italic flex-grow text-center">
                     "{testimonial.text}"
                   </p>
-                  
-                  {/* Author with Avatar */}
-                  <div className="flex items-center gap-4 pt-4 border-t border-[oklch(0.15_0_0)]">
-                    <img
-                      src={testimonial.avatar}
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full border-2 border-white"
-                    />
-                    <div>
-                      <p className="text-white font-semibold text-sm">{testimonial.name}</p>
-                      <p className="text-[oklch(0.5_0_0)] text-xs">{testimonial.role}</p>
-                    </div>
-                  </div>
                 </div>
               ))}
             </div>
