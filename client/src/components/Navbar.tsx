@@ -9,42 +9,42 @@ import { Link, useLocation } from "wouter";
 import { Menu, X, Camera, Aperture, Zap, Mic, Monitor, Move, Radio, Package, Clapperboard } from "lucide-react";
 
 const submenuCategories = [
-  { name: "Câmeras", icon: Camera, href: "/locacao/cameras" },
-  { name: "Lentes", icon: Aperture, href: "/locacao/lentes" },
-  { name: "Iluminação", icon: Zap, href: "/locacao/iluminacao" },
-  { name: "Áudio", icon: Mic, href: "/locacao/audio" },
-  { name: "Monitores", icon: Monitor, href: "/locacao/monitores" },
-  { name: "Movimento", icon: Move, href: "/locacao/movimento" },
-  { name: "Wireless", icon: Radio, href: "/locacao/wireless" },
-  { name: "Modificadores", icon: Package, href: "/locacao/modificadores" },
-  { name: "Maquinária", icon: Clapperboard, href: "/locacao/maquinaria" },
+  { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
+  { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
+  { name: "Iluminação", icon: Zap, href: "/catalogo/iluminacao" },
+  { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
+  { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
+  { name: "Movimento", icon: Move, href: "/catalogo/movimento" },
+  { name: "Wireless", icon: Radio, href: "/catalogo/wireless" },
+  { name: "Modificadores", icon: Package, href: "/catalogo/modificadores" },
+  { name: "Maquinária", icon: Clapperboard, href: "/catalogo/maquinaria" },
 ];
 
 const dropdownCategories = [
-  { name: "ÁUDIO", href: "/locacao/audio" },
-  { name: "CÂMERAS", href: "/locacao/cameras" },
-  { name: "COMPUTADORES E TABLETS", href: "/locacao/computadores" },
-  { name: "COMUNICADORES", href: "/locacao/comunicadores" },
-  { name: "CONVERSORES", href: "/locacao/conversores" },
-  { name: "ESTABILIZADORES", href: "/locacao/estabilizadores" },
-  { name: "FILTROS", href: "/locacao/filtros" },
-  { name: "FOLLOW FOCUS", href: "/locacao/follow-focus" },
-  { name: "GRAVADORES", href: "/locacao/gravadores" },
-  { name: "HDS E CARTÕES DE MEMÓRIA", href: "/locacao/hds-cartoes" },
-  { name: "LENTES", href: "/locacao/lentes" },
-  { name: "MAQUINARIA", href: "/locacao/maquinaria" },
-  { name: "MATTEBOX", href: "/locacao/mattebox" },
-  { name: "MONITORES", href: "/locacao/monitores" },
-  { name: "SUPORTE E MOVIMENTO", href: "/locacao/movimento" },
-  { name: "SWITCHES", href: "/locacao/switches" },
-  { name: "TELE-PROMPTER", href: "/locacao/tele-prompter" },
-  { name: "TRANSMISSORES", href: "/locacao/transmissores" },
-  { name: "TRIPÉS", href: "/locacao/tripes" },
+  { name: "ÁUDIO", href: "/catalogo/audio" },
+  { name: "CÂMERAS", href: "/catalogo/cameras" },
+  { name: "COMPUTADORES E TABLETS", href: "/catalogo/computadores" },
+  { name: "COMUNICADORES", href: "/catalogo/comunicadores" },
+  { name: "CONVERSORES", href: "/catalogo/conversores" },
+  { name: "ESTABILIZADORES", href: "/catalogo/estabilizadores" },
+  { name: "FILTROS", href: "/catalogo/filtros" },
+  { name: "FOLLOW FOCUS", href: "/catalogo/follow-focus" },
+  { name: "GRAVADORES", href: "/catalogo/gravadores" },
+  { name: "HDS E CARTÕES DE MEMÓRIA", href: "/catalogo/hds-cartoes" },
+  { name: "LENTES", href: "/catalogo/lentes" },
+  { name: "MAQUINÁRIA", href: "/catalogo/maquinaria" },
+  { name: "MATTEBOX", href: "/catalogo/mattebox" },
+  { name: "MONITORES", href: "/catalogo/monitores" },
+  { name: "SUPORTE E MOVIMENTO", href: "/catalogo/movimento" },
+  { name: "SWITCHES", href: "/catalogo/switches" },
+  { name: "TELE-PROMPTER", href: "/catalogo/tele-prompter" },
+  { name: "TRANSMISSORES", href: "/catalogo/transmissores" },
+  { name: "TRIPÉS", href: "/catalogo/tripes" },
 ];
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Locação", href: "/locacao", hasDropdown: true },
+  { name: "Locação", href: "/catalogo", hasDropdown: true },
   { name: "Produção", href: "/producao" },
 ];
 
@@ -150,7 +150,13 @@ export default function Navbar() {
                       )}
                     </div>
                   ))}
-
+                  {/* CTA - Cadastre-se com estilo do menu */}
+                  <Link
+                    href="/cadastro"
+                    className="loc7-nav-link"
+                  >
+                    Cadastre-se
+                  </Link>
                 </div>
 
                 {/* Mobile menu button */}
@@ -202,6 +208,9 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="pt-4 flex flex-col gap-3">
+                <Link href="/cadastro" className="loc7-btn-outline text-center py-3">
+                  Cadastre-se
+                </Link>
                 <a
                   href="https://wa.me/message/WOIONHHSTABQF1?text=Olá! Gostaria de solicitar um orçamento."
                   target="_blank"

@@ -14,14 +14,13 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import Home from "./pages/Home";
-import Locacao from "./pages/Locacao";
 import Catalogo from "./pages/Catalogo";
 import Servicos from "./pages/Servicos";
 import Contato from "./pages/Contato";
 import Blog from "./pages/Blog";
 import Portfolio from "./pages/Portfolio";
 import Sobre from "./pages/Sobre";
-
+import Cadastro from "./pages/Cadastro";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -40,8 +39,6 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={() => <Layout><Home /></Layout>} />
-      <Route path="/locacao" component={() => <Layout><Locacao /></Layout>} />
-      <Route path="/locacao/:category" component={() => <Layout><Locacao /></Layout>} />
       <Route path="/catalogo" component={() => <Layout><Catalogo /></Layout>} />
       <Route path="/catalogo/:category" component={() => <Layout><Catalogo /></Layout>} />
       <Route path="/servicos" component={() => <Layout><Servicos /></Layout>} />
@@ -50,7 +47,7 @@ function Router() {
       <Route path="/portfolio" component={() => <Layout><Portfolio /></Layout>} />
       <Route path="/sobre" component={() => <Layout><Sobre /></Layout>} />
       <Route path="/contato" component={() => <Layout><Contato /></Layout>} />
-
+      <Route path="/cadastro" component={() => <Layout><Cadastro /></Layout>} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
