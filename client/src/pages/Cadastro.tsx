@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 
 const estadosCidades: { [key: string]: string[] } = {
@@ -34,6 +34,39 @@ const estadosCidades: { [key: string]: string[] } = {
 };
 
 const estados = Object.keys(estadosCidades).sort();
+const redesSociais = ['Instagram', 'Facebook', 'LinkedIn', 'TikTok', 'YouTube', 'Twitter', 'Outro'];
+
+// Funções de máscara
+const maskCPF = (value: string) => {
+  const clean = value.replace(/\D/g, '').slice(0, 11);
+  return clean
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
+};
+
+const maskRG = (value: string) => {
+  const clean = value.replace(/\D/g, '').slice(0, 9);
+  return clean
+    .replace(/(\d{2})(\d)/, '$1.$2')
+    .replace(/(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
+};
+
+const maskPhone = (value: string) => {
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{4})(\d)/, '$1-$2')
+    .slice(0, 15);
+};
+
+const maskCEP = (value: string) => {
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .slice(0, 9);
+};
 
 interface FormFieldProps {
   label: string;
@@ -49,10 +82,18 @@ interface FormFieldProps {
 
 const FormField = ({ label, name, type = 'text', required, value, onChange, error, placeholder, options }: FormFieldProps) => {
   const handleChange = useCallback((e: any) => {
+    let val = e.target.value;
+
+    // Aplicar máscaras
+    if (type === 'cpf') val = maskCPF(val);
+    if (type === 'rg') val = maskRG(val);
+    if (type === 'phone') val = maskPhone(val);
+    if (type === 'cep') val = maskCEP(val);
+
     if (type === 'file') {
       onChange(name, e.target.files?.[0]);
     } else {
-      onChange(name, e.target.value);
+      onChange(name, val);
     }
   }, [name, onChange, type]);
 
@@ -60,7 +101,7 @@ const FormField = ({ label, name, type = 'text', required, value, onChange, erro
     return (
       <div className="mb-4">
         <label className="block text-sm font-medium text-white mb-2">
-          {label} {required && '*'}
+          {label} {required && <span className="text-red-600">*</span>}
         </label>
         <select
           value={value || ''}
@@ -77,14 +118,30 @@ const FormField = ({ label, name, type = 'text', required, value, onChange, erro
     );
   }
 
+  if (type === 'file') {
+    return (
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-white mb-2">
+          {label} {required && <span className="text-red-600">*</span>}
+        </label>
+        <input
+          type="file"
+          onChange={handleChange}
+          className="w-full px-4 py-2 bg-transparent border-2 border-white text-white focus:outline-none focus:border-red-600"
+        />
+        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+      </div>
+    );
+  }
+
   return (
     <div className="mb-4">
       <label className="block text-sm font-medium text-white mb-2">
-        {label} {required && '*'}
+        {label} {required && <span className="text-red-600">*</span>}
       </label>
       <input
-        type={type}
-        value={type === 'file' ? '' : (value || '')}
+        type={type === 'cpf' || type === 'rg' || type === 'phone' || type === 'cep' ? 'text' : type}
+        value={value || ''}
         onChange={handleChange}
         placeholder={placeholder}
         className="w-full px-4 py-2 bg-transparent border-2 border-white text-white placeholder-gray-400 focus:outline-none focus:border-red-600"
@@ -100,11 +157,17 @@ export default function Cadastro() {
   const [pjData, setPJData] = useState<any>({});
   const [pfErrors, setPFErrors] = useState<any>({});
   const [pjErrors, setPJErrors] = useState<any>({});
+  const [loading, setLoading] = useState(false);
 
   const handlePFChange = useCallback((name: string, value: any) => {
     setPFData((prev: any) => ({ ...prev, [name]: value }));
     if (pfErrors[name]) {
       setPFErrors((prev: any) => ({ ...prev, [name]: '' }));
+    }
+
+    // Preenchimento automático de CEP
+    if (name === 'cep' && value.length === 9) {
+      searchCEP(value, 'pf');
     }
   }, [pfErrors]);
 
@@ -113,20 +176,149 @@ export default function Cadastro() {
     if (pjErrors[name]) {
       setPJErrors((prev: any) => ({ ...prev, [name]: '' }));
     }
+
+    // Preenchimento automático de CEP
+    if (name === 'cepEntrega' && value.length === 9) {
+      searchCEPPJ(value);
+    }
   }, [pjErrors]);
+
+  const searchCEP = useCallback(async (cep: string, type: 'pf' | 'pj') => {
+    const cleanCEP = cep.replace(/\D/g, '');
+    if (cleanCEP.length !== 8) return;
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cleanCEP}/json/`);
+      const data = await response.json();
+
+      if (data.erro) {
+        console.log('CEP não encontrado');
+        return;
+      }
+
+      if (type === 'pf') {
+        setPFData((prev: any) => ({
+          ...prev,
+          endereco: data.logradouro,
+          bairro: data.bairro,
+          cidade: data.localidade,
+          uf: data.uf
+        }));
+      }
+    } catch (error) {
+      console.error('Erro ao buscar CEP:', error);
+    }
+  }, []);
+
+  const searchCEPPJ = useCallback(async (cep: string) => {
+    const cleanCEP = cep.replace(/\D/g, '');
+    if (cleanCEP.length !== 8) return;
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cleanCEP}/json/`);
+      const data = await response.json();
+
+      if (data.erro) {
+        console.log('CEP não encontrado');
+        return;
+      }
+
+      setPJData((prev: any) => ({
+        ...prev,
+        enderecoEntrega: data.logradouro,
+        bairroEntrega: data.bairro,
+        cidadeEntrega: data.localidade,
+        ufEntrega: data.uf
+      }));
+    } catch (error) {
+      console.error('Erro ao buscar CEP:', error);
+    }
+  }, []);
 
   const handleStateChangePF = useCallback((state: string) => {
     handlePFChange('uf', state);
-    handlePFChange('cidade', '');
   }, [handlePFChange]);
 
   const handleStateChangePJ = useCallback((state: string) => {
-    handlePJChange('uf', state);
-    handlePJChange('cidade', '');
+    handlePJChange('ufEntrega', state);
   }, [handlePJChange]);
 
-  const cidadesPF = pfData.uf ? estadosCidades[pfData.uf] || [] : [];
-  const cidadesPJ = pjData.uf ? estadosCidades[pjData.uf] || [] : [];
+  const cidadesPF = useMemo(() => pfData.uf ? estadosCidades[pfData.uf] || [] : [], [pfData.uf]);
+  const cidadesPJ = useMemo(() => pjData.ufEntrega ? estadosCidades[pjData.ufEntrega] || [] : [], [pjData.ufEntrega]);
+
+  const validatePF = useCallback(() => {
+    const errors: any = {};
+    const requiredFields = ['dataCadastro', 'nomeCompleto', 'cpf', 'dataNascimento', 'nomeMae', 'endereco', 'numero', 'bairro', 'cep', 'uf', 'cidade', 'telefone', 'email', 'empresa1', 'nomeContato1', 'telefoneDdd1'];
+    
+    requiredFields.forEach(field => {
+      if (!pfData[field]) {
+        errors[field] = 'Campo obrigatório';
+      }
+    });
+
+    return errors;
+  }, [pfData]);
+
+  const validatePJ = useCallback(() => {
+    const errors: any = {};
+    const requiredFields = ['dataCadastroPJ', 'contatoFaturamento', 'telefoneFaturamento', 'emailFaturamento', 'nomeProp1', 'dataNascProp1', 'rgProp1', 'cpfProp1', 'empresaRef1PJ', 'contatoRef1PJ', 'telefoneRef1PJ'];
+    
+    requiredFields.forEach(field => {
+      if (!pjData[field]) {
+        errors[field] = 'Campo obrigatório';
+      }
+    });
+
+    return errors;
+  }, [pjData]);
+
+  const handleSubmitPF = useCallback(async (e: any) => {
+    e.preventDefault();
+    const errors = validatePF();
+    
+    if (Object.keys(errors).length > 0) {
+      setPFErrors(errors);
+      alert('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Simular envio
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      alert('✅ Cadastro de Pessoa Física enviado com sucesso! Entraremos em contato em breve.');
+      setPFData({});
+      setPFErrors({});
+    } catch (error) {
+      alert('❌ Erro ao enviar cadastro. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  }, [validatePF]);
+
+  const handleSubmitPJ = useCallback(async (e: any) => {
+    e.preventDefault();
+    const errors = validatePJ();
+    
+    if (Object.keys(errors).length > 0) {
+      setPJErrors(errors);
+      alert('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Simular envio
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      alert('✅ Cadastro de Pessoa Jurídica enviado com sucesso! Entraremos em contato em breve.');
+      setPJData({});
+      setPJErrors({});
+    } catch (error) {
+      alert('❌ Erro ao enviar cadastro. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  }, [validatePJ]);
 
   return (
     <div className="min-h-screen bg-[oklch(0.08_0_0)] py-12">
@@ -165,15 +357,15 @@ export default function Cadastro() {
 
         {/* Formulário PF */}
         {activeTab === 'pf' && (
-          <form onSubmit={(e) => { e.preventDefault(); alert('Cadastro PF enviado!'); }} className="space-y-8">
+          <form onSubmit={handleSubmitPF} className="space-y-8">
             {/* Seção 1: Informações Gerais */}
             <div className="bg-white/5 border-2 border-white/10 p-6">
               <h2 className="text-2xl font-bold text-white mb-6">1. INFORMAÇÕES GERAIS</h2>
               <div className="grid grid-cols-2 gap-4">
                 <FormField label="Data do Cadastro" name="dataCadastro" type="date" required value={pfData.dataCadastro} onChange={handlePFChange} error={pfErrors.dataCadastro} />
                 <FormField label="Nome Completo" name="nomeCompleto" required value={pfData.nomeCompleto} onChange={handlePFChange} error={pfErrors.nomeCompleto} />
-                <FormField label="CPF" name="cpf" required value={pfData.cpf} onChange={handlePFChange} error={pfErrors.cpf} placeholder="000.000.000-00" />
-                <FormField label="RG" name="rg" value={pfData.rg} onChange={handlePFChange} />
+                <FormField label="CPF" name="cpf" type="cpf" required value={pfData.cpf} onChange={handlePFChange} error={pfErrors.cpf} placeholder="000.000.000-00" />
+                <FormField label="RG" name="rg" type="rg" value={pfData.rg} onChange={handlePFChange} placeholder="00.000.000-0" />
                 <FormField label="Data de Nascimento" name="dataNascimento" type="date" required value={pfData.dataNascimento} onChange={handlePFChange} error={pfErrors.dataNascimento} />
                 <FormField label="Nome da Mãe" name="nomeMae" required value={pfData.nomeMae} onChange={handlePFChange} error={pfErrors.nomeMae} />
               </div>
@@ -186,18 +378,18 @@ export default function Cadastro() {
                 <FormField label="Endereço" name="endereco" required value={pfData.endereco} onChange={handlePFChange} error={pfErrors.endereco} />
                 <FormField label="Número" name="numero" required value={pfData.numero} onChange={handlePFChange} error={pfErrors.numero} />
                 <FormField label="Bairro" name="bairro" required value={pfData.bairro} onChange={handlePFChange} error={pfErrors.bairro} />
-                <FormField label="CEP" name="cep" required value={pfData.cep} onChange={handlePFChange} error={pfErrors.cep} placeholder="00000-000" />
+                <FormField label="CEP" name="cep" type="cep" required value={pfData.cep} onChange={handlePFChange} error={pfErrors.cep} placeholder="00000-000" />
                 <FormField label="UF (Estado)" name="uf" type="select" required value={pfData.uf} onChange={handleStateChangePF} error={pfErrors.uf} options={estados} />
                 <FormField label="Cidade" name="cidade" type="select" required value={pfData.cidade} onChange={handlePFChange} error={pfErrors.cidade} options={cidadesPF} />
               </div>
-              <FormField label="Rede Social" name="redeSocial" value={pfData.redeSocial} onChange={handlePFChange} placeholder="(Opcional)" />
+              <FormField label="Rede Social" name="redeSocial" type="select" value={pfData.redeSocial} onChange={handlePFChange} options={redesSociais} />
             </div>
 
             {/* Seção 3: Contato */}
             <div className="bg-white/5 border-2 border-white/10 p-6">
               <h2 className="text-2xl font-bold text-white mb-6">3. CONTATO</h2>
               <div className="grid grid-cols-2 gap-4">
-                <FormField label="Telefone (com DDD)" name="telefone" required value={pfData.telefone} onChange={handlePFChange} error={pfErrors.telefone} placeholder="(11) 99999-9999" />
+                <FormField label="Telefone (com DDD)" name="telefone" type="phone" required value={pfData.telefone} onChange={handlePFChange} error={pfErrors.telefone} placeholder="(11) 9999-9999" />
                 <FormField label="E-mail" name="email" type="email" required value={pfData.email} onChange={handlePFChange} error={pfErrors.email} placeholder="seu@email.com" />
               </div>
             </div>
@@ -208,11 +400,11 @@ export default function Cadastro() {
               <p className="text-gray-400 text-sm mb-6">(Preferência na área audiovisual: Locadoras, fornecedores)</p>
               
               <div className="mb-6">
-                <h3 className="text-lg font-bold text-white mb-4">Referência 1</h3>
+                <h3 className="text-lg font-bold text-white mb-4">Referência 1 *</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <FormField label="Empresa" name="empresa1" required value={pfData.empresa1} onChange={handlePFChange} error={pfErrors.empresa1} />
                   <FormField label="Nome do Contato" name="nomeContato1" required value={pfData.nomeContato1} onChange={handlePFChange} error={pfErrors.nomeContato1} />
-                  <FormField label="Telefone (com DDD)" name="telefoneDdd1" required value={pfData.telefoneDdd1} onChange={handlePFChange} error={pfErrors.telefoneDdd1} />
+                  <FormField label="Telefone (com DDD)" name="telefoneDdd1" type="phone" required value={pfData.telefoneDdd1} onChange={handlePFChange} error={pfErrors.telefoneDdd1} />
                 </div>
               </div>
 
@@ -221,7 +413,7 @@ export default function Cadastro() {
                 <div className="grid grid-cols-3 gap-4">
                   <FormField label="Empresa" name="empresa2" value={pfData.empresa2} onChange={handlePFChange} />
                   <FormField label="Nome do Contato" name="nomeContato2" value={pfData.nomeContato2} onChange={handlePFChange} />
-                  <FormField label="Telefone (com DDD)" name="telefoneDdd2" value={pfData.telefoneDdd2} onChange={handlePFChange} />
+                  <FormField label="Telefone (com DDD)" name="telefoneDdd2" type="phone" value={pfData.telefoneDdd2} onChange={handlePFChange} />
                 </div>
               </div>
 
@@ -230,7 +422,7 @@ export default function Cadastro() {
                 <div className="grid grid-cols-3 gap-4">
                   <FormField label="Empresa" name="empresa3" value={pfData.empresa3} onChange={handlePFChange} />
                   <FormField label="Nome do Contato" name="nomeContato3" value={pfData.nomeContato3} onChange={handlePFChange} />
-                  <FormField label="Telefone (com DDD)" name="telefoneDdd3" value={pfData.telefoneDdd3} onChange={handlePFChange} />
+                  <FormField label="Telefone (com DDD)" name="telefoneDdd3" type="phone" value={pfData.telefoneDdd3} onChange={handlePFChange} />
                 </div>
               </div>
             </div>
@@ -282,20 +474,22 @@ export default function Cadastro() {
               </ul>
             </div>
 
-            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3">ENVIAR CADASTRO</Button>
+            <Button type="submit" disabled={loading} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 disabled:opacity-50">
+              {loading ? 'ENVIANDO...' : 'ENVIAR CADASTRO'}
+            </Button>
           </form>
         )}
 
         {/* Formulário PJ */}
         {activeTab === 'pj' && (
-          <form onSubmit={(e) => { e.preventDefault(); alert('Cadastro PJ enviado!'); }} className="space-y-8">
+          <form onSubmit={handleSubmitPJ} className="space-y-8">
             {/* Seção 1: Informações Gerais para Faturamento */}
             <div className="bg-white/5 border-2 border-white/10 p-6">
               <h2 className="text-2xl font-bold text-white mb-6">1. INFORMAÇÕES GERAIS PARA FATURAMENTO</h2>
               <div className="grid grid-cols-2 gap-4">
                 <FormField label="Data do Cadastro" name="dataCadastroPJ" type="date" required value={pjData.dataCadastroPJ} onChange={handlePJChange} error={pjErrors.dataCadastroPJ} />
                 <FormField label="Contato para Faturamento" name="contatoFaturamento" required value={pjData.contatoFaturamento} onChange={handlePJChange} error={pjErrors.contatoFaturamento} />
-                <FormField label="Telefone (com DDD)" name="telefoneFaturamento" required value={pjData.telefoneFaturamento} onChange={handlePJChange} error={pjErrors.telefoneFaturamento} placeholder="(11) 99999-9999" />
+                <FormField label="Telefone (com DDD)" name="telefoneFaturamento" type="phone" required value={pjData.telefoneFaturamento} onChange={handlePJChange} error={pjErrors.telefoneFaturamento} placeholder="(11) 9999-9999" />
                 <FormField label="E-mail" name="emailFaturamento" type="email" required value={pjData.emailFaturamento} onChange={handlePJChange} error={pjErrors.emailFaturamento} placeholder="seu@email.com" />
               </div>
             </div>
@@ -308,7 +502,7 @@ export default function Cadastro() {
                 <h3 className="text-lg font-bold text-white mb-4">Contato 1</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <FormField label="Nome" name="nomeContato1PJ" value={pjData.nomeContato1PJ} onChange={handlePJChange} />
-                  <FormField label="Telefone" name="telefoneContato1PJ" value={pjData.telefoneContato1PJ} onChange={handlePJChange} />
+                  <FormField label="Telefone" name="telefoneContato1PJ" type="phone" value={pjData.telefoneContato1PJ} onChange={handlePJChange} />
                   <FormField label="Empresa" name="empresaContato1PJ" value={pjData.empresaContato1PJ} onChange={handlePJChange} />
                 </div>
               </div>
@@ -317,7 +511,7 @@ export default function Cadastro() {
                 <h3 className="text-lg font-bold text-white mb-4">Contato 2</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <FormField label="Nome" name="nomeContato2PJ" value={pjData.nomeContato2PJ} onChange={handlePJChange} />
-                  <FormField label="Telefone" name="telefoneContato2PJ" value={pjData.telefoneContato2PJ} onChange={handlePJChange} />
+                  <FormField label="Telefone" name="telefoneContato2PJ" type="phone" value={pjData.telefoneContato2PJ} onChange={handlePJChange} />
                   <FormField label="Empresa" name="empresaContato2PJ" value={pjData.empresaContato2PJ} onChange={handlePJChange} />
                 </div>
               </div>
@@ -326,7 +520,7 @@ export default function Cadastro() {
                 <h3 className="text-lg font-bold text-white mb-4">Contato 3</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <FormField label="Nome" name="nomeContato3PJ" value={pjData.nomeContato3PJ} onChange={handlePJChange} />
-                  <FormField label="Telefone" name="telefoneContato3PJ" value={pjData.telefoneContato3PJ} onChange={handlePJChange} />
+                  <FormField label="Telefone" name="telefoneContato3PJ" type="phone" value={pjData.telefoneContato3PJ} onChange={handlePJChange} />
                   <FormField label="Empresa" name="empresaContato3PJ" value={pjData.empresaContato3PJ} onChange={handlePJChange} />
                 </div>
               </div>
@@ -337,12 +531,12 @@ export default function Cadastro() {
               <h2 className="text-2xl font-bold text-white mb-6">3. DADOS DOS PROPRIETÁRIOS</h2>
               
               <div className="mb-6">
-                <h3 className="text-lg font-bold text-white mb-4">Proprietário 1</h3>
+                <h3 className="text-lg font-bold text-white mb-4">Proprietário 1 *</h3>
                 <div className="grid grid-cols-4 gap-4">
-                  <FormField label="Nome" name="nomeProp1" value={pjData.nomeProp1} onChange={handlePJChange} />
-                  <FormField label="Data Nascimento" name="dataNascProp1" type="date" value={pjData.dataNascProp1} onChange={handlePJChange} />
-                  <FormField label="RG" name="rgProp1" value={pjData.rgProp1} onChange={handlePJChange} />
-                  <FormField label="CPF" name="cpfProp1" value={pjData.cpfProp1} onChange={handlePJChange} placeholder="000.000.000-00" />
+                  <FormField label="Nome" name="nomeProp1" required value={pjData.nomeProp1} onChange={handlePJChange} error={pjErrors.nomeProp1} />
+                  <FormField label="Data Nascimento" name="dataNascProp1" type="date" required value={pjData.dataNascProp1} onChange={handlePJChange} error={pjErrors.dataNascProp1} />
+                  <FormField label="RG" name="rgProp1" type="rg" required value={pjData.rgProp1} onChange={handlePJChange} error={pjErrors.rgProp1} />
+                  <FormField label="CPF" name="cpfProp1" type="cpf" required value={pjData.cpfProp1} onChange={handlePJChange} error={pjErrors.cpfProp1} placeholder="000.000.000-00" />
                 </div>
               </div>
 
@@ -351,8 +545,8 @@ export default function Cadastro() {
                 <div className="grid grid-cols-4 gap-4">
                   <FormField label="Nome" name="nomeProp2" value={pjData.nomeProp2} onChange={handlePJChange} />
                   <FormField label="Data Nascimento" name="dataNascProp2" type="date" value={pjData.dataNascProp2} onChange={handlePJChange} />
-                  <FormField label="RG" name="rgProp2" value={pjData.rgProp2} onChange={handlePJChange} />
-                  <FormField label="CPF" name="cpfProp2" value={pjData.cpfProp2} onChange={handlePJChange} placeholder="000.000.000-00" />
+                  <FormField label="RG" name="rgProp2" type="rg" value={pjData.rgProp2} onChange={handlePJChange} />
+                  <FormField label="CPF" name="cpfProp2" type="cpf" value={pjData.cpfProp2} onChange={handlePJChange} placeholder="000.000.000-00" />
                 </div>
               </div>
             </div>
@@ -362,11 +556,11 @@ export default function Cadastro() {
               <h2 className="text-2xl font-bold text-white mb-6">4. REFERÊNCIAS COMERCIAIS</h2>
               
               <div className="mb-6">
-                <h3 className="text-lg font-bold text-white mb-4">Referência 1</h3>
+                <h3 className="text-lg font-bold text-white mb-4">Referência 1 *</h3>
                 <div className="grid grid-cols-3 gap-4">
-                  <FormField label="Empresa" name="empresaRef1PJ" value={pjData.empresaRef1PJ} onChange={handlePJChange} />
-                  <FormField label="Contato" name="contatoRef1PJ" value={pjData.contatoRef1PJ} onChange={handlePJChange} />
-                  <FormField label="Telefone" name="telefoneRef1PJ" value={pjData.telefoneRef1PJ} onChange={handlePJChange} />
+                  <FormField label="Empresa" name="empresaRef1PJ" required value={pjData.empresaRef1PJ} onChange={handlePJChange} error={pjErrors.empresaRef1PJ} />
+                  <FormField label="Contato" name="contatoRef1PJ" required value={pjData.contatoRef1PJ} onChange={handlePJChange} error={pjErrors.contatoRef1PJ} />
+                  <FormField label="Telefone" name="telefoneRef1PJ" type="phone" required value={pjData.telefoneRef1PJ} onChange={handlePJChange} error={pjErrors.telefoneRef1PJ} />
                 </div>
               </div>
 
@@ -375,7 +569,7 @@ export default function Cadastro() {
                 <div className="grid grid-cols-3 gap-4">
                   <FormField label="Empresa" name="empresaRef2PJ" value={pjData.empresaRef2PJ} onChange={handlePJChange} />
                   <FormField label="Contato" name="contatoRef2PJ" value={pjData.contatoRef2PJ} onChange={handlePJChange} />
-                  <FormField label="Telefone" name="telefoneRef2PJ" value={pjData.telefoneRef2PJ} onChange={handlePJChange} />
+                  <FormField label="Telefone" name="telefoneRef2PJ" type="phone" value={pjData.telefoneRef2PJ} onChange={handlePJChange} />
                 </div>
               </div>
 
@@ -384,7 +578,7 @@ export default function Cadastro() {
                 <div className="grid grid-cols-3 gap-4">
                   <FormField label="Empresa" name="empresaRef3PJ" value={pjData.empresaRef3PJ} onChange={handlePJChange} />
                   <FormField label="Contato" name="contatoRef3PJ" value={pjData.contatoRef3PJ} onChange={handlePJChange} />
-                  <FormField label="Telefone" name="telefoneRef3PJ" value={pjData.telefoneRef3PJ} onChange={handlePJChange} />
+                  <FormField label="Telefone" name="telefoneRef3PJ" type="phone" value={pjData.telefoneRef3PJ} onChange={handlePJChange} />
                 </div>
               </div>
             </div>
@@ -396,7 +590,7 @@ export default function Cadastro() {
                 <FormField label="Endereço" name="enderecoEntrega" value={pjData.enderecoEntrega} onChange={handlePJChange} />
                 <FormField label="Complemento" name="complementoEntrega" value={pjData.complementoEntrega} onChange={handlePJChange} />
                 <FormField label="Bairro" name="bairroEntrega" value={pjData.bairroEntrega} onChange={handlePJChange} />
-                <FormField label="CEP" name="cepEntrega" value={pjData.cepEntrega} onChange={handlePJChange} placeholder="00000-000" />
+                <FormField label="CEP" name="cepEntrega" type="cep" value={pjData.cepEntrega} onChange={handlePJChange} placeholder="00000-000" />
                 <FormField label="UF" name="ufEntrega" type="select" value={pjData.ufEntrega} onChange={handleStateChangePJ} options={estados} />
                 <FormField label="Cidade" name="cidadeEntrega" type="select" value={pjData.cidadeEntrega} onChange={handlePJChange} options={cidadesPJ} />
               </div>
@@ -419,7 +613,9 @@ export default function Cadastro() {
               </ul>
             </div>
 
-            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3">ENVIAR CADASTRO</Button>
+            <Button type="submit" disabled={loading} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 disabled:opacity-50">
+              {loading ? 'ENVIANDO...' : 'ENVIAR CADASTRO'}
+            </Button>
           </form>
         )}
       </div>
