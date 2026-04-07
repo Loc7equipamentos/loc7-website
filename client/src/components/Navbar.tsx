@@ -6,7 +6,8 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Camera, Aperture, Zap, Mic, Monitor, Move, Radio, Package, Clapperboard } from "lucide-react";
+import { Menu, X, Camera, Aperture, Zap, Mic, Monitor, Move, Radio, Package, Clapperboard, ShoppingCart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 
 const submenuCategories = [
   { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
@@ -49,6 +50,7 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const { items } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
@@ -150,6 +152,20 @@ export default function Navbar() {
                       )}
                     </div>
                   ))}
+                  {/* Contador de Orçamento */}
+                  <Link
+                    href="/orcamento"
+                    className="loc7-nav-link flex items-center gap-2 relative"
+                  >
+                    <ShoppingCart className="w-5 h-5" />
+                    Orçamento
+                    {items.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-[oklch(0.45_0.25_25)] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                        {items.length}
+                      </span>
+                    )}
+                  </Link>
+
                   {/* CTA - Cadastre-se com estilo do menu */}
                   <Link
                     href="/cadastro"

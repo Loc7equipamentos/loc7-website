@@ -10,11 +10,13 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { CartProvider } from "./contexts/CartContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import Home from "./pages/Home";
 import Catalogo from "./pages/Catalogo";
+import Orcamento from "./pages/Orcamento";
 import Servicos from "./pages/Servicos";
 import Contato from "./pages/Contato";
 import Blog from "./pages/Blog";
@@ -42,6 +44,7 @@ function Router() {
       <Route path="/" component={() => <Layout><Home /></Layout>} />
       <Route path="/catalogo" component={() => <Layout><Catalogo /></Layout>} />
       <Route path="/catalogo/:category" component={() => <Layout><Catalogo /></Layout>} />
+      <Route path="/orcamento" component={() => <Layout><Orcamento /></Layout>} />
       <Route path="/servicos" component={() => <Layout><Servicos /></Layout>} />
       <Route path="/producao" component={() => <Layout><Servicos /></Layout>} />
       <Route path="/blog" component={() => <Layout><Blog /></Layout>} />
@@ -59,12 +62,14 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
+      <CartProvider>
+        <ThemeProvider defaultTheme="dark">
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </ThemeProvider>
+      </CartProvider>
     </ErrorBoundary>
   );
 }

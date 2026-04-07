@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { Search, SlidersHorizontal, X, ArrowRight } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 
 const categories = ["Todos", "Câmeras", "Lentes", "Iluminação", "Áudio", "Monitores", "Movimento", "Wireless", "Modificadores"];
 const brands = ["Todas", "Sony", "Canon", "RED", "Blackmagic", "Arri", "Aputure", "Zeiss", "DJI", "Godox"];
@@ -30,6 +31,7 @@ const allProducts = [
 ];
 
 export default function Catalogo() {
+  const { addItem } = useCart();
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [selectedBrand, setSelectedBrand] = useState("Todas");
   const [searchQuery, setSearchQuery] = useState("");
@@ -174,14 +176,20 @@ export default function Catalogo() {
                       <span className="text-[0.6rem] font-display font-bold uppercase tracking-widest bg-[oklch(0.45_0.25_25)] text-white px-1.5 py-0.5">NOVO</span>
                     )}
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 gap-2">
+                    <button
+                      onClick={() => addItem({ id: product.id, name: product.name, price: product.price, category: product.category })}
+                      className="flex-1 bg-[oklch(0.45_0.25_25)] hover:bg-[oklch(0.5_0.25_25)] text-white text-xs py-2 text-center transition-colors font-display font-semibold uppercase tracking-wide"
+                    >
+                      + Orcar
+                    </button>
                     <a
                       href={`https://wa.me/message/WOIONHHSTABQF1?text=Olá! Tenho interesse em alugar: ${product.name}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full loc7-btn-primary text-xs py-2 text-center"
+                      className="flex-1 loc7-btn-primary text-xs py-2 text-center"
                     >
-                      Orçamento WhatsApp
+                      Direto
                     </a>
                   </div>
                 </div>
