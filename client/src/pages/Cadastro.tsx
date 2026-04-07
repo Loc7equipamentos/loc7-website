@@ -101,29 +101,19 @@ export default function CadastroPage() {
         body: formData,
       })
 
-      const text = await response.text()
-      console.log("STATUS:", response.status)
-      console.log("RESPOSTA:", text)
+      const rawText = await response.text()
+      console.log("FORM RESPONSE STATUS:", response.status)
+      console.log("FORM RESPONSE BODY:", rawText)
 
       if (!response.ok) {
-        setError(`Erro ao enviar. Status: ${response.status}`)
+        setError(`Erro ao enviar. Status: ${response.status}. Veja o console.`)
         return
       }
 
       setSuccess(true)
       form.reset()
-      setTipo("pf")
-      setTelefone("")
-      setCpf("")
-      setCnpj("")
-      setRg("")
-      setCep("")
-      setEndereco("")
-      setBairro("")
-      setCidade("")
-      setUf("")
     } catch (err) {
-      console.error("Erro de envio:", err)
+      console.error("ERRO DE REDE:", err)
       setError("Erro de conexão ao enviar o formulário.")
     } finally {
       setLoading(false)
