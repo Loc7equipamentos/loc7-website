@@ -99,13 +99,15 @@ export default function CadastroPage() {
       const response = await fetch("https://formspree.io/f/mreojwrr", {
         method: "POST",
         body: formData,
-        headers: {
-          Accept: "application/json",
-        },
       })
 
+      const text = await response.text()
+      console.log("STATUS:", response.status)
+      console.log("RESPOSTA:", text)
+
       if (!response.ok) {
-        throw new Error("Falha no envio")
+        setError(`Erro ao enviar. Status: ${response.status}`)
+        return
       }
 
       setSuccess(true)
@@ -121,7 +123,8 @@ export default function CadastroPage() {
       setCidade("")
       setUf("")
     } catch (err) {
-      setError("Não foi possível enviar agora. Tente novamente em instantes.")
+      console.error("Erro de envio:", err)
+      setError("Erro de conexão ao enviar o formulário.")
     } finally {
       setLoading(false)
     }

@@ -165,6 +165,14 @@ export default function Navbar() {
                       </span>
                     )}
                   </Link>
+
+                  {/* Link Cadastro */}
+                  <Link
+                    href="/cadastro"
+                    className="loc7-nav-link"
+                  >
+                    Cadastro
+                  </Link>
                 </div>
 
                 {/* Mobile menu button */}

@@ -41,8 +41,8 @@ export default function Produto() {
       <div className="min-h-screen bg-[oklch(0.08_0_0)] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-white text-3xl font-display font-bold mb-4">Produto não encontrado</h1>
-          <Link href="/catalogo">
-            <a className="text-[oklch(0.45_0.25_25)] hover:text-[oklch(0.5_0.25_25)]">← Voltar ao catálogo</a>
+          <Link href="/catalogo" className="text-[oklch(0.45_0.25_25)] hover:text-[oklch(0.5_0.25_25)]">
+            ← Voltar ao catálogo
           </Link>
         </div>
       </div>
