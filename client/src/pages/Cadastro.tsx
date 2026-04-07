@@ -157,7 +157,7 @@ export default function CadastroPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-8">
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
           <input type="hidden" name="tipoCadastro" value={tipo} />
 
           <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
