@@ -168,7 +168,7 @@ export default function Navbar() {
 
                   {/* CTA - Cadastre-se com estilo do menu */}
                   <Link
-                    href="/cadastro"
+                    href="/cadastro-novo"
                     className="loc7-nav-link"
                   >
                     Cadastre-se
@@ -224,7 +224,7 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="pt-4 flex flex-col gap-3">
-                <Link href="/cadastro" className="loc7-btn-outline text-center py-3">
+                <Link href="/cadastro-novo" className="loc7-btn-outline text-center py-3">
                   Cadastre-se
                 </Link>
                 <a
