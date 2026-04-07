@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin - Loc 7 Equipamentos</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: oklch(0.08 0 0);
+      color: oklch(0.9 0 0);
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: oklch(0.12 0 0);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      border-left: 4px solid oklch(0.45 0.25 25);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      color: oklch(0.7 0 0);
+      font-size: 14px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid oklch(0.15 0 0);
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: oklch(0.7 0 0);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      color: oklch(0.45 0.25 25);
+      border-bottom-color: oklch(0.45 0.25 25);
+    }
+
+    .tab-btn:hover {
+      color: oklch(0.8 0 0);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      color: oklch(0.8 0 0);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      background: oklch(0.12 0 0);
+      border: 1px solid oklch(0.2 0 0);
+      color: oklch(0.9 0 0);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: oklch(0.45 0.25 25);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: oklch(0.45 0.25 25);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: oklch(0.5 0.25 25);
+    }
+
+    button.secondary {
+      background: oklch(0.2 0 0);
+      color: oklch(0.9 0 0);
+    }
+
+    button.secondary:hover {
+      background: oklch(0.25 0 0);
+    }
+
+    button.danger {
+      background: oklch(0.4 0.2 15);
+    }
+
+    button.danger:hover {
+      background: oklch(0.35 0.2 15);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: oklch(0.12 0 0);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th {
+      background: oklch(0.15 0 0);
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid oklch(0.2 0 0);
+      color: oklch(0.45 0.25 25);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid oklch(0.15 0 0);
+    }
+
+    tr:hover {
+      background: oklch(0.14 0 0);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .actions button {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .alert.success {
+      background: oklch(0.3 0.15 120);
+      color: oklch(0.9 0 0);
+      border-left: 4px solid oklch(0.5 0.2 120);
+    }
+
+    .alert.error {
+      background: oklch(0.3 0.15 15);
+      color: oklch(0.9 0 0);
+      border-left: 4px solid oklch(0.5 0.2 15);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: oklch(0.5 0 0);
+    }
+
+    .empty-state p {
+      margin-bottom: 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: oklch(0.12 0 0);
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid oklch(0.45 0.25 25);
+    }
+
+    .stat-label {
+      color: oklch(0.6 0 0);
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: oklch(0.45 0.25 25);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+
+      .actions button {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎬 Painel Admin</h1>
+      <p class="subtitle">Loc 7 Equipamentos - Gerenciamento de Produtos e Categorias</p>
+    </header>
+
+    <div id="alert-container"></div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+      <button class="tab-btn" onclick="switchTab('produtos')">📦 Produtos</button>
+      <button class="tab-btn" onclick="switchTab('categorias')">📂 Categorias</button>
+    </div>
+
+    <!-- Dashboard Tab -->
+    <div id="dashboard" class="tab-content active">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Total de Produtos</div>
+          <div class="stat-value" id="total-products">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total de Categorias</div>
+          <div class="stat-value" id="total-categories">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Valor Total em Estoque</div>
+          <div class="stat-value" id="total-value">R$ 0</div>
+        </div>
+      </div>
+
+      <div style="background: oklch(0.12 0 0); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h3 style="margin-bottom: 15px;">Ações Rápidas</h3>
+        <div class="button-group">
+          <button onclick="switchTab('produtos')">➕ Adicionar Produto</button>
+          <button class="secondary" onclick="exportData()">📥 Exportar Dados</button>
+          <button class="secondary" onclick="importData()">📤 Importar Dados</button>
+          <button class="danger" onclick="clearAllData()">🗑️ Limpar Tudo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produtos Tab -->
+    <div id="produtos" class="tab-content">
+      <h2 style="margin-bottom: 20px;">Gerenciar Produtos</h2>
+
+      <div style="background: oklch(0.12 0 0); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+        <h3 style="margin-bottom: 15px;">Adicionar Novo Produto</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome do Produto</label>
+            <input type="text" id="product-name" placeholder="Ex: Sony FX9 6K">
+          </div>
+          <div class="form-group">
+            <label>Marca</label>
+            <input type="text" id="product-brand" placeholder="Ex: SONY">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Preço (R$/dia)</label>
+            <input type="number" id="product-price" placeholder="850" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Categoria</label>
+            <select id="product-category">
+              <option value="">Selecione uma categoria</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Descrição</label>
+          <textarea id="product-description" placeholder="Descrição detalhada do produto"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>URL da Imagem</label>
+          <input type="url" id="product-image" placeholder="https://...">
+        </div>
+
+        <button onclick="addProduct()">✅ Adicionar Produto</button>
+      </div>
+
+      <h3 style="margin-bottom: 15px;">Lista de Produtos</h3>
+      <div id="products-list"></div>
+    </div>
+
+    <!-- Categorias Tab -->
+    <div id="categorias" class="tab-content">
+      <h2 style="margin-bottom: 20px;">Gerenciar Categorias</h2>
+
+      <div style="background: oklch(0.12 0 0); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+        <h3 style="margin-bottom: 15px;">Adicionar Nova Categoria</h3>
+
+        <div class="form-group">
+          <label>Nome da Categoria</label>
+          <input type="text" id="category-name" placeholder="Ex: Câmeras">
+        </div>
+
+        <div class="form-group">
+          <label>Slug (URL amigável)</label>
+          <input type="text" id="category-slug" placeholder="Ex: cameras">
+        </div>
+
+        <div class="form-group">
+          <label>Descrição</label>
+          <textarea id="category-description" placeholder="Descrição da categoria"></textarea>
+        </div>
+
+        <button onclick="addCategory()">✅ Adicionar Categoria</button>
+      </div>
+
+      <h3 style="margin-bottom: 15px;">Lista de Categorias</h3>
+      <div id="categories-list"></div>
+    </div>
+  </div>
+
+  <input type="file" id="import-file" style="display: none;" accept=".json">
+
+  <script>
+    // LocalStorage Keys
+    const PRODUCTS_KEY = 'loc7_products';
+    const CATEGORIES_KEY = 'loc7_categories';
+
+    // Initialize with sample data if empty
+    function initializeData() {
+      if (!localStorage.getItem(PRODUCTS_KEY)) {
+        const sampleProducts = [
+          { id: 1, name: 'Sony FX9 6K Full Frame', brand: 'SONY', price: 850, category: 'cameras', description: 'Câmera profissional 6K', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80' },
+          { id: 2, name: 'Zeiss Supreme Prime Set', brand: 'ZEISS', price: 2200, category: 'lenses', description: 'Set de lentes profissionais', image: 'https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=400&q=80' },
+          { id: 3, name: 'Aputure 600D Pro', brand: 'APUTURE', price: 600, category: 'lighting', description: 'Iluminação LED profissional', image: 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=400&q=80' },
+        ];
+        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(sampleProducts));
+      }
+
+      if (!localStorage.getItem(CATEGORIES_KEY)) {
+        const sampleCategories = [
+          { id: 1, name: 'Câmeras', slug: 'cameras', description: 'Câmeras profissionais de cinema' },
+          { id: 2, name: 'Lentes', slug: 'lenses', description: 'Lentes e ópticas profissionais' },
+          { id: 3, name: 'Iluminação', slug: 'lighting', description: 'Equipamentos de iluminação' },
+          { id: 4, name: 'Áudio', slug: 'audio', description: 'Equipamentos de áudio' },
+        ];
+        localStorage.setItem(CATEGORIES_KEY, JSON.stringify(sampleCategories));
+      }
+    }
+
+    // Get all products
+    function getProducts() {
+      return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]');
+    }
+
+    // Get all categories
+    function getCategories() {
+      return JSON.parse(localStorage.getItem(CATEGORIES_KEY) || '[]');
+    }
+
+    // Save products
+    function saveProducts(products) {
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+      renderProducts();
+      updateStats();
+    }
+
+    // Save categories
+    function saveCategories(categories) {
+      localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+      renderCategories();
+      updateStats();
+    }
+
+    // Add product
+    function addProduct() {
+      const name = document.getElementById('product-name').value;
+      const brand = document.getElementById('product-brand').value;
+      const price = parseFloat(document.getElementById('product-price').value);
+      const category = document.getElementById('product-category').value;
+      const description = document.getElementById('product-description').value;
+      const image = document.getElementById('product-image').value;
+
+      if (!name || !brand || !price || !category) {
+        showAlert('Preencha todos os campos obrigatórios', 'error');
+        return;
+      }
+
+      const products = getProducts();
+      const newProduct = {
+        id: Math.max(...products.map(p => p.id), 0) + 1,
+        name,
+        brand,
+        price,
+        category,
+        description,
+        image
+      };
+
+      products.push(newProduct);
+      saveProducts(products);
+
+      // Clear form
+      document.getElementById('product-name').value = '';
+      document.getElementById('product-brand').value = '';
+      document.getElementById('product-price').value = '';
+      document.getElementById('product-category').value = '';
+      document.getElementById('product-description').value = '';
+      document.getElementById('product-image').value = '';
+
+      showAlert('Produto adicionado com sucesso!', 'success');
+    }
+
+    // Delete product
+    function deleteProduct(id) {
+      if (confirm('Tem certeza que deseja deletar este produto?')) {
+        let products = getProducts();
+        products = products.filter(p => p.id !== id);
+        saveProducts(products);
+        showAlert('Produto deletado com sucesso!', 'success');
+      }
+    }
+
+    // Add category
+    function addCategory() {
+      const name = document.getElementById('category-name').value;
+      const slug = document.getElementById('category-slug').value;
+      const description = document.getElementById('category-description').value;
+
+      if (!name || !slug) {
+        showAlert('Preencha todos os campos obrigatórios', 'error');
+        return;
+      }
+
+      const categories = getCategories();
+      const newCategory = {
+        id: Math.max(...categories.map(c => c.id), 0) + 1,
+        name,
+        slug,
+        description
+      };
+
+      categories.push(newCategory);
+      saveCategories(categories);
+
+      // Clear form
+      document.getElementById('category-name').value = '';
+      document.getElementById('category-slug').value = '';
+      document.getElementById('category-description').value = '';
+
+      showAlert('Categoria adicionada com sucesso!', 'success');
+    }
+
+    // Delete category
+    function deleteCategory(id) {
+      if (confirm('Tem certeza que deseja deletar esta categoria?')) {
+        let categories = getCategories();
+        categories = categories.filter(c => c.id !== id);
+        saveCategories(categories);
+        showAlert('Categoria deletada com sucesso!', 'success');
+      }
+    }
+
+    // Render products
+    function renderProducts() {
+      const products = getProducts();
+      const container = document.getElementById('products-list');
+
+      if (products.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>Nenhum produto adicionado ainda</p></div>';
+        return;
+      }
+
+      let html = '<table><thead><tr><th>Nome</th><th>Marca</th><th>Preço</th><th>Categoria</th><th>Ações</th></tr></thead><tbody>';
+
+      products.forEach(product => {
+        html += `
+          <tr>
+            <td>${product.name}</td>
+            <td>${product.brand}</td>
+            <td>R$ ${product.price.toFixed(2)}</td>
+            <td>${product.category}</td>
+            <td class="actions">
+              <button class="danger" onclick="deleteProduct(${product.id})">🗑️ Deletar</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    // Render categories
+    function renderCategories() {
+      const categories = getCategories();
+      const container = document.getElementById('categories-list');
+
+      if (categories.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>Nenhuma categoria adicionada ainda</p></div>';
+        return;
+      }
+
+      let html = '<table><thead><tr><th>Nome</th><th>Slug</th><th>Descrição</th><th>Ações</th></tr></thead><tbody>';
+
+      categories.forEach(category => {
+        html += `
+          <tr>
+            <td>${category.name}</td>
+            <td><code>${category.slug}</code></td>
+            <td>${category.description || '-'}</td>
+            <td class="actions">
+              <button class="danger" onclick="deleteCategory(${category.id})">🗑️ Deletar</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+
+      // Update category select
+      const select = document.getElementById('product-category');
+      select.innerHTML = '<option value="">Selecione uma categoria</option>';
+      categories.forEach(cat => {
+        select.innerHTML += `<option value="${cat.slug}">${cat.name}</option>`;
+      });
+    }
+
+    // Update stats
+    function updateStats() {
+      const products = getProducts();
+      const categories = getCategories();
+      const totalValue = products.reduce((sum, p) => sum + p.price, 0);
+
+      document.getElementById('total-products').textContent = products.length;
+      document.getElementById('total-categories').textContent = categories.length;
+      document.getElementById('total-value').textContent = 'R$ ' + totalValue.toFixed(2);
+    }
+
+    // Switch tab
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // Show alert
+    function showAlert(message, type) {
+      const container = document.getElementById('alert-container');
+      const alert = document.createElement('div');
+      alert.className = `alert ${type}`;
+      alert.textContent = message;
+      container.appendChild(alert);
+
+      setTimeout(() => alert.remove(), 3000);
+    }
+
+    // Export data
+    function exportData() {
+      const data = {
+        products: getProducts(),
+        categories: getCategories(),
+        exportDate: new Date().toISOString()
+      };
+
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `loc7-admin-backup-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      showAlert('Dados exportados com sucesso!', 'success');
+    }
+
+    // Import data
+    function importData() {
+      document.getElementById('import-file').click();
+    }
+
+    document.getElementById('import-file').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const data = JSON.parse(event.target.result);
+          localStorage.setItem(PRODUCTS_KEY, JSON.stringify(data.products));
+          localStorage.setItem(CATEGORIES_KEY, JSON.stringify(data.categories));
+          renderProducts();
+          renderCategories();
+          updateStats();
+          showAlert('Dados importados com sucesso!', 'success');
+        } catch (error) {
+          showAlert('Erro ao importar arquivo', 'error');
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Clear all data
+    function clearAllData() {
+      if (confirm('⚠️ Tem certeza? Esta ação não pode ser desfeita!')) {
+        localStorage.removeItem(PRODUCTS_KEY);
+        localStorage.removeItem(CATEGORIES_KEY);
+        initializeData();
+        renderProducts();
+        renderCategories();
+        updateStats();
+        showAlert('Todos os dados foram resetados', 'success');
+      }
+    }
+
+    // Initialize on load
+    window.addEventListener('load', function() {
+      initializeData();
+      renderProducts();
+      renderCategories();
+      updateStats();
+    });
+  </script>
+</body>
+</html>

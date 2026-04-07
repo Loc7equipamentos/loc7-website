@@ -16,6 +16,12 @@ async function startServer() {
       ? path.resolve(__dirname, "public")
       : path.resolve(__dirname, "..", "dist", "public");
 
+  // Serve admin.html for /admin route (BEFORE static files)
+  app.get("/admin", (_req, res) => {
+    res.sendFile(path.join(staticPath, "admin.html"));
+  });
+
+  // Serve static files
   app.use(express.static(staticPath));
 
   // Handle client-side routing - serve index.html for all routes
