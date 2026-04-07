@@ -250,8 +250,7 @@ export default function Home() {
               >
                 {i === currentSlide && (
                   <>
-                    <h1 className="font-display font-bold text-white leading-none mb-4"
-                      style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', letterSpacing: '-0.01em', whiteSpace: 'pre-line' }}>
+                    <h1 className="font-display font-bold text-white leading-none mb-4 text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight whitespace-pre-line">
                       {slide.title}
                     </h1>
                     <p className="text-[oklch(0.7_0_0)] text-lg mb-8 max-w-md">
