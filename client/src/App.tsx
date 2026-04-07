@@ -24,6 +24,7 @@ import Portfolio from "./pages/Portfolio";
 import Sobre from "./pages/Sobre";
 import Cadastro from "./pages/Cadastro";
 import AdminPanel from "./pages/AdminPanel";
+import Produto from "./pages/Produto";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -44,6 +45,7 @@ function Router() {
       <Route path="/" component={() => <Layout><Home /></Layout>} />
       <Route path="/catalogo" component={() => <Layout><Catalogo /></Layout>} />
       <Route path="/catalogo/:category" component={() => <Layout><Catalogo /></Layout>} />
+      <Route path="/equipamentos/:slug" component={() => <Layout><Produto /></Layout>} />
       <Route path="/orcamento" component={() => <Layout><Orcamento /></Layout>} />
       <Route path="/servicos" component={() => <Layout><Servicos /></Layout>} />
       <Route path="/producao" component={() => <Layout><Servicos /></Layout>} />
