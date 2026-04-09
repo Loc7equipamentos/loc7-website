@@ -35,7 +35,6 @@ const dropdownCategories = [
   { name: "LENTES", href: "/catalogo/lentes" },
   { name: "MAQUINÁRIA", href: "/catalogo/maquinaria" },
   { name: "MATTEBOX", href: "/catalogo/mattebox" },
-  { name: "MODIFICADORES", href: "/catalogo/modificadores" },
   { name: "MONITORES", href: "/catalogo/monitores" },
   { name: "MOVIMENTO", href: "/catalogo/movimento" },
   { name: "SWITCHES", href: "/catalogo/switches" },
