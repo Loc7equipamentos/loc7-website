@@ -12,7 +12,6 @@ export default function AdminPanel() {
   // Modal de edição
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Form states
   const [newProduct, setNewProduct] = useState({
@@ -42,8 +41,11 @@ export default function AdminPanel() {
 
       if (err) throw err;
       setProducts(data || []);
+      console.log('✅ Produtos carregados:', data?.length);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar produtos');
+      const errorMsg = err instanceof Error ? err.message : 'Erro ao carregar produtos';
+      setError(errorMsg);
+      console.error('❌ Erro ao carregar produtos:', err);
     } finally {
       setLoading(false);
     }
@@ -58,50 +60,9 @@ export default function AdminPanel() {
 
       if (err) throw err;
       setCategories(data || []);
+      console.log('✅ Categorias carregadas:', data?.length);
     } catch (err) {
-      console.error('Erro ao carregar categorias:', err);
-    }
-  };
-
-  // Upload de imagem
-  const handleImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isEditing: boolean = false
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setUploadingImage(true);
-
-      // Gerar nome único para o arquivo
-      const fileName = `${Date.now()}-${file.name}`;
-      const filePath = `products/${fileName}`;
-
-      // Upload para Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('products')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      // Obter URL pública
-      const { data } = supabase.storage.from('products').getPublicUrl(filePath);
-
-      const imageUrl = data.publicUrl;
-
-      if (isEditing && editingProduct) {
-        setEditingProduct({ ...editingProduct, image_url: imageUrl });
-      } else {
-        setNewProduct({ ...newProduct, image_url: imageUrl });
-      }
-
-      alert('Imagem enviada com sucesso!');
-    } catch (err) {
-      console.error('Erro ao fazer upload:', err);
-      alert('Erro ao fazer upload da imagem');
-    } finally {
-      setUploadingImage(false);
+      console.error('❌ Erro ao carregar categorias:', err);
     }
   };
 
@@ -112,18 +73,22 @@ export default function AdminPanel() {
     }
 
     try {
-      const { error: err } = await supabase.from('products').insert([
+      console.log('📝 Adicionando produto:', newProduct);
+
+      const { data, error: err } = await supabase.from('products').insert([
         {
           name: newProduct.name,
           category: newProduct.category,
           price: newProduct.price,
           description: newProduct.description,
-          image_url: newProduct.image_url,
+          image_url: newProduct.image_url || 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=400&q=80',
           badge: newProduct.badge,
         },
       ]);
 
       if (err) throw err;
+
+      console.log('✅ Produto adicionado com sucesso!', data);
 
       setNewProduct({
         name: '',
@@ -134,10 +99,15 @@ export default function AdminPanel() {
         badge: '',
       });
       setError(null);
-      loadProducts();
-      alert('Produto adicionado com sucesso!');
+      
+      // Recarregar produtos
+      await loadProducts();
+      alert('✅ Produto adicionado com sucesso!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao adicionar produto');
+      const errorMsg = err instanceof Error ? err.message : 'Erro ao adicionar produto';
+      setError(errorMsg);
+      console.error('❌ Erro ao adicionar produto:', err);
+      alert('❌ ' + errorMsg);
     }
   };
 
@@ -146,6 +116,8 @@ export default function AdminPanel() {
     if (!editingProduct) return;
 
     try {
+      console.log('📝 Atualizando produto:', editingProduct);
+
       const { error: err } = await supabase
         .from('products')
         .update({
@@ -155,16 +127,23 @@ export default function AdminPanel() {
           description: editingProduct.description,
           image_url: editingProduct.image_url,
           badge: editingProduct.badge,
+          updated_at: new Date().toISOString(),
         })
         .eq('id', editingProduct.id);
 
       if (err) throw err;
+      
+      console.log('✅ Produto atualizado com sucesso!');
+      
       setShowEditModal(false);
       setEditingProduct(null);
-      loadProducts();
-      alert('Produto atualizado com sucesso!');
+      await loadProducts();
+      alert('✅ Produto atualizado com sucesso!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao atualizar produto');
+      const errorMsg = err instanceof Error ? err.message : 'Erro ao atualizar produto';
+      setError(errorMsg);
+      console.error('❌ Erro ao atualizar produto:', err);
+      alert('❌ ' + errorMsg);
     }
   };
 
@@ -172,16 +151,24 @@ export default function AdminPanel() {
     if (!confirm('Tem certeza que deseja deletar este produto?')) return;
 
     try {
+      console.log('🗑️ Deletando produto:', id);
+
       const { error: err } = await supabase
         .from('products')
         .delete()
         .eq('id', id);
 
       if (err) throw err;
-      loadProducts();
-      alert('Produto deletado com sucesso!');
+      
+      console.log('✅ Produto deletado com sucesso!');
+      
+      await loadProducts();
+      alert('✅ Produto deletado com sucesso!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao deletar produto');
+      const errorMsg = err instanceof Error ? err.message : 'Erro ao deletar produto';
+      setError(errorMsg);
+      console.error('❌ Erro ao deletar produto:', err);
+      alert('❌ ' + errorMsg);
     }
   };
 
@@ -192,6 +179,8 @@ export default function AdminPanel() {
     }
 
     try {
+      console.log('📝 Adicionando categoria:', newCategory);
+
       const { error: err } = await supabase.from('categories').insert([
         {
           name: newCategory,
@@ -199,12 +188,18 @@ export default function AdminPanel() {
       ]);
 
       if (err) throw err;
+
+      console.log('✅ Categoria adicionada com sucesso!');
+
       setNewCategory('');
       setError(null);
-      loadCategories();
-      alert('Categoria adicionada com sucesso!');
+      await loadCategories();
+      alert('✅ Categoria adicionada com sucesso!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao adicionar categoria');
+      const errorMsg = err instanceof Error ? err.message : 'Erro ao adicionar categoria';
+      setError(errorMsg);
+      console.error('❌ Erro ao adicionar categoria:', err);
+      alert('❌ ' + errorMsg);
     }
   };
 
@@ -212,48 +207,62 @@ export default function AdminPanel() {
     if (!confirm('Tem certeza que deseja deletar esta categoria?')) return;
 
     try {
+      console.log('🗑️ Deletando categoria:', id);
+
       const { error: err } = await supabase
         .from('categories')
         .delete()
         .eq('id', id);
 
       if (err) throw err;
-      loadCategories();
-      alert('Categoria deletada com sucesso!');
+
+      console.log('✅ Categoria deletada com sucesso!');
+
+      await loadCategories();
+      alert('✅ Categoria deletada com sucesso!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao deletar categoria');
+      const errorMsg = err instanceof Error ? err.message : 'Erro ao deletar categoria';
+      setError(errorMsg);
+      console.error('❌ Erro ao deletar categoria:', err);
+      alert('❌ ' + errorMsg);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[oklch(0.08_0_0)] flex items-center justify-center pt-32">
-        <Loader className="w-8 h-8 text-[oklch(0.45_0.25_25)] animate-spin" />
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader className="w-8 h-8 animate-spin mx-auto mb-4 text-orange-600" />
+          <p className="text-gray-600">Carregando painel...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 pt-32 pb-16">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen bg-white p-6">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gray-900">Painel de Controle</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Painel de Controle</h1>
           <p className="text-gray-600">Gerenciar produtos e categorias do catálogo</p>
         </div>
 
-        {/* Error Alert */}
+        {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-100 border border-red-400 rounded text-red-800 flex justify-between items-center">
-            <span>{error}</span>
-            <button onClick={() => setError(null)} className="text-red-800 hover:text-red-600">
-              <X size={20} />
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between">
+            <span className="text-red-700">{error}</span>
+            <button
+              onClick={() => setError(null)}
+              className="text-red-500 hover:text-red-700"
+            >
+              <X className="w-5 h-5" />
             </button>
           </div>
         )}
 
         {/* Tabs */}
-        <div className="flex gap-4 mb-8 border-b border-gray-300">
+        <div className="flex gap-4 mb-8 border-b border-gray-200">
           <button
             onClick={() => setActiveTab('products')}
             className={`px-4 py-2 font-semibold transition-colors ${
@@ -280,9 +289,10 @@ export default function AdminPanel() {
         {activeTab === 'products' && (
           <div className="space-y-8">
             {/* Add Product Form */}
-            <div className="bg-gray-50 border border-gray-300 rounded-lg p-6">
-              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 text-gray-900">
-                <Plus size={24} /> Adicionar Produto
+            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Plus className="w-5 h-5 text-orange-600" />
+                Adicionar Produto
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -291,13 +301,13 @@ export default function AdminPanel() {
                   placeholder="Nome do produto"
                   value={newProduct.name}
                   onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                  className="bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
                 />
 
                 <select
                   value={newProduct.category}
                   onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                  className="bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
                 >
                   <option value="">Selecione uma categoria</option>
                   {categories.map((cat) => (
@@ -312,7 +322,7 @@ export default function AdminPanel() {
                   placeholder="Preço (R$)"
                   value={newProduct.price}
                   onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
-                  className="bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
                 />
 
                 <input
@@ -320,109 +330,93 @@ export default function AdminPanel() {
                   placeholder="Badge (ex: NOVO, FULLFRAME)"
                   value={newProduct.badge}
                   onChange={(e) => setNewProduct({ ...newProduct, badge: e.target.value })}
-                  className="bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
                 />
 
                 <textarea
                   placeholder="Descrição"
                   value={newProduct.description}
                   onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                  className="md:col-span-2 bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 h-20 resize-none"
+                  className="md:col-span-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600 resize-none"
+                  rows={3}
                 />
 
-                {/* Upload de imagem */}
-                <div className="md:col-span-2 border-2 border-dashed border-gray-300 rounded p-4 bg-gray-50">
-                  <label className="flex items-center justify-center gap-2 cursor-pointer hover:text-orange-600 transition-colors text-gray-600">
-                    <Upload className="w-5 h-5" />
-                    <span>Clique para fazer upload da imagem</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload(e, false)}
-                      disabled={uploadingImage}
-                      className="hidden"
-                    />
-                  </label>
-                  {newProduct.image_url && (
-                    <div className="mt-4">
-                      <img
-                        src={newProduct.image_url}
-                        alt="Preview"
-                        className="w-32 h-32 object-cover rounded"
-                      />
-                    </div>
-                  )}
-                </div>
+                <input
+                  type="url"
+                  placeholder="URL da imagem (opcional)"
+                  value={newProduct.image_url}
+                  onChange={(e) => setNewProduct({ ...newProduct, image_url: e.target.value })}
+                  className="md:col-span-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
+                />
               </div>
 
               <button
                 onClick={addProduct}
-                className="mt-4 bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded transition-colors flex items-center gap-2"
+                className="mt-4 w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
-                <Plus size={20} /> Adicionar Produto
+                <Plus className="w-5 h-5" />
+                Adicionar Produto
               </button>
             </div>
 
-            {/* Products List */}
-            <div className="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-100 border-b border-gray-300">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nome</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Categoria</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Preço</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Badge</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Imagem</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Ações</th>
+            {/* Products Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100 border-b border-gray-300">
+                    <th className="px-4 py-3 text-left text-gray-900 font-semibold">Nome</th>
+                    <th className="px-4 py-3 text-left text-gray-900 font-semibold">Categoria</th>
+                    <th className="px-4 py-3 text-left text-gray-900 font-semibold">Preço</th>
+                    <th className="px-4 py-3 text-left text-gray-900 font-semibold">Badge</th>
+                    <th className="px-4 py-3 text-left text-gray-900 font-semibold">Imagem</th>
+                    <th className="px-4 py-3 text-left text-gray-900 font-semibold">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map((product) => (
+                    <tr key={product.id} className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="px-4 py-3 text-gray-900">{product.name}</td>
+                      <td className="px-4 py-3 text-gray-600">{product.category}</td>
+                      <td className="px-4 py-3 text-gray-900 font-semibold">R$ {product.price.toFixed(2)}</td>
+                      <td className="px-4 py-3">
+                        {product.badge && (
+                          <span className="inline-block bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            {product.badge}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {product.image_url && (
+                          <img
+                            src={product.image_url}
+                            alt={product.name}
+                            className="w-12 h-12 object-cover rounded"
+                          />
+                        )}
+                      </td>
+                      <td className="px-4 py-3 flex gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingProduct(product);
+                            setShowEditModal(true);
+                          }}
+                          className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+                          title="Editar"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteProduct(product.id)}
+                          className="p-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
+                          title="Deletar"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {products.map((product) => (
-                      <tr key={product.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-3 text-sm text-gray-900">{product.name}</td>
-                        <td className="px-6 py-3 text-sm text-gray-600">{product.category}</td>
-                        <td className="px-6 py-3 text-sm font-mono text-gray-900">R$ {product.price.toFixed(2)}</td>
-                        <td className="px-6 py-3 text-sm">
-                          {product.badge && (
-                            <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs font-semibold">
-                              {product.badge}
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-3 text-sm">
-                          {product.image_url && (
-                            <img
-                              src={product.image_url}
-                              alt={product.name}
-                              className="w-12 h-12 object-cover rounded"
-                            />
-                          )}
-                        </td>
-                        <td className="px-6 py-3 text-sm flex gap-2">
-                          <button
-                            onClick={() => {
-                              setEditingProduct(product);
-                              setShowEditModal(true);
-                            }}
-                            className="p-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
-                            title="Editar"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => deleteProduct(product.id)}
-                            className="p-2 bg-red-600 hover:bg-red-700 rounded transition-colors"
-                            title="Deletar"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
@@ -431,9 +425,10 @@ export default function AdminPanel() {
         {activeTab === 'categories' && (
           <div className="space-y-8">
             {/* Add Category Form */}
-            <div className="bg-gray-50 border border-gray-300 rounded-lg p-6">
-              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 text-gray-900">
-                <Plus size={24} /> Adicionar Categoria
+            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Plus className="w-5 h-5 text-orange-600" />
+                Adicionar Categoria
               </h2>
 
               <div className="flex gap-4">
@@ -442,27 +437,29 @@ export default function AdminPanel() {
                   placeholder="Nome da categoria"
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                  className="flex-1 bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
                 />
                 <button
                   onClick={addCategory}
-                  className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded transition-colors flex items-center gap-2"
+                  className="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors flex items-center gap-2"
                 >
-                  <Plus size={20} /> Adicionar
+                  <Plus className="w-5 h-5" />
+                  Adicionar
                 </button>
               </div>
             </div>
 
-            {/*             {/* Categories Grid */}
+            {/* Categories Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {categories.map((category) => (
                 <div
                   key={category.id}
-                  className="bg-white border border-gray-300 rounded-lg p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                  className="bg-white border border-gray-300 rounded-lg p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow"
+                >
                   <span className="font-semibold text-gray-900">{category.name}</span>
                   <button
                     onClick={() => deleteCategory(category.id)}
-                    className="p-2 bg-red-600 hover:bg-red-700 rounded transition-colors"
+                    className="p-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
                     title="Deletar"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -472,39 +469,36 @@ export default function AdminPanel() {
             </div>
           </div>
         )}
-      </div>
 
-      {/* Modal de edição */}
-      {showEditModal && editingProduct && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border border-gray-300 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-lg">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Editar Produto</h2>
-              <button
-                onClick={() => {
-                  setShowEditModal(false);
-                  setEditingProduct(null);
-                }}
-                className="p-2 hover:bg-gray-200 rounded transition-colors text-gray-600"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
+        {/* Edit Modal */}
+        {showEditModal && editingProduct && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-2xl w-full p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Editar Produto</h2>
+                <button
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingProduct(null);
+                  }}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
 
-            <form onSubmit={updateProduct} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <form onSubmit={updateProduct} className="space-y-4">
                 <input
                   type="text"
-                  placeholder="Nome do produto"
                   value={editingProduct.name}
                   onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
-                  className="bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
                 />
 
                 <select
                   value={editingProduct.category}
                   onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
-                  className="bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
                 >
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.name}>
@@ -515,81 +509,63 @@ export default function AdminPanel() {
 
                 <input
                   type="number"
-                  placeholder="Preço (R$)"
                   value={editingProduct.price}
                   onChange={(e) => setEditingProduct({ ...editingProduct, price: parseFloat(e.target.value) })}
-                  className="bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
                 />
 
                 <input
                   type="text"
-                  placeholder="Badge"
-                  value={editingProduct.badge || ''}
+                  value={editingProduct.badge}
                   onChange={(e) => setEditingProduct({ ...editingProduct, badge: e.target.value })}
-                  className="bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
                 />
-              </div>
 
-              <textarea
-                placeholder="Descrição"
-                value={editingProduct.description || ''}
-                onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
-                className="w-full bg-white border border-gray-300 rounded px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 h-24 resize-none"
-              />
+                <textarea
+                  value={editingProduct.description}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600 resize-none"
+                  rows={3}
+                />
 
-              {/* Upload de imagem na edição */}
-              <div className="border-2 border-dashed border-gray-300 rounded p-4 bg-gray-50">
-                <label className="flex items-center justify-center gap-2 cursor-pointer hover:text-orange-600 transition-colors text-gray-600">
-                  <Upload className="w-5 h-5" />
-                  <span>Clique para atualizar a imagem</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageUpload(e, true)}
-                    disabled={uploadingImage}
-                    className="hidden"
-                  />
-                </label>
+                <input
+                  type="url"
+                  value={editingProduct.image_url}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, image_url: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600"
+                />
+
                 {editingProduct.image_url && (
-                  <div className="mt-4">
-                    <img
-                      src={editingProduct.image_url}
-                      alt="Preview"
-                      className="w-32 h-32 object-cover rounded"
-                    />
-                  </div>
+                  <img
+                    src={editingProduct.image_url}
+                    alt={editingProduct.name}
+                    className="w-32 h-32 object-cover rounded"
+                  />
                 )}
-              </div>
 
-              <div className="flex gap-4 justify-end">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowEditModal(false);
-                    setEditingProduct(null);
-                  }}
-                  className="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-900 rounded font-semibold transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded transition-colors flex items-center gap-2"
-                  disabled={uploadingImage}
-                >
-                  {uploadingImage ? (
-                    <>
-                      <Loader className="w-4 h-4 animate-spin" /> Enviando...
-                    </>
-                  ) : (
-                    'Salvar Alterações'
-                  )}
-                </button>
-              </div>
-            </form>
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Salvar Alterações
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEditModal(false);
+                      setEditingProduct(null);
+                    }}
+                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 font-semibold py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

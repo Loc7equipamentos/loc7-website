@@ -6,17 +6,18 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Camera, Aperture, Zap, Mic, Monitor, Move, Radio, Package, Clapperboard, ShoppingCart } from "lucide-react";
+import { Menu, X, Camera, Aperture, Zap, Mic, Monitor, Move, Radio, Package, Clapperboard, ShoppingCart, Wifi, Lightbulb, Wrench } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 
 const submenuCategories = [
   { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
   { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
-  { name: "Iluminação", icon: Zap, href: "/catalogo/iluminacao" },
+  { name: "Iluminação", icon: Lightbulb, href: "/catalogo/iluminacao" },
   { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
   { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
   { name: "Movimento", icon: Move, href: "/catalogo/movimento" },
-  { name: "Transmissores", icon: Radio, href: "/catalogo/transmissores" },
+  { name: "Wireless", icon: Wifi, href: "/catalogo/wireless" },
+  { name: "Modificadores", icon: Wrench, href: "/catalogo/modificadores" },
   { name: "Maquinária", icon: Clapperboard, href: "/catalogo/maquinaria" },
 ];
 
