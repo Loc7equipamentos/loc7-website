@@ -227,31 +227,34 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <Loader className="w-8 h-8 text-blue-600 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Navbar Admin */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <nav className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
               <Package className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-xl font-bold text-gray-900">Loc 7 Admin</h1>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Loc 7 Admin</h1>
+              <p className="text-xs text-gray-500">Gerenciar equipamentos</p>
+            </div>
           </div>
-          <p className="text-sm text-gray-600">Gerenciar equipamentos e categorias</p>
+          <p className="text-sm text-gray-600 font-medium">Painel de Controle</p>
         </div>
       </nav>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 flex justify-between items-center">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 flex justify-between items-center shadow-sm">
             <span>{error}</span>
             <button onClick={() => setError(null)} className="text-red-700 hover:text-red-600">
               <X size={20} />
@@ -260,33 +263,33 @@ export default function AdminDashboard() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 border-b border-gray-200">
+        <div className="flex gap-2 mb-8 border-b border-gray-100 bg-gray-50 -mx-4 px-4 rounded-t-lg">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`px-4 py-3 font-semibold transition-colors flex items-center gap-2 border-b-2 ${
+            className={`px-4 py-3 font-semibold transition-colors flex items-center gap-2 border-b-2 rounded-t-lg ${
               activeTab === 'dashboard'
-                ? 'text-blue-600 border-blue-600'
-                : 'text-gray-600 hover:text-gray-900 border-transparent'
+                ? 'text-blue-600 border-blue-600 bg-white'
+                : 'text-gray-600 hover:text-gray-900 border-transparent hover:bg-gray-100'
             }`}
           >
             <BarChart3 size={20} /> Dashboard
           </button>
           <button
             onClick={() => setActiveTab('products')}
-            className={`px-4 py-3 font-semibold transition-colors flex items-center gap-2 border-b-2 ${
+            className={`px-4 py-3 font-semibold transition-colors flex items-center gap-2 border-b-2 rounded-t-lg ${
               activeTab === 'products'
-                ? 'text-blue-600 border-blue-600'
-                : 'text-gray-600 hover:text-gray-900 border-transparent'
+                ? 'text-blue-600 border-blue-600 bg-white'
+                : 'text-gray-600 hover:text-gray-900 border-transparent hover:bg-gray-100'
             }`}
           >
             <Package size={20} /> Produtos ({products.length})
           </button>
           <button
             onClick={() => setActiveTab('categories')}
-            className={`px-4 py-3 font-semibold transition-colors flex items-center gap-2 border-b-2 ${
+            className={`px-4 py-3 font-semibold transition-colors flex items-center gap-2 border-b-2 rounded-t-lg ${
               activeTab === 'categories'
-                ? 'text-blue-600 border-blue-600'
-                : 'text-gray-600 hover:text-gray-900 border-transparent'
+                ? 'text-blue-600 border-blue-600 bg-white'
+                : 'text-gray-600 hover:text-gray-900 border-transparent hover:bg-gray-100'
             }`}
           >
             <FolderOpen size={20} /> Categorias ({categories.length})
@@ -296,7 +299,7 @@ export default function AdminDashboard() {
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="bg-gradient-to-br from-white to-blue-50 border border-blue-100 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-medium">Total de Produtos</p>
@@ -305,7 +308,7 @@ export default function AdminDashboard() {
                 <Package className="w-12 h-12 text-blue-600 opacity-20" />
               </div>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="bg-gradient-to-br from-white to-green-50 border border-green-100 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-medium">Total de Categorias</p>
@@ -314,7 +317,7 @@ export default function AdminDashboard() {
                 <FolderOpen className="w-12 h-12 text-green-600 opacity-20" />
               </div>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="bg-gradient-to-br from-white to-purple-50 border border-purple-100 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-medium">Valor Total em Estoque</p>
@@ -332,7 +335,7 @@ export default function AdminDashboard() {
         {activeTab === 'products' && (
           <div className="space-y-8">
             {/* Add Product Form */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="bg-white border border-gray-100 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-900">
                 <Plus size={24} /> Adicionar Produto
               </h2>
@@ -409,17 +412,17 @@ export default function AdminDashboard() {
 
               <button
                 onClick={addProduct}
-                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors flex items-center gap-2"
+                className="mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2"
               >
                 <Plus size={20} /> Adicionar Produto
               </button>
             </div>
 
             {/* Products List */}
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            <div className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-100 border-b border-gray-200">
+                  <thead className="bg-gray-50 border-b border-gray-100">
                     <tr>
                       <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nome</th>
                       <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Categoria</th>
@@ -429,7 +432,7 @@ export default function AdminDashboard() {
                       <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Ações</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-100">
                     {products.map((product) => (
                       <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-3 text-sm text-gray-900">{product.name}</td>
@@ -483,7 +486,7 @@ export default function AdminDashboard() {
         {activeTab === 'categories' && (
           <div className="space-y-8">
             {/* Add Category Form */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="bg-white border border-gray-100 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-900">
                 <Plus size={24} /> Adicionar Categoria
               </h2>
@@ -498,7 +501,7 @@ export default function AdminDashboard() {
                 />
                 <button
                   onClick={addCategory}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors flex items-center gap-2"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2"
                 >
                   <Plus size={20} /> Adicionar
                 </button>
@@ -510,7 +513,7 @@ export default function AdminDashboard() {
               {categories.map((category) => (
                 <div
                   key={category.id}
-                  className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                  className="bg-gradient-to-br from-white to-blue-50 border border-blue-100 rounded-lg p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
                   <span className="font-semibold text-gray-900">{category.name}</span>
                   <button
                     onClick={() => deleteCategory(category.id)}
@@ -528,8 +531,8 @@ export default function AdminDashboard() {
 
       {/* Modal de edição */}
       {showEditModal && editingProduct && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border border-gray-300 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-lg">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-white border border-gray-100 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Editar Produto</h2>
               <button
@@ -620,13 +623,13 @@ export default function AdminDashboard() {
                     setShowEditModal(false);
                     setEditingProduct(null);
                   }}
-                  className="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-900 rounded font-semibold transition-colors"
+                  className="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg font-semibold transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors flex items-center gap-2"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2"
                   disabled={uploadingImage}
                 >
                   {uploadingImage ? (
