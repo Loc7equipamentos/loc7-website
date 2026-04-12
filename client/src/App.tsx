@@ -24,7 +24,7 @@ import Portfolio from "./pages/Portfolio";
 import Sobre from "./pages/Sobre";
 import Cadastro from "./pages/Cadastro";
 
-import AdminPanel from "./pages/AdminPanel";
+import AdminDashboard from "./pages/AdminDashboard";
 import Produto from "./pages/Produto";
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -56,7 +56,7 @@ function Router() {
       <Route path="/contato" component={() => <Layout><Contato /></Layout>} />
       <Route path="/cadastro" component={() => <Layout><Cadastro /></Layout>} />
 
-      <Route path="/admin-panel" component={() => <AdminPanel />} />
+      <Route path="/admin-panel" component={() => <AdminDashboard />} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
