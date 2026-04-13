@@ -67,7 +67,7 @@ function App() {
   return (
     <ErrorBoundary>
       <CartProvider>
-        <ThemeProvider defaultTheme="dark">
+        <ThemeProvider defaultTheme="light" switchable={false}>
           <TooltipProvider>
             <Toaster />
             <Router />
