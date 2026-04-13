@@ -310,11 +310,6 @@ export default function Catalogo() {
                   <h3 className="text-white text-sm font-medium leading-tight mb-2 line-clamp-2">
                     {product.name}
                   </h3>
-                  {product.description && (
-                    <p className="text-[oklch(0.6_0_0)] text-xs mb-2 line-clamp-2">
-                      {product.description}
-                    </p>
-                  )}
                   <p className="font-mono-price text-[oklch(0.8_0_0)] text-sm font-semibold">
                     R$ {product.price.toFixed(2)}<span className="text-[oklch(0.45_0_0)] text-xs font-normal">/dia</span>
                   </p>
