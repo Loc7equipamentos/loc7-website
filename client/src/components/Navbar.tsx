@@ -209,6 +209,27 @@ export default function Navbar() {
             </div>
           </div>
 
+          {/* Submenu horizontal com ícones */}
+          <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] h-16">
+            <div className="flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide">
+              {submenuCategories.map((cat) => {
+                const Icon = cat.icon;
+                return (
+                  <Link
+                    key={cat.name}
+                    href={cat.href}
+                    className="flex items-center gap-2 px-4 py-2 text-white hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all whitespace-nowrap text-sm rounded hover:scale-105"
+                  >
+                    <Icon className="w-7 h-7 transition-transform duration-150 hover:scale-125" />
+                    <span style={{ fontFamily: 'Oswald, sans-serif' }} className="uppercase tracking-wide font-semibold">
+                      {cat.name}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Mobile menu */}
           {isMobileOpen && (
             <div className="md:hidden bg-[oklch(0.06_0_0)] border-t border-[oklch(0.18_0_0)]">
