@@ -166,49 +166,20 @@ export default function Navbar() {
                       
                       {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
                       {link.hasDropdown && isCatalogOpen && (
-                        <div 
-                          className="absolute left-1/2 transform -translate-x-1/2 top-full mt-0 w-64 shadow-2xl z-50 overflow-hidden"
-                          style={{
-                            backgroundColor: '#615e5e',
-                            borderColor: '#615e5e',
-                            backgroundImage: `
-                              linear-gradient(to right, rgba(0,0,0,0.5), transparent 30%, transparent 70%, rgba(0,0,0,0.5)),
-                              linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 30%, transparent 70%, rgba(0,0,0,0.5))
-                            `,
-                            backgroundSize: '100% 100%, 100% 100%',
-                            backgroundPosition: '0 0, 0 0',
-                            backgroundRepeat: 'no-repeat, no-repeat'
-                          }}
-                        >
-                          <div className="flex flex-col">
-                            {loadingCategories ? (
-                              <div className="px-4 py-3 text-white text-sm text-center">Carregando...</div>
-                            ) : (
-                              dropdownCategories.map((cat) => (
-                                <Link
-                                  key={cat.name}
-                                  href={cat.href}
-                                  className="px-4 py-3 text-white font-bold transition-transform duration-100 text-sm tracking-wide text-center"
-                                  onMouseEnter={(e) => {
-                                    let scale = 1.35;
-                                    if (['COMPUTADORES E TABLETS', 'HDS E CARTÕES DE MEMÓRIA'].includes(cat.name)) scale = 1.15;
-                                    e.currentTarget.style.transform = `scale(${scale})`;
-                                    e.currentTarget.style.color = '#ffffff';
-                                    e.currentTarget.style.textShadow = '0 0 8px rgba(255, 255, 255, 0.4)';
-                                    e.currentTarget.style.fontWeight = '900';
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'scale(1)';
-                                    e.currentTarget.style.color = '#ffffff';
-                                    e.currentTarget.style.textShadow = 'none';
-                                    e.currentTarget.style.fontWeight = 'bold';
-                                  }}
-                                >
-                                  {cat.name}
-                                </Link>
-                              ))
-                            )}
-                          </div>
+                        <div className="loc7-dropdown">
+                          {loadingCategories ? (
+                            <div className="px-4 py-3 text-white text-sm text-center">Carregando...</div>
+                          ) : (
+                            dropdownCategories.map((cat) => (
+                              <Link
+                                key={cat.name}
+                                href={cat.href}
+                                className="loc7-dropdown-item"
+                              >
+                                {cat.name}
+                              </Link>
+                            ))
+                          )}
                         </div>
                       )}
                     </div>
