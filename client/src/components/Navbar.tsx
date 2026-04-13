@@ -144,11 +144,11 @@ export default function Navbar() {
               {/* Main nav */}
               <div className="flex items-center justify-center h-16 flex-1">
                 {/* Desktop nav - Centralizado */}
-                <div className="hidden md:flex items-center gap-24 justify-center flex-1 relative">
+                <div className="hidden md:flex items-center gap-24 justify-center flex-1 relative overflow-visible">
                   {navLinks.map((link) => (
                     <div 
                       key={link.name} 
-                      className="relative group whitespace-nowrap"
+                      className="relative group whitespace-nowrap overflow-visible"
                       onMouseEnter={() => link.hasDropdown && setIsCatalogOpen(true)}
                       onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
                     >
@@ -166,7 +166,7 @@ export default function Navbar() {
                       
                       {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
                       {link.hasDropdown && isCatalogOpen && (
-                        <div className="loc7-dropdown">
+                        <div className="loc7-dropdown" style={{pointerEvents: 'auto'}}>
                           {loadingCategories ? (
                             <div className="px-4 py-3 text-white text-sm text-center">Carregando...</div>
                           ) : (
