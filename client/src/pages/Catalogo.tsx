@@ -9,11 +9,13 @@ import { useState, useEffect } from "react";
 import { Search, SlidersHorizontal, X, ArrowRight, Loader } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { supabase, type Product } from "@/lib/supabase";
+import { useParams } from "wouter";
 
 const brands = ["Todas", "Sony", "Canon", "RED", "Blackmagic", "Arri", "Aputure", "Zeiss", "DJI", "Godox"];
 
 export default function Catalogo() {
   const { addItem } = useCart();
+  const params = useParams<{ category?: string }>();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +27,21 @@ export default function Catalogo() {
   const [priceRange, setPriceRange] = useState([0, 3000]);
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState("relevance");
+
+  // Atualizar categoria selecionada quando URL mudar
+  useEffect(() => {
+    if (params.category) {
+      // Converter URL slug para nome de categoria
+      const categoryName = params.category
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      console.log('[DEBUG] Categoria da URL:', { slug: params.category, name: categoryName });
+      setSelectedCategory(categoryName);
+    } else {
+      setSelectedCategory("Todos");
+    }
+  }, [params.category]);
 
   // Carregar dados do Supabase
   useEffect(() => {
@@ -87,10 +104,17 @@ export default function Catalogo() {
   }, []);
 
   const filtered = products.filter(p => {
-    const matchCat = selectedCategory === "Todos" || p.category === selectedCategory;
+    // Filtro de categoria: comparar case-insensitive
+    const matchCat = selectedCategory === "Todos" || 
+      (p.category?.toLowerCase() === selectedCategory.toLowerCase());
     const matchBrand = selectedBrand === "Todas" || (p.name?.toLowerCase().includes(selectedBrand.toLowerCase()) ?? false);
     const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
+    
+    if (selectedCategory !== "Todos" && !matchCat) {
+      console.log('[DEBUG] Produto não corresponde à categoria:', { product: p.name, productCat: p.category, selectedCat: selectedCategory });
+    }
+    
     return matchCat && matchBrand && matchSearch && matchPrice;
   }).sort((a, b) => {
     if (sortBy === "price-asc") return a.price - b.price;
@@ -286,6 +310,11 @@ export default function Catalogo() {
                   <h3 className="text-white text-sm font-medium leading-tight mb-2 line-clamp-2">
                     {product.name}
                   </h3>
+                  {product.description && (
+                    <p className="text-[oklch(0.6_0_0)] text-xs mb-2 line-clamp-2">
+                      {product.description}
+                    </p>
+                  )}
                   <p className="font-mono-price text-[oklch(0.8_0_0)] text-sm font-semibold">
                     R$ {product.price.toFixed(2)}<span className="text-[oklch(0.45_0_0)] text-xs font-normal">/dia</span>
                   </p>

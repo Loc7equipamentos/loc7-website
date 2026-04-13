@@ -69,26 +69,45 @@ export default function AdminDashboard() {
     isEditing: boolean = false
   ) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      console.warn('[DEBUG] Nenhum arquivo selecionado');
+      return;
+    }
 
     try {
       setUploadingImage(true);
+      console.log('[DEBUG] Iniciando upload:', { fileName: file.name, fileSize: file.size, fileType: file.type });
+
+      // Validar arquivo
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        throw new Error('Arquivo muito grande (máximo 10MB)');
+      }
 
       // Gerar nome único para o arquivo
-      const fileName = `${Date.now()}-${file.name}`;
+      const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       const filePath = `products/${fileName}`;
+      console.log('[DEBUG] Caminho do arquivo:', filePath);
 
       // Upload para Supabase Storage
-      const { error: uploadError } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('products')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('[DEBUG] Erro no upload:', uploadError);
+        throw new Error(`Erro ao fazer upload: ${uploadError.message}`);
+      }
+
+      console.log('[DEBUG] Upload bem-sucedido:', uploadData);
 
       // Obter URL pública
       const { data } = supabase.storage.from('products').getPublicUrl(filePath);
-
       const imageUrl = data.publicUrl;
+      console.log('[DEBUG] URL pública obtida:', imageUrl);
 
       if (isEditing && editingProduct) {
         setEditingProduct({ ...editingProduct, image_url: imageUrl });
@@ -96,10 +115,12 @@ export default function AdminDashboard() {
         setNewProduct({ ...newProduct, image_url: imageUrl });
       }
 
-      alert('Imagem enviada com sucesso!');
+      alert('✅ Imagem enviada com sucesso!');
     } catch (err) {
-      console.error('Erro ao fazer upload:', err);
-      alert('Erro ao fazer upload da imagem');
+      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      console.error('[DEBUG] Erro ao fazer upload:', errorMessage);
+      alert(`❌ Erro ao fazer upload: ${errorMessage}`);
+      setError(errorMessage);
     } finally {
       setUploadingImage(false);
     }
@@ -236,7 +257,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar Admin */}
-      <nav className="bg-gradient-to-r from-white to-indigo-50 border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+      <nav className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-700 rounded-lg flex items-center justify-center shadow-md">
@@ -263,13 +284,13 @@ export default function AdminDashboard() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 border-b border-gray-100 bg-gray-50 -mx-4 px-4 rounded-t-lg">
+        <div className="flex gap-2 mb-8 border-b border-gray-200 bg-gray-100 -mx-4 px-4 rounded-t-lg">
           <button
             onClick={() => setActiveTab('dashboard')}
             className={`px-4 py-3 font-semibold transition-colors flex items-center gap-2 border-b-2 rounded-t-lg ${
               activeTab === 'dashboard'
                 ? 'text-gray-800 border-gray-400 bg-white'
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:bg-gray-100'
+                : 'text-gray-600 hover:text-gray-900 border-transparent hover:bg-gray-50'
             }`}
           >
             <BarChart3 size={20} /> Dashboard
@@ -279,7 +300,7 @@ export default function AdminDashboard() {
             className={`px-4 py-3 font-semibold transition-colors flex items-center gap-2 border-b-2 rounded-t-lg ${
               activeTab === 'products'
                 ? 'text-gray-800 border-gray-400 bg-white'
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:bg-gray-100'
+                : 'text-gray-600 hover:text-gray-900 border-transparent hover:bg-gray-50'
             }`}
           >
             <Package size={20} /> Produtos ({products.length})
@@ -289,7 +310,7 @@ export default function AdminDashboard() {
             className={`px-4 py-3 font-semibold transition-colors flex items-center gap-2 border-b-2 rounded-t-lg ${
               activeTab === 'categories'
                 ? 'text-gray-800 border-gray-400 bg-white'
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:bg-gray-100'
+                : 'text-gray-600 hover:text-gray-900 border-transparent hover:bg-gray-50'
             }`}
           >
             <FolderOpen size={20} /> Categorias ({categories.length})
@@ -299,7 +320,7 @@ export default function AdminDashboard() {
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-white to-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-medium">Total de Produtos</p>
@@ -308,7 +329,7 @@ export default function AdminDashboard() {
                 <Package className="w-12 h-12 text-gray-800 opacity-20" />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-white to-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-medium">Total de Categorias</p>
@@ -317,7 +338,7 @@ export default function AdminDashboard() {
                 <FolderOpen className="w-12 h-12 text-green-600 opacity-20" />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-white to-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-medium">Valor Total em Estoque</p>
@@ -335,7 +356,7 @@ export default function AdminDashboard() {
         {activeTab === 'products' && (
           <div className="space-y-8">
             {/* Add Product Form */}
-            <div className="bg-white border border-gray-100 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-900">
                 <Plus size={24} /> Adicionar Produto
               </h2>
@@ -386,7 +407,7 @@ export default function AdminDashboard() {
                 />
 
                 {/* Upload de imagem */}
-                <div className="md:col-span-2 border-2 border-dashed border-gray-300 rounded p-4 bg-gray-50">
+                <div className="md:col-span-2 border-2 border-dashed border-gray-300 rounded p-4 bg-gray-100">
                   <label className="flex items-center justify-center gap-2 cursor-pointer hover:text-gray-800 transition-colors text-gray-600">
                     <Upload className="w-5 h-5" />
                     <span>Clique para fazer upload da imagem</span>
@@ -419,10 +440,10 @@ export default function AdminDashboard() {
             </div>
 
             {/* Products List */}
-            <div className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-gray-100 border-b border-gray-200">
                     <tr>
                       <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nome</th>
                       <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Categoria</th>
@@ -434,7 +455,7 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {products.map((product) => (
-                      <tr key={product.id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={product.id} className="hover:bg-gray-100 transition-colors">
                         <td className="px-6 py-3 text-sm text-gray-900">{product.name}</td>
                         <td className="px-6 py-3 text-sm text-gray-600">{product.category}</td>
                         <td className="px-6 py-3 text-sm font-mono text-gray-900">R$ {product.price.toFixed(2)}</td>
@@ -486,7 +507,7 @@ export default function AdminDashboard() {
         {activeTab === 'categories' && (
           <div className="space-y-8">
             {/* Add Category Form */}
-            <div className="bg-white border border-gray-100 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-900">
                 <Plus size={24} /> Adicionar Categoria
               </h2>
@@ -513,7 +534,7 @@ export default function AdminDashboard() {
               {categories.map((category) => (
                 <div
                   key={category.id}
-                  className="bg-gradient-to-br from-white to-white border border-gray-200 rounded-lg p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                  className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
                   <span className="font-semibold text-gray-900">{category.name}</span>
                   <button
                     onClick={() => deleteCategory(category.id)}
@@ -532,7 +553,7 @@ export default function AdminDashboard() {
       {/* Modal de edição */}
       {showEditModal && editingProduct && (
         <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-          <div className="bg-white border border-gray-100 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className="bg-white border border-gray-200 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Editar Produto</h2>
               <button
@@ -593,7 +614,7 @@ export default function AdminDashboard() {
               />
 
               {/* Upload de imagem na edição */}
-              <div className="border-2 border-dashed border-gray-300 rounded p-4 bg-gray-50">
+              <div className="border-2 border-dashed border-gray-300 rounded p-4 bg-gray-100">
                 <label className="flex items-center justify-center gap-2 cursor-pointer hover:text-gray-800 transition-colors text-gray-600">
                   <Upload className="w-5 h-5" />
                   <span>Clique para atualizar a imagem</span>
