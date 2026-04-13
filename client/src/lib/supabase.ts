@@ -17,6 +17,7 @@ export interface Product {
   description: string;
   image_url?: string;
   badge?: string;
+  slug?: string;
   created_at?: string;
   updated_at?: string;
 }

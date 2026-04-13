@@ -133,6 +133,12 @@ export default function AdminDashboard() {
     }
 
     try {
+      // Gerar slug automaticamente do nome
+      const slug = newProduct.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
       const { error: err } = await supabase.from('products').insert([
         {
           name: newProduct.name,
@@ -141,6 +147,7 @@ export default function AdminDashboard() {
           description: newProduct.description,
           image_url: newProduct.image_url,
           badge: newProduct.badge,
+          slug: slug,
         },
       ]);
 
@@ -167,6 +174,12 @@ export default function AdminDashboard() {
     if (!editingProduct) return;
 
     try {
+      // Gerar slug automaticamente do nome
+      const slug = editingProduct.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
       const { error: err } = await supabase
         .from('products')
         .update({
@@ -176,6 +189,7 @@ export default function AdminDashboard() {
           description: editingProduct.description,
           image_url: editingProduct.image_url,
           badge: editingProduct.badge,
+          slug: slug,
         })
         .eq('id', editingProduct.id);
 
