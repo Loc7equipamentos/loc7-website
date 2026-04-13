@@ -28,11 +28,21 @@ export default function Catalogo() {
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState("relevance");
 
+  const slugToCategoryName: Record<string, string> = {
+    'cameras': 'Cameras',
+    'lentes': 'Lentes',
+    'iluminacao': 'Iluminacao',
+    'audio': 'Audio',
+    'monitores': 'Monitores',
+    'movimento': 'Movimento',
+    'transmissores': 'Transmissores',
+    'maquinaria': 'Maquinaria',
+  };
+
   // Atualizar categoria selecionada quando URL mudar
   useEffect(() => {
     if (params.category) {
-      // Converter URL slug para nome de categoria
-      const categoryName = params.category
+      const categoryName = slugToCategoryName[params.category] || params.category
         .split('-')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');

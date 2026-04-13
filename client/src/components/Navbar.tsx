@@ -22,6 +22,17 @@ const submenuCategories = [
   { name: "Maquinária", icon: Clapperboard, href: "/catalogo/maquinaria" },
 ];
 
+const slugToCategoryName: Record<string, string> = {
+  'cameras': 'Cameras',
+  'lentes': 'Lentes',
+  'iluminacao': 'Iluminacao',
+  'audio': 'Audio',
+  'monitores': 'Monitores',
+  'movimento': 'Movimento',
+  'transmissores': 'Transmissores',
+  'maquinaria': 'Maquinaria',
+};
+
 // Fallback categories (usado se Supabase falhar)
 const fallbackCategories = [
   { name: "ÁUDIO", href: "/catalogo/audio" },
