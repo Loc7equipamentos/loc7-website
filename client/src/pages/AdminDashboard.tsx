@@ -1,33 +1,75 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 const categorias = [
-  "Câmeras",
-  "Lentes",
-  "Iluminação",
   "Áudio",
-  "Monitores",
-  "Movimento",
-  "Transmissores",
+  "Câmeras",
+  "Computadores e Tablets",
   "Comunicadores",
-  "Maquinária",
+  "Conversores / Distribuidores",
   "Drones",
+  "Estabilizadores",
+  "Filtros",
+  "Follow Focus",
+  "Gravadores",
+  "HDs e Cartões de Memória",
+  "Lentes",
+  "Luz",
+  "Maquinária",
+  "Mattebox",
+  "Monitores",
+  "Still",
+  "Movimento",
+  "Switchers",
+  "Tele-Prompter",
+  "Transmissores",
+  "Tripés",
 ];
 
+const subcategoriasMap: Record<string, string[]> = {
+  Câmeras: ["PTZ", "Broadcast", "Mirrorless", "Cinema"],
+  Lentes: ["E-Mount", "EF-Mount", "RF-Mount", "PL-Mount", "Broadcast"],
+  Luz: ["LED", "Fresnel", "Tubos", "Painéis", "Modificadores"],
+};
+
 const marcas = [
-  "Sony",
-  "Canon",
-  "RED",
-  "Blackmagic",
-  "Arri",
+  "Amaran",
+  "Angenieux",
+  "Apple",
   "Aputure",
+  "ARRI",
+  "Astra",
+  "Atlas",
+  "Blackmagic",
+  "Canon",
+  "Chrosziel",
+  "Cooke",
+  "Dana Dolly",
   "DJI",
-  "Hollyland",
-  "Sennheiser",
-  "Rode",
-  "SmallHD",
-  "DanaDolly",
   "DZO",
+  "Fujifilm",
+  "GoPro",
+  "Hollyland",
+  "Kowa",
+  "Laowa",
+  "Leica",
+  "Lensbaby",
+  "Manfrotto",
+  "Panasonic",
+  "Petzval",
+  "Portkeys",
+  "RED",
+  "RØDE",
+  "Sachtler",
+  "Sennheiser",
+  "SmallHD",
+  "Sony",
+  "Teradek",
+  "Tiffen",
+  "Thypoch",
+  "Tilta",
+  "TRIBE7",
+  "Zeiss",
 ];
 
 type Product = {
@@ -35,6 +77,7 @@ type Product = {
   name: string;
   brand: string;
   category: string;
+  subcategory: string;
   price: string | number;
   short_description: string;
   full_description: string;
@@ -85,19 +128,12 @@ const buttonSecondary: React.CSSProperties = {
   cursor: "pointer",
 };
 
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  marginBottom: "8px",
-  color: "#111111",
-  fontSize: "14px",
-  fontWeight: 600,
-};
-
 export default function AdminDashboard() {
   const emptyForm: Product = {
     name: "",
     brand: "",
     category: "",
+    subcategory: "",
     price: "",
     short_description: "",
     full_description: "",
@@ -111,8 +147,28 @@ export default function AdminDashboard() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<Product>(emptyForm);
 
+  const subcategoriasAtuais = useMemo(() => {
+    return subcategoriasMap[form.category] || [];
+  }, [form.category]);
+
   const handleChange = (field: keyof Product, value: string | boolean) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [field]: value };
+
+      if (field === "category") {
+        const categoryValue = String(value);
+        if (!subcategoriasMap[categoryValue]) {
+          next.subcategory = "";
+        } else if (
+          next.subcategory &&
+          !subcategoriasMap[categoryValue].includes(next.subcategory)
+        ) {
+          next.subcategory = "";
+        }
+      }
+
+      return next;
+    });
   };
 
   const reset = () => {
@@ -149,6 +205,11 @@ export default function AdminDashboard() {
       return;
     }
 
+    if (subcategoriasMap[form.category] && !form.subcategory.trim()) {
+      alert("Selecione a subcategoria");
+      return;
+    }
+
     if (!String(form.price).trim()) {
       alert("Preencha o preço");
       return;
@@ -157,6 +218,13 @@ export default function AdminDashboard() {
     const payload = {
       ...form,
       price: Number(form.price),
+      brand: form.brand || null,
+      subcategory: form.subcategory || null,
+      short_description: form.short_description || null,
+      full_description: form.full_description || null,
+      includes: form.includes || null,
+      technical_specs: form.technical_specs || null,
+      image_url: form.image_url || null,
     };
 
     if (editingId) {
@@ -194,6 +262,7 @@ export default function AdminDashboard() {
       name: p.name || "",
       brand: p.brand || "",
       category: p.category || "",
+      subcategory: p.subcategory || "",
       price: p.price || "",
       short_description: p.short_description || "",
       full_description: p.full_description || "",
@@ -264,7 +333,7 @@ export default function AdminDashboard() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              gridTemplateColumns: "1.3fr 1fr 1fr 1fr",
               gap: 12,
               marginBottom: 16,
             }}
@@ -301,7 +370,6 @@ export default function AdminDashboard() {
                   {c}
                 </option>
               ))}
-              <option value="Outra">Outra</option>
             </select>
 
             <input
@@ -311,6 +379,23 @@ export default function AdminDashboard() {
               onChange={(e) => handleChange("price", e.target.value)}
             />
           </div>
+
+          {subcategoriasAtuais.length > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <select
+                style={inputStyle}
+                value={form.subcategory}
+                onChange={(e) => handleChange("subcategory", e.target.value)}
+              >
+                <option value="">Subcategoria</option>
+                {subcategoriasAtuais.map((sub) => (
+                  <option key={sub} value={sub}>
+                    {sub}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div style={{ marginBottom: 12 }}>
             <textarea
@@ -342,7 +427,7 @@ export default function AdminDashboard() {
           <div style={{ marginBottom: 12 }}>
             <textarea
               style={textareaStyle}
-              placeholder="Specs"
+              placeholder="Especificações técnicas"
               value={form.technical_specs}
               onChange={(e) => handleChange("technical_specs", e.target.value)}
             />
@@ -461,6 +546,17 @@ export default function AdminDashboard() {
                       fontSize: 14,
                     }}
                   >
+                    Subcategoria
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      color: "#111111",
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      fontSize: 14,
+                    }}
+                  >
                     Preço
                   </th>
                   <th
@@ -489,7 +585,7 @@ export default function AdminDashboard() {
               </thead>
 
               <tbody>
-                {products.map((p) => (
+                {products.map((p: any) => (
                   <tr key={p.id}>
                     <td
                       style={{
@@ -523,6 +619,17 @@ export default function AdminDashboard() {
                       }}
                     >
                       {p.category || "-"}
+                    </td>
+                    <td
+                      style={{
+                        color: "#111111",
+                        padding: "12px 10px",
+                        borderBottom: "1px solid #f1f5f9",
+                        fontSize: 14,
+                        backgroundColor: "#ffffff",
+                      }}
+                    >
+                      {p.subcategory || "-"}
                     </td>
                     <td
                       style={{
