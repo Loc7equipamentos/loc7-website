@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 type FormState = {
@@ -13,6 +13,16 @@ type FormState = {
   technical_specs: string;
   image_url: string;
   is_active: boolean;
+};
+
+type ProductRow = {
+  id: string;
+  name: string | null;
+  brand: string | null;
+  category: string | null;
+  price: number | null;
+  is_active: boolean | null;
+  created_at?: string | null;
 };
 
 const inputStyle: React.CSSProperties = {
@@ -74,6 +84,8 @@ export default function AdminDashboard() {
   });
 
   const [saving, setSaving] = useState(false);
+  const [products, setProducts] = useState<ProductRow[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
   const handleChange = (field: keyof FormState, value: string | boolean) => {
     setForm((prev) => ({
@@ -81,6 +93,28 @@ export default function AdminDashboard() {
       [field]: value,
     }));
   };
+
+  const loadProducts = async () => {
+    setLoadingProducts(true);
+
+    const { data, error } = await supabase
+      .from("products")
+      .select("id, name, brand, category, price, is_active, created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Erro ao carregar produtos:", error);
+      setLoadingProducts(false);
+      return;
+    }
+
+    setProducts((data as ProductRow[]) || []);
+    setLoadingProducts(false);
+  };
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
   const handleSubmit = async () => {
     if (!form.name.trim()) {
@@ -116,7 +150,22 @@ export default function AdminDashboard() {
     }
 
     alert("Produto criado com sucesso.");
-    window.location.reload();
+
+    setForm({
+      name: "",
+      brand: "",
+      category: "",
+      price: "",
+      description: "",
+      short_description: "",
+      full_description: "",
+      includes: "",
+      technical_specs: "",
+      image_url: "",
+      is_active: true,
+    });
+
+    loadProducts();
   };
 
   return (
@@ -145,6 +194,7 @@ export default function AdminDashboard() {
             borderRadius: "16px",
             padding: "24px",
             boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+            marginBottom: "24px",
           }}
         >
           <div
@@ -324,6 +374,143 @@ export default function AdminDashboard() {
           >
             {saving ? "Salvando..." : "Salvar produto"}
           </button>
+        </div>
+
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            borderRadius: "16px",
+            padding: "24px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+          }}
+        >
+          <h2 style={sectionTitleStyle}>Equipamentos cadastrados</h2>
+
+          {loadingProducts ? (
+            <p style={{ color: "#555555", margin: 0 }}>Carregando produtos...</p>
+          ) : products.length === 0 ? (
+            <p style={{ color: "#555555", margin: 0 }}>
+              Nenhum produto cadastrado ainda.
+            </p>
+          ) : (
+            <div style={{ overflowX: "auto" }}>
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  fontSize: "14px",
+                }}
+              >
+                <thead>
+                  <tr>
+                    <th
+                      style={{
+                        textAlign: "left",
+                        padding: "12px",
+                        borderBottom: "1px solid #e5e7eb",
+                        color: "#111111",
+                      }}
+                    >
+                      Nome
+                    </th>
+                    <th
+                      style={{
+                        textAlign: "left",
+                        padding: "12px",
+                        borderBottom: "1px solid #e5e7eb",
+                        color: "#111111",
+                      }}
+                    >
+                      Marca
+                    </th>
+                    <th
+                      style={{
+                        textAlign: "left",
+                        padding: "12px",
+                        borderBottom: "1px solid #e5e7eb",
+                        color: "#111111",
+                      }}
+                    >
+                      Categoria
+                    </th>
+                    <th
+                      style={{
+                        textAlign: "left",
+                        padding: "12px",
+                        borderBottom: "1px solid #e5e7eb",
+                        color: "#111111",
+                      }}
+                    >
+                      Preço
+                    </th>
+                    <th
+                      style={{
+                        textAlign: "left",
+                        padding: "12px",
+                        borderBottom: "1px solid #e5e7eb",
+                        color: "#111111",
+                      }}
+                    >
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {products.map((product) => (
+                    <tr key={product.id}>
+                      <td
+                        style={{
+                          padding: "12px",
+                          borderBottom: "1px solid #f1f5f9",
+                          color: "#111111",
+                        }}
+                      >
+                        {product.name || "-"}
+                      </td>
+                      <td
+                        style={{
+                          padding: "12px",
+                          borderBottom: "1px solid #f1f5f9",
+                          color: "#111111",
+                        }}
+                      >
+                        {product.brand || "-"}
+                      </td>
+                      <td
+                        style={{
+                          padding: "12px",
+                          borderBottom: "1px solid #f1f5f9",
+                          color: "#111111",
+                        }}
+                      >
+                        {product.category || "-"}
+                      </td>
+                      <td
+                        style={{
+                          padding: "12px",
+                          borderBottom: "1px solid #f1f5f9",
+                          color: "#111111",
+                        }}
+                      >
+                        {product.price != null ? `R$ ${product.price}` : "-"}
+                      </td>
+                      <td
+                        style={{
+                          padding: "12px",
+                          borderBottom: "1px solid #f1f5f9",
+                          color: product.is_active ? "#166534" : "#991b1b",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {product.is_active ? "Ativo" : "Inativo"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
