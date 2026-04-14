@@ -13,6 +13,18 @@ import { useParams } from "wouter";
 
 const brands = ["Todas", "Sony", "Canon", "RED", "Blackmagic", "Arri", "Aputure", "Zeiss", "DJI", "Godox"];
 
+<<<<<<< HEAD
+=======
+// Função para normalizar categorias (remover acentos e converter para minúsculas)
+function normalizeCategory(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+>>>>>>> da6cefa (fix: normalize category filter)
 export default function Catalogo() {
   const { addItem } = useCart();
   const params = useParams<{ category?: string }>();
@@ -29,6 +41,7 @@ export default function Catalogo() {
   const [sortBy, setSortBy] = useState("relevance");
 
   const slugToCategoryName: Record<string, string> = {
+<<<<<<< HEAD
     'cameras': 'Cameras',
     'lentes': 'Lentes',
     'iluminacao': 'Iluminacao',
@@ -37,6 +50,21 @@ export default function Catalogo() {
     'movimento': 'Movimento',
     'transmissores': 'Transmissores',
     'maquinaria': 'Maquinaria',
+=======
+    'cameras': 'Câmeras',
+    'lentes': 'Lentes',
+    'iluminacao': 'Iluminação',
+    'audio': 'Audio',  // SEM acento, como está no admin
+    'monitores': 'Monitores',
+    'movimento': 'Movimento',
+    'transmissores': 'Transmissores',
+    'maquinaria': 'Maquinária',
+    // Aliases com acentos (caso venham da URL com acentos)
+    'câmeras': 'Câmeras',
+    'iluminação': 'Iluminação',
+    'áudio': 'Audio',  // SEM acento
+    'maquinária': 'Maquinária',
+>>>>>>> da6cefa (fix: normalize category filter)
   };
 
   // Atualizar categoria selecionada quando URL mudar
@@ -114,15 +142,31 @@ export default function Catalogo() {
   }, []);
 
   const filtered = products.filter(p => {
+<<<<<<< HEAD
     // Filtro de categoria: comparar case-insensitive
     const matchCat = selectedCategory === "Todos" || 
       (p.category?.toLowerCase() === selectedCategory.toLowerCase());
+=======
+    // Filtro de categoria: comparar com normalização
+    const matchCat = selectedCategory === "Todos" || 
+      (normalizeCategory(p.category || '') === normalizeCategory(selectedCategory));
+>>>>>>> da6cefa (fix: normalize category filter)
     const matchBrand = selectedBrand === "Todas" || (p.name?.toLowerCase().includes(selectedBrand.toLowerCase()) ?? false);
     const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
     
     if (selectedCategory !== "Todos" && !matchCat) {
+<<<<<<< HEAD
       console.log('[DEBUG] Produto não corresponde à categoria:', { product: p.name, productCat: p.category, selectedCat: selectedCategory });
+=======
+      console.log('[DEBUG] Produto não corresponde à categoria:', { 
+        product: p.name, 
+        productCat: p.category,
+        productCatNormalized: normalizeCategory(p.category || ''),
+        selectedCat: selectedCategory,
+        selectedCatNormalized: normalizeCategory(selectedCategory)
+      });
+>>>>>>> da6cefa (fix: normalize category filter)
     }
     
     return matchCat && matchBrand && matchSearch && matchPrice;
@@ -287,7 +331,11 @@ export default function Catalogo() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filtered.map((product) => {
+<<<<<<< HEAD
               const productLink = product.slug ? `/equipamentos/${product.slug}` : null;
+=======
+              const productLink = product.slug ? `/equipamentos/${encodeURIComponent(product.slug)}` : null;
+>>>>>>> da6cefa (fix: normalize category filter)
               return (
               <a
                 key={product.id}
