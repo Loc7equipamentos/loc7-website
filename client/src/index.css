@@ -560,3 +560,30 @@
   font-family: 'Helvetica Neue', 'Arial', sans-serif;
   letter-spacing: 0.06em;
 }
+/* ADMIN FORCE FIX */
+.admin-panel,
+.admin-panel * {
+  color: #111111;
+}
+
+.admin-panel input,
+.admin-panel textarea,
+.admin-panel select {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #d1d5db !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+.admin-panel input::placeholder,
+.admin-panel textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+.admin-panel label,
+.admin-panel p,
+.admin-panel span {
+  color: #111111 !important;
+}
