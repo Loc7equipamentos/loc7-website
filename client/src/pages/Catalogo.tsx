@@ -40,7 +40,7 @@ export default function Catalogo() {
   const [sortBy, setSortBy] = useState("relevance");
 
   const slugToCategoryName: Record<string, string> = {
-<<<<<<< HEAD
+
     'cameras': 'Cameras',
     'lentes': 'Lentes',
     'iluminacao': 'Iluminacao',
@@ -49,7 +49,7 @@ export default function Catalogo() {
     'movimento': 'Movimento',
     'transmissores': 'Transmissores',
     'maquinaria': 'Maquinaria',
-=======
+
     'cameras': 'Câmeras',
     'lentes': 'Lentes',
     'iluminacao': 'Iluminação',
@@ -63,7 +63,7 @@ export default function Catalogo() {
     'iluminação': 'Iluminação',
     'áudio': 'Audio',  // SEM acento
     'maquinária': 'Maquinária',
->>>>>>> da6cefa (fix: normalize category filter)
+
   };
 
   // Atualizar categoria selecionada quando URL mudar
@@ -141,23 +141,23 @@ export default function Catalogo() {
   }, []);
 
   const filtered = products.filter(p => {
-<<<<<<< HEAD
+
     // Filtro de categoria: comparar case-insensitive
     const matchCat = selectedCategory === "Todos" || 
       (p.category?.toLowerCase() === selectedCategory.toLowerCase());
-=======
+
     // Filtro de categoria: comparar com normalização
     const matchCat = selectedCategory === "Todos" || 
       (normalizeCategory(p.category || '') === normalizeCategory(selectedCategory));
->>>>>>> da6cefa (fix: normalize category filter)
+
     const matchBrand = selectedBrand === "Todas" || (p.name?.toLowerCase().includes(selectedBrand.toLowerCase()) ?? false);
     const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
     
     if (selectedCategory !== "Todos" && !matchCat) {
-<<<<<<< HEAD
+
       console.log('[DEBUG] Produto não corresponde à categoria:', { product: p.name, productCat: p.category, selectedCat: selectedCategory });
-=======
+
       console.log('[DEBUG] Produto não corresponde à categoria:', { 
         product: p.name, 
         productCat: p.category,
@@ -165,7 +165,7 @@ export default function Catalogo() {
         selectedCat: selectedCategory,
         selectedCatNormalized: normalizeCategory(selectedCategory)
       });
->>>>>>> da6cefa (fix: normalize category filter)
+
     }
     
     return matchCat && matchBrand && matchSearch && matchPrice;
@@ -323,16 +323,16 @@ export default function Catalogo() {
           <div className="flex items-center justify-center py-16">
             <Loader className="w-8 h-8 text-[oklch(0.45_0.25_25)] animate-spin" />
           </div>
-        ) : filtered.length === 0 ? (
+        
           <div className="text-center py-16">
             <p className="text-[oklch(0.7_0_0)] text-lg">Nenhum produto encontrado com os filtros selecionados.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filtered.map((product) => {
-<<<<<<< HEAD
+
               const productLink = product.slug ? `/equipamentos/${product.slug}` : null;
-=======
+
               const productLink = product.slug ? `/equipamentos/${encodeURIComponent(product.slug)}` : null;
 >>>>>>> da6cefa (fix: normalize category filter)
               return (
