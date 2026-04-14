@@ -13,8 +13,7 @@ import { useParams } from "wouter";
 
 const brands = ["Todas", "Sony", "Canon", "RED", "Blackmagic", "Arri", "Aputure", "Zeiss", "DJI", "Godox"];
 
-<<<<<<< HEAD
-=======
+
 // Função para normalizar categorias (remover acentos e converter para minúsculas)
 function normalizeCategory(value: string): string {
   return value
@@ -24,7 +23,7 @@ function normalizeCategory(value: string): string {
     .trim();
 }
 
->>>>>>> da6cefa (fix: normalize category filter)
+
 export default function Catalogo() {
   const { addItem } = useCart();
   const params = useParams<{ category?: string }>();
