@@ -2,34 +2,99 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 const categorias = [
-  "Câmeras","Lentes","Iluminação","Áudio","Monitores",
-  "Movimento","Transmissores","Comunicadores","Maquinária","Drones"
+  "Câmeras",
+  "Lentes",
+  "Iluminação",
+  "Áudio",
+  "Monitores",
+  "Movimento",
+  "Transmissores",
+  "Comunicadores",
+  "Maquinária",
+  "Drones",
 ];
 
 const marcas = [
-  "Sony","Canon","RED","Blackmagic","Arri","Aputure","DJI",
-  "Hollyland","Sennheiser","Rode","SmallHD","DanaDolly","DZO"
+  "Sony",
+  "Canon",
+  "RED",
+  "Blackmagic",
+  "Arri",
+  "Aputure",
+  "DJI",
+  "Hollyland",
+  "Sennheiser",
+  "Rode",
+  "SmallHD",
+  "DanaDolly",
+  "DZO",
 ];
 
-const input = {
-  width: "100%",
-  background: "#fff",
-  color: "#000",
-  border: "1px solid #ccc",
-  padding: "10px",
-  borderRadius: "8px"
+type Product = {
+  id?: number;
+  name: string;
+  brand: string;
+  category: string;
+  price: string | number;
+  short_description: string;
+  full_description: string;
+  includes: string;
+  technical_specs: string;
+  image_url: string;
+  is_active: boolean;
 };
 
-const textarea = {
-  ...input,
-  minHeight: "100px"
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  backgroundColor: "#ffffff",
+  color: "#111111",
+  border: "1px solid #cbd5e1",
+  borderRadius: "8px",
+  padding: "12px 14px",
+  fontSize: "14px",
+  lineHeight: "20px",
+  outline: "none",
+  boxSizing: "border-box",
+};
+
+const textareaStyle: React.CSSProperties = {
+  ...inputStyle,
+  minHeight: "100px",
+  resize: "vertical",
+};
+
+const buttonPrimary: React.CSSProperties = {
+  backgroundColor: "#000000",
+  color: "#ffffff",
+  border: "none",
+  borderRadius: "8px",
+  padding: "12px 18px",
+  fontSize: "15px",
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const buttonSecondary: React.CSSProperties = {
+  backgroundColor: "#e5e7eb",
+  color: "#111111",
+  border: "none",
+  borderRadius: "8px",
+  padding: "12px 18px",
+  fontSize: "15px",
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  marginBottom: "8px",
+  color: "#111111",
+  fontSize: "14px",
+  fontWeight: 600,
 };
 
 export default function AdminDashboard() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [editingId, setEditingId] = useState<number | null>(null);
-
-  const [form, setForm] = useState({
+  const emptyForm: Product = {
     name: "",
     brand: "",
     category: "",
@@ -40,44 +105,83 @@ export default function AdminDashboard() {
     technical_specs: "",
     image_url: "",
     is_active: true,
-  });
+  };
 
-  const handleChange = (field: string, value: any) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [form, setForm] = useState<Product>(emptyForm);
+
+  const handleChange = (field: keyof Product, value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const reset = () => {
     setEditingId(null);
-    setForm({
-      name: "",
-      brand: "",
-      category: "",
-      price: "",
-      short_description: "",
-      full_description: "",
-      includes: "",
-      technical_specs: "",
-      image_url: "",
-      is_active: true,
-    });
+    setForm(emptyForm);
   };
 
   const load = async () => {
-    const { data } = await supabase.from("products").select("*").order("id", { ascending: false });
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("id", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
     setProducts(data || []);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const save = async () => {
-    const payload = { ...form, price: Number(form.price) };
+    if (!form.name.trim()) {
+      alert("Preencha o nome");
+      return;
+    }
+
+    if (!form.category.trim()) {
+      alert("Selecione a categoria");
+      return;
+    }
+
+    if (!String(form.price).trim()) {
+      alert("Preencha o preço");
+      return;
+    }
+
+    const payload = {
+      ...form,
+      price: Number(form.price),
+    };
 
     if (editingId) {
-      await supabase.from("products").update(payload).eq("id", editingId);
-      alert("Atualizado");
+      const { error } = await supabase
+        .from("products")
+        .update(payload)
+        .eq("id", editingId);
+
+      if (error) {
+        console.error(error);
+        alert("Erro ao atualizar");
+        return;
+      }
+
+      alert("Produto atualizado");
     } else {
-      await supabase.from("products").insert([payload]);
-      alert("Criado");
+      const { error } = await supabase.from("products").insert([payload]);
+
+      if (error) {
+        console.error(error);
+        alert("Erro ao criar");
+        return;
+      }
+
+      alert("Produto criado");
     }
 
     reset();
@@ -98,83 +202,393 @@ export default function AdminDashboard() {
       image_url: p.image_url || "",
       is_active: p.is_active ?? true,
     });
-    window.scrollTo({ top: 0 });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const remove = async (id: number) => {
-    if (!confirm("Excluir?")) return;
-    await supabase.from("products").delete().eq("id", id);
+    const ok = window.confirm("Excluir produto?");
+    if (!ok) return;
+
+    const { error } = await supabase.from("products").delete().eq("id", id);
+
+    if (error) {
+      console.error(error);
+      alert("Erro ao excluir");
+      return;
+    }
+
+    if (editingId === id) {
+      reset();
+    }
+
+    alert("Produto excluído");
     load();
   };
 
   return (
-    <div style={{ background: "#000", minHeight: "100vh", padding: 20 }}>
-      <div style={{ maxWidth: 1100, margin: "auto" }}>
-        <h1 style={{ color: "#fff" }}>Admin - Produtos</h1>
+    <div style={{ background: "#000000", minHeight: "100vh", padding: 20 }}>
+      <div style={{ maxWidth: 1140, margin: "0 auto" }}>
+        <h1
+          style={{
+            color: "#ffffff",
+            fontSize: 24,
+            fontWeight: 800,
+            marginBottom: 24,
+          }}
+        >
+          Admin - Produtos
+        </h1>
 
-        <div style={{ background: "#fff", padding: 20, borderRadius: 12 }}>
-          <h2>{editingId ? "Editando" : "Novo produto"}</h2>
+        <div
+          style={{
+            background: "#ffffff",
+            borderRadius: 16,
+            padding: 20,
+            marginBottom: 24,
+            boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+          }}
+        >
+          <h2
+            style={{
+              color: "#111111",
+              fontSize: 18,
+              fontWeight: 700,
+              marginTop: 0,
+              marginBottom: 16,
+            }}
+          >
+            {editingId ? "Editando produto" : "Novo produto"}
+          </h2>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10 }}>
-            <input style={input} placeholder="Nome" value={form.name} onChange={(e)=>handleChange("name", e.target.value)} />
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              gap: 12,
+              marginBottom: 16,
+            }}
+          >
+            <input
+              style={inputStyle}
+              placeholder="Nome"
+              value={form.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+            />
 
-            <select style={input} value={form.brand} onChange={(e)=>handleChange("brand", e.target.value)}>
+            <select
+              style={inputStyle}
+              value={form.brand}
+              onChange={(e) => handleChange("brand", e.target.value)}
+            >
               <option value="">Marca</option>
-              {marcas.map(m => <option key={m}>{m}</option>)}
-              <option>Outra</option>
+              {marcas.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+              <option value="Outra">Outra</option>
             </select>
 
-            <select style={input} value={form.category} onChange={(e)=>handleChange("category", e.target.value)}>
+            <select
+              style={inputStyle}
+              value={form.category}
+              onChange={(e) => handleChange("category", e.target.value)}
+            >
               <option value="">Categoria</option>
-              {categorias.map(c => <option key={c}>{c}</option>)}
-              <option>Outra</option>
+              {categorias.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+              <option value="Outra">Outra</option>
             </select>
 
-            <input style={input} placeholder="Preço" value={form.price} onChange={(e)=>handleChange("price", e.target.value)} />
+            <input
+              style={inputStyle}
+              placeholder="Preço"
+              value={form.price}
+              onChange={(e) => handleChange("price", e.target.value)}
+            />
           </div>
 
-          <textarea style={textarea} placeholder="Descrição curta" value={form.short_description} onChange={(e)=>handleChange("short_description", e.target.value)} />
-          <textarea style={textarea} placeholder="Descrição completa" value={form.full_description} onChange={(e)=>handleChange("full_description", e.target.value)} />
-          <textarea style={textarea} placeholder="O que acompanha" value={form.includes} onChange={(e)=>handleChange("includes", e.target.value)} />
-          <textarea style={textarea} placeholder="Specs" value={form.technical_specs} onChange={(e)=>handleChange("technical_specs", e.target.value)} />
+          <div style={{ marginBottom: 12 }}>
+            <textarea
+              style={textareaStyle}
+              placeholder="Descrição curta"
+              value={form.short_description}
+              onChange={(e) => handleChange("short_description", e.target.value)}
+            />
+          </div>
 
-          <input style={input} placeholder="URL imagem" value={form.image_url} onChange={(e)=>handleChange("image_url", e.target.value)} />
+          <div style={{ marginBottom: 12 }}>
+            <textarea
+              style={textareaStyle}
+              placeholder="Descrição completa"
+              value={form.full_description}
+              onChange={(e) => handleChange("full_description", e.target.value)}
+            />
+          </div>
 
-          <label>
-            <input type="checkbox" checked={form.is_active} onChange={(e)=>handleChange("is_active", e.target.checked)} />
+          <div style={{ marginBottom: 12 }}>
+            <textarea
+              style={textareaStyle}
+              placeholder="O que acompanha"
+              value={form.includes}
+              onChange={(e) => handleChange("includes", e.target.value)}
+            />
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
+            <textarea
+              style={textareaStyle}
+              placeholder="Specs"
+              value={form.technical_specs}
+              onChange={(e) => handleChange("technical_specs", e.target.value)}
+            />
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
+            <input
+              style={inputStyle}
+              placeholder="URL imagem"
+              value={form.image_url}
+              onChange={(e) => handleChange("image_url", e.target.value)}
+            />
+          </div>
+
+          <label
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              color: "#111111",
+              fontSize: 14,
+              fontWeight: 600,
+              marginBottom: 16,
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={form.is_active}
+              onChange={(e) => handleChange("is_active", e.target.checked)}
+            />
             Ativo
           </label>
 
-          <br />
+          <div style={{ display: "flex", gap: 10 }}>
+            <button style={buttonPrimary} onClick={save}>
+              {editingId ? "Atualizar" : "Salvar"}
+            </button>
 
-          <button onClick={save}>
-            {editingId ? "Atualizar" : "Salvar"}
-          </button>
-
-          {editingId && <button onClick={reset}>Cancelar</button>}
+            {editingId && (
+              <button style={buttonSecondary} onClick={reset}>
+                Cancelar
+              </button>
+            )}
+          </div>
         </div>
 
-        <div style={{ background: "#fff", marginTop: 20, padding: 20, borderRadius: 12 }}>
-          <h2>Equipamentos</h2>
+        <div
+          style={{
+            background: "#ffffff",
+            borderRadius: 16,
+            padding: 20,
+            boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+          }}
+        >
+          <h2
+            style={{
+              color: "#111111",
+              fontSize: 18,
+              fontWeight: 700,
+              marginTop: 0,
+              marginBottom: 16,
+            }}
+          >
+            Equipamentos cadastrados
+          </h2>
 
-          <table width="100%">
-            <tbody>
-              {products.map(p => (
-                <tr key={p.id}>
-                  <td>{p.name}</td>
-                  <td>{p.brand}</td>
-                  <td>{p.category}</td>
-                  <td>R$ {p.price}</td>
-                  <td>{p.is_active ? "Ativo" : "Inativo"}</td>
-                  <td>
-                    <button onClick={()=>edit(p)}>Editar</button>
-                    <button onClick={()=>remove(p.id)} style={{ color:"red" }}>Excluir</button>
-                  </td>
+          <div style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <thead>
+                <tr>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      color: "#111111",
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      fontSize: 14,
+                    }}
+                  >
+                    Nome
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      color: "#111111",
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      fontSize: 14,
+                    }}
+                  >
+                    Marca
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      color: "#111111",
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      fontSize: 14,
+                    }}
+                  >
+                    Categoria
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      color: "#111111",
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      fontSize: 14,
+                    }}
+                  >
+                    Preço
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      color: "#111111",
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      fontSize: 14,
+                    }}
+                  >
+                    Status
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      color: "#111111",
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      fontSize: 14,
+                    }}
+                  >
+                    Ações
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
 
+              <tbody>
+                {products.map((p) => (
+                  <tr key={p.id}>
+                    <td
+                      style={{
+                        color: "#111111",
+                        padding: "12px 10px",
+                        borderBottom: "1px solid #f1f5f9",
+                        fontSize: 14,
+                        backgroundColor: "#ffffff",
+                      }}
+                    >
+                      {p.name || "-"}
+                    </td>
+                    <td
+                      style={{
+                        color: "#111111",
+                        padding: "12px 10px",
+                        borderBottom: "1px solid #f1f5f9",
+                        fontSize: 14,
+                        backgroundColor: "#ffffff",
+                      }}
+                    >
+                      {p.brand || "-"}
+                    </td>
+                    <td
+                      style={{
+                        color: "#111111",
+                        padding: "12px 10px",
+                        borderBottom: "1px solid #f1f5f9",
+                        fontSize: 14,
+                        backgroundColor: "#ffffff",
+                      }}
+                    >
+                      {p.category || "-"}
+                    </td>
+                    <td
+                      style={{
+                        color: "#111111",
+                        padding: "12px 10px",
+                        borderBottom: "1px solid #f1f5f9",
+                        fontSize: 14,
+                        backgroundColor: "#ffffff",
+                      }}
+                    >
+                      R$ {p.price}
+                    </td>
+                    <td
+                      style={{
+                        color: p.is_active ? "#15803d" : "#b91c1c",
+                        fontWeight: 700,
+                        padding: "12px 10px",
+                        borderBottom: "1px solid #f1f5f9",
+                        fontSize: 14,
+                        backgroundColor: "#ffffff",
+                      }}
+                    >
+                      {p.is_active ? "Ativo" : "Inativo"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "12px 10px",
+                        borderBottom: "1px solid #f1f5f9",
+                        fontSize: 14,
+                        backgroundColor: "#ffffff",
+                      }}
+                    >
+                      <div style={{ display: "flex", gap: 12 }}>
+                        <button
+                          onClick={() => edit(p)}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "#2563eb",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            padding: 0,
+                          }}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => remove(p.id)}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "#dc2626",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            padding: 0,
+                          }}
+                        >
+                          Excluir
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
