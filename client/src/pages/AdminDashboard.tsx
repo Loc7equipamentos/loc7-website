@@ -174,6 +174,29 @@ export default function AdminDashboard() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleDelete = async (id: number) => {
+    const confirmDelete = window.confirm(
+      "Tem certeza que deseja excluir este produto?"
+    );
+
+    if (!confirmDelete) return;
+
+    const { error } = await supabase.from("products").delete().eq("id", id);
+
+    if (error) {
+      console.error(error);
+      alert("Erro ao excluir produto.");
+      return;
+    }
+
+    if (editingId === id) {
+      resetForm();
+    }
+
+    alert("Produto excluído com sucesso.");
+    loadProducts();
+  };
+
   const handleSubmit = async () => {
     if (!form.name.trim()) {
       alert("Preencha o nome do produto.");
@@ -592,19 +615,35 @@ export default function AdminDashboard() {
                           borderBottom: "1px solid #f1f5f9",
                         }}
                       >
-                        <button
-                          onClick={() => handleEdit(product)}
-                          style={{
-                            background: "none",
-                            border: "none",
-                            color: "#2563eb",
-                            fontWeight: 700,
-                            cursor: "pointer",
-                            padding: 0,
-                          }}
-                        >
-                          Editar
-                        </button>
+                        <div style={{ display: "flex", gap: "12px" }}>
+                          <button
+                            onClick={() => handleEdit(product)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "#2563eb",
+                              fontWeight: 700,
+                              cursor: "pointer",
+                              padding: 0,
+                            }}
+                          >
+                            Editar
+                          </button>
+
+                          <button
+                            onClick={() => handleDelete(product.id)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "#dc2626",
+                              fontWeight: 700,
+                              cursor: "pointer",
+                              padding: 0,
+                            }}
+                          >
+                            Excluir
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
