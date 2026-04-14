@@ -1,517 +1,227 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
-type FormState = {
+type Product = {
+  id?: number;
   name: string;
-  brand: string;
+  brand?: string;
   category: string;
-  price: string;
-  description: string;
-  short_description: string;
-  full_description: string;
-  includes: string;
-  technical_specs: string;
-  image_url: string;
-  is_active: boolean;
-};
-
-type ProductRow = {
-  id: string;
-  name: string | null;
-  brand: string | null;
-  category: string | null;
-  price: number | null;
-  is_active: boolean | null;
-  created_at?: string | null;
-};
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  backgroundColor: "#ffffff",
-  color: "#111111",
-  border: "1px solid #d1d5db",
-  borderRadius: "8px",
-  padding: "12px 14px",
-  fontSize: "14px",
-  lineHeight: "20px",
-  outline: "none",
-  boxSizing: "border-box",
-};
-
-const textareaStyle: React.CSSProperties = {
-  width: "100%",
-  minHeight: "110px",
-  backgroundColor: "#ffffff",
-  color: "#111111",
-  border: "1px solid #d1d5db",
-  borderRadius: "8px",
-  padding: "12px 14px",
-  fontSize: "14px",
-  lineHeight: "20px",
-  outline: "none",
-  boxSizing: "border-box",
-  resize: "vertical",
-};
-
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  marginBottom: "8px",
-  color: "#111111",
-  fontSize: "14px",
-  fontWeight: 600,
-};
-
-const sectionTitleStyle: React.CSSProperties = {
-  color: "#111111",
-  fontSize: "18px",
-  fontWeight: 700,
-  marginBottom: "16px",
+  price: number;
+  description?: string;
+  image_url?: string;
+  is_active?: boolean;
 };
 
 export default function AdminDashboard() {
-  const [form, setForm] = useState<FormState>({
+  const [products, setProducts] = useState<Product[]>([]);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  const [form, setForm] = useState<Product>({
     name: "",
     brand: "",
     category: "",
-    price: "",
+    price: 0,
     description: "",
-    short_description: "",
-    full_description: "",
-    includes: "",
-    technical_specs: "",
     image_url: "",
     is_active: true,
   });
 
-  const [saving, setSaving] = useState(false);
-  const [products, setProducts] = useState<ProductRow[]>([]);
-  const [loadingProducts, setLoadingProducts] = useState(true);
-
-  const handleChange = (field: keyof FormState, value: string | boolean) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const loadProducts = async () => {
-    setLoadingProducts(true);
-
-    const { data, error } = await supabase
-      .from("products")
-      .select("id, name, brand, category, price, is_active, created_at")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Erro ao carregar produtos:", error);
-      setLoadingProducts(false);
-      return;
-    }
-
-    setProducts((data as ProductRow[]) || []);
-    setLoadingProducts(false);
+  // =========================
+  // FETCH PRODUTOS
+  // =========================
+  const fetchProducts = async () => {
+    const { data } = await supabase.from("products").select("*").order("id", { ascending: false });
+    if (data) setProducts(data);
   };
 
   useEffect(() => {
-    loadProducts();
+    fetchProducts();
   }, []);
 
-  const handleSubmit = async () => {
-    if (!form.name.trim()) {
-      alert("Preencha o nome do produto.");
-      return;
-    }
+  // =========================
+  // HANDLE CHANGE
+  // =========================
+  const handleChange = (field: keyof Product, value: any) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: field === "price" ? Number(value) : value,
+    }));
+  };
 
-    if (!form.category.trim()) {
-      alert("Preencha a categoria.");
-      return;
-    }
+  // =========================
+  // EDITAR
+  // =========================
+  const handleEdit = (product: Product) => {
+    setEditingProduct(product);
+    setForm(product);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-    if (!form.price.trim()) {
-      alert("Preencha o preço.");
-      return;
-    }
-
-    setSaving(true);
-
-    const payload = {
-      ...form,
-      price: Number(form.price),
-    };
-
-    const { error } = await supabase.from("products").insert([payload]);
-
-    setSaving(false);
-
-    if (error) {
-      console.error(error);
-      alert("Erro ao salvar produto.");
-      return;
-    }
-
-    alert("Produto criado com sucesso.");
-
+  const handleCancelEdit = () => {
+    setEditingProduct(null);
     setForm({
       name: "",
       brand: "",
       category: "",
-      price: "",
+      price: 0,
       description: "",
-      short_description: "",
-      full_description: "",
-      includes: "",
-      technical_specs: "",
       image_url: "",
       is_active: true,
     });
-
-    loadProducts();
   };
 
+  // =========================
+  // SUBMIT
+  // =========================
+  const handleSubmit = async () => {
+    if (!form.name || !form.category) {
+      alert("Preencha nome e categoria");
+      return;
+    }
+
+    if (editingProduct) {
+      // UPDATE
+      const { error } = await supabase
+        .from("products")
+        .update(form)
+        .eq("id", editingProduct.id);
+
+      if (error) {
+        alert("Erro ao atualizar");
+        console.error(error);
+      } else {
+        alert("Produto atualizado!");
+        handleCancelEdit();
+        fetchProducts();
+      }
+    } else {
+      // INSERT
+      const { error } = await supabase.from("products").insert([form]);
+
+      if (error) {
+        alert("Erro ao salvar");
+        console.error(error);
+      } else {
+        alert("Produto criado!");
+        fetchProducts();
+      }
+    }
+  };
+
+  // =========================
+  // UI
+  // =========================
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#000000",
-        padding: "24px",
-      }}
-    >
-      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
-        <h1
-          style={{
-            color: "#ffffff",
-            fontSize: "24px",
-            fontWeight: 800,
-            marginBottom: "24px",
-          }}
-        >
-          Admin - Produtos
-        </h1>
+    <div className="admin-panel p-6 max-w-5xl mx-auto">
+      <h1 className="text-2xl font-bold mb-6">Admin - Produtos</h1>
 
-        <div
-          style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "16px",
-            padding: "24px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-            marginBottom: "24px",
-          }}
-        >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-              gap: "16px",
-              marginBottom: "32px",
-            }}
-          >
-            <div style={{ gridColumn: "1 / -1" }}>
-              <h2 style={sectionTitleStyle}>Informações básicas</h2>
-            </div>
+      {/* FORM */}
+      <div className="bg-white p-6 rounded-xl shadow space-y-4 mb-10">
+        <h2 className="font-semibold">
+          {editingProduct ? "Editando produto" : "Novo produto"}
+        </h2>
 
-            <div>
-              <label style={labelStyle}>Nome</label>
-              <input
-                value={form.name}
-                onChange={(e) => handleChange("name", e.target.value)}
-                placeholder="Nome"
-                style={inputStyle}
-              />
-            </div>
+        <input
+          placeholder="Nome"
+          value={form.name}
+          onChange={(e) => handleChange("name", e.target.value)}
+          className="input"
+        />
 
-            <div>
-              <label style={labelStyle}>Marca</label>
-              <input
-                value={form.brand}
-                onChange={(e) => handleChange("brand", e.target.value)}
-                placeholder="Marca"
-                style={inputStyle}
-              />
-            </div>
+        <input
+          placeholder="Marca"
+          value={form.brand || ""}
+          onChange={(e) => handleChange("brand", e.target.value)}
+          className="input"
+        />
 
-            <div>
-              <label style={labelStyle}>Categoria</label>
-              <input
-                value={form.category}
-                onChange={(e) => handleChange("category", e.target.value)}
-                placeholder="Categoria"
-                style={inputStyle}
-              />
-            </div>
+        <input
+          placeholder="Categoria"
+          value={form.category}
+          onChange={(e) => handleChange("category", e.target.value)}
+          className="input"
+        />
 
-            <div>
-              <label style={labelStyle}>Preço</label>
-              <input
-                value={form.price}
-                onChange={(e) => handleChange("price", e.target.value)}
-                placeholder="Preço"
-                type="number"
-                style={inputStyle}
-              />
-            </div>
-          </div>
+        <input
+          placeholder="Preço"
+          type="number"
+          value={form.price}
+          onChange={(e) => handleChange("price", e.target.value)}
+          className="input"
+        />
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-              gap: "16px",
-              marginBottom: "32px",
-            }}
-          >
-            <div style={{ gridColumn: "1 / -1" }}>
-              <h2 style={sectionTitleStyle}>Descrição</h2>
-            </div>
+        <textarea
+          placeholder="Descrição"
+          value={form.description || ""}
+          onChange={(e) => handleChange("description", e.target.value)}
+          className="input"
+        />
 
-            <div>
-              <label style={labelStyle}>Descrição curta</label>
-              <textarea
-                value={form.short_description}
-                onChange={(e) =>
-                  handleChange("short_description", e.target.value)
-                }
-                placeholder="Descrição curta"
-                style={textareaStyle}
-              />
-            </div>
+        <input
+          placeholder="URL da imagem"
+          value={form.image_url || ""}
+          onChange={(e) => handleChange("image_url", e.target.value)}
+          className="input"
+        />
 
-            <div>
-              <label style={labelStyle}>Descrição completa</label>
-              <textarea
-                value={form.full_description}
-                onChange={(e) =>
-                  handleChange("full_description", e.target.value)
-                }
-                placeholder="Descrição completa"
-                style={textareaStyle}
-              />
-            </div>
-          </div>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={form.is_active}
+            onChange={(e) => handleChange("is_active", e.target.checked)}
+          />
+          Produto ativo
+        </label>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-              gap: "16px",
-              marginBottom: "32px",
-            }}
-          >
-            <div style={{ gridColumn: "1 / -1" }}>
-              <h2 style={sectionTitleStyle}>Detalhes</h2>
-            </div>
-
-            <div>
-              <label style={labelStyle}>O que acompanha</label>
-              <textarea
-                value={form.includes}
-                onChange={(e) => handleChange("includes", e.target.value)}
-                placeholder="O que acompanha"
-                style={textareaStyle}
-              />
-            </div>
-
-            <div>
-              <label style={labelStyle}>Especificações técnicas</label>
-              <textarea
-                value={form.technical_specs}
-                onChange={(e) =>
-                  handleChange("technical_specs", e.target.value)
-                }
-                placeholder="Especificações técnicas"
-                style={textareaStyle}
-              />
-            </div>
-          </div>
-
-          <div style={{ marginBottom: "32px" }}>
-            <h2 style={sectionTitleStyle}>Imagem</h2>
-
-            <label style={labelStyle}>URL da imagem</label>
-            <input
-              value={form.image_url}
-              onChange={(e) => handleChange("image_url", e.target.value)}
-              placeholder="URL da imagem"
-              style={inputStyle}
-            />
-          </div>
-
-          <div style={{ marginBottom: "24px" }}>
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                color: "#111111",
-                fontSize: "15px",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={form.is_active}
-                onChange={(e) => handleChange("is_active", e.target.checked)}
-                style={{ width: "16px", height: "16px" }}
-              />
-              Produto ativo
-            </label>
-          </div>
-
-          <button
-            onClick={handleSubmit}
-            disabled={saving}
-            style={{
-              backgroundColor: "#000000",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "10px",
-              padding: "12px 18px",
-              fontSize: "16px",
-              fontWeight: 700,
-              cursor: saving ? "not-allowed" : "pointer",
-              opacity: saving ? 0.7 : 1,
-            }}
-          >
-            {saving ? "Salvando..." : "Salvar produto"}
+        <div className="flex gap-3">
+          <button onClick={handleSubmit} className="btn-primary">
+            {editingProduct ? "Atualizar produto" : "Salvar produto"}
           </button>
-        </div>
 
-        <div
-          style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "16px",
-            padding: "24px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-          }}
-        >
-          <h2 style={sectionTitleStyle}>Equipamentos cadastrados</h2>
-
-          {loadingProducts ? (
-            <p style={{ color: "#555555", margin: 0 }}>Carregando produtos...</p>
-          ) : products.length === 0 ? (
-            <p style={{ color: "#555555", margin: 0 }}>
-              Nenhum produto cadastrado ainda.
-            </p>
-          ) : (
-            <div style={{ overflowX: "auto" }}>
-              <table
-                style={{
-                  width: "100%",
-                  borderCollapse: "collapse",
-                  fontSize: "14px",
-                }}
-              >
-                <thead>
-                  <tr>
-                    <th
-                      style={{
-                        textAlign: "left",
-                        padding: "12px",
-                        borderBottom: "1px solid #e5e7eb",
-                        color: "#111111",
-                      }}
-                    >
-                      Nome
-                    </th>
-                    <th
-                      style={{
-                        textAlign: "left",
-                        padding: "12px",
-                        borderBottom: "1px solid #e5e7eb",
-                        color: "#111111",
-                      }}
-                    >
-                      Marca
-                    </th>
-                    <th
-                      style={{
-                        textAlign: "left",
-                        padding: "12px",
-                        borderBottom: "1px solid #e5e7eb",
-                        color: "#111111",
-                      }}
-                    >
-                      Categoria
-                    </th>
-                    <th
-                      style={{
-                        textAlign: "left",
-                        padding: "12px",
-                        borderBottom: "1px solid #e5e7eb",
-                        color: "#111111",
-                      }}
-                    >
-                      Preço
-                    </th>
-                    <th
-                      style={{
-                        textAlign: "left",
-                        padding: "12px",
-                        borderBottom: "1px solid #e5e7eb",
-                        color: "#111111",
-                      }}
-                    >
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {products.map((product) => (
-                    <tr key={product.id}>
-                      <td
-                        style={{
-                          padding: "12px",
-                          borderBottom: "1px solid #f1f5f9",
-                          color: "#111111",
-                        }}
-                      >
-                        {product.name || "-"}
-                      </td>
-                      <td
-                        style={{
-                          padding: "12px",
-                          borderBottom: "1px solid #f1f5f9",
-                          color: "#111111",
-                        }}
-                      >
-                        {product.brand || "-"}
-                      </td>
-                      <td
-                        style={{
-                          padding: "12px",
-                          borderBottom: "1px solid #f1f5f9",
-                          color: "#111111",
-                        }}
-                      >
-                        {product.category || "-"}
-                      </td>
-                      <td
-                        style={{
-                          padding: "12px",
-                          borderBottom: "1px solid #f1f5f9",
-                          color: "#111111",
-                        }}
-                      >
-                        {product.price != null ? `R$ ${product.price}` : "-"}
-                      </td>
-                      <td
-                        style={{
-                          padding: "12px",
-                          borderBottom: "1px solid #f1f5f9",
-                          color: product.is_active ? "#166534" : "#991b1b",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {product.is_active ? "Ativo" : "Inativo"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          {editingProduct && (
+            <button onClick={handleCancelEdit} className="btn-secondary">
+              Cancelar
+            </button>
           )}
         </div>
+      </div>
+
+      {/* LISTA */}
+      <div className="bg-white p-6 rounded-xl shadow">
+        <h2 className="font-semibold mb-4">Equipamentos cadastrados</h2>
+
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b">
+              <th>Nome</th>
+              <th>Marca</th>
+              <th>Categoria</th>
+              <th>Preço</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {products.map((p) => (
+              <tr key={p.id} className="border-b">
+                <td>{p.name}</td>
+                <td>{p.brand || "-"}</td>
+                <td>{p.category}</td>
+                <td>R$ {p.price}</td>
+                <td>{p.is_active ? "Ativo" : "Inativo"}</td>
+                <td>
+                  <button
+                    onClick={() => handleEdit(p)}
+                    className="text-blue-600"
+                  >
+                    Editar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
