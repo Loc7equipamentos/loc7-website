@@ -25,6 +25,12 @@ type Brand = {
   created_at?: string | null;
 };
 
+type Category = {
+  id: string;
+  name: string;
+  created_at?: string | null;
+};
+
 type ProductForm = {
   name: string;
   brand: string;
@@ -38,31 +44,6 @@ type ProductForm = {
   image_url: string;
   is_active: boolean;
 };
-
-const categorias = [
-  "Áudio",
-  "Câmeras",
-  "Computadores e Tablets",
-  "Comunicadores",
-  "Conversores / Distribuidores",
-  "Drones",
-  "Estabilizadores",
-  "Filtros",
-  "Follow Focus",
-  "Gravadores",
-  "HDs e Cartões de Memória",
-  "Lentes",
-  "Luz",
-  "Maquinária",
-  "Mattebox",
-  "Monitores",
-  "Still",
-  "Movimento",
-  "Switchers",
-  "Tele-Prompter",
-  "Transmissores",
-  "Tripés",
-] as const;
 
 const subcategoriasPorCategoria: Record<string, string[]> = {
   Câmeras: [
@@ -222,11 +203,14 @@ function slugify(value: string) {
 export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [newBrand, setNewBrand] = useState("");
+  const [newCategory, setNewCategory] = useState("");
   const [form, setForm] = useState<ProductForm>(initialForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savingBrand, setSavingBrand] = useState(false);
+  const [savingCategory, setSavingCategory] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -234,6 +218,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     loadBrands();
+    loadCategories();
     loadProducts();
   }, [refreshKey]);
 
@@ -264,6 +249,21 @@ export default function AdminDashboard() {
     }
 
     setBrands((data || []) as Brand[]);
+  }
+
+  async function loadCategories() {
+    const { data, error } = await supabase
+      .from("categories")
+      .select("*")
+      .order("name", { ascending: true });
+
+    if (error) {
+      console.error(error);
+      alert("Erro ao carregar categorias");
+      return;
+    }
+
+    setCategories((data || []) as Category[]);
   }
 
   async function loadProducts() {
@@ -485,6 +485,52 @@ export default function AdminDashboard() {
     setRefreshKey((n) => n + 1);
   }
 
+  async function addCategory() {
+    if (!newCategory.trim()) {
+      alert("Digite o nome da categoria");
+      return;
+    }
+
+    try {
+      setSavingCategory(true);
+
+      const { error } = await supabase
+        .from("categories")
+        .insert([{ name: newCategory.trim() }]);
+
+      if (error) {
+        console.error(error);
+        alert("Erro ao criar categoria");
+        return;
+      }
+
+      setNewCategory("");
+      alert("Categoria criada");
+      setRefreshKey((n) => n + 1);
+    } finally {
+      setSavingCategory(false);
+    }
+  }
+
+  async function deleteCategory(id: string, name: string) {
+    const confirmed = window.confirm(`Deseja excluir a categoria "${name}"?`);
+    if (!confirmed) return;
+
+    const { error } = await supabase.from("categories").delete().eq("id", id);
+
+    if (error) {
+      console.error(error);
+      alert("Erro ao excluir categoria");
+      return;
+    }
+
+    alert("Categoria excluída");
+    if (form.category === name) {
+      setForm((prev) => ({ ...prev, category: "", subcategory: "" }));
+    }
+    setRefreshKey((n) => n + 1);
+  }
+
   async function removeProduct(id: string) {
     const confirmed = window.confirm("Deseja excluir este produto?");
     if (!confirmed) return;
@@ -542,9 +588,9 @@ export default function AdminDashboard() {
                 onChange={(e) => handleChange("category", e.target.value)}
               >
                 <option value="">Categoria</option>
-                {categorias.map((categoria) => (
-                  <option key={categoria} value={categoria}>
-                    {categoria}
+                {categories.map((category) => (
+                  <option key={category.id} value={category.name}>
+                    {category.name}
                   </option>
                 ))}
               </select>
@@ -779,6 +825,80 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={() => deleteBrand(brand.id, brand.name)}
+                    style={{
+                      ...smallButtonStyle,
+                      borderColor: "#ef4444",
+                      color: "#b91c1c",
+                    }}
+                  >
+                    Excluir
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div style={cardStyle}>
+          <div style={sectionTitleStyle}>Gerenciar categorias</div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "2fr 1fr",
+              gap: 12,
+              marginBottom: 20,
+            }}
+          >
+            <input
+              style={inputStyle}
+              placeholder="Nova categoria"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+            />
+
+            <button
+              type="button"
+              onClick={addCategory}
+              disabled={savingCategory}
+              style={{
+                ...buttonPrimaryStyle,
+                opacity: savingCategory ? 0.7 : 1,
+              }}
+            >
+              {savingCategory ? "Salvando..." : "Adicionar categoria"}
+            </button>
+          </div>
+
+          {categories.length === 0 ? (
+            <div style={{ color: "#555" }}>Nenhuma categoria cadastrada.</div>
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+                gap: 12,
+              }}
+            >
+              {categories.map((category) => (
+                <div
+                  key={category.id}
+                  style={{
+                    border: "1px solid #d9dee7",
+                    borderRadius: 12,
+                    padding: 14,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 12,
+                    background: "#fff",
+                  }}
+                >
+                  <span style={{ fontWeight: 600 }}>{category.name}</span>
+
+                  <button
+                    type="button"
+                    onClick={() => deleteCategory(category.id, category.name)}
                     style={{
                       ...smallButtonStyle,
                       borderColor: "#ef4444",
