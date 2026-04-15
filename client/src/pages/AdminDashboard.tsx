@@ -1028,7 +1028,10 @@ export default function AdminDashboard() {
                 gap: 12,
               }}
             >
-              {subcategories.map((subcategory) => (
+            {(newSubcategoryCategoryId
+  ? subcategories.filter((subcategory) => subcategory.category_id === newSubcategoryCategoryId)
+  : subcategories
+).map((subcategory) => (
                 <div
                   key={subcategory.id}
                   style={{
