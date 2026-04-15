@@ -31,6 +31,13 @@ type Category = {
   created_at?: string | null;
 };
 
+type Subcategory = {
+  id: string;
+  name: string;
+  category_id: string;
+  created_at?: string | null;
+};
+
 type ProductForm = {
   name: string;
   brand: string;
@@ -43,38 +50,6 @@ type ProductForm = {
   technical_specs: string;
   image_url: string;
   is_active: boolean;
-};
-
-const subcategoriasPorCategoria: Record<string, string[]> = {
-  Câmeras: [
-    "DSLR / Mirrorless",
-    "Cinema",
-    "Broadcast",
-    "Handycam",
-    "Ação",
-    "Acessórios de Câmera",
-  ],
-  Lentes: [
-    "Prime",
-    "Zoom",
-    "Cinema",
-    "Foto",
-    "Anamórfica",
-    "PL-Mount",
-    "EF-Mount",
-    "RF-Mount",
-    "Sony E",
-    "Adaptadores",
-  ],
-  Luz: [
-    "LED",
-    "Tubo",
-    "Fresnel",
-    "Painel",
-    "COB",
-    "Modificadores",
-    "Acessórios de Iluminação",
-  ],
 };
 
 const initialForm: ProductForm = {
@@ -204,13 +179,21 @@ export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+
   const [newBrand, setNewBrand] = useState("");
   const [newCategory, setNewCategory] = useState("");
+  const [newSubcategory, setNewSubcategory] = useState("");
+  const [newSubcategoryCategoryId, setNewSubcategoryCategoryId] = useState("");
+
   const [form, setForm] = useState<ProductForm>(initialForm);
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savingBrand, setSavingBrand] = useState(false);
   const [savingCategory, setSavingCategory] = useState(false);
+  const [savingSubcategory, setSavingSubcategory] = useState(false);
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -219,6 +202,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     loadBrands();
     loadCategories();
+    loadSubcategories();
     loadProducts();
   }, [refreshKey]);
 
@@ -232,9 +216,14 @@ export default function AdminDashboard() {
     };
   }, [file]);
 
+  const selectedCategory = useMemo(() => {
+    return categories.find((cat) => cat.name === form.category) || null;
+  }, [categories, form.category]);
+
   const subcategoriasDisponiveis = useMemo(() => {
-    return subcategoriasPorCategoria[form.category] || [];
-  }, [form.category]);
+    if (!selectedCategory) return [];
+    return subcategories.filter((sub) => sub.category_id === selectedCategory.id);
+  }, [selectedCategory, subcategories]);
 
   async function loadBrands() {
     const { data, error } = await supabase
@@ -264,6 +253,21 @@ export default function AdminDashboard() {
     }
 
     setCategories((data || []) as Category[]);
+  }
+
+  async function loadSubcategories() {
+    const { data, error } = await supabase
+      .from("subcategories")
+      .select("*")
+      .order("name", { ascending: true });
+
+    if (error) {
+      console.error(error);
+      alert("Erro ao carregar subcategorias");
+      return;
+    }
+
+    setSubcategories((data || []) as Subcategory[]);
   }
 
   async function loadProducts() {
@@ -531,6 +535,60 @@ export default function AdminDashboard() {
     setRefreshKey((n) => n + 1);
   }
 
+  async function addSubcategory() {
+    if (!newSubcategoryCategoryId) {
+      alert("Selecione a categoria da subcategoria");
+      return;
+    }
+
+    if (!newSubcategory.trim()) {
+      alert("Digite o nome da subcategoria");
+      return;
+    }
+
+    try {
+      setSavingSubcategory(true);
+
+      const { error } = await supabase.from("subcategories").insert([
+        {
+          name: newSubcategory.trim(),
+          category_id: newSubcategoryCategoryId,
+        },
+      ]);
+
+      if (error) {
+        console.error(error);
+        alert("Erro ao criar subcategoria");
+        return;
+      }
+
+      setNewSubcategory("");
+      alert("Subcategoria criada");
+      setRefreshKey((n) => n + 1);
+    } finally {
+      setSavingSubcategory(false);
+    }
+  }
+
+  async function deleteSubcategory(id: string, name: string) {
+    const confirmed = window.confirm(`Deseja excluir a subcategoria "${name}"?`);
+    if (!confirmed) return;
+
+    const { error } = await supabase.from("subcategories").delete().eq("id", id);
+
+    if (error) {
+      console.error(error);
+      alert("Erro ao excluir subcategoria");
+      return;
+    }
+
+    alert("Subcategoria excluída");
+    if (form.subcategory === name) {
+      setForm((prev) => ({ ...prev, subcategory: "" }));
+    }
+    setRefreshKey((n) => n + 1);
+  }
+
   async function removeProduct(id: string) {
     const confirmed = window.confirm("Deseja excluir este produto?");
     if (!confirmed) return;
@@ -546,6 +604,9 @@ export default function AdminDashboard() {
     alert("Produto excluído");
     setRefreshKey((n) => n + 1);
   }
+
+  const categoryNameById = (categoryId: string) =>
+    categories.find((cat) => cat.id === categoryId)?.name || "-";
 
   return (
     <div style={pageStyle}>
@@ -617,8 +678,8 @@ export default function AdminDashboard() {
                 >
                   <option value="">Subcategoria</option>
                   {subcategoriasDisponiveis.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
+                    <option key={item.id} value={item.name}>
+                      {item.name}
                     </option>
                   ))}
                 </select>
@@ -899,6 +960,98 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={() => deleteCategory(category.id, category.name)}
+                    style={{
+                      ...smallButtonStyle,
+                      borderColor: "#ef4444",
+                      color: "#b91c1c",
+                    }}
+                  >
+                    Excluir
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div style={cardStyle}>
+          <div style={sectionTitleStyle}>Gerenciar subcategorias</div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: 12,
+              marginBottom: 20,
+            }}
+          >
+            <select
+              style={inputStyle}
+              value={newSubcategoryCategoryId}
+              onChange={(e) => setNewSubcategoryCategoryId(e.target.value)}
+            >
+              <option value="">Categoria da subcategoria</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+
+            <input
+              style={inputStyle}
+              placeholder="Nova subcategoria"
+              value={newSubcategory}
+              onChange={(e) => setNewSubcategory(e.target.value)}
+            />
+
+            <button
+              type="button"
+              onClick={addSubcategory}
+              disabled={savingSubcategory}
+              style={{
+                ...buttonPrimaryStyle,
+                opacity: savingSubcategory ? 0.7 : 1,
+              }}
+            >
+              {savingSubcategory ? "Salvando..." : "Adicionar subcategoria"}
+            </button>
+          </div>
+
+          {subcategories.length === 0 ? (
+            <div style={{ color: "#555" }}>Nenhuma subcategoria cadastrada.</div>
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                gap: 12,
+              }}
+            >
+              {subcategories.map((subcategory) => (
+                <div
+                  key={subcategory.id}
+                  style={{
+                    border: "1px solid #d9dee7",
+                    borderRadius: 12,
+                    padding: 14,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 12,
+                    background: "#fff",
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 700 }}>{subcategory.name}</div>
+                    <div style={{ fontSize: 13, color: "#666", marginTop: 4 }}>
+                      {categoryNameById(subcategory.category_id)}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => deleteSubcategory(subcategory.id, subcategory.name)}
                     style={{
                       ...smallButtonStyle,
                       borderColor: "#ef4444",
