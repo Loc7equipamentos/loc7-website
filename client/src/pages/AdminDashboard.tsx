@@ -58,6 +58,32 @@ const categorias = [
   "Tripés",
 ] as const;
 
+const marcas = [
+  "Aputure",
+  "ARRI",
+  "Angenieux",
+  "Atomos",
+  "Blackmagic",
+  "Canon",
+  "DJI",
+  "Fujinon",
+  "Godox",
+  "Hollyland",
+  "Nanlite",
+  "Panasonic",
+  "Rode",
+  "Sachtler",
+  "Samyang",
+  "Sennheiser",
+  "Sigma",
+  "SmallHD",
+  "Sony",
+  "Tamron",
+  "Tokina",
+  "Zeiss",
+  "Outra",
+] as const;
+
 const subcategoriasPorCategoria: Record<string, string[]> = {
   Câmeras: [
     "DSLR / Mirrorless",
@@ -73,6 +99,10 @@ const subcategoriasPorCategoria: Record<string, string[]> = {
     "Cinema",
     "Foto",
     "Anamórfica",
+    "PL-Mount",
+    "EF-Mount",
+    "RF-Mount",
+    "Sony E",
     "Adaptadores",
   ],
   Luz: [
@@ -439,12 +469,18 @@ export default function AdminDashboard() {
             </div>
 
             <div style={{ gridColumn: "span 3" }}>
-              <input
+              <select
                 style={inputStyle}
-                placeholder="Marca"
                 value={form.brand}
                 onChange={(e) => handleChange("brand", e.target.value)}
-              />
+              >
+                <option value="">Marca</option>
+                {marcas.map((marca) => (
+                  <option key={marca} value={marca}>
+                    {marca}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div style={{ gridColumn: "span 3" }}>
