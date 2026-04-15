@@ -4,11 +4,11 @@
  */
 
 import { useParams, useLocation } from "wouter";
-import { ChevronLeft, MapPin, Zap, Star, ArrowRight, ShoppingCart, Loader } from "lucide-react";
+import { ChevronLeft, ShoppingCart, Loader } from "lucide-react";
 import { Link } from "wouter";
 import { useCart } from "@/contexts/CartContext";
 import { supabase, type Product } from "@/lib/supabase";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 export default function Produto() {
   const { slug } = useParams<{ slug: string }>();
@@ -18,28 +18,27 @@ export default function Produto() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Buscar produto do Supabase pelo slug
   useEffect(() => {
     const loadProduct = async () => {
       try {
         setLoading(true);
         const { data, error: err } = await supabase
-          .from('products')
-          .select('*')
-          .eq('slug', slug)
+          .from("products")
+          .select("*")
+          .eq("slug", slug)
           .single();
 
         if (err) {
-          console.error('Erro ao buscar produto:', err);
-          setError('Produto não encontrado');
+          console.error("Erro ao buscar produto:", err);
+          setError("Produto não encontrado");
           setProduct(null);
         } else {
           setProduct(data);
           setError(null);
         }
       } catch (err) {
-        console.error('Erro:', err);
-        setError('Erro ao carregar produto');
+        console.error("Erro:", err);
+        setError("Erro ao carregar produto");
       } finally {
         setLoading(false);
       }
@@ -49,6 +48,11 @@ export default function Produto() {
       loadProduct();
     }
   }, [slug]);
+
+  const categoryLabel = useMemo(() => {
+    if (!product) return "";
+    return product.subcategory?.trim() || product.category || "";
+  }, [product]);
 
   if (loading) {
     return (
@@ -62,7 +66,9 @@ export default function Produto() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-gray-800 text-3xl font-display font-bold mb-4">Produto não encontrado</h1>
+          <h1 className="text-gray-800 text-3xl font-display font-bold mb-4">
+            Produto não encontrado
+          </h1>
           <Link href="/catalogo" className="text-blue-600 hover:text-blue-700">
             ← Voltar ao catálogo
           </Link>
@@ -85,7 +91,6 @@ export default function Produto() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header com botão voltar */}
       <div className="bg-gray-50 border-b border-gray-200 py-6">
         <div className="container">
           <button
@@ -100,7 +105,6 @@ export default function Produto() {
 
       <div className="container py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Imagem */}
           <div className="flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden aspect-square">
             {product.image_url ? (
               <img
@@ -115,13 +119,12 @@ export default function Produto() {
             )}
           </div>
 
-          {/* Detalhes */}
           <div className="flex flex-col justify-start">
-            {/* Categoria e Badge */}
             <div className="flex items-center gap-3 mb-4">
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
-                {product.category}
+                {categoryLabel}
               </span>
+
               {product.badge && (
                 <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
                   {product.badge}
@@ -129,12 +132,10 @@ export default function Produto() {
               )}
             </div>
 
-            {/* Nome */}
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
               {product.name}
             </h1>
 
-            {/* Preço */}
             <div className="mb-8 pb-8 border-b border-gray-200">
               <p className="text-3xl font-bold text-gray-900">
                 R$ {product.price.toFixed(2)}
@@ -142,17 +143,17 @@ export default function Produto() {
               </p>
             </div>
 
-            {/* Descrição */}
             {product.description && (
               <div className="mb-8">
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">Descrição</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-3">
+                  Descrição
+                </h2>
                 <p className="text-gray-700 leading-relaxed">
                   {product.description}
                 </p>
               </div>
             )}
 
-            {/* CTA Buttons */}
             <div className="flex gap-4 mt-auto">
               <a
                 href={whatsappUrl}
@@ -165,6 +166,7 @@ export default function Produto() {
                 </svg>
                 Solicitar Orçamento
               </a>
+
               <button
                 onClick={handleAddToCart}
                 className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold py-4 px-6 rounded-lg transition flex items-center justify-center gap-2"
@@ -176,18 +178,27 @@ export default function Produto() {
           </div>
         </div>
 
-        {/* Seção de informações adicionais */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Categoria</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              Categoria
+            </h3>
             <p className="text-gray-700">{product.category}</p>
           </div>
+
           <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Preço por dia</h3>
-            <p className="text-2xl font-bold text-gray-900">R$ {product.price.toFixed(2)}</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              Preço por dia
+            </h3>
+            <p className="text-2xl font-bold text-gray-900">
+              R$ {product.price.toFixed(2)}
+            </p>
           </div>
+
           <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Disponibilidade</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              Disponibilidade
+            </h3>
             <p className="text-gray-700">Sob consulta</p>
           </div>
         </div>
