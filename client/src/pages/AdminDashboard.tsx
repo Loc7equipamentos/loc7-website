@@ -138,6 +138,13 @@ const titleStyle: React.CSSProperties = {
   color: "#111111",
 };
 
+const sectionTitleStyle: React.CSSProperties = {
+  fontSize: 20,
+  fontWeight: 800,
+  marginBottom: 20,
+  color: "#111111",
+};
+
 const subtitleStyle: React.CSSProperties = {
   fontSize: 14,
   color: "#555",
@@ -215,9 +222,11 @@ function slugify(value: string) {
 export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [newBrand, setNewBrand] = useState("");
   const [form, setForm] = useState<ProductForm>(initialForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingBrand, setSavingBrand] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -428,6 +437,52 @@ export default function AdminDashboard() {
     } finally {
       setSaving(false);
     }
+  }
+
+  async function addBrand() {
+    if (!newBrand.trim()) {
+      alert("Digite o nome da marca");
+      return;
+    }
+
+    try {
+      setSavingBrand(true);
+
+      const { error } = await supabase
+        .from("brands")
+        .insert([{ name: newBrand.trim() }]);
+
+      if (error) {
+        console.error(error);
+        alert("Erro ao criar marca");
+        return;
+      }
+
+      setNewBrand("");
+      alert("Marca criada");
+      setRefreshKey((n) => n + 1);
+    } finally {
+      setSavingBrand(false);
+    }
+  }
+
+  async function deleteBrand(id: string, name: string) {
+    const confirmed = window.confirm(`Deseja excluir a marca "${name}"?`);
+    if (!confirmed) return;
+
+    const { error } = await supabase.from("brands").delete().eq("id", id);
+
+    if (error) {
+      console.error(error);
+      alert("Erro ao excluir marca");
+      return;
+    }
+
+    alert("Marca excluída");
+    if (form.brand === name) {
+      setForm((prev) => ({ ...prev, brand: "" }));
+    }
+    setRefreshKey((n) => n + 1);
   }
 
   async function removeProduct(id: string) {
@@ -665,16 +720,81 @@ export default function AdminDashboard() {
         </div>
 
         <div style={cardStyle}>
+          <div style={sectionTitleStyle}>Gerenciar marcas</div>
+
           <div
             style={{
-              fontSize: 20,
-              fontWeight: 800,
+              display: "grid",
+              gridTemplateColumns: "2fr 1fr",
+              gap: 12,
               marginBottom: 20,
-              color: "#111111",
             }}
           >
-            Equipamentos cadastrados
+            <input
+              style={inputStyle}
+              placeholder="Nova marca"
+              value={newBrand}
+              onChange={(e) => setNewBrand(e.target.value)}
+            />
+
+            <button
+              type="button"
+              onClick={addBrand}
+              disabled={savingBrand}
+              style={{
+                ...buttonPrimaryStyle,
+                opacity: savingBrand ? 0.7 : 1,
+              }}
+            >
+              {savingBrand ? "Salvando..." : "Adicionar marca"}
+            </button>
           </div>
+
+          {brands.length === 0 ? (
+            <div style={{ color: "#555" }}>Nenhuma marca cadastrada.</div>
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+                gap: 12,
+              }}
+            >
+              {brands.map((brand) => (
+                <div
+                  key={brand.id}
+                  style={{
+                    border: "1px solid #d9dee7",
+                    borderRadius: 12,
+                    padding: 14,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 12,
+                    background: "#fff",
+                  }}
+                >
+                  <span style={{ fontWeight: 600 }}>{brand.name}</span>
+
+                  <button
+                    type="button"
+                    onClick={() => deleteBrand(brand.id, brand.name)}
+                    style={{
+                      ...smallButtonStyle,
+                      borderColor: "#ef4444",
+                      color: "#b91c1c",
+                    }}
+                  >
+                    Excluir
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div style={cardStyle}>
+          <div style={sectionTitleStyle}>Equipamentos cadastrados</div>
 
           {loading ? (
             <div style={{ color: "#555" }}>Carregando...</div>
