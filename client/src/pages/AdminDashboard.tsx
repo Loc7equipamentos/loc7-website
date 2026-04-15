@@ -431,17 +431,31 @@ export default function AdminDashboard() {
               value={form.technical_specs}
               onChange={(e) => handleChange("technical_specs", e.target.value)}
             />
-          </div>
+         <div style={{ marginBottom: 12 }}>
+  <label
+    style={{
+      display: "block",
+      color: "#111111",
+      fontSize: 14,
+      fontWeight: 600,
+      marginBottom: 8,
+    }}
+  >
+    Imagem do produto
+  </label>
 
-          <div style={{ marginBottom: 12 }}>
-            <input
-              style={inputStyle}
-              placeholder="URL imagem"
-              value={form.image_url}
-              onChange={(e) => handleChange("image_url", e.target.value)}
-            />
-          </div>
-
+  <input
+    type="file"
+    accept="image/png,image/jpeg,image/jpg,image/webp"
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        alert(`Arquivo selecionado: ${file.name}`);
+      }
+    }}
+    style={inputStyle}
+  />
+</div>
           <label
             style={{
               display: "flex",
