@@ -43,7 +43,7 @@ export default function Produto() {
     <div className="min-h-screen bg-black text-white px-4 py-10">
       <div className="max-w-6xl mx-auto">
 
-        {/* 🔥 TOPO CORRIGIDO (SEM REDUNDÂNCIA) */}
+        {/* ✅ EXIBE SUBCATEGORIA OU CATEGORIA */}
         <p className="text-sm text-gray-400 mb-2 uppercase tracking-widest">
           {product.subcategory || product.category}
         </p>
@@ -66,12 +66,6 @@ export default function Produto() {
             <p className="text-gray-300 leading-relaxed mb-6">
               {product.description}
             </p>
-
-            {/* 🔽 Se existir outro bloco de categoria abaixo, mantemos */}
-            <div className="text-sm text-gray-500">
-              Categoria: {product.subcategory || product.category}
-            </div>
-
           </div>
 
         </div>
