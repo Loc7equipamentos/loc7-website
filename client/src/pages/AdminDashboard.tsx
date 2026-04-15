@@ -19,6 +19,12 @@ type Product = {
   updated_at?: string | null;
 };
 
+type Brand = {
+  id: string;
+  name: string;
+  created_at?: string | null;
+};
+
 type ProductForm = {
   name: string;
   brand: string;
@@ -56,32 +62,6 @@ const categorias = [
   "Tele-Prompter",
   "Transmissores",
   "Tripés",
-] as const;
-
-const marcas = [
-  "Aputure",
-  "ARRI",
-  "Angenieux",
-  "Atomos",
-  "Blackmagic",
-  "Canon",
-  "DJI",
-  "Fujinon",
-  "Godox",
-  "Hollyland",
-  "Nanlite",
-  "Panasonic",
-  "Rode",
-  "Sachtler",
-  "Samyang",
-  "Sennheiser",
-  "Sigma",
-  "SmallHD",
-  "Sony",
-  "Tamron",
-  "Tokina",
-  "Zeiss",
-  "Outra",
 ] as const;
 
 const subcategoriasPorCategoria: Record<string, string[]> = {
@@ -234,6 +214,7 @@ function slugify(value: string) {
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [form, setForm] = useState<ProductForm>(initialForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -243,6 +224,7 @@ export default function AdminDashboard() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
+    loadBrands();
     loadProducts();
   }, [refreshKey]);
 
@@ -259,6 +241,21 @@ export default function AdminDashboard() {
   const subcategoriasDisponiveis = useMemo(() => {
     return subcategoriasPorCategoria[form.category] || [];
   }, [form.category]);
+
+  async function loadBrands() {
+    const { data, error } = await supabase
+      .from("brands")
+      .select("*")
+      .order("name", { ascending: true });
+
+    if (error) {
+      console.error(error);
+      alert("Erro ao carregar marcas");
+      return;
+    }
+
+    setBrands((data || []) as Brand[]);
+  }
 
   async function loadProducts() {
     try {
@@ -475,9 +472,9 @@ export default function AdminDashboard() {
                 onChange={(e) => handleChange("brand", e.target.value)}
               >
                 <option value="">Marca</option>
-                {marcas.map((marca) => (
-                  <option key={marca} value={marca}>
-                    {marca}
+                {brands.map((brand) => (
+                  <option key={brand.id} value={brand.name}>
+                    {brand.name}
                   </option>
                 ))}
               </select>
