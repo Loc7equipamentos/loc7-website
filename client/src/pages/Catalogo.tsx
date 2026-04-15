@@ -357,3 +357,4 @@ export default function Catalogo() {
     </div>
   );
 }
+// estado estável após rollback
