@@ -34,14 +34,6 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-function normalizeText(value: string | null | undefined) {
-  return (value || "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
-}
-
 export default function Catalogo() {
   const [, params] = useRoute("/catalogo/:category");
   const categorySlug = params?.category || null;
@@ -123,12 +115,33 @@ export default function Catalogo() {
     }
   }
 
+  const visibleSubcategories = useMemo(() => {
+    const namesFromProducts = Array.from(
+      new Set(
+        products
+          .map((product) => (product.subcategory || "").trim())
+          .filter((name) => name.length > 0)
+      )
+    );
+
+    if (namesFromProducts.length === 0) {
+      return subcategories.map((sub) => sub.name);
+    }
+
+    const orderedFromTable = subcategories
+      .map((sub) => sub.name)
+      .filter((name) => namesFromProducts.includes(name));
+
+    const missingFromTable = namesFromProducts
+      .filter((name) => !orderedFromTable.includes(name))
+      .sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+    return [...orderedFromTable, ...missingFromTable];
+  }, [products, subcategories]);
+
   const filteredProducts = useMemo(() => {
     if (!selectedSubcategory) return products;
-
-    return products.filter((product) => {
-      return normalizeText(product.subcategory) === normalizeText(selectedSubcategory);
-    });
+    return products.filter((product) => product.subcategory === selectedSubcategory);
   }, [products, selectedSubcategory]);
 
   return (
@@ -142,7 +155,7 @@ export default function Catalogo() {
         alignItems: "flex-start",
       }}
     >
-      {subcategories.length > 0 && (
+      {visibleSubcategories.length > 0 && (
         <aside
           style={{
             width: 240,
@@ -186,23 +199,17 @@ export default function Catalogo() {
             Todos
           </button>
 
-          {subcategories.map((sub) => (
+          {visibleSubcategories.map((subcategoryName) => (
             <button
-              key={sub.id}
+              key={subcategoryName}
               type="button"
-              onClick={() => setSelectedSubcategory(sub.name)}
+              onClick={() => setSelectedSubcategory(subcategoryName)}
               style={{
                 display: "block",
                 width: "100%",
                 textAlign: "left",
-                background:
-                  normalizeText(selectedSubcategory) === normalizeText(sub.name)
-                    ? "#111"
-                    : "#fff",
-                color:
-                  normalizeText(selectedSubcategory) === normalizeText(sub.name)
-                    ? "#fff"
-                    : "#111",
+                background: selectedSubcategory === subcategoryName ? "#111" : "#fff",
+                color: selectedSubcategory === subcategoryName ? "#fff" : "#111",
                 border: "1px solid #d1d5db",
                 borderRadius: 10,
                 padding: "10px 12px",
@@ -211,7 +218,7 @@ export default function Catalogo() {
                 cursor: "pointer",
               }}
             >
-              {sub.name}
+              {subcategoryName}
             </button>
           ))}
         </aside>
@@ -357,4 +364,3 @@ export default function Catalogo() {
     </div>
   );
 }
-// estado estável após rollback
