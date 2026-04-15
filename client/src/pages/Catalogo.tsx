@@ -1,235 +1,144 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, Loader } from "lucide-react";
-import { supabase, type Product } from "@/lib/supabase";
-import { useParams } from "wouter";
+import { supabase } from "@/lib/supabase";
+import { useParams } from "react-router-dom";
 
-function normalizeCategory(value: string = ""): string {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
-}
+type Product = {
+  id: string;
+  name: string;
+  category: string;
+  subcategory: string | null;
+  price: number;
+  image_url: string | null;
+};
 
 export default function Catalogo() {
-  const params = useParams<{ category?: string }>();
+  const { categoria } = useParams();
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>(["Todos"]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [produtos, setProdutos] = useState<Product[]>([]);
+  const [subcategorias, setSubcategorias] = useState<string[]>([]);
+  const [filtroSubcategoria, setFiltroSubcategoria] = useState<string | null>(null);
 
-  const slugToCategoryName: Record<string, string> = {
-    cameras: "Câmeras",
-    lentes: "Lentes",
-    iluminacao: "Iluminação",
-    audio: "Audio",
-    monitores: "Monitores",
-    movimento: "Movimento",
-    transmissores: "Transmissores",
-    maquinaria: "Maquinária",
-    câmeras: "Câmeras",
-    iluminação: "Iluminação",
-    áudio: "Audio",
-    maquinária: "Maquinária",
+  // 🔹 Carregar produtos
+  const loadProdutos = async () => {
+    const { data } = await supabase
+      .from("products")
+      .select("*")
+      .eq("category", categoria)
+      .eq("is_active", true);
+
+    if (data) setProdutos(data);
+  };
+
+  // 🔹 Carregar subcategorias
+  const loadSubcategorias = async () => {
+    const { data } = await supabase
+      .from("subcategories")
+      .select("*")
+      .eq("category", categoria);
+
+    if (data) {
+      const nomes = data.map((item: any) => item.name);
+      setSubcategorias(nomes);
+    }
   };
 
   useEffect(() => {
-    if (!params.category) {
-      setSelectedCategory("Todos");
-      return;
+    if (categoria) {
+      loadProdutos();
+      loadSubcategorias();
     }
+  }, [categoria]);
 
-    try {
-      const slug = decodeURIComponent(params.category);
-      const categoryName =
-        slugToCategoryName[slug] ||
-        slug
-          .split("-")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
-
-      setSelectedCategory(categoryName);
-    } catch (err) {
-      console.error("Erro ao decodificar categoria:", err);
-      setSelectedCategory("Todos");
-    }
-  }, [params.category]);
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const { data: categoriesData, error: categoriesError } = await supabase
-          .from("categories")
-          .select("name")
-          .order("name");
-
-        if (categoriesError) {
-          throw categoriesError;
-        }
-
-        const { data: productsData, error: productsError } = await supabase
-          .from("products")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (productsError) {
-          throw productsError;
-        }
-
-        setCategories([
-          "Todos",
-          ...(categoriesData?.map((item) => item.name) ?? []),
-        ]);
-        setProducts(productsData ?? []);
-      } catch (err) {
-        console.error("Erro ao carregar catálogo:", err);
-        setError("Erro ao carregar produtos.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadData();
-  }, []);
-
-  const filteredProducts = products.filter((product) => {
-    const matchCategory =
-      selectedCategory === "Todos" ||
-      normalizeCategory(product.category || "") ===
-        normalizeCategory(selectedCategory);
-
-    const matchSearch = (product.name || "")
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-
-    return matchCategory && matchSearch;
-  });
-
-  function renderContent() {
-    if (loading) {
-      return (
-        <div className="flex justify-center py-16">
-          <Loader className="w-8 h-8 animate-spin text-gray-600" />
-        </div>
-      );
-    }
-
-    if (filteredProducts.length === 0) {
-      return (
-        <div className="text-center py-16">
-          <p className="text-gray-600 text-lg">
-            Nenhum produto encontrado com os filtros selecionados.
-          </p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filteredProducts.map((product) => {
-          const productLink = product.slug
-            ? `/equipamentos/${encodeURIComponent(product.slug)}`
-            : "#";
-
-          return (
-            <a
-              key={product.id}
-              href={productLink}
-              className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-gray-200"
-            >
-              <div className="relative overflow-hidden aspect-square bg-gray-100">
-                <img
-                  src={
-                    product.image_url ||
-                    "https://via.placeholder.com/400x400?text=Sem+imagem"
-                  }
-                  alt={product.name || "Produto"}
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                />
-              </div>
-
-              <div className="p-4">
-                <p className="text-gray-500 text-xs uppercase tracking-widest font-semibold mb-2">
-                  {product.category}
-                </p>
-
-                <h3 className="text-gray-900 text-sm font-semibold leading-tight mb-3 line-clamp-2">
-                  {product.name}
-                </h3>
-
-                <p className="text-gray-900 text-lg font-bold">
-                  R$ {Number(product.price || 0).toFixed(2)}
-                  <span className="text-gray-500 text-sm font-normal">
-                    /dia
-                  </span>
-                </p>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white pt-32 pb-16">
-        <p className="text-gray-700">{error}</p>
-      </div>
-    );
-  }
+  // 🔹 Aplicar filtro
+  const produtosFiltrados = filtroSubcategoria
+    ? produtos.filter(p => p.subcategory === filtroSubcategoria)
+    : produtos;
 
   return (
-    <div className="min-h-screen bg-white pt-32 pb-16">
-      <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-6 text-gray-900">Catálogo</h1>
+    <div style={{ display: "flex", padding: 20, gap: 20 }}>
 
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Buscar equipamento..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full border border-gray-300 p-3 rounded-lg text-gray-900"
-          />
+      {/* 🔥 LATERAL */}
+      <div style={{
+        width: 220,
+        borderRight: "1px solid #eee",
+        paddingRight: 20
+      }}>
+        <h3 style={{ marginBottom: 16 }}>Filtrar</h3>
+
+        <div
+          style={{
+            cursor: "pointer",
+            marginBottom: 10,
+            fontWeight: !filtroSubcategoria ? "bold" : "normal"
+          }}
+          onClick={() => setFiltroSubcategoria(null)}
+        >
+          Todos
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-8">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-2 rounded-lg text-sm transition ${
-                selectedCategory === cat
-                  ? "bg-gray-900 text-white"
-                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-              }`}
+        {subcategorias.map((sub) => (
+          <div
+            key={sub}
+            onClick={() => setFiltroSubcategoria(sub)}
+            style={{
+              cursor: "pointer",
+              marginBottom: 8,
+              color: filtroSubcategoria === sub ? "#000" : "#666",
+              fontWeight: filtroSubcategoria === sub ? "bold" : "normal"
+            }}
+          >
+            {sub}
+          </div>
+        ))}
+      </div>
+
+      {/* 🔥 PRODUTOS */}
+      <div style={{ flex: 1 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+            gap: 20
+          }}
+        >
+          {produtosFiltrados.map((p) => (
+            <div
+              key={p.id}
+              style={{
+                border: "1px solid #eee",
+                borderRadius: 8,
+                overflow: "hidden",
+                background: "#fff"
+              }}
             >
-              {cat}
-            </button>
+              <img
+                src={p.image_url || ""}
+                alt={p.name}
+                style={{
+                  width: "100%",
+                  height: 180,
+                  objectFit: "cover"
+                }}
+              />
+
+              <div style={{ padding: 12 }}>
+                <div style={{ fontSize: 12, color: "#888" }}>
+                  {p.category}
+                </div>
+
+                <div style={{ fontWeight: 600 }}>
+                  {p.name}
+                </div>
+
+                <div style={{ marginTop: 6 }}>
+                  R$ {p.price}.00/dia
+                </div>
+              </div>
+            </div>
           ))}
         </div>
-
-        {renderContent()}
-
-        <div className="mt-16 text-center">
-          <a
-            href="https://wa.me/5511997237850"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition"
-          >
-            Falar no WhatsApp
-            <ArrowRight className="w-4 h-4" />
-          </a>
-        </div>
       </div>
+
     </div>
   );
 }
