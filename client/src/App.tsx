@@ -1,81 +1,147 @@
-/*
- * LOC 7 EQUIPAMENTOS — App Router
- * Cinema Noir Industrial style
- * All routes + global layout (Navbar + Footer + WhatsApp)
- */
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useParams } from "react-router-dom";
 
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { CartProvider } from "./contexts/CartContext";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import WhatsAppFloat from "./components/WhatsAppFloat";
-import Home from "./pages/Home";
-import Catalogo from "./pages/Catalogo";
-import Orcamento from "./pages/Orcamento";
-import Servicos from "./pages/Servicos";
-import Contato from "./pages/Contato";
-import Blog from "./pages/Blog";
-import Portfolio from "./pages/Portfolio";
-import Sobre from "./pages/Sobre";
-import Cadastro from "./pages/Cadastro";
+type Product = {
+  id: string;
+  name: string;
+  category: string;
+  subcategory: string | null;
+  price: number;
+  image_url: string | null;
+  is_active: boolean;
+};
 
-import AdminDashboard from "./pages/AdminDashboard";
-import Produto from "./pages/Produto";
+export default function Catalogo() {
+  const { category } = useParams();
 
-function Layout({ children }: { children: React.ReactNode }) {
+  const [produtos, setProdutos] = useState<Product[]>([]);
+  const [subcategorias, setSubcategorias] = useState<string[]>([]);
+  const [filtroSubcategoria, setFiltroSubcategoria] = useState<string | null>(null);
+
+  // 🔹 Carregar produtos
+  const loadProdutos = async () => {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("category", category)
+      .eq("is_active", true);
+
+    if (!error && data) {
+      setProdutos(data);
+    }
+  };
+
+  // 🔹 Carregar subcategorias
+  const loadSubcategorias = async () => {
+    const { data, error } = await supabase
+      .from("subcategories")
+      .select("*")
+      .eq("category", category);
+
+    if (!error && data) {
+      const nomes = data.map((item: any) => item.name);
+      setSubcategorias(nomes);
+    }
+  };
+
+  useEffect(() => {
+    if (category) {
+      loadProdutos();
+      loadSubcategorias();
+    }
+  }, [category]);
+
+  // 🔹 Aplicar filtro
+  const produtosFiltrados = filtroSubcategoria
+    ? produtos.filter(p => p.subcategory === filtroSubcategoria)
+    : produtos;
+
   return (
-    <div className="flex flex-col min-h-screen bg-[oklch(0.08_0_0)]">
-      <Navbar />
-      <main className="flex-1">
-        {children}
-      </main>
-      <Footer />
-      <WhatsAppFloat />
+    <div style={{ display: "flex", padding: 20, gap: 20 }}>
+
+      {/* 🔥 LATERAL DE FILTRO */}
+      <div style={{
+        width: 220,
+        borderRight: "1px solid #eee",
+        paddingRight: 20
+      }}>
+        <h3 style={{ marginBottom: 16 }}>Filtrar</h3>
+
+        <div
+          style={{
+            cursor: "pointer",
+            marginBottom: 10,
+            fontWeight: !filtroSubcategoria ? "bold" : "normal"
+          }}
+          onClick={() => setFiltroSubcategoria(null)}
+        >
+          Todos
+        </div>
+
+        {subcategorias.map((sub) => (
+          <div
+            key={sub}
+            onClick={() => setFiltroSubcategoria(sub)}
+            style={{
+              cursor: "pointer",
+              marginBottom: 8,
+              color: filtroSubcategoria === sub ? "#000" : "#666",
+              fontWeight: filtroSubcategoria === sub ? "bold" : "normal"
+            }}
+          >
+            {sub}
+          </div>
+        ))}
+      </div>
+
+      {/* 🔥 LISTA DE PRODUTOS */}
+      <div style={{ flex: 1 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+            gap: 20
+          }}
+        >
+          {produtosFiltrados.map((p) => (
+            <div
+              key={p.id}
+              style={{
+                border: "1px solid #eee",
+                borderRadius: 8,
+                overflow: "hidden",
+                background: "#fff"
+              }}
+            >
+              <img
+                src={p.image_url || ""}
+                alt={p.name}
+                style={{
+                  width: "100%",
+                  height: 180,
+                  objectFit: "cover"
+                }}
+              />
+
+              <div style={{ padding: 12 }}>
+                <div style={{ fontSize: 12, color: "#888" }}>
+                  {p.category}
+                </div>
+
+                <div style={{ fontWeight: 600 }}>
+                  {p.name}
+                </div>
+
+                <div style={{ marginTop: 6 }}>
+                  R$ {p.price}.00/dia
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 }
-
-function Router() {
-  return (
-    <Switch>
-      <Route path="/" component={() => <Layout><Home /></Layout>} />
-      <Route path="/catalogo" component={() => <Layout><Catalogo /></Layout>} />
-      <Route path="/catalogo/:category" component={() => <Layout><Catalogo /></Layout>} />
-      <Route path="/equipamentos/:slug" component={() => <Layout><Produto /></Layout>} />
-      <Route path="/orcamento" component={() => <Layout><Orcamento /></Layout>} />
-      <Route path="/servicos" component={() => <Layout><Servicos /></Layout>} />
-      <Route path="/producao" component={() => <Layout><Servicos /></Layout>} />
-      <Route path="/blog" component={() => <Layout><Blog /></Layout>} />
-      <Route path="/portfolio" component={() => <Layout><Portfolio /></Layout>} />
-      <Route path="/sobre" component={() => <Layout><Sobre /></Layout>} />
-      <Route path="/contato" component={() => <Layout><Contato /></Layout>} />
-      <Route path="/cadastro" component={() => <Layout><Cadastro /></Layout>} />
-
-      <Route path="/admin-panel" component={() => <AdminDashboard />} />
-      <Route path="/404" component={NotFound} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
-
-function App() {
-  return (
-    <ErrorBoundary>
-      <CartProvider>
-        <ThemeProvider defaultTheme="light" switchable={false}>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </ThemeProvider>
-      </CartProvider>
-    </ErrorBoundary>
-  );
-}
-
-export default App;
