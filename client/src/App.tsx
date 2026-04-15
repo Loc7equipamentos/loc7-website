@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useRoute } from "wouter";
 import { supabase } from "@/lib/supabase";
 
 type Product = {
@@ -35,7 +35,8 @@ function slugify(value: string) {
 }
 
 export default function Catalogo() {
-  const { category } = useParams<{ category?: string }>();
+  const [, params] = useRoute("/catalogo/:category");
+  const categorySlug = params?.category || null;
 
   const [loading, setLoading] = useState(true);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
@@ -45,21 +46,20 @@ export default function Catalogo() {
 
   useEffect(() => {
     loadPage();
-  }, [category]);
+  }, [categorySlug]);
 
   async function loadPage() {
     try {
       setLoading(true);
       setSelectedSubcategory(null);
 
-      if (!category) {
+      if (!categorySlug) {
         setCurrentCategory(null);
         setProducts([]);
         setSubcategories([]);
         return;
       }
 
-      // 1) Descobrir a categoria real a partir do slug da URL
       const { data: categoriesData, error: categoriesError } = await supabase
         .from("categories")
         .select("id, name")
@@ -72,7 +72,7 @@ export default function Catalogo() {
       }
 
       const matchedCategory =
-        (categoriesData || []).find((cat) => slugify(cat.name) === category) || null;
+        (categoriesData || []).find((cat) => slugify(cat.name) === categorySlug) || null;
 
       setCurrentCategory(matchedCategory);
 
@@ -82,7 +82,6 @@ export default function Catalogo() {
         return;
       }
 
-      // 2) Carregar produtos da categoria
       const { data: productsData, error: productsError } = await supabase
         .from("products")
         .select("id, name, slug, category, subcategory, price, image_url, is_active")
@@ -98,7 +97,6 @@ export default function Catalogo() {
 
       setProducts((productsData || []) as Product[]);
 
-      // 3) Carregar subcategorias ligadas à categoria por category_id
       const { data: subcategoriesData, error: subcategoriesError } = await supabase
         .from("subcategories")
         .select("id, name, category_id")
@@ -257,7 +255,7 @@ export default function Catalogo() {
             {filteredProducts.map((product) => (
               <Link
                 key={product.id}
-                to={product.slug ? `/equipamentos/${product.slug}` : "#"}
+                href={product.slug ? `/equipamentos/${product.slug}` : "#"}
                 style={{
                   textDecoration: "none",
                   color: "inherit",
