@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import { useParams } from "react-router-dom";
 
 type Product = {
   id: string;
   name: string;
+  slug: string | null;
   category: string;
   subcategory: string | null;
   price: number;
@@ -12,136 +13,332 @@ type Product = {
   is_active: boolean;
 };
 
+type Category = {
+  id: string;
+  name: string;
+};
+
+type Subcategory = {
+  id: string;
+  name: string;
+  category_id: string;
+};
+
+function slugify(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export default function Catalogo() {
-  const { category } = useParams();
+  const { category } = useParams<{ category?: string }>();
 
-  const [produtos, setProdutos] = useState<Product[]>([]);
-  const [subcategorias, setSubcategorias] = useState<string[]>([]);
-  const [filtroSubcategoria, setFiltroSubcategoria] = useState<string | null>(null);
-
-  // 🔹 Carregar produtos
-  const loadProdutos = async () => {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .eq("category", category)
-      .eq("is_active", true);
-
-    if (!error && data) {
-      setProdutos(data);
-    }
-  };
-
-  // 🔹 Carregar subcategorias
-  const loadSubcategorias = async () => {
-    const { data, error } = await supabase
-      .from("subcategories")
-      .select("*")
-      .eq("category", category);
-
-    if (!error && data) {
-      const nomes = data.map((item: any) => item.name);
-      setSubcategorias(nomes);
-    }
-  };
+  const [loading, setLoading] = useState(true);
+  const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
 
   useEffect(() => {
-    if (category) {
-      loadProdutos();
-      loadSubcategorias();
-    }
+    loadPage();
   }, [category]);
 
-  // 🔹 Aplicar filtro
-  const produtosFiltrados = filtroSubcategoria
-    ? produtos.filter(p => p.subcategory === filtroSubcategoria)
-    : produtos;
+  async function loadPage() {
+    try {
+      setLoading(true);
+      setSelectedSubcategory(null);
+
+      if (!category) {
+        setCurrentCategory(null);
+        setProducts([]);
+        setSubcategories([]);
+        return;
+      }
+
+      // 1) Descobrir a categoria real a partir do slug da URL
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from("categories")
+        .select("id, name")
+        .order("name", { ascending: true });
+
+      if (categoriesError) {
+        console.error(categoriesError);
+        alert("Erro ao carregar categorias");
+        return;
+      }
+
+      const matchedCategory =
+        (categoriesData || []).find((cat) => slugify(cat.name) === category) || null;
+
+      setCurrentCategory(matchedCategory);
+
+      if (!matchedCategory) {
+        setProducts([]);
+        setSubcategories([]);
+        return;
+      }
+
+      // 2) Carregar produtos da categoria
+      const { data: productsData, error: productsError } = await supabase
+        .from("products")
+        .select("id, name, slug, category, subcategory, price, image_url, is_active")
+        .eq("category", matchedCategory.name)
+        .eq("is_active", true)
+        .order("name", { ascending: true });
+
+      if (productsError) {
+        console.error(productsError);
+        alert("Erro ao carregar produtos");
+        return;
+      }
+
+      setProducts((productsData || []) as Product[]);
+
+      // 3) Carregar subcategorias ligadas à categoria por category_id
+      const { data: subcategoriesData, error: subcategoriesError } = await supabase
+        .from("subcategories")
+        .select("id, name, category_id")
+        .eq("category_id", matchedCategory.id)
+        .order("name", { ascending: true });
+
+      if (subcategoriesError) {
+        console.error(subcategoriesError);
+        alert("Erro ao carregar subcategorias");
+        return;
+      }
+
+      setSubcategories((subcategoriesData || []) as Subcategory[]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const filteredProducts = useMemo(() => {
+    if (!selectedSubcategory) return products;
+    return products.filter((product) => product.subcategory === selectedSubcategory);
+  }, [products, selectedSubcategory]);
 
   return (
-    <div style={{ display: "flex", padding: 20, gap: 20 }}>
-
-      {/* 🔥 LATERAL DE FILTRO */}
-      <div style={{
-        width: 220,
-        borderRight: "1px solid #eee",
-        paddingRight: 20
-      }}>
-        <h3 style={{ marginBottom: 16 }}>Filtrar</h3>
-
-        <div
+    <div
+      style={{
+        maxWidth: 1400,
+        margin: "0 auto",
+        padding: "32px 24px",
+        display: "flex",
+        gap: 24,
+        alignItems: "flex-start",
+      }}
+    >
+      {subcategories.length > 0 && (
+        <aside
           style={{
-            cursor: "pointer",
-            marginBottom: 10,
-            fontWeight: !filtroSubcategoria ? "bold" : "normal"
+            width: 240,
+            minWidth: 240,
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 16,
+            padding: 20,
+            position: "sticky",
+            top: 24,
           }}
-          onClick={() => setFiltroSubcategoria(null)}
         >
-          Todos
-        </div>
-
-        {subcategorias.map((sub) => (
           <div
-            key={sub}
-            onClick={() => setFiltroSubcategoria(sub)}
             style={{
-              cursor: "pointer",
-              marginBottom: 8,
-              color: filtroSubcategoria === sub ? "#000" : "#666",
-              fontWeight: filtroSubcategoria === sub ? "bold" : "normal"
+              fontSize: 20,
+              fontWeight: 800,
+              marginBottom: 16,
+              color: "#111",
             }}
           >
-            {sub}
+            Subcategorias
           </div>
-        ))}
-      </div>
 
-      {/* 🔥 LISTA DE PRODUTOS */}
-      <div style={{ flex: 1 }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-            gap: 20
-          }}
-        >
-          {produtosFiltrados.map((p) => (
-            <div
-              key={p.id}
+          <button
+            type="button"
+            onClick={() => setSelectedSubcategory(null)}
+            style={{
+              display: "block",
+              width: "100%",
+              textAlign: "left",
+              background: selectedSubcategory === null ? "#111" : "#fff",
+              color: selectedSubcategory === null ? "#fff" : "#111",
+              border: "1px solid #d1d5db",
+              borderRadius: 10,
+              padding: "10px 12px",
+              fontWeight: 700,
+              marginBottom: 10,
+              cursor: "pointer",
+            }}
+          >
+            Todos
+          </button>
+
+          {subcategories.map((sub) => (
+            <button
+              key={sub.id}
+              type="button"
+              onClick={() => setSelectedSubcategory(sub.name)}
               style={{
-                border: "1px solid #eee",
-                borderRadius: 8,
-                overflow: "hidden",
-                background: "#fff"
+                display: "block",
+                width: "100%",
+                textAlign: "left",
+                background: selectedSubcategory === sub.name ? "#111" : "#fff",
+                color: selectedSubcategory === sub.name ? "#fff" : "#111",
+                border: "1px solid #d1d5db",
+                borderRadius: 10,
+                padding: "10px 12px",
+                fontWeight: 600,
+                marginBottom: 10,
+                cursor: "pointer",
               }}
             >
-              <img
-                src={p.image_url || ""}
-                alt={p.name}
-                style={{
-                  width: "100%",
-                  height: 180,
-                  objectFit: "cover"
-                }}
-              />
-
-              <div style={{ padding: 12 }}>
-                <div style={{ fontSize: 12, color: "#888" }}>
-                  {p.category}
-                </div>
-
-                <div style={{ fontWeight: 600 }}>
-                  {p.name}
-                </div>
-
-                <div style={{ marginTop: 6 }}>
-                  R$ {p.price}.00/dia
-                </div>
-              </div>
-            </div>
+              {sub.name}
+            </button>
           ))}
-        </div>
-      </div>
+        </aside>
+      )}
 
+      <main style={{ flex: 1 }}>
+        <div style={{ marginBottom: 24 }}>
+          <div
+            style={{
+              fontSize: 14,
+              color: "#6b7280",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              marginBottom: 6,
+            }}
+          >
+            Catálogo
+          </div>
+
+          <h1
+            style={{
+              fontSize: 38,
+              fontWeight: 900,
+              color: "#111",
+              margin: 0,
+            }}
+          >
+            {currentCategory ? currentCategory.name : "Categoria"}
+          </h1>
+
+          {selectedSubcategory && (
+            <div
+              style={{
+                marginTop: 10,
+                fontSize: 15,
+                color: "#444",
+              }}
+            >
+              Filtrando por: <strong>{selectedSubcategory}</strong>
+            </div>
+          )}
+        </div>
+
+        {loading ? (
+          <div style={{ color: "#555", fontSize: 16 }}>Carregando...</div>
+        ) : filteredProducts.length === 0 ? (
+          <div style={{ color: "#555", fontSize: 16 }}>
+            Nenhum produto encontrado nesta categoria.
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: 24,
+            }}
+          >
+            {filteredProducts.map((product) => (
+              <Link
+                key={product.id}
+                to={product.slug ? `/equipamentos/${product.slug}` : "#"}
+                style={{
+                  textDecoration: "none",
+                  color: "inherit",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 16,
+                  overflow: "hidden",
+                  background: "#fff",
+                  boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+                }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    height: 260,
+                    background: "#f3f4f6",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
+                    src={product.image_url || ""}
+                    alt={product.name}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
+                </div>
+
+                <div style={{ padding: 18 }}>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: "#6b7280",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      marginBottom: 8,
+                    }}
+                  >
+                    {product.category}
+                    {product.subcategory ? ` • ${product.subcategory}` : ""}
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 26,
+                      fontWeight: 800,
+                      lineHeight: 1.15,
+                      color: "#111",
+                      marginBottom: 12,
+                    }}
+                  >
+                    {product.name}
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 800,
+                      color: "#111",
+                    }}
+                  >
+                    R$ {Number(product.price || 0).toFixed(2)}
+                    <span
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 500,
+                        color: "#6b7280",
+                        marginLeft: 2,
+                      }}
+                    >
+                      /dia
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 }
