@@ -275,7 +275,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="admin-dashboard admin-form min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="admin-dashboard min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Premium Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -358,7 +358,7 @@ export default function AdminDashboard() {
                     placeholder="Ex: Sony FX9 6K"
                     value={newProduct.name}
                     onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                    className="admin-input w-full text-sm"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
 
@@ -367,7 +367,7 @@ export default function AdminDashboard() {
                   <select
                     value={newProduct.category}
                     onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                    className="admin-select w-full text-sm"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   >
                     <option value="">Selecione uma categoria</option>
                     {categories.map((cat) => (
@@ -385,7 +385,7 @@ export default function AdminDashboard() {
                     placeholder="0.00"
                     value={newProduct.price}
                     onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
-                    className="admin-input w-full text-sm"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
 
@@ -396,7 +396,7 @@ export default function AdminDashboard() {
                     placeholder="Ex: FULLFRAME"
                     value={newProduct.badge}
                     onChange={(e) => setNewProduct({ ...newProduct, badge: e.target.value })}
-                    className="admin-input w-full text-sm"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
 
@@ -406,7 +406,7 @@ export default function AdminDashboard() {
                     placeholder="Descrição do produto"
                     value={newProduct.description}
                     onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                    className="admin-textarea w-full text-sm"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                     rows={3}
                   />
                 </div>
@@ -530,7 +530,7 @@ export default function AdminDashboard() {
                   placeholder="Nome da categoria"
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                  className="flex-1 admin-input text-sm"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                 />
                 <button
                   onClick={addCategory}
@@ -587,7 +587,7 @@ export default function AdminDashboard() {
                     type="text"
                     value={editingProduct.name}
                     onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
-                    className="admin-input w-full text-sm"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
 
@@ -596,7 +596,7 @@ export default function AdminDashboard() {
                   <select
                     value={editingProduct.category}
                     onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
-                    className="admin-select w-full text-sm"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   >
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.name}>
@@ -612,7 +612,7 @@ export default function AdminDashboard() {
                     type="number"
                     value={editingProduct.price}
                     onChange={(e) => setEditingProduct({ ...editingProduct, price: parseFloat(e.target.value) })}
-                    className="admin-input w-full text-sm"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
 
@@ -622,7 +622,7 @@ export default function AdminDashboard() {
                     type="text"
                     value={editingProduct.badge || ''}
                     onChange={(e) => setEditingProduct({ ...editingProduct, badge: e.target.value })}
-                    className="admin-input w-full text-sm"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
               </div>
@@ -632,7 +632,7 @@ export default function AdminDashboard() {
                 <textarea
                   value={editingProduct.description || ''}
                   onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
-                  className="admin-textarea w-full text-sm"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   rows={3}
                 />
               </div>
