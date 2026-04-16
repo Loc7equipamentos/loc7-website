@@ -276,25 +276,25 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Premium Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      {/* Premium Header - Black */}
+      <header className="bg-black border-b border-gray-800 sticky top-0 z-40 shadow-lg">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-5">
             <img 
               src="/logo.png" 
               alt="Loc 7" 
-              className="h-8 w-auto object-contain"
+              className="h-12 w-auto object-contain"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
               }}
             />
-            <div className="border-l border-gray-200 pl-4">
-              <h1 className="text-sm font-semibold text-gray-900">Painel de Administração</h1>
-              <p className="text-xs text-gray-500">Gerenciar equipamentos e categorias</p>
+            <div className="border-l border-gray-700 pl-5">
+              <h1 className="text-base font-semibold text-white">Painel de Administração</h1>
+              <p className="text-xs text-gray-400">Gerenciar equipamentos e categorias</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs text-gray-500">Loc 7 Equipamentos</p>
+            <p className="text-xs text-gray-400">Loc 7 Equipamentos</p>
           </div>
         </div>
       </header>
@@ -696,4 +696,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
