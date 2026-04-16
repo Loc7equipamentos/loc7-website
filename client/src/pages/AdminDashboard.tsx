@@ -25,6 +25,10 @@ export default function AdminDashboard() {
 
   const [newCategory, setNewCategory] = useState('');
 
+  const formatPrice = (value: number) => {
+    return new Intl.NumberFormat('pt-BR').format(value);
+  };
+
   useEffect(() => {
     loadProducts();
     loadCategories();
@@ -579,7 +583,7 @@ export default function AdminDashboard() {
                           )}
                         </td>
                         <td className="px-6 py-4 font-mono text-gray-900 font-medium">
-                          R$ {product.price.toFixed(2)}
+                          R$ {formatPrice(product.price)}
                         </td>
                         <td className="px-6 py-4">
                           {product.badge && (
