@@ -1,4 +1,4 @@
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 
 import Home from "./pages/Home";
 import Catalogo from "./pages/Catalogo";
@@ -8,14 +8,16 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 import Navbar from "./components/Navbar";
-
-// 🔥 IMPORTANTE
 import { CartProvider } from "./contexts/CartContext";
 
 export default function App() {
+  const [location] = useLocation();
+
+  const isAdmin = location.startsWith("/admin-panel");
+
   return (
     <CartProvider>
-      <Navbar />
+      {!isAdmin && <Navbar />}
 
       <Switch>
         <Route path="/" component={Home} />
