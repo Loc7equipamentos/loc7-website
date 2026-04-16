@@ -34,6 +34,45 @@ export default function AdminDashboard() {
     return value?.trim() || '';
   };
 
+  const slugify = (value: string) => {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .replace(/-{2,}/g, '-');
+  };
+
+  const generateUniqueSlug = async (name: string, productId?: string) => {
+    const baseSlug = slugify(name) || `produto-${Date.now()}`;
+
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, slug')
+      .ilike('slug', `${baseSlug}%`);
+
+    if (error) throw error;
+
+    const conflicts = (data || []).filter((item) => item.id !== productId);
+
+    if (conflicts.length === 0) {
+      return baseSlug;
+    }
+
+    const existingSlugs = new Set(conflicts.map((item) => item.slug));
+    let counter = 2;
+    let candidate = `${baseSlug}-${counter}`;
+
+    while (existingSlugs.has(candidate)) {
+      counter += 1;
+      candidate = `${baseSlug}-${counter}`;
+    }
+
+    return candidate;
+  };
+
   const getSubcategoriesForCategory = (categoryName: string) => {
     if (!categoryName) return [];
 
@@ -117,7 +156,6 @@ export default function AdminDashboard() {
 
       const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       const filePath = `products/${fileName}`;
-      console.log('[DEBUG] Caminho do arquivo:', filePath);
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('products')
@@ -127,7 +165,6 @@ export default function AdminDashboard() {
         });
 
       if (uploadError) {
-        console.error('[DEBUG] Erro no upload:', uploadError);
         throw new Error(`Erro ao fazer upload: ${uploadError.message}`);
       }
 
@@ -135,7 +172,6 @@ export default function AdminDashboard() {
 
       const { data } = supabase.storage.from('products').getPublicUrl(filePath);
       const imageUrl = data.publicUrl;
-      console.log('[DEBUG] URL pública obtida:', imageUrl);
 
       if (isEditing && editingProduct) {
         setEditingProduct({ ...editingProduct, image_url: imageUrl });
@@ -146,7 +182,6 @@ export default function AdminDashboard() {
       alert('✅ Imagem enviada com sucesso!');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
-      console.error('[DEBUG] Erro ao fazer upload:', errorMessage);
       alert(`❌ Erro ao fazer upload: ${errorMessage}`);
       setError(errorMessage);
     } finally {
@@ -161,14 +196,11 @@ export default function AdminDashboard() {
     }
 
     try {
-      const slug = newProduct.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+      const slug = await generateUniqueSlug(newProduct.name);
 
       const { error: err } = await supabase.from('products').insert([
         {
-          name: newProduct.name,
+          name: newProduct.name.trim(),
           category: newProduct.category,
           subcategory: normalizeSubcategory(newProduct.subcategory) || null,
           price: newProduct.price,
@@ -191,7 +223,7 @@ export default function AdminDashboard() {
         badge: '',
       });
       setError(null);
-      loadProducts();
+      await loadProducts();
       alert('Produto adicionado com sucesso!');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao adicionar produto');
@@ -203,15 +235,12 @@ export default function AdminDashboard() {
     if (!editingProduct) return;
 
     try {
-      const slug = editingProduct.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+      const slug = await generateUniqueSlug(editingProduct.name, editingProduct.id);
 
       const { error: err } = await supabase
         .from('products')
         .update({
-          name: editingProduct.name,
+          name: editingProduct.name.trim(),
           category: editingProduct.category,
           subcategory: normalizeSubcategory(editingProduct.subcategory) || null,
           price: editingProduct.price,
@@ -225,7 +254,7 @@ export default function AdminDashboard() {
       if (err) throw err;
       setShowEditModal(false);
       setEditingProduct(null);
-      loadProducts();
+      await loadProducts();
       alert('Produto atualizado com sucesso!');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao atualizar produto');
@@ -239,7 +268,7 @@ export default function AdminDashboard() {
       const { error: err } = await supabase.from('products').delete().eq('id', id);
 
       if (err) throw err;
-      loadProducts();
+      await loadProducts();
       alert('Produto deletado com sucesso!');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao deletar produto');
@@ -255,14 +284,14 @@ export default function AdminDashboard() {
     try {
       const { error: err } = await supabase.from('categories').insert([
         {
-          name: newCategory,
+          name: newCategory.trim(),
         },
       ]);
 
       if (err) throw err;
       setNewCategory('');
       setError(null);
-      loadCategories();
+      await loadCategories();
       alert('Categoria adicionada com sucesso!');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao adicionar categoria');
@@ -276,7 +305,7 @@ export default function AdminDashboard() {
       const { error: err } = await supabase.from('categories').delete().eq('id', id);
 
       if (err) throw err;
-      loadCategories();
+      await loadCategories();
       alert('Categoria deletada com sucesso!');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao deletar categoria');
@@ -429,11 +458,6 @@ export default function AdminDashboard() {
                   {newProduct.category && newProductSubcategories.length > 0 && (
                     <p className="mt-2 text-[11px] text-gray-500">
                       Sugestões disponíveis para esta categoria.
-                    </p>
-                  )}
-                  {newProduct.category && newProductSubcategories.length === 0 && (
-                    <p className="mt-2 text-[11px] text-gray-500">
-                      Nenhuma subcategoria cadastrada ainda para esta categoria.
                     </p>
                   )}
                 </div>
@@ -727,16 +751,6 @@ export default function AdminDashboard() {
                       <option key={subcategory} value={subcategory} />
                     ))}
                   </datalist>
-                  {editingProduct.category && editingProductSubcategories.length > 0 && (
-                    <p className="mt-2 text-[11px] text-gray-500">
-                      Sugestões disponíveis para esta categoria.
-                    </p>
-                  )}
-                  {editingProduct.category && editingProductSubcategories.length === 0 && (
-                    <p className="mt-2 text-[11px] text-gray-500">
-                      Nenhuma subcategoria cadastrada ainda para esta categoria.
-                    </p>
-                  )}
                 </div>
 
                 <div>
