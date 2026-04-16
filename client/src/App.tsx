@@ -9,9 +9,12 @@ import NotFound from "./pages/NotFound";
 
 import Navbar from "./components/Navbar";
 
+// 🔥 IMPORTANTE
+import { CartProvider } from "./contexts/CartContext";
+
 export default function App() {
   return (
-    <>
+    <CartProvider>
       <Navbar />
 
       <Switch>
@@ -24,6 +27,6 @@ export default function App() {
 
         <Route component={NotFound} />
       </Switch>
-    </>
+    </CartProvider>
   );
 }
