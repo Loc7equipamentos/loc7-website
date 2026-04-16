@@ -10,33 +10,80 @@ interface Product {
   category: string;
   subcategory?: string;
   price?: number;
+  slug?: string;
+  created_at?: string;
 }
 
 export default function Produto() {
   const [, params] = useRoute("/equipamentos/:slug");
   const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!params?.slug) return;
+      if (!params?.slug) {
+        setErrorMessage("Slug do produto não informado.");
+        setLoading(false);
+        return;
+      }
 
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .eq("slug", params.slug)
-        .single();
+      try {
+        setLoading(true);
+        setErrorMessage(null);
 
-      if (!error) setProduct(data);
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .eq("slug", params.slug)
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data || data.length === 0) {
+          setErrorMessage("Produto não encontrado.");
+          setProduct(null);
+          return;
+        }
+
+        setProduct(data[0]);
+      } catch (err) {
+        console.error("Erro ao carregar produto:", err);
+        setErrorMessage("Não foi possível carregar este produto.");
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProduct();
   }, [params?.slug]);
 
-  if (!product) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-black text-white px-4 py-10">
         <div className="max-w-6xl mx-auto text-center py-20">
           Carregando produto...
+        </div>
+      </div>
+    );
+  }
+
+  if (errorMessage || !product) {
+    return (
+      <div className="min-h-screen bg-black text-white px-4 py-10">
+        <div className="max-w-6xl mx-auto text-center py-20">
+          <p className="text-lg text-gray-300 mb-6">
+            {errorMessage || "Produto não encontrado."}
+          </p>
+          <Link
+            href="/catalogo"
+            className="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-white text-black font-medium hover:opacity-90 transition"
+          >
+            Voltar ao catálogo
+          </Link>
         </div>
       </div>
     );
