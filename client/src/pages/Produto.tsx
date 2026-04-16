@@ -20,6 +20,13 @@ export default function Produto() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const formatPrice = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  };
+
   useEffect(() => {
     const fetchProduct = async () => {
       if (!params?.slug) {
@@ -116,7 +123,7 @@ export default function Produto() {
 
           {typeof product.price === "number" && (
             <p className="text-2xl md:text-3xl font-semibold text-white">
-              R$ {product.price.toFixed(2)}
+              R$ {formatPrice(product.price)}
               <span className="text-gray-400 text-lg md:text-xl font-normal">/dia</span>
             </p>
           )}
