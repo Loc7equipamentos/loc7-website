@@ -12,7 +12,6 @@ import { CartProvider } from "./contexts/CartContext";
 
 export default function App() {
   const [location] = useLocation();
-
   const isAdmin = location.startsWith("/admin-panel");
 
   return (
