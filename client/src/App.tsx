@@ -21,12 +21,11 @@ export default function App() {
 
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/catalogo" component={Catalogo} />
         <Route path="/catalogo/:category" component={Catalogo} />
         <Route path="/equipamentos/:slug" component={Produto} />
         <Route path="/orcamento" component={Orcamento} />
-
         <Route path="/admin-panel" component={AdminDashboard} />
-
         <Route component={NotFound} />
       </Switch>
     </CartProvider>
