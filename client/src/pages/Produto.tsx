@@ -1,5 +1,5 @@
 import { useRoute, Link } from "wouter";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 interface Product {
@@ -7,6 +7,7 @@ interface Product {
   name: string;
   description: string;
   image_url: string;
+  images?: string[] | null;
   category: string;
   subcategory?: string;
   price?: number;
@@ -19,6 +20,7 @@ export default function Produto() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string>("");
 
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -55,7 +57,8 @@ export default function Produto() {
           return;
         }
 
-        setProduct(data[0]);
+        const fetchedProduct = data[0] as Product;
+        setProduct(fetchedProduct);
       } catch (err) {
         console.error("Erro ao carregar produto:", err);
         setErrorMessage("Não foi possível carregar este produto.");
@@ -67,6 +70,27 @@ export default function Produto() {
 
     fetchProduct();
   }, [params?.slug]);
+
+  const galleryImages = useMemo(() => {
+    if (!product) return [];
+
+    const fromArray = Array.isArray(product.images)
+      ? product.images.map((img) => img?.trim()).filter(Boolean)
+      : [];
+
+    const fallback = product.image_url?.trim() ? [product.image_url.trim()] : [];
+
+    const merged = [...fromArray, ...fallback];
+    return Array.from(new Set(merged));
+  }, [product]);
+
+  useEffect(() => {
+    if (galleryImages.length > 0) {
+      setSelectedImage(galleryImages[0]);
+    } else {
+      setSelectedImage("");
+    }
+  }, [galleryImages]);
 
   if (loading) {
     return (
@@ -130,12 +154,47 @@ export default function Produto() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
-          <div className="bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl overflow-hidden">
-            <img
-              src={product.image_url}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
+          <div>
+            <div className="bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl overflow-hidden">
+              {selectedImage ? (
+                <img
+                  src={selectedImage}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full min-h-[320px] flex items-center justify-center text-gray-500">
+                  Imagem não disponível
+                </div>
+              )}
+            </div>
+
+            {galleryImages.length > 1 && (
+              <div className="mt-4 grid grid-cols-4 sm:grid-cols-5 gap-3">
+                {galleryImages.map((image, index) => {
+                  const isActive = selectedImage === image;
+
+                  return (
+                    <button
+                      key={`${image}-${index}`}
+                      type="button"
+                      onClick={() => setSelectedImage(image)}
+                      className={`rounded-xl overflow-hidden border transition ${
+                        isActive
+                          ? "border-white ring-2 ring-white/30"
+                          : "border-[oklch(0.18_0_0)] hover:border-gray-400"
+                      }`}
+                    >
+                      <img
+                        src={image}
+                        alt={`${product.name} ${index + 1}`}
+                        className="w-full aspect-square object-cover"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl p-6 md:p-8">
