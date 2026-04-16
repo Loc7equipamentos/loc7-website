@@ -16,6 +16,7 @@ export default function AdminDashboard() {
   const [newProduct, setNewProduct] = useState({
     name: '',
     category: '',
+    subcategory: '',
     price: 0,
     description: '',
     image_url: '',
@@ -28,6 +29,35 @@ export default function AdminDashboard() {
     loadProducts();
     loadCategories();
   }, []);
+
+  const normalizeSubcategory = (value?: string | null) => {
+    return value?.trim() || '';
+  };
+
+  const getSubcategoriesForCategory = (categoryName: string) => {
+    if (!categoryName) return [];
+
+    const uniqueMap = new Map<string, string>();
+
+    products.forEach((product) => {
+      if (product.category !== categoryName) return;
+
+      const subcategory = normalizeSubcategory(product.subcategory);
+      if (!subcategory) return;
+
+      const normalizedKey = subcategory.toLowerCase();
+      if (!uniqueMap.has(normalizedKey)) {
+        uniqueMap.set(normalizedKey, subcategory);
+      }
+    });
+
+    return Array.from(uniqueMap.values()).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  };
+
+  const newProductSubcategories = getSubcategoriesForCategory(newProduct.category);
+  const editingProductSubcategories = editingProduct
+    ? getSubcategoriesForCategory(editingProduct.category)
+    : [];
 
   const loadProducts = async () => {
     try {
@@ -48,10 +78,7 @@ export default function AdminDashboard() {
 
   const loadCategories = async () => {
     try {
-      const { data, error: err } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name');
+      const { data, error: err } = await supabase.from('categories').select('*').order('name');
 
       if (err) throw err;
       setCategories(data || []);
@@ -143,6 +170,7 @@ export default function AdminDashboard() {
         {
           name: newProduct.name,
           category: newProduct.category,
+          subcategory: normalizeSubcategory(newProduct.subcategory) || null,
           price: newProduct.price,
           description: newProduct.description,
           image_url: newProduct.image_url,
@@ -156,6 +184,7 @@ export default function AdminDashboard() {
       setNewProduct({
         name: '',
         category: '',
+        subcategory: '',
         price: 0,
         description: '',
         image_url: '',
@@ -184,6 +213,7 @@ export default function AdminDashboard() {
         .update({
           name: editingProduct.name,
           category: editingProduct.category,
+          subcategory: normalizeSubcategory(editingProduct.subcategory) || null,
           price: editingProduct.price,
           description: editingProduct.description,
           image_url: editingProduct.image_url,
@@ -354,7 +384,13 @@ export default function AdminDashboard() {
                   </label>
                   <select
                     value={newProduct.category}
-                    onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                    onChange={(e) =>
+                      setNewProduct({
+                        ...newProduct,
+                        category: e.target.value,
+                        subcategory: '',
+                      })
+                    }
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   >
                     <option value="">Selecione uma categoria</option>
@@ -368,6 +404,42 @@ export default function AdminDashboard() {
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2">
+                    Subcategoria
+                  </label>
+                  <input
+                    type="text"
+                    list="new-product-subcategories"
+                    placeholder={
+                      newProduct.category
+                        ? 'Selecione ou digite uma subcategoria'
+                        : 'Selecione a categoria primeiro'
+                    }
+                    value={newProduct.subcategory}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, subcategory: e.target.value })
+                    }
+                    disabled={!newProduct.category}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  />
+                  <datalist id="new-product-subcategories">
+                    {newProductSubcategories.map((subcategory) => (
+                      <option key={subcategory} value={subcategory} />
+                    ))}
+                  </datalist>
+                  {newProduct.category && newProductSubcategories.length > 0 && (
+                    <p className="mt-2 text-[11px] text-gray-500">
+                      Sugestões disponíveis para esta categoria.
+                    </p>
+                  )}
+                  {newProduct.category && newProductSubcategories.length === 0 && (
+                    <p className="mt-2 text-[11px] text-gray-500">
+                      Nenhuma subcategoria cadastrada ainda para esta categoria.
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">
                     Preço (R$) *
                   </label>
                   <input
@@ -375,7 +447,10 @@ export default function AdminDashboard() {
                     placeholder="0.00"
                     value={newProduct.price}
                     onChange={(e) =>
-                      setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })
+                      setNewProduct({
+                        ...newProduct,
+                        price: parseFloat(e.target.value) || 0,
+                      })
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
@@ -456,6 +531,9 @@ export default function AdminDashboard() {
                       <th className="px-6 py-4 text-left font-semibold text-gray-700">
                         Categoria
                       </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Subcategoria
+                      </th>
                       <th className="px-6 py-4 text-left font-semibold text-gray-700">Preço</th>
                       <th className="px-6 py-4 text-left font-semibold text-gray-700">Badge</th>
                       <th className="px-6 py-4 text-left font-semibold text-gray-700">Imagem</th>
@@ -467,6 +545,15 @@ export default function AdminDashboard() {
                       <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 text-gray-900 font-medium">{product.name}</td>
                         <td className="px-6 py-4 text-gray-600">{product.category}</td>
+                        <td className="px-6 py-4">
+                          {normalizeSubcategory(product.subcategory) ? (
+                            <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
+                              {normalizeSubcategory(product.subcategory)}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">—</span>
+                          )}
+                        </td>
                         <td className="px-6 py-4 font-mono text-gray-900 font-medium">
                           R$ {product.price.toFixed(2)}
                         </td>
@@ -489,7 +576,10 @@ export default function AdminDashboard() {
                         <td className="px-6 py-4 flex gap-2">
                           <button
                             onClick={() => {
-                              setEditingProduct(product);
+                              setEditingProduct({
+                                ...product,
+                                subcategory: normalizeSubcategory(product.subcategory),
+                              });
                               setShowEditModal(true);
                             }}
                             className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
@@ -597,7 +687,11 @@ export default function AdminDashboard() {
                   <select
                     value={editingProduct.category}
                     onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, category: e.target.value })
+                      setEditingProduct({
+                        ...editingProduct,
+                        category: e.target.value,
+                        subcategory: '',
+                      })
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   >
@@ -611,6 +705,42 @@ export default function AdminDashboard() {
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2">
+                    Subcategoria
+                  </label>
+                  <input
+                    type="text"
+                    list="edit-product-subcategories"
+                    placeholder={
+                      editingProduct.category
+                        ? 'Selecione ou digite uma subcategoria'
+                        : 'Selecione a categoria primeiro'
+                    }
+                    value={editingProduct.subcategory || ''}
+                    onChange={(e) =>
+                      setEditingProduct({ ...editingProduct, subcategory: e.target.value })
+                    }
+                    disabled={!editingProduct.category}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  />
+                  <datalist id="edit-product-subcategories">
+                    {editingProductSubcategories.map((subcategory) => (
+                      <option key={subcategory} value={subcategory} />
+                    ))}
+                  </datalist>
+                  {editingProduct.category && editingProductSubcategories.length > 0 && (
+                    <p className="mt-2 text-[11px] text-gray-500">
+                      Sugestões disponíveis para esta categoria.
+                    </p>
+                  )}
+                  {editingProduct.category && editingProductSubcategories.length === 0 && (
+                    <p className="mt-2 text-[11px] text-gray-500">
+                      Nenhuma subcategoria cadastrada ainda para esta categoria.
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">
                     Preço (R$)
                   </label>
                   <input
@@ -619,7 +749,7 @@ export default function AdminDashboard() {
                     onChange={(e) =>
                       setEditingProduct({
                         ...editingProduct,
-                        price: parseFloat(e.target.value),
+                        price: parseFloat(e.target.value) || 0,
                       })
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
