@@ -1,4 +1,4 @@
-import { useRoute } from "wouter";
+import { useRoute, Link } from "wouter";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
@@ -9,6 +9,7 @@ interface Product {
   image_url: string;
   category: string;
   subcategory?: string;
+  price?: number;
 }
 
 export default function Produto() {
@@ -33,8 +34,10 @@ export default function Produto() {
 
   if (!product) {
     return (
-      <div className="text-white text-center py-20">
-        Carregando produto...
+      <div className="min-h-screen bg-black text-white px-4 py-10">
+        <div className="max-w-6xl mx-auto text-center py-20">
+          Carregando produto...
+        </div>
       </div>
     );
   }
@@ -42,32 +45,52 @@ export default function Produto() {
   return (
     <div className="min-h-screen bg-black text-white px-4 py-10">
       <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <div className="text-sm text-gray-500 mb-4 flex flex-wrap items-center gap-2 uppercase tracking-wider">
+            <Link href="/catalogo" className="hover:text-white transition-colors">
+              Locação
+            </Link>
 
-        {/* ✅ EXIBE SUBCATEGORIA OU CATEGORIA */}
-        <p className="text-sm text-gray-400 mb-2 uppercase tracking-widest">
-          {product.subcategory || product.category}
-        </p>
+            <span>/</span>
 
-        <h1 className="text-3xl md:text-4xl font-bold mb-6">
-          {product.name}
-        </h1>
+            <span className="text-gray-400">{product.category}</span>
 
-        <div className="grid md:grid-cols-2 gap-8">
+            {product.subcategory && (
+              <>
+                <span>/</span>
+                <span className="text-gray-400">{product.subcategory}</span>
+              </>
+            )}
+          </div>
 
-          <div>
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+            {product.name}
+          </h1>
+
+          {typeof product.price === "number" && (
+            <p className="text-2xl md:text-3xl font-semibold text-white">
+              R$ {product.price.toFixed(2)}
+              <span className="text-gray-400 text-lg md:text-xl font-normal">/dia</span>
+            </p>
+          )}
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
+          <div className="bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl overflow-hidden">
             <img
               src={product.image_url}
               alt={product.name}
-              className="w-full rounded-xl object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
 
-          <div>
-            <p className="text-gray-300 leading-relaxed mb-6">
-              {product.description}
+          <div className="bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl p-6 md:p-8">
+            <h2 className="text-lg font-semibold text-white mb-4">Descrição</h2>
+
+            <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+              {product.description || "Descrição não informada."}
             </p>
           </div>
-
         </div>
       </div>
     </div>
