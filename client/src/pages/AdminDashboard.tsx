@@ -2,16 +2,21 @@ import { useState, useEffect } from 'react';
 import { supabase, type Product, type Category } from '@/lib/supabase';
 import { Trash2, Plus, Edit2, X, Upload, Loader, Package, FolderOpen } from 'lucide-react';
 
+type ProductWithImages = Product & {
+  images?: string[] | null;
+};
+
 export default function AdminDashboard() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductWithImages[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'products' | 'categories'>('products');
 
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductWithImages | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [editingImagesInput, setEditingImagesInput] = useState('');
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -20,6 +25,7 @@ export default function AdminDashboard() {
     price: 0,
     description: '',
     image_url: '',
+    imagesInput: '',
     badge: '',
   });
 
@@ -36,6 +42,22 @@ export default function AdminDashboard() {
 
   const normalizeSubcategory = (value?: string | null) => {
     return value?.trim() || '';
+  };
+
+  const parseImagesInput = (value?: string | null) => {
+    if (!value) return null;
+
+    const parsed = value
+      .split(/\n|,/)
+      .map((img) => img.trim())
+      .filter(Boolean);
+
+    return parsed.length > 0 ? parsed : null;
+  };
+
+  const stringifyImages = (images?: string[] | null) => {
+    if (!images || images.length === 0) return '';
+    return images.join(', ');
   };
 
   const slugify = (value: string) => {
@@ -111,7 +133,7 @@ export default function AdminDashboard() {
         .order('created_at', { ascending: false });
 
       if (err) throw err;
-      setProducts(data || []);
+      setProducts((data as ProductWithImages[]) || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar produtos');
     } finally {
@@ -142,11 +164,6 @@ export default function AdminDashboard() {
 
     try {
       setUploadingImage(true);
-      console.log('[DEBUG] Iniciando upload:', {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type,
-      });
 
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
@@ -161,7 +178,7 @@ export default function AdminDashboard() {
       const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       const filePath = `products/${fileName}`;
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('products')
         .upload(filePath, file, {
           cacheControl: '3600',
@@ -171,8 +188,6 @@ export default function AdminDashboard() {
       if (uploadError) {
         throw new Error(`Erro ao fazer upload: ${uploadError.message}`);
       }
-
-      console.log('[DEBUG] Upload bem-sucedido:', uploadData);
 
       const { data } = supabase.storage.from('products').getPublicUrl(filePath);
       const imageUrl = data.publicUrl;
@@ -210,6 +225,7 @@ export default function AdminDashboard() {
           price: newProduct.price,
           description: newProduct.description,
           image_url: newProduct.image_url,
+          images: parseImagesInput(newProduct.imagesInput),
           badge: newProduct.badge,
           slug,
         },
@@ -224,6 +240,7 @@ export default function AdminDashboard() {
         price: 0,
         description: '',
         image_url: '',
+        imagesInput: '',
         badge: '',
       });
       setError(null);
@@ -250,6 +267,7 @@ export default function AdminDashboard() {
           price: editingProduct.price,
           description: editingProduct.description,
           image_url: editingProduct.image_url,
+          images: parseImagesInput(editingImagesInput),
           badge: editingProduct.badge,
           slug,
         })
@@ -258,6 +276,7 @@ export default function AdminDashboard() {
       if (err) throw err;
       setShowEditModal(false);
       setEditingProduct(null);
+      setEditingImagesInput('');
       await loadProducts();
       alert('Produto atualizado com sucesso!');
     } catch (err) {
@@ -510,7 +529,7 @@ export default function AdminDashboard() {
 
                 <div className="md:col-span-2">
                   <label className="block text-xs font-medium text-gray-700 mb-2">
-                    Imagem do Produto
+                    Imagem principal do produto
                   </label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
                     <label className="flex flex-col items-center justify-center cursor-pointer">
@@ -539,6 +558,24 @@ export default function AdminDashboard() {
                       </div>
                     )}
                   </div>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-2">
+                    Imagens adicionais (URLs separadas por vírgula ou quebra de linha)
+                  </label>
+                  <textarea
+                    placeholder="https://img1.jpg, https://img2.jpg"
+                    value={newProduct.imagesInput}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, imagesInput: e.target.value })
+                    }
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    rows={3}
+                  />
+                  <p className="mt-2 text-[11px] text-gray-500">
+                    A imagem principal continua vindo do upload acima. Este campo alimenta a galeria.
+                  </p>
                 </div>
               </div>
 
@@ -604,10 +641,12 @@ export default function AdminDashboard() {
                         <td className="px-6 py-4 flex gap-2">
                           <button
                             onClick={() => {
-                              setEditingProduct({
+                              const productToEdit = {
                                 ...product,
                                 subcategory: normalizeSubcategory(product.subcategory),
-                              });
+                              };
+                              setEditingProduct(productToEdit);
+                              setEditingImagesInput(stringifyImages(product.images));
                               setShowEditModal(true);
                             }}
                             className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
@@ -689,6 +728,7 @@ export default function AdminDashboard() {
                 onClick={() => {
                   setShowEditModal(false);
                   setEditingProduct(null);
+                  setEditingImagesInput('');
                 }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
               >
@@ -800,7 +840,7 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">Imagem</label>
+                <label className="block text-xs font-medium text-gray-700 mb-2">Imagem principal</label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
                   <label className="flex flex-col items-center justify-center cursor-pointer">
                     <Upload className="w-5 h-5 text-gray-400 mb-1" />
@@ -825,12 +865,26 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Imagens adicionais (URLs separadas por vírgula ou quebra de linha)
+                </label>
+                <textarea
+                  value={editingImagesInput}
+                  onChange={(e) => setEditingImagesInput(e.target.value)}
+                  placeholder="https://img1.jpg, https://img2.jpg"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                  rows={3}
+                />
+              </div>
+
               <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={() => {
                     setShowEditModal(false);
                     setEditingProduct(null);
+                    setEditingImagesInput('');
                   }}
                   className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm font-medium rounded-lg transition-colors"
                 >
