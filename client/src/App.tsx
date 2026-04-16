@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Home from "./pages/Home";
 import Catalogo from "./pages/Catalogo";
 import Produto from "./pages/Produto";
+import Producao from "./pages/Producao";
 import Orcamento from "./pages/Orcamento";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
@@ -71,11 +72,7 @@ function AdminProtectedRoute() {
               />
             </div>
 
-            {error && (
-              <div className="text-sm text-red-400">
-                {error}
-              </div>
-            )}
+            {error && <div className="text-sm text-red-400">{error}</div>}
 
             <button
               type="submit"
@@ -93,9 +90,7 @@ function AdminProtectedRoute() {
     <div className="min-h-screen bg-white">
       <div className="sticky top-0 z-50 bg-black border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="text-white text-sm font-medium">
-            Painel protegido
-          </div>
+          <div className="text-white text-sm font-medium">Painel protegido</div>
 
           <button
             onClick={handleLogout}
@@ -124,6 +119,7 @@ export default function App() {
         <Route path="/catalogo" component={Catalogo} />
         <Route path="/catalogo/:category" component={Catalogo} />
         <Route path="/equipamentos/:slug" component={Produto} />
+        <Route path="/producao" component={Producao} />
         <Route path="/orcamento" component={Orcamento} />
         <Route path="/admin-panel" component={AdminProtectedRoute} />
         <Route component={NotFound} />
