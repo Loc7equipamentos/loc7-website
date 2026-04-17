@@ -1,5 +1,6 @@
 import { useRoute, Link } from "wouter";
 import { useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 interface Product {
@@ -84,6 +85,26 @@ export default function Produto() {
     return Array.from(new Set(merged));
   }, [product]);
 
+  const currentImageIndex = useMemo(() => {
+    if (!selectedImage) return 0;
+    const index = galleryImages.findIndex((img) => img === selectedImage);
+    return index >= 0 ? index : 0;
+  }, [galleryImages, selectedImage]);
+
+  const goToPreviousImage = () => {
+    if (galleryImages.length <= 1) return;
+    const previousIndex =
+      currentImageIndex === 0 ? galleryImages.length - 1 : currentImageIndex - 1;
+    setSelectedImage(galleryImages[previousIndex]);
+  };
+
+  const goToNextImage = () => {
+    if (galleryImages.length <= 1) return;
+    const nextIndex =
+      currentImageIndex === galleryImages.length - 1 ? 0 : currentImageIndex + 1;
+    setSelectedImage(galleryImages[nextIndex]);
+  };
+
   useEffect(() => {
     if (galleryImages.length > 0) {
       setSelectedImage(galleryImages[0]);
@@ -91,6 +112,23 @@ export default function Produto() {
       setSelectedImage("");
     }
   }, [galleryImages]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!product || galleryImages.length <= 1) return;
+
+      if (event.key === "ArrowLeft") {
+        goToPreviousImage();
+      }
+
+      if (event.key === "ArrowRight") {
+        goToNextImage();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [product, galleryImages, currentImageIndex, selectedImage]);
 
   if (loading) {
     return (
@@ -155,17 +193,43 @@ export default function Produto() {
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
           <div>
-            <div className="bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl overflow-hidden">
+            <div className="relative bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl overflow-hidden min-h-[320px] md:min-h-[500px]">
               {selectedImage ? (
                 <img
                   src={selectedImage}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain bg-white"
                 />
               ) : (
-                <div className="w-full min-h-[320px] flex items-center justify-center text-gray-500">
+                <div className="w-full min-h-[320px] md:min-h-[500px] flex items-center justify-center text-gray-500">
                   Imagem não disponível
                 </div>
+              )}
+
+              {galleryImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={goToPreviousImage}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/60 hover:bg-black/80 border border-white/10 flex items-center justify-center transition"
+                    aria-label="Imagem anterior"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-white" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={goToNextImage}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/60 hover:bg-black/80 border border-white/10 flex items-center justify-center transition"
+                    aria-label="Próxima imagem"
+                  >
+                    <ChevronRight className="w-5 h-5 text-white" />
+                  </button>
+
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/60 text-xs text-white border border-white/10">
+                    {currentImageIndex + 1} / {galleryImages.length}
+                  </div>
+                </>
               )}
             </div>
 
@@ -188,7 +252,7 @@ export default function Produto() {
                       <img
                         src={image}
                         alt={`${product.name} ${index + 1}`}
-                        className="w-full aspect-square object-cover"
+                        className="w-full aspect-square object-cover bg-white"
                       />
                     </button>
                   );
