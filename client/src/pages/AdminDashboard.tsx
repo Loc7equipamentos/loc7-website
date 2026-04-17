@@ -17,6 +17,8 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<ProductWithImages | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -113,6 +115,28 @@ export default function AdminDashboard() {
     ? getSubcategoriesForCategory(editingProduct.category)
     : [];
 
+  const reorderImages = (
+    allImages: string[],
+    fromIndex: number,
+    toIndex: number
+  ): { image_url: string; images: string[] } => {
+    if (fromIndex === toIndex) {
+      return {
+        image_url: allImages[0],
+        images: allImages.slice(1),
+      };
+    }
+
+    const reordered = [...allImages];
+    const [movedImage] = reordered.splice(fromIndex, 1);
+    reordered.splice(toIndex, 0, movedImage);
+
+    return {
+      image_url: reordered[0],
+      images: reordered.slice(1),
+    };
+  };
+
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -194,25 +218,45 @@ export default function AdminDashboard() {
 
     setUploadingImage(false);
 
-    if (uploadedUrls.length === 0) return;
-
-    const [main, ...rest] = uploadedUrls;
+    if (uploadedUrls.length === 0) {
+      alert('⚠️ Nenhuma imagem foi enviada com sucesso');
+      return;
+    }
 
     if (isEditing && editingProduct) {
-      setEditingProduct({
-        ...editingProduct,
-        image_url: main,
-        images: rest.length > 0 ? rest : null,
-      });
+      const currentImages = [editingProduct.image_url, ...(editingProduct.images || [])]
+        .filter(Boolean);
+      const allImages = [...currentImages, ...uploadedUrls];
+      const reordered = {
+        image_url: allImages[0],
+        images: allImages.slice(1),
+      };
+      setEditingProduct((prev) =>
+        prev
+          ? {
+              ...prev,
+              image_url: reordered.image_url,
+              images: reordered.images,
+            }
+          : prev
+      );
     } else {
+      const currentImages = newProduct.image_url
+        ? [newProduct.image_url, ...newProduct.images]
+        : newProduct.images;
+      const allImages = [...currentImages, ...uploadedUrls];
+      const reordered = {
+        image_url: allImages[0],
+        images: allImages.slice(1),
+      };
       setNewProduct((prev) => ({
         ...prev,
-        image_url: main,
-        images: rest.length > 0 ? rest : [],
+        image_url: reordered.image_url,
+        images: reordered.images,
       }));
     }
 
-    alert('✅ Imagens enviadas com sucesso!');
+    alert(`✅ ${uploadedUrls.length} imagem(ns) enviada(s) com sucesso!`);
   };
 
   const addProduct = async () => {
@@ -542,28 +586,49 @@ export default function AdminDashboard() {
                     </label>
                     {(newProduct.image_url || newProduct.images.length > 0) && (
                       <div className="mt-4">
-                        <p className="text-xs text-gray-500 mb-2">Preview</p>
-                        <div className="flex gap-2 overflow-x-auto">
-                          {newProduct.image_url && (
-                            <div className="text-center shrink-0">
-                              <img
-                                src={newProduct.image_url}
-                                alt="Capa"
-                                className="w-16 h-16 object-cover border rounded"
-                              />
-                              <p className="text-[10px] mt-1 font-medium">Capa</p>
-                            </div>
-                          )}
-                          {newProduct.images.map((img, index) => (
-                            <div key={`${img}-${index}`} className="text-center shrink-0">
-                              <img
-                                src={img}
-                                alt={`Imagem ${index + 1}`}
-                                className="w-16 h-16 object-cover border rounded"
-                              />
-                              <p className="text-[10px] mt-1">#{index + 1}</p>
-                            </div>
-                          ))}
+                        <p className="text-xs text-gray-500 mb-2">Preview (arraste para reordenar)</p>
+                        <div className="flex gap-2 overflow-x-auto pb-2">
+                          {[newProduct.image_url, ...newProduct.images]
+                            .filter(Boolean)
+                            .map((img, index) => (
+                              <div
+                                key={`${img}-${index}`}
+                                draggable
+                                onDragStart={() => setDraggedImageIndex(index)}
+                                onDragOver={(e) => {
+                                  e.preventDefault();
+                                  setDragOverIndex(index);
+                                }}
+                                onDragLeave={() => setDragOverIndex(null)}
+                                onDrop={() => {
+                                  if (draggedImageIndex !== null && draggedImageIndex !== index) {
+                                    const allImages = [newProduct.image_url, ...newProduct.images].filter(Boolean);
+                                    const reordered = reorderImages(allImages, draggedImageIndex, index);
+                                    setNewProduct((prev) => ({
+                                      ...prev,
+                                      image_url: reordered.image_url,
+                                      images: reordered.images,
+                                    }));
+                                  }
+                                  setDraggedImageIndex(null);
+                                  setDragOverIndex(null);
+                                }}
+                                onDragEnd={() => {
+                                  setDraggedImageIndex(null);
+                                  setDragOverIndex(null);
+                                }}
+                                className={`text-center shrink-0 cursor-move transition-all ${
+                                  dragOverIndex === index ? 'ring-2 ring-gray-900 scale-105' : ''
+                                } ${draggedImageIndex === index ? 'opacity-50' : ''}`}
+                              >
+                                <img
+                                  src={img}
+                                  alt={index === 0 ? 'Capa' : `Imagem ${index}`}
+                                  className="w-16 h-16 object-cover border rounded"
+                                />
+                                <p className="text-[10px] mt-1 font-medium">{index === 0 ? 'Capa' : `#${index}`}</p>
+                              </div>
+                            ))}
                         </div>
                       </div>
                     )}
@@ -885,28 +950,54 @@ export default function AdminDashboard() {
                     </label>
                     {(editingProduct.image_url || editingProduct.images?.length) && (
                       <div className="mt-4">
-                        <p className="text-xs text-gray-500 mb-2">Preview</p>
-                        <div className="flex gap-2 overflow-x-auto">
-                          {editingProduct.image_url && (
-                            <div className="text-center shrink-0">
-                              <img
-                                src={editingProduct.image_url}
-                                alt="Capa"
-                                className="w-16 h-16 object-cover border rounded"
-                              />
-                              <p className="text-[10px] mt-1 font-medium">Capa</p>
-                            </div>
-                          )}
-                          {editingProduct.images?.map((img, index) => (
-                            <div key={`${img}-${index}`} className="text-center shrink-0">
-                              <img
-                                src={img}
-                                alt={`Imagem ${index + 1}`}
-                                className="w-16 h-16 object-cover border rounded"
-                              />
-                              <p className="text-[10px] mt-1">#{index + 1}</p>
-                            </div>
-                          ))}
+                        <p className="text-xs text-gray-500 mb-2">Preview (arraste para reordenar)</p>
+                        <div className="flex gap-2 overflow-x-auto pb-2">
+                          {[editingProduct.image_url, ...(editingProduct.images || [])]
+                            .filter(Boolean)
+                            .map((img, index) => (
+                              <div
+                                key={`${img}-${index}`}
+                                draggable
+                                onDragStart={() => setDraggedImageIndex(index)}
+                                onDragOver={(e) => {
+                                  e.preventDefault();
+                                  setDragOverIndex(index);
+                                }}
+                                onDragLeave={() => setDragOverIndex(null)}
+                                onDrop={() => {
+                                  if (draggedImageIndex !== null && draggedImageIndex !== index) {
+                                    const allImages = [editingProduct.image_url, ...(editingProduct.images || [])]
+                                      .filter(Boolean);
+                                    const reordered = reorderImages(allImages, draggedImageIndex, index);
+                                    setEditingProduct((prev) =>
+                                      prev
+                                        ? {
+                                            ...prev,
+                                            image_url: reordered.image_url,
+                                            images: reordered.images,
+                                          }
+                                        : prev
+                                    );
+                                  }
+                                  setDraggedImageIndex(null);
+                                  setDragOverIndex(null);
+                                }}
+                                onDragEnd={() => {
+                                  setDraggedImageIndex(null);
+                                  setDragOverIndex(null);
+                                }}
+                                className={`text-center shrink-0 cursor-move transition-all ${
+                                  dragOverIndex === index ? 'ring-2 ring-gray-900 scale-105' : ''
+                                } ${draggedImageIndex === index ? 'opacity-50' : ''}`}
+                              >
+                                <img
+                                  src={img}
+                                  alt={index === 0 ? 'Capa' : `Imagem ${index}`}
+                                  className="w-16 h-16 object-cover border rounded"
+                                />
+                                <p className="text-[10px] mt-1 font-medium">{index === 0 ? 'Capa' : `#${index}`}</p>
+                              </div>
+                            ))}
                         </div>
                       </div>
                     )}
@@ -946,4 +1037,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
