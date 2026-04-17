@@ -1,12 +1,13 @@
 import { useRoute, Link } from "wouter";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 interface Product {
   id: string;
   name: string;
   description: string;
+  includes?: string | null;
   image_url: string;
   images?: string[] | null;
   category: string;
@@ -83,6 +84,15 @@ export default function Produto() {
 
     const merged = [...fromArray, ...fallback];
     return Array.from(new Set(merged));
+  }, [product]);
+
+  const includedItems = useMemo(() => {
+    if (!product?.includes) return [];
+
+    return product.includes
+      .split("\n")
+      .map((item) => item.trim())
+      .filter(Boolean);
   }, [product]);
 
   const currentImageIndex = useMemo(() => {
@@ -261,12 +271,29 @@ export default function Produto() {
             )}
           </div>
 
-          <div className="bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl p-6 md:p-8">
-            <h2 className="text-lg font-semibold text-white mb-4">Descrição</h2>
+          <div className="space-y-6">
+            <div className="bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl p-6 md:p-8">
+              <h2 className="text-lg font-semibold text-white mb-4">Descrição</h2>
 
-            <p className="text-gray-300 leading-relaxed whitespace-pre-line">
-              {product.description || "Descrição não informada."}
-            </p>
+              <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+                {product.description || "Descrição não informada."}
+              </p>
+            </div>
+
+            {includedItems.length > 0 && (
+              <div className="bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl p-6 md:p-8">
+                <h2 className="text-lg font-semibold text-white mb-4">O que acompanha</h2>
+
+                <ul className="space-y-3">
+                  {includedItems.map((item, index) => (
+                    <li key={`${item}-${index}`} className="flex items-start gap-3 text-gray-300">
+                      <Check className="w-4 h-4 mt-1 text-white flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>
