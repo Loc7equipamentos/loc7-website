@@ -47,14 +47,27 @@ export default function AdminDashboard() {
   };
 
   const parseImagesInput = (value?: string | null) => {
-    if (!value) return null;
+    if (!value) return [];
 
-    const parsed = value
+    return value
       .split(/\n|,/)
       .map((img) => img.trim())
       .filter(Boolean);
+  };
 
-    return parsed.length > 0 ? parsed : null;
+  const buildGallery = (mainImage?: string | null, imagesInput?: string | null) => {
+    const main = mainImage?.trim() || '';
+
+    const parsed = parseImagesInput(imagesInput);
+
+    const uniqueAdditional = parsed.filter((img, index, self) => {
+      return img !== main && self.indexOf(img) === index;
+    });
+
+    return {
+      gallery: main ? [main, ...uniqueAdditional] : uniqueAdditional,
+      additional: uniqueAdditional.length > 0 ? uniqueAdditional : null,
+    };
   };
 
   const stringifyImages = (images?: string[] | null) => {
@@ -124,6 +137,11 @@ export default function AdminDashboard() {
   const newProductSubcategories = getSubcategoriesForCategory(newProduct.category);
   const editingProductSubcategories = editingProduct
     ? getSubcategoriesForCategory(editingProduct.category)
+    : [];
+
+  const newProductGalleryPreview = buildGallery(newProduct.image_url, newProduct.imagesInput).gallery;
+  const editingProductGalleryPreview = editingProduct
+    ? buildGallery(editingProduct.image_url, editingImagesInput).gallery
     : [];
 
   const loadProducts = async () => {
@@ -218,6 +236,7 @@ export default function AdminDashboard() {
 
     try {
       const slug = await generateUniqueSlug(newProduct.name);
+      const { additional } = buildGallery(newProduct.image_url, newProduct.imagesInput);
 
       const { error: err } = await supabase.from('products').insert([
         {
@@ -228,7 +247,7 @@ export default function AdminDashboard() {
           description: newProduct.description,
           includes: newProduct.includes.trim() || null,
           image_url: newProduct.image_url,
-          images: parseImagesInput(newProduct.imagesInput),
+          images: additional,
           badge: newProduct.badge,
           slug,
         },
@@ -261,6 +280,7 @@ export default function AdminDashboard() {
 
     try {
       const slug = await generateUniqueSlug(editingProduct.name, editingProduct.id);
+      const { additional } = buildGallery(editingProduct.image_url, editingImagesInput);
 
       const { error: err } = await supabase
         .from('products')
@@ -272,7 +292,7 @@ export default function AdminDashboard() {
           description: editingProduct.description,
           includes: editingProduct.includes?.trim() || null,
           image_url: editingProduct.image_url,
-          images: parseImagesInput(editingImagesInput),
+          images: additional,
           badge: editingProduct.badge,
           slug,
         })
@@ -600,6 +620,28 @@ export default function AdminDashboard() {
                   <p className="mt-2 text-[11px] text-gray-500">
                     A imagem principal continua vindo do upload acima. Este campo alimenta a galeria.
                   </p>
+
+                  {newProductGalleryPreview.length > 0 && (
+                    <div className="mt-4">
+                      <p className="text-xs text-gray-500 mb-2">
+                        Preview da galeria (ordem real do site)
+                      </p>
+                      <div className="flex gap-2 overflow-x-auto">
+                        {newProductGalleryPreview.map((img, index) => (
+                          <div key={`${img}-${index}`} className="text-center shrink-0">
+                            <img
+                              src={img}
+                              alt={`Preview ${index + 1}`}
+                              className="w-16 h-16 object-cover border rounded"
+                            />
+                            <p className="text-[10px] mt-1">
+                              {index === 0 ? 'Capa' : `#${index}`}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -918,6 +960,28 @@ export default function AdminDashboard() {
                   className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   rows={3}
                 />
+
+                {editingProductGalleryPreview.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-xs text-gray-500 mb-2">
+                      Preview da galeria (ordem real do site)
+                    </p>
+                    <div className="flex gap-2 overflow-x-auto">
+                      {editingProductGalleryPreview.map((img, index) => (
+                        <div key={`${img}-${index}`} className="text-center shrink-0">
+                          <img
+                            src={img}
+                            alt={`Preview ${index + 1}`}
+                            className="w-16 h-16 object-cover border rounded"
+                          />
+                          <p className="text-[10px] mt-1">
+                            {index === 0 ? 'Capa' : `#${index}`}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
