@@ -4,6 +4,7 @@ import { Trash2, Plus, Edit2, X, Upload, Loader, Package, FolderOpen } from 'luc
 
 type ProductWithImages = Product & {
   images?: string[] | null;
+  includes?: string | null;
 };
 
 export default function AdminDashboard() {
@@ -24,6 +25,7 @@ export default function AdminDashboard() {
     subcategory: '',
     price: 0,
     description: '',
+    includes: '',
     image_url: '',
     imagesInput: '',
     badge: '',
@@ -224,6 +226,7 @@ export default function AdminDashboard() {
           subcategory: normalizeSubcategory(newProduct.subcategory) || null,
           price: newProduct.price,
           description: newProduct.description,
+          includes: newProduct.includes.trim() || null,
           image_url: newProduct.image_url,
           images: parseImagesInput(newProduct.imagesInput),
           badge: newProduct.badge,
@@ -239,6 +242,7 @@ export default function AdminDashboard() {
         subcategory: '',
         price: 0,
         description: '',
+        includes: '',
         image_url: '',
         imagesInput: '',
         badge: '',
@@ -266,6 +270,7 @@ export default function AdminDashboard() {
           subcategory: normalizeSubcategory(editingProduct.subcategory) || null,
           price: editingProduct.price,
           description: editingProduct.description,
+          includes: editingProduct.includes?.trim() || null,
           image_url: editingProduct.image_url,
           images: parseImagesInput(editingImagesInput),
           badge: editingProduct.badge,
@@ -524,6 +529,25 @@ export default function AdminDashboard() {
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                     rows={3}
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-2">
+                    O que acompanha
+                  </label>
+                  <textarea
+                    placeholder={`Ex:
+2 baterias
+1 carregador
+1 case
+1 cartão de memória`}
+                    value={newProduct.includes}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, includes: e.target.value })
+                    }
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    rows={4}
                   />
                 </div>
 
@@ -836,6 +860,24 @@ export default function AdminDashboard() {
                   }
                   className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   rows={3}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  O que acompanha
+                </label>
+                <textarea
+                  value={editingProduct.includes || ''}
+                  onChange={(e) =>
+                    setEditingProduct({ ...editingProduct, includes: e.target.value })
+                  }
+                  placeholder={`Ex:
+2 baterias
+1 carregador
+1 case`}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                  rows={4}
                 />
               </div>
 
