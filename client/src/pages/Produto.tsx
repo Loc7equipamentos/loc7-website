@@ -76,14 +76,16 @@ export default function Produto() {
   const galleryImages = useMemo(() => {
     if (!product) return [];
 
-    const fromArray = Array.isArray(product.images)
+    const imagesFromArray = Array.isArray(product.images)
       ? product.images.map((img) => img?.trim()).filter(Boolean)
       : [];
 
-    const fallback = product.image_url?.trim() ? [product.image_url.trim()] : [];
+    if (imagesFromArray.length > 0) {
+      return imagesFromArray;
+    }
 
-    const merged = [...fromArray, ...fallback];
-    return Array.from(new Set(merged));
+    const fallbackImage = product.image_url?.trim();
+    return fallbackImage ? [fallbackImage] : [];
   }, [product]);
 
   const includedItems = useMemo(() => {
@@ -138,7 +140,7 @@ export default function Produto() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [product, galleryImages, currentImageIndex, selectedImage]);
+  }, [product, galleryImages, currentImageIndex]);
 
   if (loading) {
     return (
