@@ -1,6 +1,6 @@
 import { useRoute, Link } from "wouter";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 interface Product {
@@ -284,12 +284,9 @@ export default function Produto() {
               <div className="bg-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-2xl p-6 md:p-8">
                 <h2 className="text-lg font-semibold text-white mb-4">O que acompanha</h2>
 
-                <ul className="space-y-3">
+                <ul className="space-y-3 text-gray-300 list-disc pl-5 marker:text-white">
                   {includedItems.map((item, index) => (
-                    <li key={`${item}-${index}`} className="flex items-start gap-3 text-gray-300">
-                      <Check className="w-4 h-4 mt-1 text-white flex-shrink-0" />
-                      <span>{item}</span>
-                    </li>
+                    <li key={`${item}-${index}`}>{item}</li>
                   ))}
                 </ul>
               </div>
