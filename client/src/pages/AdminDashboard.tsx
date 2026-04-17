@@ -17,7 +17,6 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<ProductWithImages | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [editingImagesInput, setEditingImagesInput] = useState('');
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -27,7 +26,6 @@ export default function AdminDashboard() {
     description: '',
     includes: '',
     image_url: '',
-    imagesInput: '',
     images: [] as string[],
     badge: '',
   });
@@ -49,35 +47,6 @@ export default function AdminDashboard() {
 
   const normalizeSubcategory = (value?: string | null) => {
     return value?.trim() || '';
-  };
-
-  const parseImagesInput = (value?: string | null) => {
-    if (!value) return [];
-
-    return value
-      .split(/\n|,/)
-      .map((img) => img.trim())
-      .filter(Boolean);
-  };
-
-  const buildGallery = (mainImage?: string | null, imagesInput?: string | null) => {
-    const main = mainImage?.trim() || '';
-
-    const parsed = parseImagesInput(imagesInput);
-
-    const uniqueAdditional = parsed.filter((img, index, self) => {
-      return img !== main && self.indexOf(img) === index;
-    });
-
-    return {
-      gallery: main ? [main, ...uniqueAdditional] : uniqueAdditional,
-      additional: uniqueAdditional.length > 0 ? uniqueAdditional : null,
-    };
-  };
-
-  const stringifyImages = (images?: string[] | null) => {
-    if (!images || images.length === 0) return '';
-    return images.join(', ');
   };
 
   const slugify = (value: string) => {
@@ -144,11 +113,6 @@ export default function AdminDashboard() {
     ? getSubcategoriesForCategory(editingProduct.category)
     : [];
 
-  const newProductGalleryPreview = buildGallery(newProduct.image_url, newProduct.imagesInput).gallery;
-  const editingProductGalleryPreview = editingProduct
-    ? buildGallery(editingProduct.image_url, editingImagesInput).gallery
-    : [];
-
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -184,6 +148,8 @@ export default function AdminDashboard() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    setUploadingImage(true);
+
     const uploadedUrls: string[] = [];
 
     for (const file of Array.from(files)) {
@@ -193,8 +159,6 @@ export default function AdminDashboard() {
       }
 
       try {
-        setUploadingImage(true);
-
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
         if (!allowedTypes.includes(file.type)) {
           throw new Error('Formato inválido. Use JPG, PNG ou WebP.');
@@ -225,10 +189,10 @@ export default function AdminDashboard() {
         const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
         alert(`❌ Erro ao fazer upload: ${errorMessage}`);
         setError(errorMessage);
-      } finally {
-        setUploadingImage(false);
       }
     }
+
+    setUploadingImage(false);
 
     if (uploadedUrls.length === 0) return;
 
@@ -241,11 +205,11 @@ export default function AdminDashboard() {
         images: rest.length > 0 ? rest : null,
       });
     } else {
-      setNewProduct({
-        ...newProduct,
+      setNewProduct((prev) => ({
+        ...prev,
         image_url: main,
         images: rest.length > 0 ? rest : [],
-      });
+      }));
     }
 
     alert('✅ Imagens enviadas com sucesso!');
@@ -259,7 +223,6 @@ export default function AdminDashboard() {
 
     try {
       const slug = await generateUniqueSlug(newProduct.name);
-      const { additional } = buildGallery(newProduct.image_url, newProduct.imagesInput);
 
       const { error: err } = await supabase.from('products').insert([
         {
@@ -270,7 +233,7 @@ export default function AdminDashboard() {
           description: newProduct.description,
           includes: newProduct.includes.trim() || null,
           image_url: newProduct.image_url,
-          images: newProduct.images.length > 0 ? newProduct.images : additional,
+          images: newProduct.images.length > 0 ? newProduct.images : null,
           badge: newProduct.badge,
           slug,
         },
@@ -278,7 +241,8 @@ export default function AdminDashboard() {
 
       if (err) throw err;
 
-      setNewProduct({
+      setNewProduct((prev) => ({
+        ...prev,
         name: '',
         category: '',
         subcategory: '',
@@ -286,10 +250,9 @@ export default function AdminDashboard() {
         description: '',
         includes: '',
         image_url: '',
-        imagesInput: '',
         images: [],
         badge: '',
-      });
+      }));
       setError(null);
       await loadProducts();
       alert('Produto adicionado com sucesso!');
@@ -304,7 +267,6 @@ export default function AdminDashboard() {
 
     try {
       const slug = await generateUniqueSlug(editingProduct.name, editingProduct.id);
-      const { additional } = buildGallery(editingProduct.image_url, editingImagesInput);
 
       const { error: err } = await supabase
         .from('products')
@@ -316,7 +278,7 @@ export default function AdminDashboard() {
           description: editingProduct.description,
           includes: editingProduct.includes?.trim() || null,
           image_url: editingProduct.image_url,
-          images: editingProduct.images && editingProduct.images.length > 0 ? editingProduct.images : additional,
+          images: editingProduct.images && editingProduct.images.length > 0 ? editingProduct.images : null,
           badge: editingProduct.badge,
           slug,
         })
@@ -325,7 +287,6 @@ export default function AdminDashboard() {
       if (err) throw err;
       setShowEditModal(false);
       setEditingProduct(null);
-      setEditingImagesInput('');
       await loadProducts();
       alert('Produto atualizado com sucesso!');
     } catch (err) {
@@ -380,8 +341,17 @@ export default function AdminDashboard() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <Loader className="w-8 h-8 text-gray-600 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Premium Header */}
       <header className="bg-black border-b border-gray-900 sticky top-0 z-40 shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-5">
@@ -404,20 +374,21 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
             {error}
           </div>
         )}
 
+        {/* Tabs */}
         <div className="flex gap-4 mb-8 border-b border-gray-200">
           <button
             onClick={() => setActiveTab('products')}
-            className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${
+            className={`pb-4 px-4 font-medium text-sm transition-colors ${
               activeTab === 'products'
-                ? 'text-gray-900 border-gray-900'
-                : 'text-gray-600 border-transparent hover:text-gray-900'
+                ? 'text-gray-900 border-b-2 border-gray-900'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             <Package className="inline-block mr-2 size-4" />
@@ -425,10 +396,10 @@ export default function AdminDashboard() {
           </button>
           <button
             onClick={() => setActiveTab('categories')}
-            className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${
+            className={`pb-4 px-4 font-medium text-sm transition-colors ${
               activeTab === 'categories'
-                ? 'text-gray-900 border-gray-900'
-                : 'text-gray-600 border-transparent hover:text-gray-900'
+                ? 'text-gray-900 border-b-2 border-gray-900'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             <FolderOpen className="inline-block mr-2 size-4" />
@@ -436,10 +407,12 @@ export default function AdminDashboard() {
           </button>
         </div>
 
+        {/* Products Tab */}
         {activeTab === 'products' && (
-          <div className="space-y-8">
+          <div className="space-y-6">
+            {/* Add Product Form */}
             <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Adicionar Novo Produto</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Novo Produto</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
@@ -448,7 +421,7 @@ export default function AdminDashboard() {
                     type="text"
                     placeholder="Nome do produto"
                     value={newProduct.name}
-                    onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                    onChange={(e) => setNewProduct((prev) => ({ ...prev, name: e.target.value }))}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
@@ -457,8 +430,8 @@ export default function AdminDashboard() {
                   <label className="block text-xs font-medium text-gray-700 mb-2">Categoria *</label>
                   <select
                     value={newProduct.category}
-                    onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    onChange={(e) => setNewProduct((prev) => ({ ...prev, category: e.target.value }))}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   >
                     <option value="">Selecione uma categoria</option>
                     {categories.map((cat) => (
@@ -471,40 +444,32 @@ export default function AdminDashboard() {
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2">Subcategoria</label>
-                  <input
-                    type="text"
-                    placeholder="Digite ou selecione"
+                  <select
                     value={newProduct.subcategory}
-                    onChange={(e) => setNewProduct({ ...newProduct, subcategory: e.target.value })}
-                    list="new-product-subcategories"
+                    onChange={(e) => setNewProduct((prev) => ({ ...prev, subcategory: e.target.value }))}
                     disabled={!newProduct.category}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-                  />
-                  <datalist id="new-product-subcategories">
-                    {newProductSubcategories.map((subcategory) => (
-                      <option key={subcategory} value={subcategory} />
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors disabled:bg-gray-100 disabled:text-gray-500"
+                  >
+                    <option value="">Selecione ou crie nova</option>
+                    {newProductSubcategories.map((subcat) => (
+                      <option key={subcat} value={subcat}>
+                        {subcat}
+                      </option>
                     ))}
-                  </datalist>
-                  {newProduct.category && newProductSubcategories.length > 0 && (
-                    <p className="mt-2 text-[11px] text-gray-500">
-                      Sugestões disponíveis para esta categoria.
-                    </p>
-                  )}
+                  </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    Preço (R$) *
-                  </label>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Preço *</label>
                   <input
                     type="number"
                     placeholder="0.00"
                     value={newProduct.price}
                     onChange={(e) =>
-                      setNewProduct({
-                        ...newProduct,
+                      setNewProduct((prev) => ({
+                        ...prev,
                         price: parseFloat(e.target.value) || 0,
-                      })
+                      }))
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
@@ -516,7 +481,7 @@ export default function AdminDashboard() {
                     type="text"
                     placeholder="Ex: FULLFRAME"
                     value={newProduct.badge}
-                    onChange={(e) => setNewProduct({ ...newProduct, badge: e.target.value })}
+                    onChange={(e) => setNewProduct((prev) => ({ ...prev, badge: e.target.value }))}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
@@ -527,7 +492,7 @@ export default function AdminDashboard() {
                     placeholder="Descrição do produto"
                     value={newProduct.description}
                     onChange={(e) =>
-                      setNewProduct({ ...newProduct, description: e.target.value })
+                      setNewProduct((prev) => ({ ...prev, description: e.target.value }))
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                     rows={3}
@@ -546,7 +511,7 @@ export default function AdminDashboard() {
 1 cartão de memória`}
                     value={newProduct.includes}
                     onChange={(e) =>
-                      setNewProduct({ ...newProduct, includes: e.target.value })
+                      setNewProduct((prev) => ({ ...prev, includes: e.target.value }))
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                     rows={4}
@@ -555,7 +520,7 @@ export default function AdminDashboard() {
 
                 <div className="md:col-span-2">
                   <label className="block text-xs font-medium text-gray-700 mb-2">
-                    Imagem principal do produto
+                    Imagens do produto
                   </label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
                     <label className="flex flex-col items-center justify-center cursor-pointer">
@@ -564,7 +529,7 @@ export default function AdminDashboard() {
                         Clique para fazer upload
                       </span>
                       <span className="text-xs text-gray-500 mt-1">
-                        JPG, PNG ou WebP até 10MB
+                        JPG, PNG ou WebP até 10MB (primeira imagem = capa)
                       </span>
                       <input
                         type="file"
@@ -575,56 +540,34 @@ export default function AdminDashboard() {
                         className="hidden"
                       />
                     </label>
-                    {newProduct.image_url && (
-                      <div className="mt-4 flex justify-center">
-                        <img
-                          src={newProduct.image_url}
-                          alt="Preview"
-                          className="w-24 h-24 object-cover rounded-lg border border-gray-200"
-                        />
+                    {(newProduct.image_url || newProduct.images.length > 0) && (
+                      <div className="mt-4">
+                        <p className="text-xs text-gray-500 mb-2">Preview</p>
+                        <div className="flex gap-2 overflow-x-auto">
+                          {newProduct.image_url && (
+                            <div className="text-center shrink-0">
+                              <img
+                                src={newProduct.image_url}
+                                alt="Capa"
+                                className="w-16 h-16 object-cover border rounded"
+                              />
+                              <p className="text-[10px] mt-1 font-medium">Capa</p>
+                            </div>
+                          )}
+                          {newProduct.images.map((img, index) => (
+                            <div key={`${img}-${index}`} className="text-center shrink-0">
+                              <img
+                                src={img}
+                                alt={`Imagem ${index + 1}`}
+                                className="w-16 h-16 object-cover border rounded"
+                              />
+                              <p className="text-[10px] mt-1">#{index + 1}</p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    Imagens adicionais (URLs separadas por vírgula ou quebra de linha)
-                  </label>
-                  <textarea
-                    placeholder="https://img1.jpg, https://img2.jpg"
-                    value={newProduct.imagesInput}
-                    onChange={(e ) =>
-                      setNewProduct({ ...newProduct, imagesInput: e.target.value })
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
-                    rows={3}
-                  />
-                  <p className="mt-2 text-[11px] text-gray-500">
-                    A imagem principal continua vindo do upload acima. Este campo alimenta a galeria.
-                  </p>
-
-                  {newProductGalleryPreview.length > 0 && (
-                    <div className="mt-4">
-                      <p className="text-xs text-gray-500 mb-2">
-                        Preview da galeria (ordem real do site)
-                      </p>
-                      <div className="flex gap-2 overflow-x-auto">
-                        {newProductGalleryPreview.map((img, index) => (
-                          <div key={`${img}-${index}`} className="text-center shrink-0">
-                            <img
-                              src={img}
-                              alt={`Preview ${index + 1}`}
-                              className="w-16 h-16 object-cover border rounded"
-                            />
-                            <p className="text-[10px] mt-1">
-                              {index === 0 ? 'Capa' : `#${index}`}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -636,6 +579,7 @@ export default function AdminDashboard() {
               </button>
             </div>
 
+            {/* Products Table */}
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -706,18 +650,19 @@ export default function AdminDashboard() {
                               <button
                                 onClick={() => {
                                   setEditingProduct(product);
-                                  setEditingImagesInput(stringifyImages(product.images));
                                   setShowEditModal(true);
                                 }}
-                                className="p-2 hover:bg-blue-50 text-blue-600 rounded transition-colors"
+                                className="p-2 hover:bg-gray-100 rounded transition-colors"
+                                title="Editar"
                               >
-                                <Edit2 size={16} />
+                                <Edit2 size={16} className="text-gray-600" />
                               </button>
                               <button
                                 onClick={() => deleteProduct(product.id)}
-                                className="p-2 hover:bg-red-50 text-red-600 rounded transition-colors"
+                                className="p-2 hover:bg-red-50 rounded transition-colors"
+                                title="Deletar"
                               >
-                                <Trash2 size={16} />
+                                <Trash2 size={16} className="text-red-600" />
                               </button>
                             </div>
                           </td>
@@ -731,10 +676,11 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* Categories Tab */}
         {activeTab === 'categories' && (
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Adicionar Categoria</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Nova Categoria</h2>
               <div className="flex gap-3">
                 <input
                   type="text"
@@ -769,15 +715,16 @@ export default function AdminDashboard() {
                         </td>
                       </tr>
                     ) : (
-                      categories.map((category) => (
-                        <tr key={category.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-6 py-4 text-gray-900 font-medium">{category.name}</td>
+                      categories.map((cat) => (
+                        <tr key={cat.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4 text-gray-900 font-medium">{cat.name}</td>
                           <td className="px-6 py-4">
                             <button
-                              onClick={() => deleteCategory(category.id)}
-                              className="p-2 hover:bg-red-50 text-red-600 rounded transition-colors"
+                              onClick={() => deleteCategory(cat.id)}
+                              className="p-2 hover:bg-red-50 rounded transition-colors"
+                              title="Deletar"
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={16} className="text-red-600" />
                             </button>
                           </td>
                         </tr>
@@ -789,12 +736,13 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
-      </main>
+      </div>
 
+      {/* Edit Modal */}
       {showEditModal && editingProduct && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-lg">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Editar Produto</h2>
               <button
                 onClick={() => {
@@ -803,7 +751,7 @@ export default function AdminDashboard() {
                 }}
                 className="p-1 hover:bg-gray-100 rounded transition-colors"
               >
-                <X size={20} />
+                <X size={20} className="text-gray-600" />
               </button>
             </div>
 
@@ -828,7 +776,7 @@ export default function AdminDashboard() {
                     onChange={(e) =>
                       setEditingProduct({ ...editingProduct, category: e.target.value })
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   >
                     <option value="">Selecione uma categoria</option>
                     {categories.map((cat) => (
@@ -841,27 +789,28 @@ export default function AdminDashboard() {
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2">Subcategoria</label>
-                  <input
-                    type="text"
+                  <select
                     value={editingProduct.subcategory || ''}
                     onChange={(e) =>
                       setEditingProduct({ ...editingProduct, subcategory: e.target.value })
                     }
-                    list="editing-product-subcategories"
                     disabled={!editingProduct.category}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-                  />
-                  <datalist id="editing-product-subcategories">
-                    {editingProductSubcategories.map((subcategory) => (
-                      <option key={subcategory} value={subcategory} />
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors disabled:bg-gray-100 disabled:text-gray-500"
+                  >
+                    <option value="">Selecione ou crie nova</option>
+                    {editingProductSubcategories.map((subcat) => (
+                      <option key={subcat} value={subcat}>
+                        {subcat}
+                      </option>
                     ))}
-                  </datalist>
+                  </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Preço (R$)</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Preço</label>
                   <input
                     type="number"
+                    placeholder="0.00"
                     value={editingProduct.price}
                     onChange={(e) =>
                       setEditingProduct({
@@ -877,6 +826,7 @@ export default function AdminDashboard() {
                   <label className="block text-xs font-medium text-gray-700 mb-2">Badge</label>
                   <input
                     type="text"
+                    placeholder="Ex: FULLFRAME"
                     value={editingProduct.badge || ''}
                     onChange={(e) =>
                       setEditingProduct({ ...editingProduct, badge: e.target.value })
@@ -898,23 +848,32 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">O que acompanha</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">
+                    O que acompanha
+                  </label>
                   <textarea
                     value={editingProduct.includes || ''}
                     onChange={(e) =>
                       setEditingProduct({ ...editingProduct, includes: e.target.value })
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
-                    rows={3}
+                    rows={4}
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Imagem</label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <label className="block text-xs font-medium text-gray-700 mb-2">
+                    Imagens do produto
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
                     <label className="flex flex-col items-center justify-center cursor-pointer">
-                      <Upload className="w-5 h-5 text-gray-400 mb-1" />
-                      <span className="text-sm text-gray-700">Clique para atualizar</span>
+                      <Upload className="w-6 h-6 text-gray-400 mb-2" />
+                      <span className="text-sm font-medium text-gray-700">
+                        Clique para atualizar
+                      </span>
+                      <span className="text-xs text-gray-500 mt-1">
+                        JPG, PNG ou WebP até 10MB
+                      </span>
                       <input
                         type="file"
                         accept="image/*"
@@ -924,54 +883,34 @@ export default function AdminDashboard() {
                         className="hidden"
                       />
                     </label>
-                    {editingProduct.image_url && (
-                      <div className="mt-3 flex justify-center">
-                        <img
-                          src={editingProduct.image_url}
-                          alt="Preview"
-                          className="w-20 h-20 object-cover rounded-lg border border-gray-200"
-                        />
+                    {(editingProduct.image_url || editingProduct.images?.length) && (
+                      <div className="mt-4">
+                        <p className="text-xs text-gray-500 mb-2">Preview</p>
+                        <div className="flex gap-2 overflow-x-auto">
+                          {editingProduct.image_url && (
+                            <div className="text-center shrink-0">
+                              <img
+                                src={editingProduct.image_url}
+                                alt="Capa"
+                                className="w-16 h-16 object-cover border rounded"
+                              />
+                              <p className="text-[10px] mt-1 font-medium">Capa</p>
+                            </div>
+                          )}
+                          {editingProduct.images?.map((img, index) => (
+                            <div key={`${img}-${index}`} className="text-center shrink-0">
+                              <img
+                                src={img}
+                                alt={`Imagem ${index + 1}`}
+                                className="w-16 h-16 object-cover border rounded"
+                              />
+                              <p className="text-[10px] mt-1">#{index + 1}</p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    Imagens adicionais (URLs separadas por vírgula ou quebra de linha)
-                  </label>
-                  <textarea
-                    placeholder="https://img1.jpg, https://img2.jpg"
-                    value={editingImagesInput}
-                    onChange={(e ) => setEditingImagesInput(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
-                    rows={3}
-                  />
-                  <p className="mt-2 text-[11px] text-gray-500">
-                    A imagem principal continua vindo do upload acima. Este campo alimenta a galeria.
-                  </p>
-
-                  {editingProductGalleryPreview.length > 0 && (
-                    <div className="mt-4">
-                      <p className="text-xs text-gray-500 mb-2">
-                        Preview da galeria (ordem real do site)
-                      </p>
-                      <div className="flex gap-2 overflow-x-auto">
-                        {editingProductGalleryPreview.map((img, index) => (
-                          <div key={`${img}-${index}`} className="text-center shrink-0">
-                            <img
-                              src={img}
-                              alt={`Preview ${index + 1}`}
-                              className="w-16 h-16 object-cover border rounded"
-                            />
-                            <p className="text-[10px] mt-1">
-                              {index === 0 ? 'Capa' : `#${index}`}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -1007,3 +946,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
