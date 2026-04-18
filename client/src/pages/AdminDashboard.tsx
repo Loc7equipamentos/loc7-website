@@ -5,6 +5,26 @@ import { Trash2, Plus, Edit2, X, Upload, Loader, Package, FolderOpen } from 'luc
 type ProductWithImages = Product & {
   images?: string[] | null;
   includes?: string | null;
+  imagesList?: string[];
+};
+
+const normalizeImagesList = (product: Product): string[] => {
+  const images: string[] = [];
+  
+  if (product.image_url && typeof product.image_url === 'string' && product.image_url.trim().length > 0) {
+    images.push(product.image_url);
+  }
+  
+  if (product.images && Array.isArray(product.images)) {
+    product.images.forEach((img) => {
+      if (typeof img === 'string' && img.trim().length > 0) {
+        images.push(img);
+      }
+    });
+  }
+  
+  const uniqueImages = Array.from(new Set(images));
+  return uniqueImages;
 };
 
 export default function AdminDashboard() {
@@ -29,16 +49,11 @@ export default function AdminDashboard() {
     price: 0,
     description: '',
     includes: '',
-    image_url: '',
-    images: [] as string[],
+    imagesList: [] as string[],
     badge: '',
   });
 
   const [newCategory, setNewCategory] = useState('');
-
-  const formatPrice = (value: number) => {
-    return new Intl.NumberFormat('pt-BR').format(value);
-  };
 
   useEffect(() => {
     loadProducts();
@@ -116,36 +131,6 @@ export default function AdminDashboard() {
   const editingProductSubcategories = editingProduct
     ? getSubcategoriesForCategory(editingProduct.category)
     : [];
-
-  const reorderImages = (
-    allImages: string[],
-    fromIndex: number,
-    toIndex: number
-  ): { image_url: string; images: string[] } => {
-    if (fromIndex === toIndex) {
-      return {
-        image_url: allImages[0],
-        images: allImages.slice(1),
-      };
-    }
-
-    const reordered = [...allImages];
-    const [movedImage] = reordered.splice(fromIndex, 1);
-    reordered.splice(toIndex, 0, movedImage);
-
-    return {
-      image_url: reordered[0],
-      images: reordered.slice(1),
-    };
-  };
-
-  const fixImageOrder = (imageUrl: string, images: string[]) => {
-    const allImages = [imageUrl, ...images].filter(Boolean);
-    return {
-      image_url: allImages[0] || null,
-      images: allImages.slice(1).length > 0 ? allImages.slice(1) : null,
-    };
-  };
 
   const loadProducts = async () => {
     try {
@@ -230,35 +215,18 @@ export default function AdminDashboard() {
     }
 
     if (isEditing && editingProduct) {
-      const currentImages = [editingProduct.image_url, ...(editingProduct.images || [])]
-        .filter(Boolean);
-      const allImages = [...currentImages, ...uploadedUrls];
-      const reordered = {
-        image_url: allImages[0],
-        images: allImages.slice(1),
-      };
       setEditingProduct((prev) =>
         prev
           ? {
               ...prev,
-              image_url: reordered.image_url,
-              images: reordered.images,
+              imagesList: [...prev.imagesList, ...uploadedUrls],
             }
           : prev
       );
     } else {
-      const currentImages = newProduct.image_url
-        ? [newProduct.image_url, ...newProduct.images]
-        : newProduct.images;
-      const allImages = [...currentImages, ...uploadedUrls];
-      const reordered = {
-        image_url: allImages[0],
-        images: allImages.slice(1),
-      };
       setNewProduct((prev) => ({
         ...prev,
-        image_url: reordered.image_url,
-        images: reordered.images,
+        imagesList: [...prev.imagesList, ...uploadedUrls],
       }));
     }
 
@@ -313,16 +281,38 @@ export default function AdminDashboard() {
     }
   };
 
+  const reorderImages = (imagesList: string[], fromIndex: number, toIndex: number) => {
+    const reordered = [...imagesList];
+    const [movedImage] = reordered.splice(fromIndex, 1);
+    reordered.splice(toIndex, 0, movedImage);
+    return reordered;
+  };
+
   const addProduct = async () => {
     if (!newProduct.name || !newProduct.category || newProduct.price <= 0) {
       setError('Preencha todos os campos obrigatórios');
       return;
     }
 
+    if (newProduct.imagesList.length === 0) {
+      setError('Adicione pelo menos uma imagem');
+      return;
+    }
+
     try {
       const slug = await generateUniqueSlug(newProduct.name);
 
-      const fixedImages = fixImageOrder(newProduct.image_url, newProduct.images);
+      const cleanImagesList = Array.from(
+        new Set(
+          newProduct.imagesList.filter(
+            (img): img is string =>
+              typeof img === 'string' && img.trim().length > 0
+          )
+        )
+      );
+
+      const image_url = cleanImagesList[0] || null;
+      const images = cleanImagesList.length > 1 ? cleanImagesList.slice(1) : null;
 
       const { error: err } = await supabase.from('products').insert([
         {
@@ -332,8 +322,8 @@ export default function AdminDashboard() {
           price: newProduct.price,
           description: newProduct.description,
           includes: newProduct.includes.trim() || null,
-          image_url: fixedImages.image_url,
-          images: fixedImages.images,
+          image_url,
+          images,
           badge: newProduct.badge,
           slug,
         },
@@ -341,18 +331,16 @@ export default function AdminDashboard() {
 
       if (err) throw err;
 
-      setNewProduct((prev) => ({
-        ...prev,
+      setNewProduct({
         name: '',
         category: '',
         subcategory: '',
         price: 0,
         description: '',
         includes: '',
-        image_url: '',
-        images: [],
+        imagesList: [],
         badge: '',
-      }));
+      });
       setError(null);
       await loadProducts();
       alert('Produto adicionado com sucesso!');
@@ -368,7 +356,17 @@ export default function AdminDashboard() {
     try {
       const slug = await generateUniqueSlug(editingProduct.name, editingProduct.id);
 
-      const fixedImages = fixImageOrder(editingProduct.image_url || '', editingProduct.images || []);
+      const cleanImagesList = Array.from(
+        new Set(
+          editingProduct.imagesList.filter(
+            (img): img is string =>
+              typeof img === 'string' && img.trim().length > 0
+          )
+        )
+      );
+
+      const image_url = cleanImagesList[0] || null;
+      const images = cleanImagesList.length > 1 ? cleanImagesList.slice(1) : null;
 
       const { error: err } = await supabase
         .from('products')
@@ -379,8 +377,8 @@ export default function AdminDashboard() {
           price: editingProduct.price,
           description: editingProduct.description,
           includes: editingProduct.includes?.trim() || null,
-          image_url: fixedImages.image_url,
-          images: fixedImages.images,
+          image_url,
+          images,
           badge: editingProduct.badge,
           slug,
         })
@@ -563,12 +561,7 @@ export default function AdminDashboard() {
                     type="number"
                     placeholder="0.00"
                     value={newProduct.price}
-                    onChange={(e) =>
-                      setNewProduct((prev) => ({
-                        ...prev,
-                        price: parseFloat(e.target.value) || 0,
-                      }))
-                    }
+                    onChange={(e) => setNewProduct((prev) => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
@@ -584,121 +577,108 @@ export default function AdminDashboard() {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Incluso</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Cabo USB, Bateria"
+                    value={newProduct.includes}
+                    onChange={(e) => setNewProduct((prev) => ({ ...prev, includes: e.target.value }))}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                  />
+                </div>
+
                 <div className="md:col-span-2">
                   <label className="block text-xs font-medium text-gray-700 mb-2">Descrição</label>
                   <textarea
                     placeholder="Descrição do produto"
                     value={newProduct.description}
-                    onChange={(e) =>
-                      setNewProduct((prev) => ({ ...prev, description: e.target.value }))
-                    }
+                    onChange={(e) => setNewProduct((prev) => ({ ...prev, description: e.target.value }))}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                     rows={3}
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    O que acompanha
-                  </label>
-                  <textarea
-                    placeholder={`Ex:
-2 baterias
-1 carregador
-1 case
-1 cartão de memória`}
-                    value={newProduct.includes}
-                    onChange={(e) =>
-                      setNewProduct((prev) => ({ ...prev, includes: e.target.value }))
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
-                    rows={4}
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    Imagens do produto
-                  </label>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Imagens (primeira = capa)</label>
                   <div
                     onDragEnter={(e) => handleDragEnter(e, false)}
                     onDragOver={handleDragOver}
                     onDragLeave={(e) => handleDragLeave(e, false)}
                     onDrop={(e) => handleDrop(e, false)}
-                    className={`border-2 border-dashed rounded-lg p-6 transition-all cursor-pointer ${
+                    className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
                       isDragOverNewProduct
-                        ? 'border-gray-900 bg-gray-100'
-                        : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                        ? 'border-gray-900 bg-gray-50'
+                        : 'border-gray-300 bg-white hover:bg-gray-50'
                     }`}
-                    onClick={() => document.getElementById('fileInputNew')?.click()}
                   >
-                    <div className="flex flex-col items-center justify-center">
+                    <label className="flex flex-col items-center justify-center cursor-pointer">
                       <Upload className="w-6 h-6 text-gray-400 mb-2" />
-                      <span className="text-sm font-medium text-gray-700">
-                        {isDragOverNewProduct ? 'Solte as imagens aqui' : 'Clique ou arraste imagens'}
-                      </span>
-                      <span className="text-xs text-gray-500 mt-1">
-                        JPG, PNG ou WebP até 10MB (primeira imagem = capa)
-                      </span>
-                    </div>
+                      <span className="text-sm font-medium text-gray-700">Clique ou arraste para fazer upload</span>
+                      <span className="text-xs text-gray-500 mt-1">JPG, PNG ou WebP até 10MB</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => handleImageUpload(e, false)}
+                        disabled={uploadingImage}
+                        className="hidden"
+                      />
+                    </label>
 
-                    <input
-                      id="fileInputNew"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={(e) => handleImageUpload(e, false)}
-                      disabled={uploadingImage}
-                      className="hidden"
-                    />
-
-                    {(newProduct.image_url || newProduct.images.length > 0) && (
+                    {newProduct.imagesList.length > 0 && (
                       <div className="mt-4">
                         <p className="text-xs text-gray-500 mb-2">Preview (arraste para reordenar)</p>
                         <div className="flex gap-2 overflow-x-auto pb-2">
-                          {[newProduct.image_url, ...newProduct.images]
-                            .filter(Boolean)
-                            .map((img, index) => (
-                              <div
-                                key={`${img}-${index}`}
-                                draggable
-                                onDragStart={() => setDraggedImageIndex(index)}
-                                onDragOver={(e) => {
-                                  e.preventDefault();
-                                  setDragOverIndex(index);
+                          {newProduct.imagesList.map((img, index) => (
+                            <div
+                              key={`${img}-${index}`}
+                              draggable
+                              onDragStart={() => setDraggedImageIndex(index)}
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                setDragOverIndex(index);
+                              }}
+                              onDragLeave={() => setDragOverIndex(null)}
+                              onDrop={() => {
+                                if (draggedImageIndex !== null && draggedImageIndex !== index) {
+                                  const reordered = reorderImages(newProduct.imagesList, draggedImageIndex, index);
+                                  setNewProduct((prev) => ({
+                                    ...prev,
+                                    imagesList: reordered,
+                                  }));
+                                }
+                                setDraggedImageIndex(null);
+                                setDragOverIndex(null);
+                              }}
+                              onDragEnd={() => {
+                                setDraggedImageIndex(null);
+                                setDragOverIndex(null);
+                              }}
+                              className={`text-center shrink-0 cursor-move transition-all ${
+                                dragOverIndex === index ? 'ring-2 ring-gray-900 scale-105' : ''
+                              } ${draggedImageIndex === index ? 'opacity-50' : ''}`}
+                            >
+                              <img
+                                src={img}
+                                alt={index === 0 ? 'Capa' : `Imagem ${index}`}
+                                className="w-16 h-16 object-cover border rounded"
+                              />
+                              <p className="text-[10px] mt-1 font-medium">{index === 0 ? 'Capa' : `#${index}`}</p>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setNewProduct((prev) => ({
+                                    ...prev,
+                                    imagesList: prev.imagesList.filter((_, i) => i !== index),
+                                  }));
                                 }}
-                                onDragLeave={() => setDragOverIndex(null)}
-                                onDrop={() => {
-                                  if (draggedImageIndex !== null && draggedImageIndex !== index) {
-                                    const allImages = [newProduct.image_url, ...newProduct.images].filter(Boolean);
-                                    const reordered = reorderImages(allImages, draggedImageIndex, index);
-                                    setNewProduct((prev) => ({
-                                      ...prev,
-                                      image_url: reordered.image_url,
-                                      images: reordered.images,
-                                    }));
-                                  }
-                                  setDraggedImageIndex(null);
-                                  setDragOverIndex(null);
-                                }}
-                                onDragEnd={() => {
-                                  setDraggedImageIndex(null);
-                                  setDragOverIndex(null);
-                                }}
-                                className={`text-center shrink-0 cursor-move transition-all ${
-                                  dragOverIndex === index ? 'ring-2 ring-gray-900 scale-105' : ''
-                                } ${draggedImageIndex === index ? 'opacity-50' : ''}`}
+                                className="mt-1 text-xs text-red-600 hover:text-red-700"
                               >
-                                <img
-                                  src={img}
-                                  alt={index === 0 ? 'Capa' : `Imagem ${index}`}
-                                  className="w-16 h-16 object-cover border rounded"
-                                />
-                                <p className="text-[10px] mt-1 font-medium">
-                                  {index === 0 ? 'Capa' : `#${index}`}
-                                </p>
-                              </div>
-                            ))}
+                                Remover
+                              </button>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -708,9 +688,11 @@ export default function AdminDashboard() {
 
               <button
                 onClick={addProduct}
-                className="mt-5 bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium py-2.5 px-5 rounded-lg transition-colors flex items-center gap-2"
+                disabled={uploadingImage}
+                className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                <Plus size={16} /> Adicionar Produto
+                <Plus className="w-4 h-4" />
+                Adicionar Produto
               </button>
             </div>
 
@@ -720,89 +702,51 @@ export default function AdminDashboard() {
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="px-6 py-4 text-left font-semibold text-gray-700">Produto</th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                        Categoria
-                      </th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                        Subcategoria
-                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Categoria</th>
                       <th className="px-6 py-4 text-left font-semibold text-gray-700">Preço</th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Badge</th>
                       <th className="px-6 py-4 text-left font-semibold text-gray-700">Imagem</th>
                       <th className="px-6 py-4 text-left font-semibold text-gray-700">Ações</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {loading ? (
-                      <tr>
-                        <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                          <Loader className="inline-block animate-spin mr-2 size-4" />
-                          Carregando...
+                    {products.map((product) => (
+                      <tr key={product.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 text-gray-900 font-medium">{product.name}</td>
+                        <td className="px-6 py-4 text-gray-600 text-sm">{product.category}</td>
+                        <td className="px-6 py-4 font-mono text-gray-900 font-medium">R$ {product.price.toFixed(2)}</td>
+                        <td className="px-6 py-4">
+                          {product.image_url && (
+                            <img
+                              src={product.image_url}
+                              alt={product.name}
+                              className="w-12 h-12 object-cover rounded-lg border border-gray-200"
+                            />
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                const imagesList = normalizeImagesList(product);
+                                setEditingProduct({ ...product, imagesList });
+                                setShowEditModal(true);
+                              }}
+                              className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+                              title="Editar"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => deleteProduct(product.id)}
+                              className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors"
+                              title="Deletar"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
-                    ) : products.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                          Nenhum produto cadastrado
-                        </td>
-                      </tr>
-                    ) : (
-                      products.map((product) => (
-                        <tr key={product.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-6 py-4 text-gray-900 font-medium">{product.name}</td>
-                          <td className="px-6 py-4 text-gray-600">{product.category}</td>
-                          <td className="px-6 py-4">
-                            {normalizeSubcategory(product.subcategory) ? (
-                              <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
-                                {normalizeSubcategory(product.subcategory)}
-                              </span>
-                            ) : (
-                              <span className="text-gray-400">—</span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 font-mono text-gray-900 font-medium">
-                            R$ {formatPrice(product.price)}
-                          </td>
-                          <td className="px-6 py-4">
-                            {product.badge && (
-                              <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
-                                {product.badge}
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            {product.image_url && (
-                              <img
-                                src={product.image_url}
-                                alt={product.name}
-                                className="w-12 h-12 object-cover rounded border border-gray-200"
-                              />
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => {
-                                  setEditingProduct(product);
-                                  setShowEditModal(true);
-                                }}
-                                className="p-2 hover:bg-gray-100 rounded transition-colors"
-                                title="Editar"
-                              >
-                                <Edit2 size={16} className="text-gray-600" />
-                              </button>
-                              <button
-                                onClick={() => deleteProduct(product.id)}
-                                className="p-2 hover:bg-red-50 rounded transition-colors"
-                                title="Deletar"
-                              >
-                                <Trash2 size={16} className="text-red-600" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -813,7 +757,8 @@ export default function AdminDashboard() {
         {activeTab === 'categories' && (
           <div className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Nova Categoria</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Nova Categoria</h2>
+
               <div className="flex gap-3">
                 <input
                   type="text"
@@ -824,79 +769,59 @@ export default function AdminDashboard() {
                 />
                 <button
                   onClick={addCategory}
-                  className="bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium py-2.5 px-5 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-gray-900 hover:bg-gray-800 text-white font-medium py-2.5 px-5 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap"
                 >
-                  <Plus size={16} /> Adicionar
+                  <Plus className="w-4 h-4" />
+                  Adicionar
                 </button>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Categoria</th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {categories.length === 0 ? (
-                      <tr>
-                        <td colSpan={2} className="px-6 py-8 text-center text-gray-500">
-                          Nenhuma categoria cadastrada
-                        </td>
-                      </tr>
-                    ) : (
-                      categories.map((cat) => (
-                        <tr key={cat.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-6 py-4 text-gray-900 font-medium">{cat.name}</td>
-                          <td className="px-6 py-4">
-                            <button
-                              onClick={() => deleteCategory(cat.id)}
-                              className="p-2 hover:bg-red-50 rounded transition-colors"
-                              title="Deletar"
-                            >
-                              <Trash2 size={16} className="text-red-600" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categories.map((category) => (
+                <div
+                  key={category.id}
+                  className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between hover:shadow-md transition-shadow"
+                >
+                  <span className="font-medium text-gray-900">{category.name}</span>
+                  <button
+                    onClick={() => deleteCategory(category.id)}
+                    className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors"
+                    title="Deletar"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         )}
       </div>
 
       {showEditModal && editingProduct && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-lg">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900">Editar Produto</h2>
               <button
                 onClick={() => {
                   setShowEditModal(false);
                   setEditingProduct(null);
                 }}
-                className="p-1 hover:bg-gray-100 rounded transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
               >
-                <X size={20} className="text-gray-600" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={updateProduct} className="p-6 space-y-4">
+            <form onSubmit={updateProduct} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2">Nome</label>
                   <input
                     type="text"
                     value={editingProduct.name}
-                    onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, name: e.target.value })
-                    }
+                    onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
@@ -905,12 +830,9 @@ export default function AdminDashboard() {
                   <label className="block text-xs font-medium text-gray-700 mb-2">Categoria</label>
                   <select
                     value={editingProduct.category}
-                    onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, category: e.target.value })
-                    }
+                    onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value, subcategory: '' })}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   >
-                    <option value="">Selecione uma categoria</option>
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.name}>
                         {cat.name}
@@ -923,9 +845,7 @@ export default function AdminDashboard() {
                   <label className="block text-xs font-medium text-gray-700 mb-2">Subcategoria</label>
                   <select
                     value={editingProduct.subcategory || ''}
-                    onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, subcategory: e.target.value })
-                    }
+                    onChange={(e) => setEditingProduct({ ...editingProduct, subcategory: e.target.value })}
                     disabled={!editingProduct.category}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors disabled:bg-gray-100 disabled:text-gray-500"
                   >
@@ -942,14 +862,8 @@ export default function AdminDashboard() {
                   <label className="block text-xs font-medium text-gray-700 mb-2">Preço</label>
                   <input
                     type="number"
-                    placeholder="0.00"
                     value={editingProduct.price}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        price: parseFloat(e.target.value) || 0,
-                      })
-                    }
+                    onChange={(e) => setEditingProduct({ ...editingProduct, price: parseFloat(e.target.value) || 0 })}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
@@ -958,11 +872,18 @@ export default function AdminDashboard() {
                   <label className="block text-xs font-medium text-gray-700 mb-2">Badge</label>
                   <input
                     type="text"
-                    placeholder="Ex: FULLFRAME"
                     value={editingProduct.badge || ''}
-                    onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, badge: e.target.value })
-                    }
+                    onChange={(e) => setEditingProduct({ ...editingProduct, badge: e.target.value })}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Incluso</label>
+                  <input
+                    type="text"
+                    value={editingProduct.includes || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, includes: e.target.value })}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                   />
                 </div>
@@ -970,117 +891,100 @@ export default function AdminDashboard() {
                 <div className="md:col-span-2">
                   <label className="block text-xs font-medium text-gray-700 mb-2">Descrição</label>
                   <textarea
-                    value={editingProduct.description}
-                    onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, description: e.target.value })
-                    }
+                    value={editingProduct.description || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                     rows={3}
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    O que acompanha
-                  </label>
-                  <textarea
-                    value={editingProduct.includes || ''}
-                    onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, includes: e.target.value })
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
-                    rows={4}
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    Imagens do produto
-                  </label>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Imagens (primeira = capa)</label>
                   <div
                     onDragEnter={(e) => handleDragEnter(e, true)}
                     onDragOver={handleDragOver}
                     onDragLeave={(e) => handleDragLeave(e, true)}
                     onDrop={(e) => handleDrop(e, true)}
-                    className={`border-2 border-dashed rounded-lg p-6 transition-all cursor-pointer ${
+                    className={`border-2 border-dashed rounded-lg p-4 transition-colors ${
                       isDragOverEditProduct
-                        ? 'border-gray-900 bg-gray-100'
-                        : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                        ? 'border-gray-900 bg-gray-50'
+                        : 'border-gray-300 bg-white hover:bg-gray-50'
                     }`}
-                    onClick={() => document.getElementById('fileInputEdit')?.click()}
                   >
-                    <div className="flex flex-col items-center justify-center">
-                      <Upload className="w-6 h-6 text-gray-400 mb-2" />
-                      <span className="text-sm font-medium text-gray-700">
-                        {isDragOverEditProduct ? 'Solte as imagens aqui' : 'Clique ou arraste imagens'}
-                      </span>
-                      <span className="text-xs text-gray-500 mt-1">
-                        JPG, PNG ou WebP até 10MB
-                      </span>
-                    </div>
+                    <label className="flex flex-col items-center justify-center cursor-pointer">
+                      <Upload className="w-5 h-5 text-gray-400 mb-1" />
+                      <span className="text-sm text-gray-700">Clique ou arraste para adicionar</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => handleImageUpload(e, true)}
+                        disabled={uploadingImage}
+                        className="hidden"
+                      />
+                    </label>
 
-                    <input
-                      id="fileInputEdit"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={(e) => handleImageUpload(e, true)}
-                      disabled={uploadingImage}
-                      className="hidden"
-                    />
-
-                    {(editingProduct.image_url || editingProduct.images?.length) && (
-                      <div className="mt-4">
+                    {editingProduct.imagesList && editingProduct.imagesList.length > 0 && (
+                      <div className="mt-3">
                         <p className="text-xs text-gray-500 mb-2">Preview (arraste para reordenar)</p>
                         <div className="flex gap-2 overflow-x-auto pb-2">
-                          {[editingProduct.image_url, ...(editingProduct.images || [])]
-                            .filter(Boolean)
-                            .map((img, index) => (
-                              <div
-                                key={`${img}-${index}`}
-                                draggable
-                                onDragStart={() => setDraggedImageIndex(index)}
-                                onDragOver={(e) => {
-                                  e.preventDefault();
-                                  setDragOverIndex(index);
+                          {editingProduct.imagesList.map((img, index) => (
+                            <div
+                              key={`${img}-${index}`}
+                              draggable
+                              onDragStart={() => setDraggedImageIndex(index)}
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                setDragOverIndex(index);
+                              }}
+                              onDragLeave={() => setDragOverIndex(null)}
+                              onDrop={() => {
+                                if (draggedImageIndex !== null && draggedImageIndex !== index) {
+                                  const reordered = reorderImages(editingProduct.imagesList, draggedImageIndex, index);
+                                  setEditingProduct((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          imagesList: reordered,
+                                        }
+                                      : prev
+                                  );
+                                }
+                                setDraggedImageIndex(null);
+                                setDragOverIndex(null);
+                              }}
+                              onDragEnd={() => {
+                                setDraggedImageIndex(null);
+                                setDragOverIndex(null);
+                              }}
+                              className={`text-center shrink-0 cursor-move transition-all ${
+                                dragOverIndex === index ? 'ring-2 ring-gray-900 scale-105' : ''
+                              } ${draggedImageIndex === index ? 'opacity-50' : ''}`}
+                            >
+                              <img
+                                src={img}
+                                alt={index === 0 ? 'Capa' : `Imagem ${index}`}
+                                className="w-16 h-16 object-cover border rounded"
+                              />
+                              <p className="text-[10px] mt-1 font-medium">{index === 0 ? 'Capa' : `#${index}`}</p>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingProduct((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          imagesList: prev.imagesList.filter((_, i) => i !== index),
+                                        }
+                                      : prev
+                                  );
                                 }}
-                                onDragLeave={() => setDragOverIndex(null)}
-                                onDrop={() => {
-                                  if (draggedImageIndex !== null && draggedImageIndex !== index) {
-                                    const allImages = [editingProduct.image_url, ...(editingProduct.images || [])]
-                                      .filter(Boolean);
-                                    const reordered = reorderImages(allImages, draggedImageIndex, index);
-                                    setEditingProduct((prev) =>
-                                      prev
-                                        ? {
-                                            ...prev,
-                                            image_url: reordered.image_url,
-                                            images: reordered.images,
-                                          }
-                                        : prev
-                                    );
-                                  }
-                                  setDraggedImageIndex(null);
-                                  setDragOverIndex(null);
-                                }}
-                                onDragEnd={() => {
-                                  setDraggedImageIndex(null);
-                                  setDragOverIndex(null);
-                                }}
-                                className={`text-center shrink-0 cursor-move transition-all ${
-                                  dragOverIndex === index ? 'ring-2 ring-gray-900 scale-105' : ''
-                                } ${draggedImageIndex === index ? 'opacity-50' : ''}`}
+                                className="mt-1 text-xs text-red-600 hover:text-red-700"
                               >
-                                <img
-                                  src={img}
-                                  alt={index === 0 ? 'Capa' : `Imagem ${index}`}
-                                  className="w-16 h-16 object-cover border rounded"
-                                />
-                                <p className="text-[10px] mt-1 font-medium">
-                                  {index === 0 ? 'Capa' : `#${index}`}
-                                </p>
-                              </div>
-                            ))}
+                                Remover
+                              </button>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -1101,7 +1005,7 @@ export default function AdminDashboard() {
                 </button>
                 <button
                   type="submit"
-                  className="bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium py-2.5 px-5 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2.5 px-5 rounded-lg transition-colors flex items-center gap-2"
                   disabled={uploadingImage}
                 >
                   {uploadingImage ? (
