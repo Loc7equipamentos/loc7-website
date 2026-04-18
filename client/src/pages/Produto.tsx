@@ -62,15 +62,10 @@ export default function Produto() {
   const galleryImages = useMemo(() => {
     if (!product) return [];
 
-    const mainImage = product.image_url?.trim();
-
-    const additionalImages = Array.isArray(product.images)
-      ? product.images
-          .map((img) => img?.trim())
-          .filter((img): img is string => Boolean(img && img !== mainImage))
-      : [];
-
-    return mainImage ? [mainImage, ...additionalImages] : additionalImages;
+    return [
+      product.image_url,
+      ...(product.images || [])
+    ].filter((img): img is string => Boolean(img));
   }, [product]);
 
   useEffect(() => {
@@ -175,7 +170,6 @@ export default function Produto() {
                     type="button"
                     onClick={handlePrevImage}
                     className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 hover:bg-black text-white border border-white/10 transition"
-                    aria-label="Imagem anterior"
                   >
                     ←
                   </button>
@@ -183,7 +177,6 @@ export default function Produto() {
                     type="button"
                     onClick={handleNextImage}
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 hover:bg-black text-white border border-white/10 transition"
-                    aria-label="Próxima imagem"
                   >
                     →
                   </button>
