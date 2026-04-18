@@ -139,6 +139,14 @@ export default function AdminDashboard() {
     };
   };
 
+  const fixImageOrder = (imageUrl: string, images: string[]) => {
+    const allImages = [imageUrl, ...images].filter(Boolean);
+    return {
+      image_url: allImages[0] || null,
+      images: allImages.slice(1).length > 0 ? allImages.slice(1) : null,
+    };
+  };
+
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -314,6 +322,8 @@ export default function AdminDashboard() {
     try {
       const slug = await generateUniqueSlug(newProduct.name);
 
+      const fixedImages = fixImageOrder(newProduct.image_url, newProduct.images);
+
       const { error: err } = await supabase.from('products').insert([
         {
           name: newProduct.name.trim(),
@@ -322,8 +332,8 @@ export default function AdminDashboard() {
           price: newProduct.price,
           description: newProduct.description,
           includes: newProduct.includes.trim() || null,
-          image_url: newProduct.image_url,
-          images: newProduct.images.length > 0 ? newProduct.images : null,
+          image_url: fixedImages.image_url,
+          images: fixedImages.images,
           badge: newProduct.badge,
           slug,
         },
@@ -358,6 +368,8 @@ export default function AdminDashboard() {
     try {
       const slug = await generateUniqueSlug(editingProduct.name, editingProduct.id);
 
+      const fixedImages = fixImageOrder(editingProduct.image_url || '', editingProduct.images || []);
+
       const { error: err } = await supabase
         .from('products')
         .update({
@@ -367,8 +379,8 @@ export default function AdminDashboard() {
           price: editingProduct.price,
           description: editingProduct.description,
           includes: editingProduct.includes?.trim() || null,
-          image_url: editingProduct.image_url,
-          images: editingProduct.images && editingProduct.images.length > 0 ? editingProduct.images : null,
+          image_url: fixedImages.image_url,
+          images: fixedImages.images,
           badge: editingProduct.badge,
           slug,
         })
@@ -441,7 +453,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Premium Header */}
       <header className="bg-black border-b border-gray-900 sticky top-0 z-40 shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-5">
@@ -471,7 +482,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Tabs */}
         <div className="flex gap-4 mb-8 border-b border-gray-200">
           <button
             onClick={() => setActiveTab('products')}
@@ -497,10 +507,8 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        {/* Products Tab */}
         {activeTab === 'products' && (
           <div className="space-y-6">
-            {/* Add Product Form */}
             <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
               <h2 className="text-lg font-semibold text-gray-900 mb-6">Novo Produto</h2>
 
@@ -706,7 +714,6 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            {/* Products Table */}
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -803,7 +810,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Categories Tab */}
         {activeTab === 'categories' && (
           <div className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
@@ -865,7 +871,6 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      {/* Edit Modal */}
       {showEditModal && editingProduct && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-lg">
@@ -1115,4 +1120,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
