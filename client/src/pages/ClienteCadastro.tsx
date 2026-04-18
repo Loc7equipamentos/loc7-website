@@ -90,22 +90,10 @@ export default function ClienteCadastro() {
       return;
     }
 
-    alert("Cadastro enviado com sucesso!");
+    const whatsappUrl =
+      "https://wa.me/5511919671611?text=Cadastro%20enviado!%20Quero%20finalizar%20minha%20loca%C3%A7%C3%A3o.";
 
-    setForm({
-      email: "",
-      phone: "",
-      full_name: "",
-      cpf: "",
-      company_name: "",
-      cnpj: "",
-      city: "",
-      state: "",
-      consent: false,
-      truth_declaration: false,
-    });
-
-    setTipo("PF");
+    window.location.href = whatsappUrl;
   };
 
   return (
