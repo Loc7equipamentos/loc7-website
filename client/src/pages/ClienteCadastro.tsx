@@ -28,7 +28,7 @@ export default function ClienteCadastro() {
 
   const handleSubmit = async () => {
     if (!form.phone) {
-      alert("Preencha o telefone");
+      alert("Preencha o WhatsApp");
       return;
     }
 
@@ -110,14 +110,19 @@ export default function ClienteCadastro() {
 
   return (
     <div className="min-h-screen bg-white text-black px-6 py-10 max-w-md mx-auto">
-      <div className="mb-8">
+      <div className="mb-10">
         <h1 className="text-3xl font-bold leading-tight mb-3">
           Liberação de Cadastro para Locação
         </h1>
+
         <p className="text-sm text-gray-600 leading-relaxed">
           Preencha seus dados para liberar sua locação com mais agilidade.
           <br />
           Tempo médio: 2 minutos.
+        </p>
+
+        <p className="text-xs text-green-600 font-medium mt-2">
+          ✔ Cadastro rápido • ✔ Sem burocracia • ✔ Atendimento prioritário
         </p>
       </div>
 
@@ -173,7 +178,7 @@ export default function ClienteCadastro() {
 
       <input
         name="phone"
-        placeholder="Telefone (WhatsApp)"
+        placeholder="WhatsApp (principal contato)"
         value={form.phone}
         className="w-full border border-gray-300 rounded-md p-3 mb-4 text-base focus:outline-none focus:ring-2 focus:ring-black"
         onChange={handleChange}
@@ -249,7 +254,7 @@ export default function ClienteCadastro() {
         </label>
       </div>
 
-      <p className="text-xs text-gray-500 mb-5 leading-relaxed">
+      <p className="text-xs text-gray-600 mb-5 leading-relaxed bg-gray-50 border border-gray-200 p-3 rounded-md">
         🔒 Seus dados são utilizados apenas para análise de cadastro e não são
         compartilhados.
       </p>
@@ -260,7 +265,7 @@ export default function ClienteCadastro() {
         disabled={loading}
         className="w-full bg-black text-white py-4 text-base font-semibold rounded-md hover:opacity-90 transition disabled:opacity-60"
       >
-        {loading ? "Enviando..." : "Finalizar cadastro e liberar locação"}
+        {loading ? "Enviando..." : "Liberar meu cadastro agora"}
       </button>
     </div>
   );
