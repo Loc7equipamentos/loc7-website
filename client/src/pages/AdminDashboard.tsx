@@ -19,6 +19,8 @@ export default function AdminDashboard() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [isDragOverNewProduct, setIsDragOverNewProduct] = useState(false);
+  const [isDragOverEditProduct, setIsDragOverEditProduct] = useState(false);
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -165,11 +167,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isEditing: boolean = false
-  ) => {
-    const files = e.target.files;
+  const processFiles = async (files: FileList, isEditing: boolean = false) => {
     if (!files || files.length === 0) return;
 
     setUploadingImage(true);
@@ -257,6 +255,54 @@ export default function AdminDashboard() {
     }
 
     alert(`✅ ${uploadedUrls.length} imagem(ns) enviada(s) com sucesso!`);
+  };
+
+  const handleImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    isEditing: boolean = false
+  ) => {
+    const files = e.target.files;
+    if (!files) return;
+    await processFiles(files, isEditing);
+  };
+
+  const handleDragEnter = (e: React.DragEvent, isEditing: boolean = false) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isEditing) {
+      setIsDragOverEditProduct(true);
+    } else {
+      setIsDragOverNewProduct(true);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragLeave = (e: React.DragEvent, isEditing: boolean = false) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isEditing) {
+      setIsDragOverEditProduct(false);
+    } else {
+      setIsDragOverNewProduct(false);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent, isEditing: boolean = false) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isEditing) {
+      setIsDragOverEditProduct(false);
+    } else {
+      setIsDragOverNewProduct(false);
+    }
+    const files = e.dataTransfer.files;
+    if (files) {
+      await processFiles(files, isEditing);
+    }
   };
 
   const addProduct = async () => {
@@ -566,24 +612,38 @@ export default function AdminDashboard() {
                   <label className="block text-xs font-medium text-gray-700 mb-2">
                     Imagens do produto
                   </label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
-                    <label className="flex flex-col items-center justify-center cursor-pointer">
+                  <div
+                    onDragEnter={(e) => handleDragEnter(e, false)}
+                    onDragOver={handleDragOver}
+                    onDragLeave={(e) => handleDragLeave(e, false)}
+                    onDrop={(e) => handleDrop(e, false)}
+                    className={`border-2 border-dashed rounded-lg p-6 transition-all cursor-pointer ${
+                      isDragOverNewProduct
+                        ? 'border-gray-900 bg-gray-100'
+                        : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                    }`}
+                    onClick={() => document.getElementById('fileInputNew')?.click()}
+                  >
+                    <div className="flex flex-col items-center justify-center">
                       <Upload className="w-6 h-6 text-gray-400 mb-2" />
                       <span className="text-sm font-medium text-gray-700">
-                        Clique para fazer upload
+                        {isDragOverNewProduct ? 'Solte as imagens aqui' : 'Clique ou arraste imagens'}
                       </span>
                       <span className="text-xs text-gray-500 mt-1">
                         JPG, PNG ou WebP até 10MB (primeira imagem = capa)
                       </span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={(e) => handleImageUpload(e, false)}
-                        disabled={uploadingImage}
-                        className="hidden"
-                      />
-                    </label>
+                    </div>
+
+                    <input
+                      id="fileInputNew"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => handleImageUpload(e, false)}
+                      disabled={uploadingImage}
+                      className="hidden"
+                    />
+
                     {(newProduct.image_url || newProduct.images.length > 0) && (
                       <div className="mt-4">
                         <p className="text-xs text-gray-500 mb-2">Preview (arraste para reordenar)</p>
@@ -626,7 +686,9 @@ export default function AdminDashboard() {
                                   alt={index === 0 ? 'Capa' : `Imagem ${index}`}
                                   className="w-16 h-16 object-cover border rounded"
                                 />
-                                <p className="text-[10px] mt-1 font-medium">{index === 0 ? 'Capa' : `#${index}`}</p>
+                                <p className="text-[10px] mt-1 font-medium">
+                                  {index === 0 ? 'Capa' : `#${index}`}
+                                </p>
                               </div>
                             ))}
                         </div>
@@ -930,24 +992,38 @@ export default function AdminDashboard() {
                   <label className="block text-xs font-medium text-gray-700 mb-2">
                     Imagens do produto
                   </label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
-                    <label className="flex flex-col items-center justify-center cursor-pointer">
+                  <div
+                    onDragEnter={(e) => handleDragEnter(e, true)}
+                    onDragOver={handleDragOver}
+                    onDragLeave={(e) => handleDragLeave(e, true)}
+                    onDrop={(e) => handleDrop(e, true)}
+                    className={`border-2 border-dashed rounded-lg p-6 transition-all cursor-pointer ${
+                      isDragOverEditProduct
+                        ? 'border-gray-900 bg-gray-100'
+                        : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                    }`}
+                    onClick={() => document.getElementById('fileInputEdit')?.click()}
+                  >
+                    <div className="flex flex-col items-center justify-center">
                       <Upload className="w-6 h-6 text-gray-400 mb-2" />
                       <span className="text-sm font-medium text-gray-700">
-                        Clique para atualizar
+                        {isDragOverEditProduct ? 'Solte as imagens aqui' : 'Clique ou arraste imagens'}
                       </span>
                       <span className="text-xs text-gray-500 mt-1">
                         JPG, PNG ou WebP até 10MB
                       </span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={(e) => handleImageUpload(e, true)}
-                        disabled={uploadingImage}
-                        className="hidden"
-                      />
-                    </label>
+                    </div>
+
+                    <input
+                      id="fileInputEdit"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => handleImageUpload(e, true)}
+                      disabled={uploadingImage}
+                      className="hidden"
+                    />
+
                     {(editingProduct.image_url || editingProduct.images?.length) && (
                       <div className="mt-4">
                         <p className="text-xs text-gray-500 mb-2">Preview (arraste para reordenar)</p>
@@ -995,7 +1071,9 @@ export default function AdminDashboard() {
                                   alt={index === 0 ? 'Capa' : `Imagem ${index}`}
                                   className="w-16 h-16 object-cover border rounded"
                                 />
-                                <p className="text-[10px] mt-1 font-medium">{index === 0 ? 'Capa' : `#${index}`}</p>
+                                <p className="text-[10px] mt-1 font-medium">
+                                  {index === 0 ? 'Capa' : `#${index}`}
+                                </p>
                               </div>
                             ))}
                         </div>
@@ -1037,3 +1115,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
