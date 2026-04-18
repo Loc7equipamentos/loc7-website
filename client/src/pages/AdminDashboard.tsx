@@ -577,23 +577,23 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Incluso</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Cabo USB, Bateria"
-                    value={newProduct.includes}
-                    onChange={(e) => setNewProduct((prev) => ({ ...prev, includes: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
-                  />
-                </div>
-
                 <div className="md:col-span-2">
                   <label className="block text-xs font-medium text-gray-700 mb-2">Descrição</label>
                   <textarea
                     placeholder="Descrição do produto"
                     value={newProduct.description}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, description: e.target.value }))}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-2">O que acompanha</label>
+                  <textarea
+                    placeholder="Ex:&#10;2 baterias&#10;1 carregador&#10;1 case"
+                    value={newProduct.includes}
+                    onChange={(e) => setNewProduct((prev) => ({ ...prev, includes: e.target.value }))}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                     rows={3}
                   />
@@ -878,21 +878,22 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Incluso</label>
-                  <input
-                    type="text"
-                    value={editingProduct.includes || ''}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, includes: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
-                  />
-                </div>
-
                 <div className="md:col-span-2">
                   <label className="block text-xs font-medium text-gray-700 mb-2">Descrição</label>
                   <textarea
                     value={editingProduct.description || ''}
                     onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-2">O que acompanha</label>
+                  <textarea
+                    placeholder="Ex:&#10;2 baterias&#10;1 carregador&#10;1 case"
+                    value={editingProduct.includes || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, includes: e.target.value })}
                     className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
                     rows={3}
                   />
