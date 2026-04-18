@@ -19,6 +19,8 @@ import {
   Radio,
   Clapperboard,
   ShoppingCart,
+  Package,
+  type LucideIcon,
 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/lib/supabase";
@@ -63,15 +65,47 @@ const navLinks = [
   { name: "Produção", href: "/producao" },
 ];
 
+type DropdownCategory = {
+  name: string;
+  href: string;
+};
+
+const normalizeText = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
+const iconMapByName: Record<string, LucideIcon> = {
+  cameras: Camera,
+  camera: Camera,
+  lentes: Aperture,
+  lente: Aperture,
+  iluminacao: Zap,
+  iluminacaoes: Zap,
+  audio: Mic,
+  monitores: Monitor,
+  monitor: Monitor,
+  movimento: Move,
+  transmissores: Radio,
+  transmissor: Radio,
+  maquinaria: Clapperboard,
+  maquinarias: Clapperboard,
+};
+
+const getCategoryIcon = (categoryName: string): LucideIcon => {
+  const normalized = normalizeText(categoryName);
+  return iconMapByName[normalized] || Package;
+};
+
 export default function Navbar() {
   const { items } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [location] = useLocation();
-  const [dropdownCategories, setDropdownCategories] = useState<
-    Array<{ name: string; href: string }>
-  >(fallbackCategories);
+  const [dropdownCategories, setDropdownCategories] = useState<DropdownCategory[]>(fallbackCategories);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
   useEffect(() => {
@@ -89,7 +123,11 @@ export default function Navbar() {
         } else if (data && data.length > 0) {
           const categories = data.map((cat) => ({
             name: cat.name.toUpperCase(),
-            href: `/catalogo/${cat.name.toLowerCase().replace(/\s+/g, "-")}`,
+            href: `/catalogo/${cat.name
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .toLowerCase()
+              .replace(/\s+/g, "-")}`,
           }));
           setDropdownCategories(categories);
         } else {
@@ -183,15 +221,20 @@ export default function Navbar() {
                             Carregando...
                           </div>
                         ) : (
-                          dropdownCategories.map((cat) => (
-                            <Link
-                              key={cat.name}
-                              href={cat.href}
-                              className="loc7-dropdown-item"
-                            >
-                              {cat.name}
-                            </Link>
-                          ))
+                          dropdownCategories.map((cat) => {
+                            const Icon = getCategoryIcon(cat.name);
+
+                            return (
+                              <Link
+                                key={cat.name}
+                                href={cat.href}
+                                className="loc7-dropdown-item flex items-center gap-3"
+                              >
+                                <Icon className="w-4 h-4 shrink-0" />
+                                <span>{cat.name}</span>
+                              </Link>
+                            );
+                          })
                         )}
                       </div>
                     )}
@@ -223,7 +266,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] h-20">
+        <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] min-h-20">
           <div className="flex items-center gap-3 overflow-x-auto py-3 px-2 scrollbar-hide">
             {submenuCategories.map((cat) => {
               const Icon = cat.icon;
@@ -234,7 +277,7 @@ export default function Navbar() {
                   href={cat.href}
                   className="flex items-center gap-3 px-5 py-2 text-white hover:bg-[oklch(0.12_0_0)] transition-all whitespace-nowrap rounded-lg hover:scale-105"
                 >
-                  <Icon className="w-9 h-9" />
+                  <Icon className="w-9 h-9 shrink-0" />
                   <span
                     style={{ fontFamily: "Oswald, sans-serif" }}
                     className="uppercase tracking-wide font-semibold text-base"
@@ -262,16 +305,21 @@ export default function Navbar() {
                       </button>
 
                       {isCatalogOpen && (
-                        <div className="bg-[oklch(0.04_0_0)] pl-4">
-                          {dropdownCategories.map((cat) => (
-                            <Link
-                              key={cat.name}
-                              href={cat.href}
-                              className="block px-4 py-2 text-white text-sm hover:bg-[oklch(0.08_0_0)]"
-                            >
-                              {cat.name}
-                            </Link>
-                          ))}
+                        <div className="bg-[oklch(0.04_0_0)] pl-2">
+                          {dropdownCategories.map((cat) => {
+                            const Icon = getCategoryIcon(cat.name);
+
+                            return (
+                              <Link
+                                key={cat.name}
+                                href={cat.href}
+                                className="flex items-center gap-3 px-4 py-3 text-white text-sm hover:bg-[oklch(0.08_0_0)]"
+                              >
+                                <Icon className="w-4 h-4 shrink-0" />
+                                <span>{cat.name}</span>
+                              </Link>
+                            );
+                          })}
                         </div>
                       )}
                     </>
