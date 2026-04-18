@@ -1,206 +1,261 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
+import { useRoute } from 'wouter';
+import { supabase } from '@/lib/supabase';
+
+type Product = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  price: number;
+  image_url: string | null;
+  images: string[] | null;
+  includes: string | null;
+  category: string;
+  subcategory?: string | null;
+  badge?: string | null;
+};
 
 export default function Produto() {
-  const produto = "RED Komodo 6K S35";
+  const [, params] = useRoute('/equipamentos/:slug');
+  const slug = params?.slug;
 
-  const [itens, setItens] = useState<string[]>([]);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [selectedImage, setSelectedImage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const sugestoes = [
-    "Lente 35mm",
-    "Monitor externo",
-    "Tripé",
-    "Iluminação",
-    "Kit de áudio",
-  ];
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!slug) {
+        setError('Produto não encontrado.');
+        setLoading(false);
+        return;
+      }
 
-  const toggleItem = (item: string) => {
-    if (itens.includes(item)) {
-      setItens(itens.filter((i) => i !== item));
-    } else {
-      setItens([...itens, item]);
+      try {
+        setLoading(true);
+        setError(null);
+
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('slug', slug)
+          .single();
+
+        if (error || !data) {
+          throw new Error('Produto não encontrado.');
+        }
+
+        setProduct(data as Product);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro ao carregar produto.');
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [slug]);
+
+  const galleryImages = useMemo(() => {
+    if (!product) return [];
+
+    return [
+      product.image_url,
+      ...(product.images || [])
+    ].filter((img): img is string => Boolean(img));
+  }, [product]);
+
+  useEffect(() => {
+    if (!galleryImages.length) {
+      setSelectedImage('');
+      return;
     }
+
+    setSelectedImage((current) => {
+      if (current && galleryImages.includes(current)) {
+        return current;
+      }
+
+      return galleryImages[0];
+    });
+  }, [galleryImages]);
+
+  const includesList = useMemo(() => {
+    if (!product?.includes) return [];
+
+    return product.includes
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }, [product]);
+
+  const handleSelectImage = (image: string) => {
+    setSelectedImage(image);
   };
 
-  const gerarMensagem = () => {
-    let mensagem = `Olá! Quero alugar:\n\n${produto}\n`;
+  const handlePrevImage = () => {
+    if (!galleryImages.length || !selectedImage) return;
 
-    if (itens.length > 0) {
-      mensagem += `\nItens adicionais:\n`;
-      itens.forEach((item) => {
-        mensagem += `- ${item}\n`;
-      });
-    }
-
-    const url = `https://wa.me/5511919671611?text=${encodeURIComponent(
-      mensagem
-    )}`;
-
-    window.location.href = url;
+    const currentIndex = galleryImages.indexOf(selectedImage);
+    const prevIndex = currentIndex <= 0 ? galleryImages.length - 1 : currentIndex - 1;
+    setSelectedImage(galleryImages[prevIndex]);
   };
+
+  const handleNextImage = () => {
+    if (!galleryImages.length || !selectedImage) return;
+
+    const currentIndex = galleryImages.indexOf(selectedImage);
+    const nextIndex = currentIndex >= galleryImages.length - 1 ? 0 : currentIndex + 1;
+    setSelectedImage(galleryImages[nextIndex]);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+        <p className="text-sm text-gray-400">Carregando produto...</p>
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+        <p className="text-sm text-red-400">{error || 'Produto não encontrado.'}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10">
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        <div className="text-sm text-gray-400 mb-8">
+          <span>Catálogo</span>
+          {product.category && (
+            <>
+              <span className="mx-2">/</span>
+              <span>{product.category}</span>
+            </>
+          )}
+          {product.subcategory && (
+            <>
+              <span className="mx-2">/</span>
+              <span>{product.subcategory}</span>
+            </>
+          )}
+          <span className="mx-2">/</span>
+          <span className="text-white">{product.name}</span>
+        </div>
 
-      {/* 🔹 TOPO */}
-      <div className="grid md:grid-cols-2 gap-10 mb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+          <div>
+            <div className="relative bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden">
+              <div className="aspect-[4/3] flex items-center justify-center p-6">
+                {selectedImage ? (
+                  <img
+                    src={selectedImage}
+                    alt={product.name}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                ) : (
+                  <div className="text-sm text-gray-500">Sem imagem</div>
+                )}
+              </div>
 
-        {/* IMAGEM */}
-        <div>
-          <div className="bg-gray-200 h-[400px] flex items-center justify-center rounded-md">
-            Imagem do Produto
+              {galleryImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handlePrevImage}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 hover:bg-black text-white border border-white/10 transition"
+                  >
+                    ←
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNextImage}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 hover:bg-black text-white border border-white/10 transition"
+                  >
+                    →
+                  </button>
+                </>
+              )}
+            </div>
+
+            {galleryImages.length > 0 && (
+              <div className="flex gap-3 mt-4 overflow-x-auto pb-1">
+                {galleryImages.map((img, index) => {
+                  const isActive = img === selectedImage;
+
+                  return (
+                    <button
+                      key={`${img}-${index}`}
+                      type="button"
+                      onClick={() => handleSelectImage(img)}
+                      className={`shrink-0 rounded-xl overflow-hidden border transition ${
+                        isActive
+                          ? 'border-white'
+                          : 'border-zinc-800 hover:border-zinc-600'
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt={`${product.name} ${index + 1}`}
+                        className="w-24 h-20 object-cover bg-zinc-950"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div>
+            {product.badge && (
+              <div className="inline-flex items-center rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-300 mb-4">
+                {product.badge}
+              </div>
+            )}
+
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">
+              {product.name}
+            </h1>
+
+            <div className="text-2xl md:text-3xl font-bold text-white mb-6">
+              {Number(product.price || 0).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}
+            </div>
+
+            {product.description && (
+              <div className="mb-8">
+                <h2 className="text-sm uppercase tracking-[0.2em] text-zinc-400 mb-3">
+                  Descrição
+                </h2>
+                <p className="text-zinc-300 leading-7 whitespace-pre-line">
+                  {product.description}
+                </p>
+              </div>
+            )}
+
+            {includesList.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-sm uppercase tracking-[0.2em] text-zinc-400 mb-3">
+                  O que acompanha
+                </h2>
+                <ul className="list-disc pl-5 space-y-2 text-zinc-300">
+                  {includesList.map((item, index) => (
+                    <li key={`${item}-${index}`}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
-
-        {/* INFO */}
-        <div>
-          <p className="text-sm text-gray-500 mb-2">
-            Home / Câmeras / RED
-          </p>
-
-          <h1 className="text-3xl font-bold mb-4">
-            {produto}
-          </h1>
-
-          <p className="text-gray-700 mb-6">
-            Câmera digital compacta de cinema com qualidade profissional para produções exigentes.
-          </p>
-
-          <button
-            onClick={gerarMensagem}
-            className="bg-black text-white px-6 py-3 rounded-md"
-          >
-            Falar com especialista
-          </button>
-        </div>
       </div>
-
-      {/* 🔹 KIT LOC7 */}
-      <div className="mb-10">
-        <h2 className="text-xl font-semibold mb-2">
-          Kit Loc7 incluso
-        </h2>
-
-        <p className="text-sm text-gray-600 mb-4">
-          Kit preparado para evitar retrabalho no set
-        </p>
-
-        <ul className="grid grid-cols-2 gap-2 text-sm">
-          <li>• 4x baterias</li>
-          <li>• carregador</li>
-          <li>• mídia</li>
-          <li>• cabos essenciais</li>
-          <li>• case de transporte</li>
-        </ul>
-      </div>
-
-      {/* 🔥 MINI CARRINHO */}
-      <div className="mb-10 border-t pt-6">
-        <h3 className="text-lg font-semibold mb-4">
-          Monte seu setup
-        </h3>
-
-        <div className="flex flex-wrap gap-2 mb-6">
-          {sugestoes.map((item) => (
-            <button
-              key={item}
-              onClick={() => toggleItem(item)}
-              className={`px-3 py-2 border rounded-md text-sm ${
-                itens.includes(item)
-                  ? "bg-black text-white"
-                  : "bg-white text-black"
-              }`}
-            >
-              {itens.includes(item) ? "✓ " : ""} {item}
-            </button>
-          ))}
-        </div>
-
-        <div className="bg-gray-100 p-4 rounded-md">
-          <p className="text-sm font-medium mb-2">Seu setup</p>
-          <p className="text-sm mb-2">{produto}</p>
-
-          {itens.map((item) => (
-            <p key={item} className="text-sm text-gray-700">
-              + {item}
-            </p>
-          ))}
-
-          <button
-            onClick={gerarMensagem}
-            className="w-full mt-4 bg-black text-white py-3 rounded-md"
-          >
-            Falar com especialista
-          </button>
-        </div>
-      </div>
-
-      {/* 🔹 DESCRIÇÃO */}
-      <div className="mb-10">
-        <h2 className="text-xl font-semibold mb-4">
-          Sobre este equipamento
-        </h2>
-
-        <p className="text-gray-700">
-          Equipamento ideal para produções audiovisuais profissionais, oferecendo alta qualidade de imagem e flexibilidade em diferentes cenários de captação.
-        </p>
-      </div>
-
-      {/* 🔹 IDEAL PARA */}
-      <div className="mb-10">
-        <h2 className="text-xl font-semibold mb-4">
-          Ideal para
-        </h2>
-
-        <ul className="grid grid-cols-2 gap-2 text-sm">
-          <li>• publicidade</li>
-          <li>• documentário</li>
-          <li>• conteúdo premium</li>
-          <li>• multicâmera</li>
-        </ul>
-      </div>
-
-      {/* 🔹 ESPECIFICAÇÕES */}
-      <div className="mb-10">
-        <h2 className="text-xl font-semibold mb-4">
-          Especificações técnicas
-        </h2>
-
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <p><strong>Sensor:</strong> Super 35</p>
-          <p><strong>Resolução:</strong> 6K</p>
-          <p><strong>Montagem:</strong> RF</p>
-          <p><strong>Mídia:</strong> SSD</p>
-        </div>
-      </div>
-
-      {/* 🔹 PRODUÇÃO */}
-      <div className="mb-10 bg-gray-100 p-6 rounded-md">
-        <h2 className="text-lg font-semibold mb-2">
-          Precisa de mais do que o equipamento?
-        </h2>
-
-        <p className="text-sm text-gray-700 mb-4">
-          Também atuamos com equipe e produção completa para projetos audiovisuais.
-        </p>
-
-        <button
-          onClick={gerarMensagem}
-          className="bg-black text-white px-4 py-2 rounded-md"
-        >
-          Falar sobre produção
-        </button>
-      </div>
-
-      {/* 🔹 CTA FINAL */}
-      <div className="text-center">
-        <button
-          onClick={gerarMensagem}
-          className="bg-black text-white px-6 py-3 rounded-md"
-        >
-          Falar com especialista
-        </button>
-      </div>
-
     </div>
   );
 }
