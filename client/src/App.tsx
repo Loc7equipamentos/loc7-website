@@ -17,14 +17,17 @@ export default function App() {
 
   return (
     <CartProvider>
+      {/* ✅ NAVBAR SÓ NO SITE PÚBLICO */}
       {!isAdmin && <Navbar />}
 
       <Switch>
+        {/* SITE */}
         <Route path="/" component={Home} />
         <Route path="/catalogo/:category" component={Catalogo} />
         <Route path="/equipamentos/:slug" component={Produto} />
         <Route path="/orcamento" component={Orcamento} />
 
+        {/* ADMIN */}
         <Route path="/admin-panel" component={AdminDashboard} />
 
         <Route component={NotFound} />
