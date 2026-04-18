@@ -18,12 +18,12 @@ export default function ClienteCadastro() {
     truth_declaration: false,
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setForm({
-      ...form,
+    setForm((prev: any) => ({
+      ...prev,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
   };
 
   const handleSubmit = async () => {
@@ -37,6 +37,26 @@ export default function ClienteCadastro() {
       return;
     }
 
+    if (tipo === "PF" && !form.full_name) {
+      alert("Preencha o nome completo");
+      return;
+    }
+
+    if (tipo === "PF" && !form.cpf) {
+      alert("Preencha o CPF");
+      return;
+    }
+
+    if (tipo === "PJ" && !form.company_name) {
+      alert("Preencha a razão social");
+      return;
+    }
+
+    if (tipo === "PJ" && !form.cnpj) {
+      alert("Preencha o CNPJ");
+      return;
+    }
+
     if (!form.consent || !form.truth_declaration) {
       alert("Você precisa aceitar os termos");
       return;
@@ -44,39 +64,54 @@ export default function ClienteCadastro() {
 
     setLoading(true);
 
-    const { error } = await supabase.from("customer_registrations").insert([
-      {
-        client_type: tipo,
-        email: form.email,
-        phone: form.phone,
-        full_name: form.full_name,
-        cpf: form.cpf,
-        company_name: form.company_name,
-        cnpj: form.cnpj,
-        city: form.city,
-        state: form.state,
-        consent: form.consent,
-        truth_declaration: form.truth_declaration,
-      },
-    ]);
+    const payload = {
+      client_type: tipo,
+      email: form.email || null,
+      phone: form.phone || null,
+      full_name: tipo === "PF" ? form.full_name || null : null,
+      cpf: tipo === "PF" ? form.cpf || null : null,
+      company_name: tipo === "PJ" ? form.company_name || null : null,
+      cnpj: tipo === "PJ" ? form.cnpj || null : null,
+      city: form.city || null,
+      state: form.state || null,
+      consent: !!form.consent,
+      truth_declaration: !!form.truth_declaration,
+    };
+
+    const { error } = await supabase
+      .from("customer_registrations")
+      .insert([payload]);
 
     setLoading(false);
 
     if (error) {
       console.error(error);
       alert("Erro ao enviar cadastro");
-    } else {
-      alert("Cadastro enviado com sucesso!");
-      setForm({});
+      return;
     }
+
+    alert("Cadastro enviado com sucesso!");
+
+    setForm({
+      email: "",
+      phone: "",
+      full_name: "",
+      cpf: "",
+      company_name: "",
+      cnpj: "",
+      city: "",
+      state: "",
+      consent: false,
+      truth_declaration: false,
+    });
+
+    setTipo("PF");
   };
 
   return (
-    <div className="min-h-screen bg-white text-black p-6 max-w-xl mx-auto">
-      
-      {/* TOPO COM COPY MELHORADA */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">
+    <div className="min-h-screen bg-white text-black px-6 py-10 max-w-md mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold leading-tight mb-3">
           Liberação de Cadastro para Locação
         </h1>
         <p className="text-sm text-gray-600 leading-relaxed">
@@ -86,13 +121,16 @@ export default function ClienteCadastro() {
         </p>
       </div>
 
-      {/* Tipo */}
       <div className="mb-6">
-        <label className="font-semibold">Tipo de cliente</label>
-        <div className="flex gap-4 mt-2">
+        <label className="block font-semibold mb-3">Tipo de cliente</label>
+
+        <div className="flex gap-3">
           <button
-            className={`px-4 py-2 border ${
-              tipo === "PF" ? "bg-black text-white" : ""
+            type="button"
+            className={`px-5 py-3 border text-sm font-medium rounded-md transition ${
+              tipo === "PF"
+                ? "bg-black text-white border-black"
+                : "bg-white text-black border-gray-300 hover:border-black"
             }`}
             onClick={() => setTipo("PF")}
           >
@@ -100,8 +138,11 @@ export default function ClienteCadastro() {
           </button>
 
           <button
-            className={`px-4 py-2 border ${
-              tipo === "PJ" ? "bg-black text-white" : ""
+            type="button"
+            className={`px-5 py-3 border text-sm font-medium rounded-md transition ${
+              tipo === "PJ"
+                ? "bg-black text-white border-black"
+                : "bg-white text-black border-gray-300 hover:border-black"
             }`}
             onClick={() => setTipo("PJ")}
           >
@@ -110,12 +151,12 @@ export default function ClienteCadastro() {
         </div>
       </div>
 
-      {/* NOME / EMPRESA PRIMEIRO */}
       {tipo === "PF" && (
         <input
           name="full_name"
           placeholder="Nome completo"
-          className="w-full border p-3 mb-4 text-base"
+          value={form.full_name}
+          className="w-full border border-gray-300 rounded-md p-3 mb-4 text-base focus:outline-none focus:ring-2 focus:ring-black"
           onChange={handleChange}
         />
       )}
@@ -124,97 +165,102 @@ export default function ClienteCadastro() {
         <input
           name="company_name"
           placeholder="Razão social"
-          className="w-full border p-3 mb-4 text-base"
+          value={form.company_name}
+          className="w-full border border-gray-300 rounded-md p-3 mb-4 text-base focus:outline-none focus:ring-2 focus:ring-black"
           onChange={handleChange}
         />
       )}
 
-      {/* TELEFONE */}
       <input
         name="phone"
         placeholder="Telefone (WhatsApp)"
-        className="w-full border p-3 mb-4 text-base"
+        value={form.phone}
+        className="w-full border border-gray-300 rounded-md p-3 mb-4 text-base focus:outline-none focus:ring-2 focus:ring-black"
         onChange={handleChange}
       />
 
-      {/* EMAIL */}
       <input
         name="email"
         placeholder="Email"
-        className="w-full border p-3 mb-4 text-base"
+        value={form.email}
+        className="w-full border border-gray-300 rounded-md p-3 mb-4 text-base focus:outline-none focus:ring-2 focus:ring-black"
         onChange={handleChange}
       />
 
-      {/* PF */}
       {tipo === "PF" && (
         <input
           name="cpf"
           placeholder="CPF"
-          className="w-full border p-3 mb-4 text-base"
+          value={form.cpf}
+          className="w-full border border-gray-300 rounded-md p-3 mb-4 text-base focus:outline-none focus:ring-2 focus:ring-black"
           onChange={handleChange}
         />
       )}
 
-      {/* PJ */}
       {tipo === "PJ" && (
         <input
           name="cnpj"
           placeholder="CNPJ"
-          className="w-full border p-3 mb-4 text-base"
+          value={form.cnpj}
+          className="w-full border border-gray-300 rounded-md p-3 mb-4 text-base focus:outline-none focus:ring-2 focus:ring-black"
           onChange={handleChange}
         />
       )}
 
-      {/* Cidade */}
       <input
         name="city"
         placeholder="Cidade"
-        className="w-full border p-3 mb-4 text-base"
+        value={form.city}
+        className="w-full border border-gray-300 rounded-md p-3 mb-4 text-base focus:outline-none focus:ring-2 focus:ring-black"
         onChange={handleChange}
       />
 
-      {/* Estado */}
       <input
         name="state"
         placeholder="Estado"
-        className="w-full border p-3 mb-4 text-base"
+        value={form.state}
+        className="w-full border border-gray-300 rounded-md p-3 mb-5 text-base focus:outline-none focus:ring-2 focus:ring-black"
         onChange={handleChange}
       />
 
-      {/* Checkboxes */}
       <div className="mb-3">
-        <label className="flex gap-2 text-sm">
-          <input type="checkbox" name="consent" onChange={handleChange} />
-          Aceito o envio dos meus dados para análise de cadastro
+        <label className="flex items-start gap-2 text-sm leading-relaxed">
+          <input
+            type="checkbox"
+            name="consent"
+            checked={form.consent}
+            onChange={handleChange}
+            className="mt-1"
+          />
+          <span>Aceito o envio dos meus dados para análise de cadastro</span>
         </label>
       </div>
 
       <div className="mb-4">
-        <label className="flex gap-2 text-sm">
+        <label className="flex items-start gap-2 text-sm leading-relaxed">
           <input
             type="checkbox"
             name="truth_declaration"
+            checked={form.truth_declaration}
             onChange={handleChange}
+            className="mt-1"
           />
-          Declaro que as informações são verdadeiras
+          <span>Declaro que as informações são verdadeiras</span>
         </label>
       </div>
 
-      {/* TEXTO DE CONFIANÇA */}
-      <p className="text-xs text-gray-500 mb-4">
+      <p className="text-xs text-gray-500 mb-5 leading-relaxed">
         🔒 Seus dados são utilizados apenas para análise de cadastro e não são
         compartilhados.
       </p>
 
-      {/* BOTÃO */}
       <button
+        type="button"
         onClick={handleSubmit}
         disabled={loading}
-        className="w-full bg-black text-white py-4 text-base font-semibold"
+        className="w-full bg-black text-white py-4 text-base font-semibold rounded-md hover:opacity-90 transition disabled:opacity-60"
       >
-        {loading
-          ? "Enviando..."
-          : "Finalizar cadastro e liberar locação"}
+        {loading ? "Enviando..." : "Finalizar cadastro e liberar locação"}
       </button>
     </div>
   );
