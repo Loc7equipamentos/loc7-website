@@ -24,7 +24,7 @@ export default function Catalogo() {
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [selectedSubcategory, setSelectedSubcategory] = useState("Todas");
   const [selectedBrand, setSelectedBrand] = useState("Todas");
@@ -34,22 +34,25 @@ export default function Catalogo() {
   const [sortBy, setSortBy] = useState("relevance");
 
   const slugToCategoryName: Record<string, string> = {
-    'cameras': 'Câmeras',
-    'lentes': 'Lentes',
-    'iluminacao': 'Iluminação',
-    'audio': 'Áudio',
-    'monitores': 'Monitores',
-    'movimento': 'Movimento',
-    'transmissores': 'Transmissores',
-    'maquinaria': 'Maquinária',
+    cameras: "Câmeras",
+    lentes: "Lentes",
+    iluminacao: "Iluminação",
+    audio: "Áudio",
+    monitores: "Monitores",
+    movimento: "Movimento",
+    transmissores: "Transmissores",
+    maquinaria: "Maquinária",
   };
 
   useEffect(() => {
     if (params.category) {
-      const categoryName = slugToCategoryName[params.category] || params.category
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
+      const categoryName =
+        slugToCategoryName[params.category] ||
+        params.category
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+
       setSelectedCategory(categoryName);
       setSelectedSubcategory("Todas");
     } else {
@@ -69,31 +72,31 @@ export default function Catalogo() {
         setError(null);
 
         const { data: categoriesData, error: catError } = await supabase
-          .from('categories')
-          .select('name')
-          .order('name');
+          .from("categories")
+          .select("name")
+          .order("name");
 
         if (catError) throw catError;
 
-        const categoryNames = categoriesData?.map(c => c.name) || [];
+        const categoryNames = categoriesData?.map((c) => c.name) || [];
         setCategories(["Todos", ...categoryNames]);
 
         const { data: productsData, error: prodError } = await supabase
-          .from('products')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .from("products")
+          .select("*")
+          .order("created_at", { ascending: false });
 
         if (prodError) throw prodError;
 
         setProducts(productsData || []);
 
         if (productsData && productsData.length > 0) {
-          const maxPrice = Math.max(...productsData.map(p => p.price));
+          const maxPrice = Math.max(...productsData.map((p) => p.price));
           setPriceRange([0, Math.ceil(maxPrice / 100) * 100]);
         }
       } catch (err) {
-        console.error('Erro ao carregar dados:', err);
-        setError('Erro ao carregar produtos. Tente novamente.');
+        console.error("Erro ao carregar dados:", err);
+        setError("Erro ao carregar produtos. Tente novamente.");
       } finally {
         setLoading(false);
       }
@@ -102,10 +105,10 @@ export default function Catalogo() {
     loadData();
 
     const subscription = supabase
-      .channel('products-changes')
+      .channel("products-changes")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'products' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "products" },
         () => {
           loadData();
         }
@@ -118,39 +121,53 @@ export default function Catalogo() {
   }, []);
 
   const availableSubcategories = products
-    .filter(p =>
+    .filter((p) =>
       selectedCategory === "Todos"
         ? true
         : normalize(p.category) === normalize(selectedCategory)
     )
-    .map(p => p.subcategory)
+    .map((p) => p.subcategory)
     .filter(Boolean) as string[];
 
   const uniqueSubcategories = Array.from(new Set(availableSubcategories.map(normalize)))
-    .map(normalized => availableSubcategories.find(sub => normalize(sub) === normalized) || "")
+    .map(
+      (normalized) =>
+        availableSubcategories.find((sub) => normalize(sub) === normalized) || ""
+    )
     .filter(Boolean);
 
-  const filtered = products.filter(p => {
-    const matchCategory =
-      selectedCategory === "Todos" ||
-      normalize(p.category) === normalize(selectedCategory);
+  const filtered = products
+    .filter((p) => {
+      const matchCategory =
+        selectedCategory === "Todos" ||
+        normalize(p.category) === normalize(selectedCategory);
 
-    const matchSubcategory =
-      selectedSubcategory === "Todas" ||
-      normalize(p.subcategory || "") === normalize(selectedSubcategory);
+      const matchSubcategory =
+        selectedSubcategory === "Todas" ||
+        normalize(p.subcategory || "") === normalize(selectedSubcategory);
 
-    const matchBrand = selectedBrand === "Todas" || (p.name?.toLowerCase().includes(selectedBrand.toLowerCase()) ?? false);
-    const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
+      const matchBrand =
+        selectedBrand === "Todas" ||
+        (p.name?.toLowerCase().includes(selectedBrand.toLowerCase()) ?? false);
 
-    return matchCategory && matchSubcategory && matchBrand && matchSearch && matchPrice;
-  }).sort((a, b) => {
-    if (sortBy === "price-asc") return a.price - b.price;
-    if (sortBy === "price-desc") return b.price - a.price;
-    if (sortBy === "name-asc") return a.name.localeCompare(b.name);
-    if (sortBy === "name-desc") return b.name.localeCompare(a.name);
-    return 0;
-  });
+      const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
+
+      return (
+        matchCategory &&
+        matchSubcategory &&
+        matchBrand &&
+        matchSearch &&
+        matchPrice
+      );
+    })
+    .sort((a, b) => {
+      if (sortBy === "price-asc") return a.price - b.price;
+      if (sortBy === "price-desc") return b.price - a.price;
+      if (sortBy === "name-asc") return a.name.localeCompare(b.name);
+      if (sortBy === "name-desc") return b.name.localeCompare(a.name);
+      return 0;
+    });
 
   if (error) {
     return (
@@ -177,7 +194,7 @@ export default function Catalogo() {
         <div className="mb-12">
           <h1 className="text-5xl font-bold text-white mb-2">CATÁLOGO</h1>
           <p className="text-[oklch(0.7_0_0)] text-lg">
-            {loading ? 'Carregando produtos...' : `${filtered.length} produtos encontrados`}
+            {loading ? "Carregando produtos..." : `${filtered.length} produtos encontrados`}
           </p>
         </div>
 
@@ -198,7 +215,7 @@ export default function Catalogo() {
             className="flex items-center gap-2 text-[oklch(0.45_0.25_25)] hover:text-white transition-colors"
           >
             <SlidersHorizontal className="w-5 h-5" />
-            {showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+            {showFilters ? "Ocultar filtros" : "Mostrar filtros"}
           </button>
 
           {showFilters && (
@@ -212,8 +229,8 @@ export default function Catalogo() {
                       onClick={() => setSelectedCategory(cat)}
                       className={`px-3 py-2 rounded text-sm transition-colors ${
                         selectedCategory === cat
-                          ? 'bg-[oklch(0.45_0.25_25)] text-white'
-                          : 'bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white'
+                          ? "bg-[oklch(0.45_0.25_25)] text-white"
+                          : "bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white"
                       }`}
                     >
                       {cat}
@@ -230,8 +247,8 @@ export default function Catalogo() {
                       onClick={() => setSelectedSubcategory("Todas")}
                       className={`px-3 py-2 rounded text-sm transition-colors ${
                         selectedSubcategory === "Todas"
-                          ? 'bg-[oklch(0.45_0.25_25)] text-white'
-                          : 'bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white'
+                          ? "bg-[oklch(0.45_0.25_25)] text-white"
+                          : "bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white"
                       }`}
                     >
                       Todas
@@ -242,8 +259,8 @@ export default function Catalogo() {
                         onClick={() => setSelectedSubcategory(subcat)}
                         className={`px-3 py-2 rounded text-sm transition-colors ${
                           selectedSubcategory === subcat
-                            ? 'bg-[oklch(0.45_0.25_25)] text-white'
-                            : 'bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white'
+                            ? "bg-[oklch(0.45_0.25_25)] text-white"
+                            : "bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white"
                         }`}
                       >
                         {subcat}
@@ -262,8 +279,8 @@ export default function Catalogo() {
                       onClick={() => setSelectedBrand(brand)}
                       className={`px-3 py-2 rounded text-sm transition-colors ${
                         selectedBrand === brand
-                          ? 'bg-[oklch(0.45_0.25_25)] text-white'
-                          : 'bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white'
+                          ? "bg-[oklch(0.45_0.25_25)] text-white"
+                          : "bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white"
                       }`}
                     >
                       {brand}
@@ -321,21 +338,25 @@ export default function Catalogo() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-[oklch(0.7_0_0)] text-lg">Nenhum produto encontrado com os filtros selecionados.</p>
+            <p className="text-[oklch(0.7_0_0)] text-lg">
+              Nenhum produto encontrado com os filtros selecionados.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filtered.map((product) => {
               const productLink = product.slug ? `/equipamentos/${product.slug}` : null;
+              const coverImage = [product.image_url, ...(product.images || [])].filter(Boolean)[0];
+
               return (
                 <a
                   key={product.id}
-                  href={productLink || '#'}
+                  href={productLink || "#"}
                   className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow"
                 >
                   <div className="relative overflow-hidden aspect-square bg-gray-100">
                     <img
-                      src={product.image_url || 'https://via.placeholder.com/400x400?text=Sem+imagem'}
+                      src={coverImage || "https://via.placeholder.com/400x400?text=Sem+imagem"}
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                     />
@@ -349,9 +370,10 @@ export default function Catalogo() {
                     </h3>
                     {product.badge && (
                       <p className="text-blue-600 text-xs font-semibold mb-3">{product.badge}</p>
-                     )}
+                    )}
                     <p className="text-gray-900 text-lg font-bold">
-                      R$ {product.price.toFixed(2)}<span className="text-gray-500 text-sm font-normal">/dia</span>
+                      R$ {product.price.toFixed(2)}
+                      <span className="text-gray-500 text-sm font-normal">/dia</span>
                     </p>
                   </div>
                 </a>
@@ -362,13 +384,20 @@ export default function Catalogo() {
 
         <div className="mt-16 bg-gradient-to-r from-[oklch(0.12_0_0)] to-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-lg p-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-3">Não encontrou o que procura?</h2>
-          <p className="text-[oklch(0.7_0_0)] mb-6">Fale com nossos especialistas para soluções customizadas</p>
-          <a href="https://wa.me/5511997237850" target="_blank" rel="noopener noreferrer" className="loc7-btn-primary inline-flex items-center gap-2">
+          <p className="text-[oklch(0.7_0_0)] mb-6">
+            Fale com nossos especialistas para soluções customizadas
+          </p>
+          <a
+            href="https://wa.me/5511997237850"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="loc7-btn-primary inline-flex items-center gap-2"
+          >
             Falar com especialista
             <ArrowRight className="w-4 h-4" />
           </a>
         </div>
       </div>
     </div>
-   );
+  );
 }
