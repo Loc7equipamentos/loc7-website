@@ -27,8 +27,13 @@ export default function ClienteCadastro() {
   };
 
   const handleSubmit = async () => {
-    if (!form.email || !form.phone) {
-      alert("Preencha email e telefone");
+    if (!form.phone) {
+      alert("Preencha o telefone");
+      return;
+    }
+
+    if (!form.email) {
+      alert("Preencha o email");
       return;
     }
 
@@ -68,7 +73,18 @@ export default function ClienteCadastro() {
 
   return (
     <div className="min-h-screen bg-white text-black p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Cadastro de Cliente</h1>
+      
+      {/* TOPO COM COPY MELHORADA */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold mb-2">
+          Liberação de Cadastro para Locação
+        </h1>
+        <p className="text-sm text-gray-600 leading-relaxed">
+          Preencha seus dados para liberar sua locação com mais agilidade.
+          <br />
+          Tempo médio: 2 minutos.
+        </p>
+      </div>
 
       {/* Tipo */}
       <div className="mb-6">
@@ -94,65 +110,66 @@ export default function ClienteCadastro() {
         </div>
       </div>
 
-      {/* Email */}
+      {/* NOME / EMPRESA PRIMEIRO */}
+      {tipo === "PF" && (
+        <input
+          name="full_name"
+          placeholder="Nome completo"
+          className="w-full border p-3 mb-4 text-base"
+          onChange={handleChange}
+        />
+      )}
+
+      {tipo === "PJ" && (
+        <input
+          name="company_name"
+          placeholder="Razão social"
+          className="w-full border p-3 mb-4 text-base"
+          onChange={handleChange}
+        />
+      )}
+
+      {/* TELEFONE */}
       <input
-        name="email"
-        placeholder="Email"
-        className="w-full border p-2 mb-4"
+        name="phone"
+        placeholder="Telefone (WhatsApp)"
+        className="w-full border p-3 mb-4 text-base"
         onChange={handleChange}
       />
 
-      {/* Telefone */}
+      {/* EMAIL */}
       <input
-        name="phone"
-        placeholder="Telefone"
-        className="w-full border p-2 mb-4"
+        name="email"
+        placeholder="Email"
+        className="w-full border p-3 mb-4 text-base"
         onChange={handleChange}
       />
 
       {/* PF */}
       {tipo === "PF" && (
-        <>
-          <input
-            name="full_name"
-            placeholder="Nome completo"
-            className="w-full border p-2 mb-4"
-            onChange={handleChange}
-          />
-
-          <input
-            name="cpf"
-            placeholder="CPF"
-            className="w-full border p-2 mb-4"
-            onChange={handleChange}
-          />
-        </>
+        <input
+          name="cpf"
+          placeholder="CPF"
+          className="w-full border p-3 mb-4 text-base"
+          onChange={handleChange}
+        />
       )}
 
       {/* PJ */}
       {tipo === "PJ" && (
-        <>
-          <input
-            name="company_name"
-            placeholder="Razão social"
-            className="w-full border p-2 mb-4"
-            onChange={handleChange}
-          />
-
-          <input
-            name="cnpj"
-            placeholder="CNPJ"
-            className="w-full border p-2 mb-4"
-            onChange={handleChange}
-          />
-        </>
+        <input
+          name="cnpj"
+          placeholder="CNPJ"
+          className="w-full border p-3 mb-4 text-base"
+          onChange={handleChange}
+        />
       )}
 
       {/* Cidade */}
       <input
         name="city"
         placeholder="Cidade"
-        className="w-full border p-2 mb-4"
+        className="w-full border p-3 mb-4 text-base"
         onChange={handleChange}
       />
 
@@ -160,20 +177,20 @@ export default function ClienteCadastro() {
       <input
         name="state"
         placeholder="Estado"
-        className="w-full border p-2 mb-4"
+        className="w-full border p-3 mb-4 text-base"
         onChange={handleChange}
       />
 
       {/* Checkboxes */}
-      <div className="mb-4">
-        <label className="flex gap-2">
+      <div className="mb-3">
+        <label className="flex gap-2 text-sm">
           <input type="checkbox" name="consent" onChange={handleChange} />
-          Aceito envio de dados
+          Aceito o envio dos meus dados para análise de cadastro
         </label>
       </div>
 
-      <div className="mb-6">
-        <label className="flex gap-2">
+      <div className="mb-4">
+        <label className="flex gap-2 text-sm">
           <input
             type="checkbox"
             name="truth_declaration"
@@ -183,12 +200,21 @@ export default function ClienteCadastro() {
         </label>
       </div>
 
+      {/* TEXTO DE CONFIANÇA */}
+      <p className="text-xs text-gray-500 mb-4">
+        🔒 Seus dados são utilizados apenas para análise de cadastro e não são
+        compartilhados.
+      </p>
+
+      {/* BOTÃO */}
       <button
         onClick={handleSubmit}
         disabled={loading}
-        className="w-full bg-black text-white py-3"
+        className="w-full bg-black text-white py-4 text-base font-semibold"
       >
-        {loading ? "Enviando..." : "Enviar cadastro"}
+        {loading
+          ? "Enviando..."
+          : "Finalizar cadastro e liberar locação"}
       </button>
     </div>
   );
