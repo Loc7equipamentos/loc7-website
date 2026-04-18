@@ -1,30 +1,32 @@
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 
 import Home from "./pages/Home";
 import Catalogo from "./pages/Catalogo";
 import Produto from "./pages/Produto";
 import Orcamento from "./pages/Orcamento";
 import AdminDashboard from "./pages/AdminDashboard";
-import ClienteCadastro from "./pages/ClienteCadastro";
 import NotFound from "./pages/NotFound";
 
+import Navbar from "./components/Navbar";
+import { CartProvider } from "./contexts/CartContext";
+
 export default function App() {
+  const [location] = useLocation();
+  const isAdmin = location.startsWith("/admin-panel");
+
   return (
-    <Switch>
-      {/* SITE */}
-      <Route path="/" component={Home} />
-      <Route path="/catalogo/:category" component={Catalogo} />
-      <Route path="/equipamentos/:slug" component={Produto} />
-      <Route path="/orcamento" component={Orcamento} />
+    <CartProvider>
+      {!isAdmin && <Navbar />}
 
-      {/* CADASTRO CLIENTE */}
-      <Route path="/cliente/cadastro" component={ClienteCadastro} />
-
-      {/* ADMIN */}
-      <Route path="/admin-panel" component={AdminDashboard} />
-
-      {/* FALLBACK */}
-      <Route component={NotFound} />
-    </Switch>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/catalogo" component={Catalogo} />
+        <Route path="/catalogo/:category" component={Catalogo} />
+        <Route path="/equipamentos/:slug" component={Produto} />
+        <Route path="/orcamento" component={Orcamento} />
+        <Route path="/admin-panel" component={AdminDashboard} />
+        <Route component={NotFound} />
+      </Switch>
+    </CartProvider>
   );
 }
