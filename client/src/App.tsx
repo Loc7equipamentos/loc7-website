@@ -9,6 +9,7 @@ import Orcamento from "./pages/Orcamento";
 import Producao from "./pages/Producao";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import AdminProtected from "./pages/AdminProtected"; // ✅ IMPORT CORRETO (TOPO)
 
 function AppContent() {
   const [location] = useLocation();
@@ -25,7 +26,10 @@ function AppContent() {
         <Route path="/equipamentos/:slug" component={Produto} />
         <Route path="/orcamento" component={Orcamento} />
         <Route path="/producao" component={Producao} />
-        <Route path="/admin-panel" component={AdminDashboard} />
+
+        {/* 🔒 ADMIN PROTEGIDO */}
+        <Route path="/admin-panel" component={AdminProtected} />
+
         <Route component={NotFound} />
       </Switch>
     </div>
