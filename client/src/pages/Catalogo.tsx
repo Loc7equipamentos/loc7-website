@@ -49,17 +49,14 @@ export default function Catalogo() {
 
     const currentCategory = normalize(category);
 
-    const filtered = (data || []).filter(
-      (p: Product) => normalize(p.category) === currentCategory
-    );
+    const filtered = category
+      ? data.filter((p: Product) => normalize(p.category) === currentCategory)
+      : data;
 
     const sorted = [...filtered].sort((a: Product, b: Product) => {
       const orderA = a.catalog_order ?? 9999;
       const orderB = b.catalog_order ?? 9999;
-
-      if (orderA !== orderB) return orderA - orderB;
-
-      return a.name.localeCompare(b.name, "pt-BR");
+      return orderA - orderB;
     });
 
     setProducts(sorted);
@@ -70,6 +67,7 @@ export default function Catalogo() {
 
     setSubcategories(uniqueSubs);
     setFilteredProducts(sorted);
+
     setLoading(false);
   };
 
@@ -77,16 +75,18 @@ export default function Catalogo() {
     if (selectedSubcategory === "Todos") {
       setFilteredProducts(products);
     } else {
-      const subFiltered = products.filter(
-        (p: Product) => p.subcategory === selectedSubcategory
+      setFilteredProducts(
+        products.filter((p: Product) => p.subcategory === selectedSubcategory)
       );
-      setFilteredProducts(subFiltered);
     }
   }, [selectedSubcategory, products]);
 
   const formatPrice = (price?: number) => {
     if (!price) return "";
-    return price.toLocaleString("pt-BR");
+    return `R$ ${price.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   };
 
   const getImage = (p: Product) => {
@@ -105,7 +105,6 @@ export default function Catalogo() {
   return (
     <div className="pt-24 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 lg:px-6 flex gap-8">
-        {/* SIDEBAR */}
         <aside className="hidden lg:block w-64">
           <div className="bg-white rounded-xl shadow-sm p-6 sticky top-28">
             <h2 className="text-lg font-semibold mb-4 text-gray-900">
@@ -141,9 +140,7 @@ export default function Catalogo() {
           </div>
         </aside>
 
-        {/* CONTENT */}
         <main className="flex-1">
-          {/* MOBILE FILTER */}
           <div className="lg:hidden mb-6 overflow-x-auto flex gap-2">
             <button
               onClick={() => setSelectedSubcategory("Todos")}
@@ -171,7 +168,6 @@ export default function Catalogo() {
             ))}
           </div>
 
-          {/* GRID */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
               <div
@@ -179,7 +175,6 @@ export default function Catalogo() {
                 onClick={() => navigate(`/equipamentos/${product.slug}`)}
                 className="bg-white rounded-xl shadow-sm hover:shadow-md transition cursor-pointer group overflow-hidden"
               >
-                {/* IMAGE */}
                 <div className="bg-white aspect-square flex items-center justify-center overflow-hidden">
                   <img
                     src={getImage(product)}
@@ -188,7 +183,6 @@ export default function Catalogo() {
                   />
                 </div>
 
-                {/* INFO */}
                 <div className="p-4">
                   <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">
                     {product.name}
@@ -209,6 +203,7 @@ export default function Catalogo() {
                   {product.price && (
                     <p className="mt-3 text-sm font-bold text-gray-900">
                       {formatPrice(product.price)}
+                      <span className="text-xs text-gray-500 font-normal">/dia</span>
                     </p>
                   )}
                 </div>
