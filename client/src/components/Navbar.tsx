@@ -146,13 +146,13 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Linha principal */}
-        <div className="grid grid-cols-[auto_1fr_auto] items-center min-h-[92px] md:min-h-[108px] gap-4">
-          {/* Logo - maior */}
+        <div className="grid grid-cols-[auto_1fr_auto] items-center min-h-[110px] md:min-h-[128px] gap-4">
+          {/* Logo */}
           <Link href="/" className="flex items-center group">
             <img
               src="/logo.png"
               alt="Loc7 Equipamentos"
-              className="h-16 sm:h-18 md:h-24 lg:h-[108px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+              className="h-20 sm:h-24 md:h-28 lg:h-[120px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
             />
           </Link>
 
@@ -169,7 +169,7 @@ export default function Navbar() {
                   {link.hasDropdown ? (
                     <button
                       type="button"
-                      className={`text-[15px] font-medium tracking-[0.02em] leading-none transition-colors ${
+                      className={`text-[15px] font-semibold tracking-[0.04em] leading-none transition-colors ${
                         location.startsWith("/catalogo")
                           ? "text-white"
                           : "text-white/80 hover:text-white"
@@ -180,7 +180,7 @@ export default function Navbar() {
                   ) : (
                     <Link
                       href={link.href}
-                      className={`text-[15px] font-medium tracking-[0.02em] leading-none transition-colors ${
+                      className={`text-[15px] font-semibold tracking-[0.04em] leading-none transition-colors ${
                         isActiveMainLink(link.href)
                           ? "text-white"
                           : "text-white/80 hover:text-white"
@@ -228,7 +228,7 @@ export default function Navbar() {
         </div>
 
         {/* Submenu desktop centralizado */}
-        <div className="hidden md:block border-t border-white/[0.06]">
+        <div className="hidden md:block border-t border-white/[0.04]">
           <div className="min-h-[54px] flex items-center justify-center">
             <div className="flex items-center justify-center gap-4 lg:gap-6 flex-wrap py-3">
               {submenuCategories.map((cat) => {
@@ -240,10 +240,10 @@ export default function Navbar() {
                     key={cat.name}
                     href={cat.href}
                     className={`inline-flex items-center gap-2 transition-colors whitespace-nowrap ${
-                      active ? "text-white" : "text-white/74 hover:text-white"
+                      active ? "text-white" : "text-white/60 hover:text-white"
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-[15px] h-[15px]" />
                     <span className="text-[11px] font-medium tracking-[0.12em] uppercase">
                       {cat.name}
                     </span>
@@ -256,7 +256,7 @@ export default function Navbar() {
 
         {/* Menu mobile */}
         {isMobileOpen && (
-          <div className="md:hidden border-t border-white/[0.06] bg-black">
+          <div className="md:hidden border-t border-white/[0.04] bg-black">
             <div className="py-2">
               {navLinks.map((link) => (
                 <div key={link.name}>
@@ -301,7 +301,7 @@ export default function Navbar() {
                 </div>
               ))}
 
-              <div className="border-t border-white/[0.06] mt-2 pt-2 pb-2">
+              <div className="border-t border-white/[0.04] mt-2 pt-2 pb-2">
                 {submenuCategories.map((cat) => {
                   const Icon = cat.icon;
 
