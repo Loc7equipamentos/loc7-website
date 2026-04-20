@@ -1,204 +1,275 @@
-/*
- * LOC 7 — Página Individual de Produto
- * Detalhes completo com galeria, breadcrumb e informações
- * Busca dados do Supabase
- */
+import { useEffect, useMemo, useState } from "react";
+import { Link, useRoute } from "wouter";
+import { ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
+import { supabase } from "../lib/supabase";
 
-import { useParams } from "wouter";
-import { ChevronRight, Loader } from "lucide-react";
-import { Link } from "wouter";
-import { useEffect, useState } from "react";
-import { supabase, type Product } from "@/lib/supabase";
-import { useCart } from "@/contexts/CartContext";
+type Product = {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  subcategory?: string | null;
+  price?: number | null;
+  description?: string | null;
+  image_url?: string | null;
+  images?: string[] | null;
+  includes?: string[] | string | null;
+  badge?: string | null;
+};
 
-interface ProductWithExtras extends Product {
-  images?: string[];
-  includes?: string;
+function formatPrice(price?: number | null) {
+  if (price === null || price === undefined || Number.isNaN(price)) {
+    return "Sob consulta";
+  }
+
+  return `R$ ${price.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}/dia`;
+}
+
+function normalizeCategory(category?: string | null) {
+  if (!category) return "";
+  return category
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function formatCategoryLabel(category?: string | null) {
+  if (!category) return "Categoria";
+  return category
+    .split("-")
+    .map((word) => (word ? word.charAt(0).toUpperCase() + word.slice(1) : ""))
+    .join(" ");
+}
+
+function parseIncludes(includes?: string[] | string | null) {
+  if (!includes) return [];
+
+  if (Array.isArray(includes)) {
+    return includes.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  if (typeof includes === "string") {
+    return includes
+      .split("\n")
+      .map((item) => item.replace(/^[-•\s]+/, "").trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
+function buildGallery(product: Product | null) {
+  if (!product) return [];
+
+  const rawImages = [
+    ...(Array.isArray(product.images) ? product.images : []),
+    product.image_url,
+  ];
+
+  return Array.from(
+    new Set(
+      rawImages
+        .map((img) => (typeof img === "string" ? img.trim() : ""))
+        .filter(Boolean)
+    )
+  );
+}
+
+function buildWhatsAppLink(product: Product | null) {
+  const phone = "5511999999999"; // ajuste somente se seu número oficial for outro
+  const productName = product?.name ?? "equipamento";
+  const message = `Olá! Tenho interesse no equipamento: ${productName}. Pode me passar mais informações?`;
+
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
 export default function Produto() {
-  const { slug } = useParams<{ slug: string }>();
-  const { addItem } = useCart();
-  const [product, setProduct] = useState<ProductWithExtras | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<ProductWithExtras[]>([]);
+  const [, params] = useRoute("/equipamentos/:slug");
+  const slug = params?.slug;
+
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [error, setError] = useState("");
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  // NOVO: estado isolado para expandir/recolher descrição
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   useEffect(() => {
-    loadProduct();
-  }, [slug]);
+    async function fetchProduct() {
+      if (!slug) {
+        setError("Produto não encontrado.");
+        setLoading(false);
+        return;
+      }
 
-  const loadProduct = async () => {
-    try {
       setLoading(true);
-      setError(null);
+      setError("");
 
-      const { data: productData, error: err } = await supabase
+      const { data, error } = await supabase
         .from("products")
         .select("*")
         .eq("slug", slug)
         .single();
 
-      if (err) throw new Error("Produto não encontrado");
-      if (!productData) throw new Error("Produto não encontrado");
-
-      setProduct(productData);
-
-      const { data: related, error: relErr } = await supabase
-        .from("products")
-        .select("*")
-        .eq("category", productData.category)
-        .neq("id", productData.id)
-        .limit(4);
-
-      if (!relErr && related) {
-        setRelatedProducts(related);
+      if (error || !data) {
+        setError("Não foi possível carregar este produto.");
+        setProduct(null);
+        setLoading(false);
+        return;
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar produto");
-      console.error("Erro:", err);
-    } finally {
+
+      setProduct(data as Product);
+      setSelectedImage(0);
+      setIsDescriptionExpanded(false);
       setLoading(false);
     }
-  };
 
-  const normalizeCategory = (str: string) =>
-    str
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, "-");
+    fetchProduct();
+  }, [slug]);
 
-  const handleAddToCart = () => {
-    if (!product) return;
-    addItem({
-      id: typeof product.id === "string" ? parseInt(product.id, 10) : product.id,
-      name: product.name,
-      price: product.price,
-      category: product.category,
-    });
-  };
+  const galleryImages = useMemo(() => buildGallery(product), [product]);
+  const includesList = useMemo(() => parseIncludes(product?.includes), [product?.includes]);
+
+  const safeDescription = (product?.description ?? "").trim();
+  const shouldShowDescriptionToggle = safeDescription.length > 220;
+
+  const currentImage =
+    galleryImages[selectedImage] || galleryImages[0] || "/placeholder-image.jpg";
+
+  const categorySlug = normalizeCategory(product?.category);
+
+  function handlePrevImage() {
+    if (galleryImages.length <= 1) return;
+    setSelectedImage((prev) =>
+      prev === 0 ? galleryImages.length - 1 : prev - 1
+    );
+  }
+
+  function handleNextImage() {
+    if (galleryImages.length <= 1) return;
+    setSelectedImage((prev) =>
+      prev === galleryImages.length - 1 ? 0 : prev + 1
+    );
+  }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader className="w-8 h-8 text-gray-400 animate-spin" />
+      <div className="min-h-screen bg-white pt-28 pb-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="animate-pulse space-y-6">
+            <div className="h-4 w-56 bg-gray-200 rounded" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <div className="aspect-square bg-gray-200 rounded-2xl" />
+              <div className="space-y-4">
+                <div className="h-10 w-3/4 bg-gray-200 rounded" />
+                <div className="h-6 w-40 bg-gray-200 rounded" />
+                <div className="h-24 w-full bg-gray-200 rounded" />
+                <div className="h-12 w-52 bg-gray-200 rounded" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-gray-800 text-3xl font-bold mb-4">
-            Produto não encontrado
-          </h1>
-          <Link href="/catalogo" className="text-blue-600 hover:text-blue-700">
-            ← Voltar ao catálogo
-          </Link>
+      <div className="min-h-screen bg-white pt-28 pb-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-6">
+            <h1 className="text-xl font-semibold mb-2">Erro ao carregar produto</h1>
+            <p className="mb-4">{error || "Produto não encontrado."}</p>
+            <Link href="/catalogo">
+              <a className="inline-flex items-center text-sm font-medium text-black underline underline-offset-4">
+                Voltar para o catálogo
+              </a>
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
-  const galleryImages =
-    product.images && product.images.length > 0
-      ? product.images
-      : product.image_url
-        ? [product.image_url]
-        : [];
-
-  const mainImage = galleryImages[selectedImageIndex] || product.image_url;
-
-  let includesArray: string[] = [];
-  if (product.includes) {
-    try {
-      includesArray = JSON.parse(product.includes);
-    } catch {
-      includesArray = product.includes
-        .split("\n")
-        .filter((item) => item.trim());
-    }
-  }
-
-  const formatPrice = (price?: number) => {
-    if (price === undefined || price === null) return "";
-    return `R$ ${price.toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
-  };
-
-  const whatsappMessage = `Olá! Tenho interesse em alugar: ${product.name} (${formatPrice(
-    product.price
-  )}/dia)`;
-
-  const whatsappUrl = `https://wa.me/message/WOIONHHSTABQF1?text=${encodeURIComponent(
-    whatsappMessage
-  )}`;
-
   return (
-    <div className="min-h-screen bg-white">
-      {/* Breadcrumb */}
-      <div className="bg-gray-50 border-b border-gray-200 py-4">
-        <div className="container">
-          <nav className="flex items-center gap-2 text-sm">
-            <Link
-              href="/catalogo"
-              className="text-gray-600 hover:text-gray-900"
-            >
-              Catálogo
-            </Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <Link
-              href={`/catalogo/${normalizeCategory(product.category)}`}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              {product.category}
-            </Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-900 font-semibold">
-              {product.name}
-            </span>
-          </nav>
-        </div>
-      </div>
+    <div className="min-h-screen bg-white pt-28 pb-16 px-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Breadcrumb */}
+        <nav className="flex flex-wrap items-center gap-2 text-sm text-gray-500 mb-8">
+          <Link href="/catalogo">
+            <a className="hover:text-black transition-colors">Catálogo</a>
+          </Link>
 
-      <div className="container py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* GALERIA */}
-          <div className="flex flex-col gap-4">
-            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-              {mainImage ? (
-                <img
-                  src={mainImage}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full text-gray-400">
-                  Sem imagem
-                </div>
+          {categorySlug && (
+            <>
+              <span>/</span>
+              <Link href={`/catalogo/${categorySlug}`}>
+                <a className="hover:text-black transition-colors">
+                  {formatCategoryLabel(product.category)}
+                </a>
+              </Link>
+            </>
+          )}
+
+          <span>/</span>
+          <span className="text-gray-900 font-medium">{product.name}</span>
+        </nav>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
+          {/* Galeria */}
+          <div className="space-y-4">
+            <div className="relative aspect-square bg-gray-100 rounded-3xl overflow-hidden border border-gray-200">
+              <img
+                src={currentImage}
+                alt={product.name}
+                className="w-full h-full object-contain"
+              />
+
+              {galleryImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handlePrevImage}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-white transition"
+                    aria-label="Imagem anterior"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-black" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleNextImage}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-white transition"
+                    aria-label="Próxima imagem"
+                  >
+                    <ChevronRight className="w-5 h-5 text-black" />
+                  </button>
+                </>
               )}
             </div>
 
             {galleryImages.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto">
-                {galleryImages.map((img, i) => (
+              <div className="grid grid-cols-5 sm:grid-cols-6 gap-3">
+                {galleryImages.map((image, index) => (
                   <button
-                    key={i}
-                    onClick={() => setSelectedImageIndex(i)}
-                    className={`w-20 h-20 border-2 rounded-lg overflow-hidden ${
-                      selectedImageIndex === i
-                        ? "border-black"
-                        : "border-gray-200"
+                    key={`${image}-${index}`}
+                    type="button"
+                    onClick={() => setSelectedImage(index)}
+                    className={`aspect-square rounded-2xl overflow-hidden border transition ${
+                      selectedImage === index
+                        ? "border-black ring-2 ring-black/10"
+                        : "border-gray-200 hover:border-gray-300"
                     }`}
+                    aria-label={`Selecionar imagem ${index + 1}`}
                   >
                     <img
-                      src={img}
-                      alt={`${product.name} ${i + 1}`}
+                      src={image}
+                      alt={`${product.name} ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
                   </button>
@@ -207,153 +278,106 @@ export default function Produto() {
             )}
           </div>
 
-          {/* INFO */}
-          <div className="flex flex-col text-gray-900">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
-                {product.category}
-              </span>
-
-              {product.badge && (
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+          {/* Conteúdo */}
+          <div className="flex flex-col">
+            {product.badge && (
+              <div className="mb-4">
+                <span className="inline-flex items-center rounded-full bg-black text-white text-xs font-semibold px-3 py-1.5 tracking-wide">
                   {product.badge}
                 </span>
-              )}
-            </div>
+              </div>
+            )}
 
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">
               {product.name}
             </h1>
 
-            <div className="mb-8 pb-8 border-b border-gray-200">
-              <p className="text-3xl font-bold text-gray-900">
-                {formatPrice(product.price)}
-                <span className="text-lg text-gray-500 font-normal">/dia</span>
+            {(product.subcategory || product.category) && (
+              <p className="mt-3 text-sm sm:text-base text-gray-500">
+                {product.subcategory || formatCategoryLabel(product.category)}
               </p>
+            )}
+
+            <div className="mt-5 text-2xl sm:text-3xl font-bold text-gray-900">
+              {formatPrice(product.price)}
             </div>
 
-            {includesArray.length > 0 && (
-              <div className="mb-8 pb-8 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            {/* Descrição com Ver mais / Ver menos */}
+            {safeDescription && (
+              <section className="mt-8">
+                <h2 className="text-base font-semibold text-gray-900 mb-3">
+                  Descrição
+                </h2>
+
+                <div className="relative">
+                  <p
+                    className="text-gray-700 text-[15px] sm:text-base leading-7 transition-all duration-300"
+                    style={
+                      isDescriptionExpanded
+                        ? undefined
+                        : {
+                            display: "-webkit-box",
+                            WebkitLineClamp: 4,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }
+                    }
+                  >
+                    {safeDescription}
+                  </p>
+
+                  {!isDescriptionExpanded && shouldShowDescriptionToggle && (
+                    <div className="pointer-events-none absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-white to-transparent" />
+                  )}
+                </div>
+
+                {shouldShowDescriptionToggle && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setIsDescriptionExpanded((prevState) => !prevState)
+                    }
+                    className="mt-3 inline-flex items-center text-sm font-semibold text-black hover:opacity-70 transition-opacity"
+                  >
+                    {isDescriptionExpanded ? "Ver menos" : "Ver mais"}
+                  </button>
+                )}
+              </section>
+            )}
+
+            {includesList.length > 0 && (
+              <section className="mt-8">
+                <h2 className="text-base font-semibold text-gray-900 mb-3">
                   O que acompanha
                 </h2>
+
                 <ul className="space-y-2">
-                  {includesArray.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-gray-700">
-                      <span className="text-green-600 font-semibold">✓</span>
+                  {includesList.map((item, index) => (
+                    <li
+                      key={`${item}-${index}`}
+                      className="flex items-start gap-3 text-gray-700 text-[15px] sm:text-base leading-6"
+                    >
+                      <span className="mt-2 block w-1.5 h-1.5 rounded-full bg-black shrink-0" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
-              </div>
+              </section>
             )}
 
-            {product.description && (
-              <div className="mb-8">
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">
-                  Descrição
-                </h2>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {product.description}
-                </p>
-              </div>
-            )}
-
-            <div className="flex gap-4 mt-auto">
+            <div className="mt-10">
               <a
-                href={whatsappUrl}
+                href={buildWhatsAppLink(product)}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-4 text-center rounded-lg transition"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-black text-white px-6 py-4 font-semibold hover:opacity-90 transition-opacity"
               >
-                Solicitar Orçamento
+                <MessageCircle className="w-5 h-5" />
+                Solicitar orçamento
               </a>
-
-              <button
-                onClick={handleAddToCart}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold py-4 rounded-lg transition"
-              >
-                Adicionar ao carrinho
-              </button>
             </div>
           </div>
         </div>
-
-        {/* INFORMAÇÕES ADICIONAIS */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Categoria</h3>
-            <p className="text-gray-700">{product.category}</p>
-          </div>
-
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Preço por dia</h3>
-            <p className="text-2xl font-bold text-gray-900">
-              {formatPrice(product.price)}
-            </p>
-          </div>
-
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Disponibilidade</h3>
-            <p className="text-gray-700">Sob consulta</p>
-          </div>
-        </div>
-
-        {/* RELACIONADOS */}
-        {relatedProducts.length > 0 && (
-          <div className="mt-16 pt-16 border-t border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">
-              Produtos Relacionados
-            </h2>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/equipamentos/${p.slug || ""}`}
-                  className="group cursor-pointer"
-                >
-                  <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden">
-                    <div className="relative overflow-hidden aspect-square bg-gray-100">
-                      {p.image_url ? (
-                        <img
-                          src={p.image_url}
-                          alt={p.name}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                          Sem imagem
-                        </div>
-                      )}
-
-                      {p.badge && (
-                        <div className="absolute top-2 left-2">
-                          <span className="inline-block bg-black text-white text-[10px] font-semibold px-2 py-1 rounded">
-                            {p.badge}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="p-4">
-                      <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">
-                        {p.category}
-                      </p>
-                      <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2">
-                        {p.name}
-                      </h3>
-                      <p className="text-sm font-bold text-gray-900">
-                        {formatPrice(p.price)}
-                        <span className="text-xs text-gray-500 font-normal">/dia</span>
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
