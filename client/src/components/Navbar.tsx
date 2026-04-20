@@ -1,14 +1,23 @@
 /*
  * LOC 7 — Navbar Component
- * Cinema Noir Industrial style
- * Dark header, Oswald font, red accent on active/hover
- * CATEGORIAS DINÂMICAS DO SUPABASE
+ * Final premium refinement
+ * Preto dominante, branco limpo, identidade Loc7
  */
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Camera, Aperture, Zap, Mic, Monitor, Move, Radio, Package, Clapperboard, ShoppingCart } from "lucide-react";
-import { useCart } from "@/contexts/CartContext";
+import {
+  Menu,
+  X,
+  Camera,
+  Aperture,
+  Zap,
+  Mic,
+  Monitor,
+  Move,
+  Radio,
+  Clapperboard,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 const submenuCategories = [
@@ -22,18 +31,6 @@ const submenuCategories = [
   { name: "Maquinária", icon: Clapperboard, href: "/catalogo/maquinaria" },
 ];
 
-const slugToCategoryName: Record<string, string> = {
-  'cameras': 'Câmeras',
-  'lentes': 'Lentes',
-  'iluminacao': 'Iluminação',
-  'audio': 'Áudio',
-  'monitores': 'Monitores',
-  'movimento': 'Movimento',
-  'transmissores': 'Transmissores',
-  'maquinaria': 'Maquinária',
-};
-
-// Fallback categories (usado se Supabase falhar)
 const fallbackCategories = [
   { name: "ÁUDIO", href: "/catalogo/audio" },
   { name: "CÂMERAS", href: "/catalogo/cameras" },
@@ -64,40 +61,44 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const { items } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [location] = useLocation();
-  const [dropdownCategories, setDropdownCategories] = useState<Array<{ name: string; href: string }>>(fallbackCategories);
+  const [dropdownCategories, setDropdownCategories] = useState<
+    Array<{ name: string; href: string }>
+  >(fallbackCategories);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
-  // Carregar categorias do Supabase
   useEffect(() => {
     const loadCategories = async () => {
       try {
         setLoadingCategories(true);
+
         const { data, error } = await supabase
-          .from('categories')
-          .select('name')
-          .order('name');
+          .from("categories")
+          .select("name")
+          .order("name");
 
         if (error) {
-          console.warn('[DEBUG] Erro ao carregar categorias:', error);
+          console.warn("[DEBUG] Erro ao carregar categorias:", error);
           setDropdownCategories(fallbackCategories);
         } else if (data && data.length > 0) {
-          console.log('[DEBUG] Categorias carregadas do Supabase:', data);
           const categories = data.map((cat: any) => ({
-            name: cat.name.toUpperCase(),
-            href: `/catalogo/${cat.name.toLowerCase().replace(/\s+/g, '-')}`
+            name: String(cat.name).toUpperCase(),
+            href: `/catalogo/${String(cat.name)
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .replace(/\s+/g, "-")}`,
           }));
+
           setDropdownCategories(categories);
         } else {
-          console.warn('[DEBUG] Nenhuma categoria encontrada, usando fallback');
           setDropdownCategories(fallbackCategories);
         }
       } catch (err) {
-        console.error('[DEBUG] Erro ao carregar categorias:', err);
+        console.error("[DEBUG] Erro ao carregar categorias:", err);
         setDropdownCategories(fallbackCategories);
       } finally {
         setLoadingCategories(false);
@@ -106,14 +107,12 @@ export default function Navbar() {
 
     loadCategories();
 
-    // Inscrever em mudanças em tempo real
     const subscription = supabase
-      .channel('categories-changes')
+      .channel("categories-changes")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'categories' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "categories" },
         () => {
-          console.log('[DEBUG] Categorias atualizadas, recarregando...');
           loadCategories();
         }
       )
@@ -135,104 +134,118 @@ export default function Navbar() {
     setIsCatalogOpen(false);
   }, [location]);
 
-  return (
-    <>
-      {/* Main navbar */}
-      <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-[oklch(0.06_0_0)] shadow-2xl shadow-black/50' : 'bg-[oklch(0.08_0_0)]'} border-b border-[oklch(0.18_0_0)]`}>
-        <div className="container">
-          <div className="flex items-stretch justify-between">
-            {/* Logo - Loc 7 Brand */}
-            <Link href="/" className="flex items-center gap-2 group pr-8">
-              <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/loc7-logo-final_576bd0cc.jpg"
-                alt="Loc 7 Equipamentos"
-                className="h-12 w-auto"
-              />
-            </Link>
+  const isActiveMainLink = (href: string) => {
+    if (href === "/") return location === "/";
+    return location === href || location.startsWith(`${href}/`);
+  };
 
-            {/* Right side: nav */}
-            <div className="flex flex-col flex-1 relative">
-              {/* Main nav */}
-              <div className="flex items-center justify-center h-16 flex-1">
-                {/* Desktop nav - Centralizado */}
-                <div className="hidden md:flex items-center gap-24 justify-center flex-1 relative overflow-visible">
-                  {navLinks.map((link) => (
-                    <div 
-                      key={link.name} 
-                      className="relative group whitespace-nowrap overflow-visible"
-                      onMouseEnter={() => link.hasDropdown && setIsCatalogOpen(true)}
-                      onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
+  return (
+    <nav
+      className={`sticky top-0 z-50 border-b border-white/10 transition-all duration-300 ${
+        isScrolled ? "bg-black shadow-[0_10px_30px_rgba(0,0,0,0.35)]" : "bg-black"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Linha principal */}
+        <div className="grid grid-cols-[auto_1fr_auto] items-center min-h-[84px] md:min-h-[96px] gap-4">
+          {/* Logo */}
+          <Link href="/" className="flex items-center group">
+            <img
+              src="/logo.png"
+              alt="Loc7 Equipamentos"
+              className="h-12 sm:h-14 md:h-16 lg:h-[72px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+            />
+          </Link>
+
+          {/* Menu principal desktop */}
+          <div className="hidden md:flex items-center justify-center">
+            <div className="flex items-center gap-10 lg:gap-14">
+              {navLinks.map((link) => (
+                <div
+                  key={link.name}
+                  className="relative"
+                  onMouseEnter={() => link.hasDropdown && setIsCatalogOpen(true)}
+                  onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
+                >
+                  {link.hasDropdown ? (
+                    <button
+                      type="button"
+                      className={`text-[15px] font-medium tracking-[0.02em] transition-colors ${
+                        location.startsWith("/catalogo")
+                          ? "text-white"
+                          : "text-white/78 hover:text-white"
+                      }`}
                     >
-                      {link.hasDropdown ? (
-                        <button
-                          className={`loc7-nav-link flex items-center gap-1 ${location.startsWith('/catalogo') ? 'active' : ''}`}
-                        >
-                          {link.name}
-                        </button>
-                      ) : (
-                        <Link href={link.href} className={`loc7-nav-link ${location === link.href ? 'active' : ''}`}>
-                          {link.name}
-                        </Link>
-                      )}
-                      
-                      {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
-                      {link.hasDropdown && isCatalogOpen && (
-                        <div className="loc7-dropdown" style={{pointerEvents: 'auto'}}>
-                          {loadingCategories ? (
-                            <div className="px-4 py-3 text-white text-sm text-center">Carregando...</div>
-                          ) : (
-                            dropdownCategories.map((cat) => (
-                              <Link
-                                key={cat.name}
-                                href={cat.href}
-                                className="loc7-dropdown-item"
-                              >
-                                {cat.name}
-                              </Link>
-                            ))
-                          )}
+                      {link.name}
+                    </button>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className={`text-[15px] font-medium tracking-[0.02em] transition-colors ${
+                        isActiveMainLink(link.href)
+                          ? "text-white"
+                          : "text-white/78 hover:text-white"
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  )}
+
+                  {link.hasDropdown && isCatalogOpen && (
+                    <div className="absolute left-1/2 top-full z-50 mt-4 -translate-x-1/2 min-w-[280px] rounded-xl border border-white/10 bg-[#0b0b0b] p-2 shadow-2xl">
+                      {loadingCategories ? (
+                        <div className="px-4 py-3 text-sm text-white/70 text-center">
+                          Carregando...
                         </div>
+                      ) : (
+                        dropdownCategories.map((cat) => (
+                          <Link
+                            key={cat.name}
+                            href={cat.href}
+                            className="block rounded-lg px-4 py-2.5 text-[13px] font-medium tracking-wide text-white/82 transition hover:bg-white/5 hover:text-white"
+                          >
+                            {cat.name}
+                          </Link>
+                        ))
                       )}
                     </div>
-                  ))}
-                </div>
-
-                {/* Mobile menu button */}
-                <button
-                  onClick={() => setIsMobileOpen(!isMobileOpen)}
-                  className="md:hidden p-2"
-                >
-                  {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
-              </div>
-
-              {/* Cart icon */}
-              <div className="flex items-center justify-end pr-4 h-12">
-                <Link href="/carrinho" className="relative">
-                  <ShoppingCart size={24} className="text-white hover:text-red-500 transition" />
-                  {items.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {items.length}
-                    </span>
                   )}
-                </Link>
-              </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Submenu horizontal com ícones - Centralizado */}
-          <div className="hidden md:block border-t border-[oklch(0.2_0_0)] bg-[oklch(0.08_0_0)] h-16">
-            <div className="flex items-center justify-center gap-1 py-2">
+          {/* Mobile button */}
+          <div className="flex justify-end md:hidden">
+            <button
+              onClick={() => setIsMobileOpen(!isMobileOpen)}
+              className="inline-flex items-center justify-center w-10 h-10 text-white/90 hover:text-white transition"
+              aria-label={isMobileOpen ? "Fechar menu" : "Abrir menu"}
+              type="button"
+            >
+              {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Submenu desktop centralizado */}
+        <div className="hidden md:block border-t border-white/8">
+          <div className="min-h-[56px] flex items-center justify-center">
+            <div className="flex items-center justify-center gap-4 lg:gap-6 flex-wrap py-3">
               {submenuCategories.map((cat) => {
                 const Icon = cat.icon;
+                const active = location === cat.href;
+
                 return (
                   <Link
                     key={cat.name}
                     href={cat.href}
-                    className="flex items-center gap-2 px-4 py-2 text-white hover:text-white hover:bg-[oklch(0.12_0_0)] transition-all whitespace-nowrap text-sm rounded hover:scale-105"
+                    className={`inline-flex items-center gap-2 transition-colors whitespace-nowrap ${
+                      active ? "text-white" : "text-white/72 hover:text-white"
+                    }`}
                   >
-                    <Icon className="w-7 h-7 transition-transform duration-150 hover:scale-125" />
-                    <span style={{ fontFamily: 'Oswald, sans-serif' }} className="uppercase tracking-wide font-semibold">
+                    <Icon className="w-4 h-4" />
+                    <span className="text-[11px] font-medium tracking-[0.12em] uppercase">
                       {cat.name}
                     </span>
                   </Link>
@@ -240,47 +253,75 @@ export default function Navbar() {
               })}
             </div>
           </div>
+        </div>
 
-          {/* Mobile menu */}
-          {isMobileOpen && (
-            <div className="md:hidden bg-[oklch(0.06_0_0)] border-t border-[oklch(0.18_0_0)]">
-              <div className="flex flex-col">
-                {navLinks.map((link) => (
-                  <div key={link.name}>
-                    {link.hasDropdown ? (
-                      <>
-                        <button
-                          onClick={() => setIsCatalogOpen(!isCatalogOpen)}
-                          className="w-full text-left px-4 py-3 text-white hover:bg-[oklch(0.12_0_0)] transition"
-                        >
-                          {link.name}
-                        </button>
-                        {isCatalogOpen && (
-                          <div className="bg-[oklch(0.04_0_0)] pl-4">
-                            {dropdownCategories.map((cat) => (
+        {/* Menu mobile */}
+        {isMobileOpen && (
+          <div className="md:hidden border-t border-white/10 bg-black">
+            <div className="py-2">
+              {navLinks.map((link) => (
+                <div key={link.name}>
+                  {link.hasDropdown ? (
+                    <>
+                      <button
+                        onClick={() => setIsCatalogOpen(!isCatalogOpen)}
+                        className="w-full text-left px-4 py-3 text-sm font-medium text-white hover:bg-white/5 transition"
+                        type="button"
+                      >
+                        {link.name}
+                      </button>
+
+                      {isCatalogOpen && (
+                        <div className="bg-[#070707] border-t border-white/5 border-b border-white/5">
+                          {loadingCategories ? (
+                            <div className="px-6 py-3 text-xs text-white/70">
+                              Carregando...
+                            </div>
+                          ) : (
+                            dropdownCategories.map((cat) => (
                               <Link
                                 key={cat.name}
                                 href={cat.href}
-                                className="block px-4 py-2 text-white text-sm hover:bg-[oklch(0.08_0_0)] transition"
+                                className="block px-6 py-2.5 text-xs tracking-wide text-white/80 hover:text-white hover:bg-white/5 transition"
                               >
                                 {cat.name}
                               </Link>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <Link href={link.href} className="block px-4 py-3 text-white hover:bg-[oklch(0.12_0_0)] transition">
-                        {link.name}
-                      </Link>
-                    )}
-                  </div>
-                ))}
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="block px-4 py-3 text-sm font-medium text-white hover:bg-white/5 transition"
+                    >
+                      {link.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+
+              <div className="border-t border-white/8 mt-2 pt-2 pb-2">
+                {submenuCategories.map((cat) => {
+                  const Icon = cat.icon;
+
+                  return (
+                    <Link
+                      key={cat.name}
+                      href={cat.href}
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-white/82 hover:text-white hover:bg-white/5 transition"
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{cat.name}</span>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
-          )}
-        </div>
-      </nav>
-    </>
+          </div>
+        )}
+      </div>
+    </nav>
   );
 }
