@@ -1,7 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { supabase } from "../lib/supabase";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Product {
   id: string;
@@ -16,18 +15,6 @@ interface Product {
   catalog_order?: number;
 }
 
-// Categorias hardcoded
-const CATEGORIES = [
-  { name: "Câmeras", slug: "cameras" },
-  { name: "Lentes", slug: "lentes" },
-  { name: "Iluminação", slug: "iluminacao" },
-  { name: "Áudio", slug: "audio" },
-  { name: "Monitores", slug: "monitores" },
-  { name: "Movimento", slug: "movimento" },
-  { name: "Transmissores", slug: "transmissores" },
-  { name: "Maquinária", slug: "maquinaria" },
-];
-
 export default function Catalogo() {
   const { category } = useParams();
   const [, navigate] = useLocation();
@@ -35,9 +22,6 @@ export default function Catalogo() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
 
   const normalize = (str?: string) =>
     (str || "")
@@ -79,38 +63,6 @@ export default function Catalogo() {
     setLoading(false);
   };
 
-  // Verificar scroll position
-  const handleScroll = () => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    }
-  };
-
-  useEffect(() => {
-    handleScroll();
-    const container = scrollContainerRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-      window.addEventListener("resize", handleScroll);
-      return () => {
-        container.removeEventListener("scroll", handleScroll);
-        window.removeEventListener("resize", handleScroll);
-      };
-    }
-  }, []);
-
-  const scroll = (direction: "left" | "right") => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 300;
-      scrollContainerRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
-
   const formatPrice = (price?: number) => {
     if (!price) return "";
     return `R$ ${price.toLocaleString("pt-BR", {
@@ -134,79 +86,6 @@ export default function Catalogo() {
 
   return (
     <div className="pt-24 bg-gray-50 min-h-screen">
-      {/* PREMIUM CATEGORY BAR */}
-      <div className="bg-white border-b border-gray-200 sticky top-24 z-40">
-        <div className="max-w-7xl mx-auto px-4 lg:px-6">
-          <div className="relative flex items-center">
-            {/* Left fade gradient */}
-            {canScrollLeft && (
-              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-            )}
-
-            {/* Left scroll button */}
-            {canScrollLeft && (
-              <button
-                onClick={() => scroll("left")}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-2 hover:bg-gray-100 rounded-full transition"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft className="w-5 h-5 text-gray-700" />
-              </button>
-            )}
-
-            {/* Scroll container */}
-            <div
-              ref={scrollContainerRef}
-              className="flex gap-2 overflow-x-auto scrollbar-hide py-4 px-8"
-              style={{ scrollBehavior: "smooth" }}
-            >
-              {/* "Todos" button */}
-              <button
-                onClick={() => navigate("/catalogo")}
-                className={`flex-shrink-0 px-6 py-2 rounded-full font-semibold whitespace-nowrap transition-all ${
-                  !category
-                    ? "bg-gray-900 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                Todos
-              </button>
-
-              {/* Category buttons */}
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat.slug}
-                  onClick={() => navigate(`/catalogo/${cat.slug}`)}
-                  className={`flex-shrink-0 px-6 py-2 rounded-full font-semibold whitespace-nowrap transition-all ${
-                    normalize(category) === cat.slug
-                      ? "bg-gray-900 text-white shadow-md"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              ))}
-            </div>
-
-            {/* Right fade gradient */}
-            {canScrollRight && (
-              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-            )}
-
-            {/* Right scroll button */}
-            {canScrollRight && (
-              <button
-                onClick={() => scroll("right")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-2 hover:bg-gray-100 rounded-full transition"
-                aria-label="Scroll right"
-              >
-                <ChevronRight className="w-5 h-5 text-gray-700" />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-8">
         {/* GRID */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
