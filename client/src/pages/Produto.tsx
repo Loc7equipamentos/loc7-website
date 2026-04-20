@@ -284,22 +284,6 @@ export default function Produto() {
           </div>
         </div>
 
-        {/* Seção de informações adicionais */}
-        <div className="mt-16 pt-12 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-gray-100">
-          <div>
-            <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Categoria</h3>
-            <p className="text-base text-gray-900 font-medium">{product.category}</p>
-          </div>
-          <div>
-            <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Preço por dia</h3>
-            <p className="text-2xl font-semibold text-gray-900">{formatPrice(product.price)}</p>
-          </div>
-          <div>
-            <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Disponibilidade</h3>
-            <p className="text-base text-gray-900 font-medium">Sob consulta</p>
-          </div>
-        </div>
-
         {/* Produtos relacionados */}
         {relatedProducts.length > 0 && (
           <div className="mt-16 pt-12 border-t border-gray-100">
