@@ -143,7 +143,7 @@ export default function Navbar() {
               <img
                 src="/logo-loc7-navbar.png"
                 alt="Loc 7 Equipamentos"
-                className="h-14 w-auto transition-transform duration-300 group-hover:scale-105"
+                className="h-[6.5rem] w-auto transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
 
@@ -161,12 +161,9 @@ export default function Navbar() {
                       onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
                     >
                       {link.hasDropdown ? (
-                        <button
-                          className={`loc7-nav-link flex items-center gap-1 text-base font-semibold tracking-wide text-white hover:text-gray-300 transition ${location.startsWith('/catalogo') ? 'text-gray-300' : ''}`}
-                        >
+                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-gray-300 transition ${location.startsWith('/catalogo') ? 'text-gray-300' : ''}`}>
                           {link.name}
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
-                        </button>
+                        </Link>
                       ) : (
                         <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-gray-300 transition ${location === link.href ? 'text-gray-300' : ''}`}>
                           {link.name}
