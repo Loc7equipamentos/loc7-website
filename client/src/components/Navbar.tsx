@@ -180,7 +180,7 @@ export default function Navbar() {
                               <Link
                                 key={cat.name}
                                 href={cat.href}
-                                className="loc7-dropdown-item hover:bg-gray-900 hover:text-white transition-all duration-150 hover:pl-6 hover:tracking-wide"
+                                className="loc7-dropdown-item hover:text-white hover:drop-shadow-[0_0_4px_rgba(255,255,255,0.2)] transition-all duration-150 ease-out hover:pl-5"
                               >
                                 {cat.name}
                               </Link>
@@ -212,7 +212,7 @@ export default function Navbar() {
                   <Link
                     key={cat.name}
                     href={cat.href}
-                    className="flex items-center gap-2 px-3 py-2 text-white hover:text-white hover:bg-gray-900/80 hover:scale-105 hover:shadow-[0_0_10px_rgba(255,255,255,0.15)] transition-all duration-200 whitespace-nowrap text-xs rounded group"
+                    className="flex items-center gap-2 px-3 py-2 text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.25)] transition-all duration-200 ease-out whitespace-nowrap text-xs rounded group"
                   >
                     <Icon className="w-5 h-5 transition-transform duration-150 group-hover:scale-110" />
                     <span className="font-medium uppercase tracking-wider">
