@@ -135,15 +135,15 @@ export default function Navbar() {
   return (
     <>
       {/* Main navbar */}
-      <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-black shadow-lg shadow-black/40' : 'bg-black'} border-b border-gray-800`}>
+      <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-black shadow-lg shadow-black/40' : 'bg-black'}`}>
         <div className="container">
           <div className="flex items-stretch justify-between">
             {/* Logo - Loc 7 Brand - Maior e com mais presença */}
             <Link href="/" className="flex items-center py-3 group">
               <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/loc7-logo-final_576bd0cc.jpg"
+                src="/logo-loc7-navbar.png"
                 alt="Loc 7 Equipamentos"
-                className="h-16 w-auto transition-transform duration-300 group-hover:scale-105"
+                className="h-14 w-auto transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
 
@@ -162,12 +162,13 @@ export default function Navbar() {
                     >
                       {link.hasDropdown ? (
                         <button
-                          className={`loc7-nav-link flex items-center gap-1 text-sm font-medium text-white hover:text-gray-300 transition ${location.startsWith('/catalogo') ? 'text-gray-300' : ''}`}
+                          className={`loc7-nav-link flex items-center gap-1 text-base font-semibold tracking-wide text-white hover:text-gray-300 transition ${location.startsWith('/catalogo') ? 'text-gray-300' : ''}`}
                         >
                           {link.name}
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
                         </button>
                       ) : (
-                        <Link href={link.href} className={`text-sm font-medium text-white hover:text-gray-300 transition ${location === link.href ? 'text-gray-300' : ''}`}>
+                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-gray-300 transition ${location === link.href ? 'text-gray-300' : ''}`}>
                           {link.name}
                         </Link>
                       )}
@@ -206,7 +207,7 @@ export default function Navbar() {
           </div>
 
           {/* Submenu horizontal com ícones - Centralizado e refinado */}
-          <div className="hidden md:block border-t border-gray-800 bg-black h-16">
+          <div className="hidden md:block bg-black h-16">
             <div className="flex items-center justify-center gap-2 py-2">
               {submenuCategories.map((cat) => {
                 const Icon = cat.icon;
