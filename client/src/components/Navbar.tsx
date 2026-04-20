@@ -143,7 +143,7 @@ export default function Navbar() {
               <img
                 src="/logo-loc7-navbar.png"
                 alt="Loc 7 Equipamentos"
-                className="h-[6.5rem] w-auto transition-transform duration-300 group-hover:scale-105"
+                className="h-[7.5rem] w-auto transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
 
@@ -161,18 +161,18 @@ export default function Navbar() {
                       onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
                     >
                       {link.hasDropdown ? (
-                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.25)] transition-all duration-200 ease-out ${location.startsWith('/catalogo') ? 'text-gray-300' : ''}`}>
+                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_4px_rgba(255,255,255,0.2)] transition-all duration-200 ease-out ${location.startsWith('/catalogo') ? 'text-gray-300' : ''}`}>
                           {link.name}
                         </Link>
                       ) : (
-                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.25)] transition-all duration-200 ease-out ${location === link.href ? 'text-gray-300' : ''}`}>
+                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_4px_rgba(255,255,255,0.2)] transition-all duration-200 ease-out ${location === link.href ? 'text-gray-300' : ''}`}>
                           {link.name}
                         </Link>
                       )}
                       
                       {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
                       {link.hasDropdown && isCatalogOpen && (
-                        <div className="loc7-dropdown z-[9999] bg-black border border-gray-800 shadow-2xl backdrop-blur-none" style={{pointerEvents: 'auto'}}>
+                        <div className="loc7-dropdown z-[9999] bg-black border border-white/10 shadow-2xl backdrop-blur-none" style={{pointerEvents: 'auto'}}>
                           {loadingCategories ? (
                             <div className="px-4 py-3 text-white text-sm text-center">Carregando...</div>
                           ) : (
