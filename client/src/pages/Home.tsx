@@ -5,7 +5,8 @@ import { supabase, type Product } from "@/lib/supabase";
 
 const HERO_BG =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/DSC00394_darkened_19aead4d.webp";
-
+const HERO_VIDEO = "/hero-primo.mp4";
+const HERO_POSTER = "/hero-primo-poster.png";
 const CAMERAS_IMG =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/cameras-category-CAmby3gUvFFiGLofYZBGb5.webp";
 const LENSES_IMG =
@@ -171,7 +172,31 @@ export default function Home() {
                   Loc7 Equipamentos
                 </span>
               </div>
+<div className="mt-10 lg:mt-0">
+  <button
+    type="button"
+    onClick={() => setShowVideo(true)}
+    className="group relative block w-full overflow-hidden rounded-[28px] border border-white/10 bg-black/30 text-left shadow-2xl"
+  >
+    <img
+      src={HERO_POSTER}
+      alt="Operação real Loc7"
+      className="h-[420px] w-full object-cover object-center sm:h-[520px] lg:h-[620px]"
+    />
 
+    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
+
+    <div className="absolute bottom-0 left-0 right-0 p-5">
+      <p className="text-sm text-white/80">
+        Produção real • Grupo Primo
+      </p>
+    </div>
+
+    <div className="absolute inset-0 flex items-center justify-center">
+      <Play className="w-10 h-10 text-white opacity-80 group-hover:scale-110 transition" />
+    </div>
+  </button>
+</div>
               <h1 className="max-w-4xl text-balance font-display text-[2rem] font-semibold leading-[0.98] tracking-[-0.04em] text-white sm:text-[2.6rem] md:text-[3.8rem] lg:text-[4.6rem]">
                 Equipamentos audiovisuais para produção profissional.
               </h1>
