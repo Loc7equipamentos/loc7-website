@@ -161,18 +161,18 @@ export default function Navbar() {
                       onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
                     >
                       {link.hasDropdown ? (
-                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-gray-300 transition ${location.startsWith('/catalogo') ? 'text-gray-300' : ''}`}>
+                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.25)] transition-all duration-200 ease-out ${location.startsWith('/catalogo') ? 'text-gray-300' : ''}`}>
                           {link.name}
                         </Link>
                       ) : (
-                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-gray-300 transition ${location === link.href ? 'text-gray-300' : ''}`}>
+                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.25)] transition-all duration-200 ease-out ${location === link.href ? 'text-gray-300' : ''}`}>
                           {link.name}
                         </Link>
                       )}
                       
                       {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
                       {link.hasDropdown && isCatalogOpen && (
-                        <div className="loc7-dropdown z-[9999]" style={{pointerEvents: 'auto'}}>
+                        <div className="loc7-dropdown z-[9999] bg-black border border-gray-800 shadow-2xl backdrop-blur-none" style={{pointerEvents: 'auto'}}>
                           {loadingCategories ? (
                             <div className="px-4 py-3 text-white text-sm text-center">Carregando...</div>
                           ) : (
@@ -180,7 +180,7 @@ export default function Navbar() {
                               <Link
                                 key={cat.name}
                                 href={cat.href}
-                                className="loc7-dropdown-item"
+                                className="loc7-dropdown-item hover:bg-gray-900 hover:text-white transition-all duration-150 hover:pl-6 hover:tracking-wide"
                               >
                                 {cat.name}
                               </Link>
@@ -212,9 +212,9 @@ export default function Navbar() {
                   <Link
                     key={cat.name}
                     href={cat.href}
-                    className="flex items-center gap-2 px-3 py-2 text-white hover:text-gray-300 hover:bg-gray-900 transition-all whitespace-nowrap text-xs rounded"
+                    className="flex items-center gap-2 px-3 py-2 text-white hover:text-white hover:bg-gray-900/80 hover:scale-105 hover:shadow-[0_0_10px_rgba(255,255,255,0.15)] transition-all duration-200 whitespace-nowrap text-xs rounded group"
                   >
-                    <Icon className="w-5 h-5 transition-transform duration-150" />
+                    <Icon className="w-5 h-5 transition-transform duration-150 group-hover:scale-110" />
                     <span className="font-medium uppercase tracking-wider">
                       {cat.name}
                     </span>
