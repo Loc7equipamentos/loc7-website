@@ -1,326 +1,266 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useLocation, useRoute } from "wouter";
-import {
-  Camera,
-  Aperture,
-  Zap,
-  Mic,
-  Monitor,
-  Move,
-  Radio,
-  Clapperboard,
-} from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { useParams, useLocation } from "wouter";
 import { supabase } from "../lib/supabase";
-import { categoryConfig, getCategoryConfigBySlug } from "../config/categories";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-type Product = {
+interface Product {
   id: string;
   name: string;
-  slug: string;
   category: string;
-  subcategory?: string | null;
-  price?: number | null;
-  image_url?: string | null;
-  images?: string[] | null;
-  badge?: string | null;
-  catalog_order?: number | null;
-};
-
-type CategoryTab = {
-  name: string;
+  subcategory?: string;
+  price?: number;
+  image_url?: string;
+  images?: string[];
+  badge?: string;
   slug: string;
-  icon: React.ComponentType<{ className?: string }>;
-};
+  catalog_order?: number;
+}
 
-const categoryTabs: CategoryTab[] = [
-  { name: "Câmeras", slug: "cameras", icon: Camera },
-  { name: "Lentes", slug: "lentes", icon: Aperture },
-  { name: "Iluminação", slug: "iluminacao", icon: Zap },
-  { name: "Áudio", slug: "audio", icon: Mic },
-  { name: "Monitores", slug: "monitores", icon: Monitor },
-  { name: "Movimento", slug: "movimento", icon: Move },
-  { name: "Transmissores", slug: "transmissores", icon: Radio },
-  { name: "Maquinária", slug: "maquinaria", icon: Clapperboard },
+// Categorias hardcoded
+const CATEGORIES = [
+  { name: "Câmeras", slug: "cameras" },
+  { name: "Lentes", slug: "lentes" },
+  { name: "Iluminação", slug: "iluminacao" },
+  { name: "Áudio", slug: "audio" },
+  { name: "Monitores", slug: "monitores" },
+  { name: "Movimento", slug: "movimento" },
+  { name: "Transmissores", slug: "transmissores" },
+  { name: "Maquinária", slug: "maquinaria" },
 ];
 
-function normalizeText(value?: string | null) {
-  return (value || "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
-}
-
-function formatPrice(price?: number | null) {
-  if (price === null || price === undefined || Number.isNaN(price)) {
-    return "Sob consulta";
-  }
-
-  return `R$ ${price.toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}/dia`;
-}
-
-function getPrimaryImage(product: Product) {
-  const gallery = Array.isArray(product.images) ? product.images : [];
-  return gallery[0] || product.image_url || "/placeholder-image.jpg";
-}
-
 export default function Catalogo() {
-  const [location, setLocation] = useLocation();
-  const [, params] = useRoute("/catalogo/:category");
-  const categorySlug = params?.category || "";
+  const { category } = useParams();
+  const [, navigate] = useLocation();
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [selectedSubcategory, setSelectedSubcategory] = useState("todos");
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const normalize = (str?: string) =>
+    (str || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "-");
 
   useEffect(() => {
-    async function fetchProducts() {
-      setLoading(true);
-      setError("");
+    fetchProducts();
+  }, [category]);
 
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .order("catalog_order", { ascending: true, nullsFirst: false })
-        .order("created_at", { ascending: false });
+  const fetchProducts = async () => {
+    setLoading(true);
 
-      if (error) {
-        setError("Não foi possível carregar o catálogo.");
-        setProducts([]);
-        setLoading(false);
-        return;
-      }
+    const { data, error } = await supabase.from("products").select("*");
 
-      setProducts((data || []) as Product[]);
+    if (error) {
+      console.error(error);
       setLoading(false);
+      return;
     }
 
-    fetchProducts();
+    const currentCategory = normalize(category);
+
+    const filtered = category
+      ? data.filter((p: Product) => normalize(p.category) === currentCategory)
+      : data;
+
+    const sorted = [...filtered].sort((a: Product, b: Product) => {
+      const orderA = a.catalog_order ?? 9999;
+      const orderB = b.catalog_order ?? 9999;
+      return orderA - orderB;
+    });
+
+    setProducts(sorted);
+    setFilteredProducts(sorted);
+
+    setLoading(false);
+  };
+
+  // Verificar scroll position
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  useEffect(() => {
+    handleScroll();
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+      window.addEventListener("resize", handleScroll);
+      return () => {
+        container.removeEventListener("scroll", handleScroll);
+        window.removeEventListener("resize", handleScroll);
+      };
+    }
   }, []);
 
-  useEffect(() => {
-    setSelectedSubcategory("todos");
-  }, [categorySlug]);
-
-  const activeCategoryConfig = useMemo(() => {
-    if (!categorySlug) return null;
-    return getCategoryConfigBySlug(categorySlug);
-  }, [categorySlug]);
-
-  const filteredProducts = useMemo(() => {
-    const ordered = [...products].sort((a, b) => {
-      const aOrder = a.catalog_order ?? Number.MAX_SAFE_INTEGER;
-      const bOrder = b.catalog_order ?? Number.MAX_SAFE_INTEGER;
-
-      if (aOrder !== bOrder) return aOrder - bOrder;
-      return a.name.localeCompare(b.name, "pt-BR");
-    });
-
-    if (!categorySlug) {
-      return ordered;
+  const scroll = (direction: "left" | "right") => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 300;
+      scrollContainerRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
     }
+  };
 
-    const activeCategorySlug = normalizeText(categorySlug);
-    const categoryProducts = ordered.filter((product) => {
-      const productCategory = normalizeText(product.category);
-      return productCategory === activeCategorySlug;
-    });
+  const formatPrice = (price?: number) => {
+    if (!price) return "";
+    return `R$ ${price.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
 
-    if (
-      !activeCategoryConfig ||
-      !activeCategoryConfig.subcategories ||
-      activeCategoryConfig.subcategories.length === 0 ||
-      selectedSubcategory === "todos"
-    ) {
-      return categoryProducts;
-    }
+  const getImage = (p: Product) => {
+    if (p.images && p.images.length > 0) return p.images[0];
+    return p.image_url;
+  };
 
-    return categoryProducts.filter((product) => {
-      const productSub = normalizeText(product.subcategory);
-      return productSub === normalizeText(selectedSubcategory);
-    });
-  }, [products, categorySlug, activeCategoryConfig, selectedSubcategory]);
-
-  const title = activeCategoryConfig?.name || "Catálogo";
+  if (loading) {
+    return (
+      <div className="pt-32 text-center text-white">
+        Carregando catálogo...
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-14">
-      {/* Barra horizontal premium */}
-      <section className="sticky top-[72px] z-30 bg-black border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="overflow-x-auto scrollbar-hide">
-            <div className="flex items-center gap-2 min-w-max py-3">
+    <div className="pt-24 bg-gray-50 min-h-screen">
+      {/* PREMIUM CATEGORY BAR */}
+      <div className="bg-white border-b border-gray-200 sticky top-24 z-40">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6">
+          <div className="relative flex items-center">
+            {/* Left fade gradient */}
+            {canScrollLeft && (
+              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+            )}
+
+            {/* Left scroll button */}
+            {canScrollLeft && (
               <button
-                type="button"
-                onClick={() => setLocation("/catalogo")}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium whitespace-nowrap transition ${
-                  !categorySlug
-                    ? "bg-white text-black border-white"
-                    : "bg-transparent text-white border-white/15 hover:border-white/30 hover:bg-white/5"
+                onClick={() => scroll("left")}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-2 hover:bg-gray-100 rounded-full transition"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-700" />
+              </button>
+            )}
+
+            {/* Scroll container */}
+            <div
+              ref={scrollContainerRef}
+              className="flex gap-2 overflow-x-auto scrollbar-hide py-4 px-8"
+              style={{ scrollBehavior: "smooth" }}
+            >
+              {/* "Todos" button */}
+              <button
+                onClick={() => navigate("/catalogo")}
+                className={`flex-shrink-0 px-6 py-2 rounded-full font-semibold whitespace-nowrap transition-all ${
+                  !category
+                    ? "bg-gray-900 text-white shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 Todos
               </button>
 
-              {categoryTabs.map((category) => {
-                const Icon = category.icon;
-                const active = category.slug === categorySlug;
-
-                return (
-                  <button
-                    key={category.slug}
-                    type="button"
-                    onClick={() => setLocation(`/catalogo/${category.slug}`)}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium whitespace-nowrap transition ${
-                      active
-                        ? "bg-white text-black border-white"
-                        : "bg-transparent text-white border-white/15 hover:border-white/30 hover:bg-white/5"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{category.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Conteúdo */}
-      <section className="max-w-7xl mx-auto px-4 pt-8">
-        <div className="mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900">
-            {title}
-          </h1>
-
-          {activeCategoryConfig?.description && (
-            <p className="mt-2 text-zinc-600 text-sm md:text-base">
-              {activeCategoryConfig.description}
-            </p>
-          )}
-        </div>
-
-        {/* Subcategorias APENAS quando existe categoria ativa */}
-        {activeCategoryConfig?.subcategories &&
-          activeCategoryConfig.subcategories.length > 0 && (
-            <div className="mb-8 overflow-x-auto scrollbar-hide">
-              <div className="flex items-center gap-2 min-w-max">
+              {/* Category buttons */}
+              {CATEGORIES.map((cat) => (
                 <button
-                  type="button"
-                  onClick={() => setSelectedSubcategory("todos")}
-                  className={`px-4 py-2 rounded-full border text-sm font-medium transition whitespace-nowrap ${
-                    selectedSubcategory === "todos"
-                      ? "bg-black text-white border-black"
-                      : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-300"
+                  key={cat.slug}
+                  onClick={() => navigate(`/catalogo/${cat.slug}`)}
+                  className={`flex-shrink-0 px-6 py-2 rounded-full font-semibold whitespace-nowrap transition-all ${
+                    normalize(category) === cat.slug
+                      ? "bg-gray-900 text-white shadow-md"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
-                  Todos
+                  {cat.name}
                 </button>
+              ))}
+            </div>
 
-                {activeCategoryConfig.subcategories.map((subcategory: string) => {
-                  const active =
-                    normalizeText(selectedSubcategory) === normalizeText(subcategory);
+            {/* Right fade gradient */}
+            {canScrollRight && (
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+            )}
 
-                  return (
-                    <button
-                      key={subcategory}
-                      type="button"
-                      onClick={() => setSelectedSubcategory(subcategory)}
-                      className={`px-4 py-2 rounded-full border text-sm font-medium transition whitespace-nowrap ${
-                        active
-                          ? "bg-black text-white border-black"
-                          : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-300"
-                      }`}
-                    >
-                      {subcategory}
-                    </button>
-                  );
-                })}
+            {/* Right scroll button */}
+            {canScrollRight && (
+              <button
+                onClick={() => scroll("right")}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-2 hover:bg-gray-100 rounded-full transition"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-700" />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 lg:px-6 py-8">
+        {/* GRID */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredProducts.map((product) => (
+            <div
+              key={product.id}
+              onClick={() => navigate(`/equipamentos/${product.slug}`)}
+              className="bg-white rounded-xl shadow-sm hover:shadow-md transition cursor-pointer group overflow-hidden"
+            >
+              {/* IMAGE */}
+              <div className="bg-white aspect-square flex items-center justify-center overflow-hidden">
+                <img
+                  src={getImage(product)}
+                  alt={product.name}
+                  className="object-contain w-full h-full p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              {/* INFO */}
+              <div className="p-4">
+                <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">
+                  {product.name}
+                </h3>
+
+                {product.subcategory && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    {product.subcategory}
+                  </p>
+                )}
+
+                {product.badge && (
+                  <span className="inline-block mt-2 text-[10px] font-semibold bg-gray-900 text-white px-2 py-1 rounded">
+                    {product.badge}
+                  </span>
+                )}
+
+                {product.price && (
+                  <p className="mt-3 text-sm font-bold text-gray-900">
+                    {formatPrice(product.price)}
+                    <span className="text-xs text-gray-500 font-normal">/dia</span>
+                  </p>
+                )}
               </div>
             </div>
-          )}
+          ))}
+        </div>
 
-        {loading && (
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-3xl border border-zinc-200 p-4 animate-pulse"
-              >
-                <div className="aspect-[4/4] rounded-2xl bg-zinc-100 mb-4" />
-                <div className="h-5 w-3/4 bg-zinc-100 rounded mb-2" />
-                <div className="h-4 w-1/3 bg-zinc-100 rounded mb-3" />
-                <div className="h-5 w-1/2 bg-zinc-100 rounded" />
-              </div>
-            ))}
+        {/* Empty state */}
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-gray-500 text-lg">Nenhum produto encontrado nesta categoria.</p>
           </div>
         )}
-
-        {!loading && error && (
-          <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-700">
-            <h2 className="text-lg font-semibold mb-2">Erro ao carregar catálogo</h2>
-            <p>{error}</p>
-          </div>
-        )}
-
-        {!loading && !error && filteredProducts.length === 0 && (
-          <div className="rounded-3xl border border-zinc-200 bg-white p-8 text-center">
-            <h2 className="text-lg font-semibold text-zinc-900 mb-2">
-              Nenhum produto encontrado
-            </h2>
-            <p className="text-zinc-600">
-              Não encontramos produtos para este filtro no momento.
-            </p>
-          </div>
-        )}
-
-        {!loading && !error && filteredProducts.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
-            {filteredProducts.map((product) => (
-              <Link key={product.id} href={`/equipamentos/${product.slug}`}>
-                <a className="group block bg-white rounded-3xl border border-zinc-200 hover:border-zinc-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
-                  <div className="aspect-[4/4] bg-white p-4 overflow-hidden">
-                    <img
-                      src={getPrimaryImage(product)}
-                      alt={product.name}
-                      className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-300"
-                    />
-                  </div>
-
-                  <div className="px-4 pb-5">
-                    <h3 className="text-zinc-900 font-semibold leading-snug line-clamp-2 min-h-[3rem]">
-                      {product.name}
-                    </h3>
-
-                    <p className="text-sm text-zinc-500 mt-1">
-                      {product.subcategory || product.category}
-                    </p>
-
-                    {product.badge && (
-                      <div className="mt-3">
-                        <span className="inline-flex items-center rounded-full bg-black text-white text-[11px] font-semibold px-2.5 py-1 uppercase tracking-wide">
-                          {product.badge}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="mt-4">
-                      <p className="text-zinc-900 text-xl font-bold">
-                        {formatPrice(product.price)}
-                      </p>
-                    </div>
-                  </div>
-                </a>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
+      </div>
     </div>
   );
 }
