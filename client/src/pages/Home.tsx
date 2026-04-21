@@ -12,9 +12,10 @@ export default function Home() {
           autoPlay
           muted
           loop
+          playsInline
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src="/video-expedicao-loc7.mp4" type="video/mp4" />
+          <source src="/Video%20expedi%C3%A7%C3%A3o%20Loc7.m4v" type="video/mp4" />
         </video>
         
         <div className="absolute inset-0 bg-black/60" />
@@ -93,7 +94,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CATEGORIAS DE LOCAÇÃO */}
+      {/* CATEGORIAS */}
       <section className="py-20 bg-gray-950 border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
@@ -101,195 +102,80 @@ export default function Home() {
           </h2>
 
           <div className="grid md:grid-cols-4 gap-6">
-            <button
-              onClick={() => navigate("/catalogo/cameras")}
-              className="p-6 bg-black border border-gray-800 rounded-2xl hover:border-white hover:bg-gray-900 hover:scale-[1.02] transition text-left"
-            >
-              <h3 className="text-xl font-semibold mb-2">Câmeras</h3>
-              <p className="text-gray-400">12+ equipamentos</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/catalogo/lentes")}
-              className="p-6 bg-black border border-gray-800 rounded-2xl hover:border-white hover:bg-gray-900 hover:scale-[1.02] transition text-left"
-            >
-              <h3 className="text-xl font-semibold mb-2">Lentes</h3>
-              <p className="text-gray-400">25+ equipamentos</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/catalogo/iluminacao")}
-              className="p-6 bg-black border border-gray-800 rounded-2xl hover:border-white hover:bg-gray-900 hover:scale-[1.02] transition text-left"
-            >
-              <h3 className="text-xl font-semibold mb-2">Iluminação</h3>
-              <p className="text-gray-400">18+ equipamentos</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/catalogo/audio")}
-              className="p-6 bg-black border border-gray-800 rounded-2xl hover:border-white hover:bg-gray-900 hover:scale-[1.02] transition text-left"
-            >
-              <h3 className="text-xl font-semibold mb-2">Áudio</h3>
-              <p className="text-gray-400">15+ equipamentos</p>
-            </button>
+            {[
+              { name: "Câmeras", path: "/catalogo/cameras" },
+              { name: "Lentes", path: "/catalogo/lentes" },
+              { name: "Iluminação", path: "/catalogo/iluminacao" },
+              { name: "Áudio", path: "/catalogo/audio" },
+            ].map((item) => (
+              <button
+                key={item.name}
+                onClick={() => navigate(item.path)}
+                className="p-6 bg-black border border-gray-800 rounded-2xl hover:border-white hover:bg-gray-900 hover:scale-[1.02] transition text-left"
+              >
+                <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
+                <p className="text-gray-400">Equipamentos disponíveis</p>
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
       {/* DIFERENCIAIS */}
       <section className="py-20 bg-black border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
-            Por que escolher a Loc7
-          </h2>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-8 text-center">
+          {[
+            "Equipamentos prontos para set",
+            "Curadoria técnica especializada",
+            "Atendimento consultivo real",
+            "Agilidade na operação",
+          ].map((text) => (
+            <div key={text}>
               <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🎬</span>
+                🎬
               </div>
-              <h3 className="text-xl font-semibold mb-2">Equipamentos prontos para set</h3>
-              <p className="text-gray-400">Marcas de referência mundial em cinema e broadcast, testados e calibrados</p>
+              <h3 className="font-semibold">{text}</h3>
             </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">⚡</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Curadoria técnica especializada</h3>
-              <p className="text-gray-400">Equipe experiente para consultoria, setup e suporte durante produção</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🚀</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Atendimento consultivo real</h3>
-              <p className="text-gray-400">Entrega rápida em São Paulo e região, com logística dedicada</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">💰</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Agilidade na operação</h3>
-              <p className="text-gray-400">Preços competitivos com melhor custo-benefício do mercado</p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* EM OPERAÇÃO */}
       <section className="py-20 bg-gray-950 border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             Em operação
           </h2>
-          
-          <p className="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-            Em operação em grandes produções nacionais
-          </p>
 
           <div className="grid md:grid-cols-4 gap-6">
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 relative group hover:scale-[1.02] transition duration-300">
-              <img
-                src="/the-voice.webp"
-                alt="The Voice Brasil"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full relative z-10">
-                THE VOICE BRASIL
+            {[
+              { src: "/the-voice.webp", label: "THE VOICE BRASIL" },
+              { src: "/esquadrao-moda.png", label: "SBT — ESQUADRÃO DA MODA" },
+              { src: "/bbb.webp", label: "BBB" },
+              { src: "/operacao.webp", label: "BAND — PESADELO NA COZINHA" },
+            ].map((img) => (
+              <div key={img.src} className="aspect-[4/3] overflow-hidden rounded-2xl relative">
+                <img src={img.src} className="w-full h-full object-cover" />
+                <div className="absolute bottom-3 left-3 text-xs bg-black/60 px-3 py-1 rounded-full">
+                  {img.label}
+                </div>
               </div>
-            </div>
-
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 relative group hover:scale-[1.02] transition duration-300">
-              <img
-                src="/esquadrao-moda.png"
-                alt="SBT Esquadrão da Moda"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full relative z-10">
-                SBT — ESQUADRÃO DA MODA
-              </div>
-            </div>
-
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 relative group hover:scale-[1.02] transition duration-300">
-              <img
-                src="/bbb.webp"
-                alt="Big Brother Brasil"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full relative z-10">
-                BBB
-              </div>
-            </div>
-
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 relative group hover:scale-[1.02] transition duration-300">
-              <img
-                src="/operacao.webp"
-                alt="Band Pesadelo na Cozinha"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full relative z-10">
-                BAND — PESADELO NA COZINHA
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* PRODUÇÃO */}
-      <section className="py-20 bg-black border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 hover:scale-[1.02] transition duration-300">
-            <img
-              src="/operacao.webp"
-              alt="Produção completa"
-              className="w-full h-full object-cover"
-            />
-          </div>
-
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Produção completa
-            </h2>
-
-            <p className="text-gray-400 mb-6">
-              Estrutura completa com equipe técnica e soluções personalizadas para grandes projetos. Desde consultoria até execução final.
-            </p>
-
-            <button
-              onClick={() => navigate("/producao")}
-              className="border border-white px-8 py-3 rounded-lg hover:bg-white hover:text-black transition font-semibold"
-            >
-              Ver produção
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA FINAL */}
-      <section className="py-20 bg-white text-black text-center border-t border-gray-200">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Precisa do setup ideal para sua produção?
-          </h2>
-
-          <p className="text-gray-600 mb-8 text-lg">
-            Fale com nossa equipe e monte seu setup ideal.
-          </p>
-
-          <button
-            onClick={() => navigate("/orcamento")}
-            className="bg-black text-white px-8 py-4 rounded-xl font-semibold hover:bg-gray-800 transition"
-          >
-            Solicitar orçamento
-          </button>
-        </div>
+      {/* CTA */}
+      <section className="py-20 bg-white text-black text-center">
+        <h2 className="text-3xl font-bold mb-4">
+          Precisa do setup ideal?
+        </h2>
+        <button
+          onClick={() => navigate("/orcamento")}
+          className="bg-black text-white px-8 py-4 rounded-xl"
+        >
+          Solicitar orçamento
+        </button>
       </section>
 
     </div>
