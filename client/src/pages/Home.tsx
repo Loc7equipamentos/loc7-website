@@ -1,34 +1,52 @@
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 
 export default function Home() {
   const [, navigate] = useLocation();
+  const [heroVisible, setHeroVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setHeroVisible(true), 120);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="bg-black text-white">
       {/* HERO */}
-      <section className="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden md:justify-start md:text-left">
+      <section className="relative min-h-screen flex items-end md:items-center justify-center md:justify-start text-center md:text-left px-6 pb-20 md:pb-0 overflow-hidden">
         <video
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
           className="absolute inset-0 w-full h-full object-cover"
         >
           <source src="/video-expedicao-loc7.mp4" type="video/mp4" />
         </video>
 
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/40" />
 
-        <div className="max-w-4xl relative z-10">
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight text-white">
-            LOCADORA DE EQUIPAMENTOS AUDIOVISUAIS EM SÃO PAULO
+        <div
+          className={`max-w-4xl relative z-10 mt-20 md:mt-0 transition-all duration-700 ease-out ${
+            heroVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-6"
+          }`}
+        >
+          <h1 className="text-4xl md:text-6xl font-bold leading-[0.95] text-white">
+            LOCADORA DE EQUIPAMENTOS
+            <br />
+            <span className="text-5xl md:text-7xl">AUDIOVISUAIS</span>
+            <br />
+            EM SÃO PAULO
           </h1>
 
-          <p className="mt-6 text-lg text-gray-300">
+          <p className="mt-6 text-lg text-white/85 max-w-2xl">
             Equipamentos prontos para produção, com agilidade e suporte técnico real.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row gap-4">
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 md:justify-start justify-center">
             <button
               onClick={() => navigate("/catalogo")}
               className="bg-white text-black px-8 py-4 rounded-xl font-semibold hover:bg-gray-200 transition"
@@ -59,7 +77,7 @@ export default function Home() {
                 <img
                   src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&h=450&q=80"
                   alt="Câmera profissional"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 />
               </div>
               <h3 className="text-xl font-semibold">Câmeras Cinema</h3>
@@ -71,7 +89,7 @@ export default function Home() {
                 <img
                   src="https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=600&h=450&q=80"
                   alt="Lentes profissionais"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 />
               </div>
               <h3 className="text-xl font-semibold">Lentes Premium</h3>
@@ -83,7 +101,7 @@ export default function Home() {
                 <img
                   src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=600&h=450&q=80"
                   alt="Iluminação profissional"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 />
               </div>
               <h3 className="text-xl font-semibold">Iluminação LED</h3>
@@ -189,7 +207,7 @@ export default function Home() {
 
       {/* EM OPERAÇÃO */}
       <section className="py-20 bg-gray-950 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-[1400px] mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
             Em operação
           </h2>
@@ -198,12 +216,12 @@ export default function Home() {
             Em operação em grandes produções nacionais
           </p>
 
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 relative group hover:scale-[1.02] transition duration-300">
               <img
                 src="/the-voice.webp"
                 alt="The Voice Brasil"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
@@ -215,7 +233,7 @@ export default function Home() {
               <img
                 src="/esquadrao-moda.png"
                 alt="SBT Esquadrão da Moda"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
@@ -227,7 +245,7 @@ export default function Home() {
               <img
                 src="/bbb.webp"
                 alt="Big Brother Brasil"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
@@ -239,7 +257,7 @@ export default function Home() {
               <img
                 src="/operacao.webp"
                 alt="Band Pesadelo na Cozinha"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
