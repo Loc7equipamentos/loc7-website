@@ -206,7 +206,7 @@ export default function Home() {
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10">
+              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
                 THE VOICE BRASIL
               </div>
             </div>
@@ -218,7 +218,7 @@ export default function Home() {
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10">
+              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
                 SBT — ESQUADRÃO DA MODA
               </div>
             </div>
@@ -230,7 +230,7 @@ export default function Home() {
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10">
+              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
                 BBB
               </div>
             </div>
@@ -242,7 +242,7 @@ export default function Home() {
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10">
+              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
                 BAND — PESADELO NA COZINHA
               </div>
             </div>
