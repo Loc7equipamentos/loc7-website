@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <div className="bg-black text-white">
       {/* HERO */}
-      <section className="relative min-h-screen flex items-end md:items-center justify-center md:justify-start text-center md:text-left px-6 pb-16 md:pb-0 overflow-hidden">
+      <section className="relative min-h-screen flex items-center md:items-center justify-center md:justify-start text-center md:text-left px-6 pb-0 md:pb-0 overflow-hidden">
         <video
           autoPlay
           muted
@@ -28,7 +28,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/35" />
 
         <div
-          className={`max-w-5xl relative z-10 -mt-20 transition-all duration-700 ease-out ${
+          className={`max-w-5xl relative z-10 -mt-12 md:mt-0 transition-all duration-700 ease-out ${
             heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
