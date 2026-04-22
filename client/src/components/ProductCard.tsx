@@ -59,13 +59,46 @@ function parseImages(images?: string[] | string | null): string[] {
 export default function ProductCard({ product }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const parsedImages = useMemo(() => parseImages(product.images), [product.images]);
+  const parsedImages = useMemo(() => parseImages(product?.images), [product?.images]);
 
-  const coverImage = product.image_url || PLACEHOLDER_IMAGE;
+  const safeName =
+    typeof product?.name === "string" && product.name.trim() !== ""
+      ? product.name
+      : "Produto";
+
+  const safeCategory =
+    typeof product?.subcategory === "string" && product.subcategory.trim() !== ""
+      ? product.subcategory
+      : typeof product?.category === "string" && product.category.trim() !== ""
+      ? product.category
+      : null;
+
+  const safeDescription =
+    typeof product?.description === "string" && product.description.trim() !== ""
+      ? product.description
+      : null;
+
+  const safeBadge =
+    typeof product?.badge === "string" && product.badge.trim() !== ""
+      ? product.badge
+      : null;
+
+  const coverImage =
+    typeof product?.image_url === "string" && product.image_url.trim() !== ""
+      ? product.image_url
+      : PLACEHOLDER_IMAGE;
+
   const hoverImage = parsedImages.length > 0 ? parsedImages[0] : null;
   const displayImage = isHovered && hoverImage ? hoverImage : coverImage;
-  const formattedPrice = formatPrice(product.price);
-  const productHref = product.slug ? `/equipamentos/${product.slug}` : "/catalogo";
+
+  const formattedPrice = formatPrice(
+    typeof product?.price === "number" ? product.price : null
+  );
+
+  const productHref =
+    typeof product?.slug === "string" && product.slug.trim() !== ""
+      ? `/equipamentos/${product.slug}`
+      : "/catalogo";
 
   return (
     <Link href={productHref}>
@@ -76,36 +109,44 @@ export default function ProductCard({ product }: ProductCardProps) {
       >
         <article className="flex h-full flex-col overflow-hidden rounded-[18px] border border-neutral-200 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_10px_28px_rgba(0,0,0,0.08)]">
           <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#f4f4f2]">
-            {product.badge ? (
+            {safeBadge ? (
               <div className="absolute left-3 top-3 z-10 rounded-full border border-white/70 bg-black/82 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
-                {product.badge}
+                {safeBadge}
               </div>
             ) : null}
 
             <img
               src={displayImage}
-              alt={product.name || "Produto"}
-              className="h-full w-full object-cover transition-opacity duration-300"
+              alt={safeName}
+              className="h-full w-full object-cover"
               loading="lazy"
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (target.src !== PLACEHOLDER_IMAGE) {
+                  target.src = PLACEHOLDER_IMAGE;
+                }
+              }}
             />
           </div>
 
           <div className="flex flex-1 flex-col px-4 pb-4 pt-3">
-            {(product.category || product.subcategory) && (
+            {safeCategory ? (
               <div className="mb-2 min-h-[18px]">
                 <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-500">
-                  {product.subcategory || product.category}
+                  {safeCategory}
                 </span>
               </div>
+            ) : (
+              <div className="mb-2 min-h-[18px]" />
             )}
 
-            <h3 className="min-h-[44px] text-[15px] font-semibold leading-[1.45] text-neutral-900 transition-colors duration-200 group-hover:text-black sm:text-[16px]">
-              {product.name}
+            <h3 className="min-h-[44px] text-[15px] font-semibold leading-[1.45] text-neutral-900 sm:text-[16px]">
+              {safeName}
             </h3>
 
-            {product.description ? (
+            {safeDescription ? (
               <p className="mt-2 min-h-[40px] text-[12.5px] leading-5 text-neutral-600 sm:text-[13px]">
-                {product.description}
+                {safeDescription}
               </p>
             ) : (
               <div className="mt-2 min-h-[40px]" />
@@ -124,7 +165,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 )}
               </div>
 
-              <div className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-700 transition-all duration-200 group-hover:translate-x-[2px] group-hover:text-black">
+              <div className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-700">
                 Ver produto
               </div>
             </div>
