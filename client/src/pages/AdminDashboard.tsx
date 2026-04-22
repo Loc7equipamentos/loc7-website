@@ -485,7 +485,7 @@ export default function AdminDashboard() {
                     placeholder="Nome do produto"
                     value={newProduct.name}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
                 </div>
 
@@ -494,7 +494,7 @@ export default function AdminDashboard() {
                   <select
                     value={newProduct.category}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, category: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   >
                     <option value="">Selecione</option>
                     {categories.map((cat) => (
@@ -511,7 +511,7 @@ export default function AdminDashboard() {
                     value={newProduct.subcategory}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, subcategory: e.target.value }))}
                     disabled={!newProduct.category}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white disabled:bg-gray-50"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
                   >
                     <option value="">Selecione</option>
                     {newProductSubcategories.map((subcat) => (
@@ -775,7 +775,14 @@ export default function AdminDashboard() {
                   placeholder="Nome da categoria"
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                 className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"                />
+                  style={{
+                    color: '#111827',
+                    backgroundColor: '#ffffff',
+                    WebkitTextFillColor: '#111827',
+                    caretColor: '#111827',
+                  }}
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder:text-gray-400"
+                />
                 <button
                   onClick={addCategory}
                   className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
@@ -853,7 +860,7 @@ export default function AdminDashboard() {
                         prev ? { ...prev, name: e.target.value } : prev
                       )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   />
                 </div>
 
@@ -866,7 +873,7 @@ export default function AdminDashboard() {
                         prev ? { ...prev, category: e.target.value } : prev
                       )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   >
                     <option value="">Selecione</option>
                     {categories.map((cat) => (
@@ -887,7 +894,7 @@ export default function AdminDashboard() {
                       )
                     }
                     disabled={!editingProduct.category}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white disabled:bg-gray-50"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
                   >
                     <option value="">Selecione</option>
                     {editingProductSubcategories.map((subcat) => (
@@ -908,7 +915,7 @@ export default function AdminDashboard() {
                         prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : prev
                       )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   />
                 </div>
 
@@ -922,7 +929,7 @@ export default function AdminDashboard() {
                         prev ? { ...prev, badge: e.target.value } : prev
                       )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   />
                 </div>
 
@@ -941,7 +948,7 @@ export default function AdminDashboard() {
                           : prev
                       )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   />
                 </div>
 
@@ -954,7 +961,7 @@ export default function AdminDashboard() {
                         prev ? { ...prev, description: e.target.value } : prev
                       )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                     rows={3}
                   />
                 </div>
@@ -968,7 +975,7 @@ export default function AdminDashboard() {
                         prev ? { ...prev, includes: e.target.value } : prev
                       )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                     rows={2}
                   />
                 </div>
@@ -1012,7 +1019,7 @@ export default function AdminDashboard() {
                                 : prev
                             )
                           }
-                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                         />
                         <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
                       </div>
