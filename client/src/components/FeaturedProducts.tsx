@@ -4,45 +4,91 @@ import ProductCard from "@/components/ProductCard";
 
 type Product = {
   id: string;
-  slug: string;
   name: string;
-  price: number;
-  image_url?: string | null;
-  images?: string[] | null;
+  slug?: string | null;
   category?: string | null;
   subcategory?: string | null;
+  price?: number | null;
+  description?: string | null;
+  includes?: string[] | string | null;
+  image_url?: string | null;
+  images?: string[] | string | null;
+  badge?: string | null;
   is_featured?: boolean | null;
   featured_order?: number | null;
 };
+
+function safeString(value: unknown, fallback = ""): string {
+  return typeof value === "string" ? value : fallback;
+}
+
+function safeNullableString(value: unknown): string | null {
+  return typeof value === "string" && value.trim() !== "" ? value : null;
+}
+
+function safeNumber(value: unknown): number | null {
+  return typeof value === "number" && !Number.isNaN(value) ? value : null;
+}
+
+function sanitizeProduct(raw: any): Product | null {
+  if (!raw || typeof raw !== "object") return null;
+
+  const id =
+    typeof raw.id === "string" || typeof raw.id === "number"
+      ? String(raw.id)
+      : "";
+
+  const name = safeString(raw.name).trim();
+
+  if (!id || !name) return null;
+
+  return {
+    id,
+    name,
+    slug: safeNullableString(raw.slug),
+    category: safeNullableString(raw.category),
+    subcategory: safeNullableString(raw.subcategory),
+    price: safeNumber(raw.price),
+    description: safeNullableString(raw.description),
+    includes: raw.includes ?? null,
+    image_url: safeNullableString(raw.image_url),
+    images: raw.images ?? null,
+    badge: safeNullableString(raw.badge),
+    is_featured: typeof raw.is_featured === "boolean" ? raw.is_featured : null,
+    featured_order: safeNumber(raw.featured_order),
+  };
+}
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const loadFeaturedProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .eq("is_featured", true)
+          .order("featured_order", { ascending: true, nullsFirst: false });
+
+        if (error) throw error;
+
+        const sanitized = Array.isArray(data)
+          ? (data.map(sanitizeProduct).filter(Boolean) as Product[])
+          : [];
+
+        setProducts(sanitized);
+      } catch (error) {
+        console.error("Erro ao carregar produtos em destaque:", error);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadFeaturedProducts();
   }, []);
-
-  const loadFeaturedProducts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("products")
-        .select(
-          "id, slug, name, price, image_url, images, category, subcategory, is_featured, featured_order"
-        )
-        .eq("is_featured", true)
-        .order("featured_order", { ascending: true, nullsFirst: false });
-
-      if (error) throw error;
-
-      setProducts((data as Product[]) || []);
-    } catch (error) {
-      console.error("Erro ao carregar produtos em destaque:", error);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading || products.length === 0) return null;
 
@@ -57,16 +103,7 @@ export default function FeaturedProducts() {
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              slug={product.slug}
-              name={product.name}
-              price={product.price}
-              image_url={product.image_url}
-              images={product.images}
-              category={product.category ?? undefined}
-              subcategory={product.subcategory ?? undefined}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>
