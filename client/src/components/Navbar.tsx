@@ -1,12 +1,23 @@
 /*
  * LOC 7 — Navbar Component
- * Premium, elegant, dark aesthetic
- * Preto dominante, branco limpo, identidade Loc7
+ * Versão compactada para melhor densidade visual em telas menores
+ * Mantém estrutura atual: logo + menu principal + submenu categorias + mobile
  */
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Camera, Aperture, Zap, Mic, Monitor, Move, Radio, Clapperboard } from "lucide-react";
+import {
+  Menu,
+  X,
+  Camera,
+  Aperture,
+  Zap,
+  Mic,
+  Monitor,
+  Move,
+  Radio,
+  Clapperboard,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 const submenuCategories = [
@@ -20,18 +31,6 @@ const submenuCategories = [
   { name: "Maquinária", icon: Clapperboard, href: "/catalogo/maquinaria" },
 ];
 
-const slugToCategoryName: Record<string, string> = {
-  cameras: "Câmeras",
-  lentes: "Lentes",
-  iluminacao: "Iluminação",
-  audio: "Áudio",
-  monitores: "Monitores",
-  movimento: "Movimento",
-  transmissores: "Transmissores",
-  maquinaria: "Maquinária",
-};
-
-// Fallback categories (usado se Supabase falhar)
 const fallbackCategories = [
   { name: "ÁUDIO", href: "/catalogo/audio" },
   { name: "CÂMERAS", href: "/catalogo/cameras" },
@@ -66,14 +65,16 @@ export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [location] = useLocation();
-  const [dropdownCategories, setDropdownCategories] = useState<Array<{ name: string; href: string }>>(fallbackCategories);
+  const [dropdownCategories, setDropdownCategories] = useState<
+    Array<{ name: string; href: string }>
+  >(fallbackCategories);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
-  // Carregar categorias do Supabase
   useEffect(() => {
     const loadCategories = async () => {
       try {
         setLoadingCategories(true);
+
         const { data, error } = await supabase
           .from("categories")
           .select("name")
@@ -83,14 +84,12 @@ export default function Navbar() {
           console.warn("[DEBUG] Erro ao carregar categorias:", error);
           setDropdownCategories(fallbackCategories);
         } else if (data && data.length > 0) {
-          console.log("[DEBUG] Categorias carregadas do Supabase:", data);
-          const categories = data.map((cat: any) => ({
+          const categories = data.map((cat: { name: string }) => ({
             name: cat.name.toUpperCase(),
             href: `/catalogo/${cat.name.toLowerCase().replace(/\s+/g, "-")}`,
           }));
           setDropdownCategories(categories);
         } else {
-          console.warn("[DEBUG] Nenhuma categoria encontrada, usando fallback");
           setDropdownCategories(fallbackCategories);
         }
       } catch (err) {
@@ -103,14 +102,12 @@ export default function Navbar() {
 
     loadCategories();
 
-    // Inscrever em mudanças em tempo real
     const subscription = supabase
       .channel("categories-changes")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "categories" },
         () => {
-          console.log("[DEBUG] Categorias atualizadas, recarregando...");
           loadCategories();
         }
       )
@@ -133,143 +130,149 @@ export default function Navbar() {
   }, [location]);
 
   return (
-    <>
-      {/* Main navbar */}
-      <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black shadow-lg shadow-black/40" : "bg-black"}`}>
-        <div className="container">
-          <div className="flex items-stretch justify-between">
-            {/* Logo - Loc 7 Brand */}
-            <Link href="/" className="flex items-center py-3 group">
-              <img
-                src="/logo-loc7-navbar.png"
-                alt="Loc 7 Equipamentos"
-                className="h-[8.625rem] w-auto transition-transform duration-300 group-hover:scale-105"
-              />
-            </Link>
+    <nav
+      className={`sticky top-0 z-50 transition-all duration-300 border-b border-gray-800 ${
+        isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
+      }`}
+    >
+      <div className="container">
+        <div className="flex items-stretch justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center py-2 group shrink-0">
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/loc7-logo-final_576bd0cc.jpg"
+              alt="Loc 7 Equipamentos"
+              className="h-11 md:h-12 w-auto transition-transform duration-300 group-hover:scale-[1.03]"
+            />
+          </Link>
 
-            {/* Right side: nav */}
-            <div className="flex flex-col flex-1 relative">
-              {/* Main nav */}
-              <div className="flex items-center justify-center h-20 flex-1">
-                {/* Desktop nav */}
-                <div className="hidden md:flex items-center gap-16 justify-center flex-1 relative overflow-visible">
-                  {navLinks.map((link) => (
-                    <div
-                      key={link.name}
-                      className="relative group whitespace-nowrap overflow-visible pointer-events-auto"
-                      onMouseEnter={() => link.hasDropdown && setIsCatalogOpen(true)}
-                      onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
-                    >
-                      {link.hasDropdown ? (
-                        <Link
-                          href={link.href}
-                          className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.28)] transition-all duration-200 ease-out ${location.startsWith("/catalogo") ? "text-gray-300" : ""}`}
-                        >
-                          {link.name}
-                        </Link>
-                      ) : (
-                        <Link
-                          href={link.href}
-                          className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.28)] transition-all duration-200 ease-out ${location === link.href ? "text-gray-300" : ""}`}
-                        >
-                          {link.name}
-                        </Link>
-                      )}
-
-                      {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
-                      {link.hasDropdown && isCatalogOpen && (
-                        <div className="loc7-dropdown z-[9999] bg-black border border-white/10 shadow-2xl backdrop-blur-none" style={{ pointerEvents: "auto" }}>
-                          {loadingCategories ? (
-                            <div className="px-4 py-3 text-white text-sm text-center">Carregando...</div>
-                          ) : (
-                            dropdownCategories.map((cat) => (
-                              <Link
-                                key={cat.name}
-                                href={cat.href}
-                                className="loc7-dropdown-item hover:text-white hover:drop-shadow-[0_0_4px_rgba(255,255,255,0.2)] transition-all duration-150 ease-out hover:pl-5"
-                              >
-                                {cat.name}
-                              </Link>
-                            ))
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Mobile menu button */}
-                <button
-                  onClick={() => setIsMobileOpen(!isMobileOpen)}
-                  className="md:hidden p-2 text-white"
-                >
-                  {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Submenu horizontal com ícones */}
-          <div className="hidden md:block bg-black h-16">
-            <div className="flex items-center justify-center gap-2 py-2">
-              {submenuCategories.map((cat) => {
-                const Icon = cat.icon;
-                return (
-                  <Link
-                    key={cat.name}
-                    href={cat.href}
-                    className="flex items-center gap-2 px-3 py-2 text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.25)] transition-all duration-200 ease-out whitespace-nowrap text-xs rounded group"
-                  >
-                    <Icon className="w-5 h-5 transition-transform duration-150 group-hover:scale-110" />
-                    <span className="font-medium uppercase tracking-wider">
-                      {cat.name}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Mobile menu */}
-          {isMobileOpen && (
-            <div className="md:hidden bg-gray-950 border-t border-gray-800">
-              <div className="flex flex-col">
+          {/* Navegação desktop / mobile trigger */}
+          <div className="flex flex-col flex-1 relative">
+            <div className="flex items-center justify-center h-16 md:h-[68px] flex-1">
+              <div className="hidden md:flex items-center gap-10 lg:gap-12 justify-center flex-1 relative overflow-visible">
                 {navLinks.map((link) => (
-                  <div key={link.name}>
+                  <div
+                    key={link.name}
+                    className="relative group whitespace-nowrap overflow-visible pointer-events-auto"
+                    onMouseEnter={() => link.hasDropdown && setIsCatalogOpen(true)}
+                    onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
+                  >
                     {link.hasDropdown ? (
-                      <>
-                        <button
-                          onClick={() => setIsCatalogOpen(!isCatalogOpen)}
-                          className="w-full text-left px-4 py-3 text-white hover:bg-gray-900 transition text-sm font-medium"
-                        >
-                          {link.name}
-                        </button>
-                        {isCatalogOpen && (
-                          <div className="bg-black pl-4">
-                            {dropdownCategories.map((cat) => (
-                              <Link
-                                key={cat.name}
-                                href={cat.href}
-                                className="block px-4 py-2 text-white text-xs hover:bg-gray-900 transition"
-                              >
-                                {cat.name}
-                              </Link>
-                            ))}
-                          </div>
-                        )}
-                      </>
+                      <button
+                        className={`flex items-center gap-1 text-sm font-medium text-white hover:text-gray-300 transition ${
+                          location.startsWith("/catalogo") ? "text-gray-300" : ""
+                        }`}
+                      >
+                        {link.name}
+                      </button>
                     ) : (
-                      <Link href={link.href} className="block px-4 py-3 text-white hover:bg-gray-900 transition text-sm font-medium">
+                      <Link
+                        href={link.href}
+                        className={`text-sm font-medium text-white hover:text-gray-300 transition ${
+                          location === link.href ? "text-gray-300" : ""
+                        }`}
+                      >
                         {link.name}
                       </Link>
+                    )}
+
+                    {link.hasDropdown && isCatalogOpen && (
+                      <div className="absolute left-1/2 top-full -translate-x-1/2 mt-2 min-w-[260px] rounded-xl border border-gray-800 bg-black/95 backdrop-blur-md shadow-2xl z-[9999] py-2">
+                        {loadingCategories ? (
+                          <div className="px-4 py-3 text-white text-sm text-center">
+                            Carregando...
+                          </div>
+                        ) : (
+                          dropdownCategories.map((cat) => (
+                            <Link
+                              key={cat.name}
+                              href={cat.href}
+                              className="block px-4 py-2 text-xs font-medium tracking-wide text-white hover:bg-gray-900 transition"
+                            >
+                              {cat.name}
+                            </Link>
+                          ))
+                        )}
+                      </div>
                     )}
                   </div>
                 ))}
               </div>
+
+              <button
+                onClick={() => setIsMobileOpen(!isMobileOpen)}
+                className="md:hidden p-2 text-white"
+                aria-label="Abrir menu"
+              >
+                {isMobileOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
             </div>
-          )}
+          </div>
         </div>
-      </nav>
-    </>
+
+        {/* Submenu horizontal com ícones */}
+        <div className="hidden md:block border-t border-gray-800 bg-black">
+          <div className="flex items-center justify-center gap-1 lg:gap-2 py-2">
+            {submenuCategories.map((cat) => {
+              const Icon = cat.icon;
+              return (
+                <Link
+                  key={cat.name}
+                  href={cat.href}
+                  className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 text-white hover:text-gray-300 hover:bg-gray-900 transition-all whitespace-nowrap text-[11px] rounded"
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span className="font-medium uppercase tracking-[0.12em]">
+                    {cat.name}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        {isMobileOpen && (
+          <div className="md:hidden bg-gray-950 border-t border-gray-800">
+            <div className="flex flex-col">
+              {navLinks.map((link) => (
+                <div key={link.name}>
+                  {link.hasDropdown ? (
+                    <>
+                      <button
+                        onClick={() => setIsCatalogOpen(!isCatalogOpen)}
+                        className="w-full text-left px-4 py-3 text-white hover:bg-gray-900 transition text-sm font-medium"
+                      >
+                        {link.name}
+                      </button>
+                      {isCatalogOpen && (
+                        <div className="bg-black pl-4">
+                          {dropdownCategories.map((cat) => (
+                            <Link
+                              key={cat.name}
+                              href={cat.href}
+                              className="block px-4 py-2 text-white text-xs hover:bg-gray-900 transition"
+                            >
+                              {cat.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="block px-4 py-3 text-white hover:bg-gray-900 transition text-sm font-medium"
+                    >
+                      {link.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
   );
 }
