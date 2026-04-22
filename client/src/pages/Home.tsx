@@ -1,320 +1,382 @@
-import { useEffect, useState } from "react";
+/*
+ * LOC 7 — Home Page
+ * Hero refinado para linguagem premium/broadcast
+ * Estrutura preservada + hero ajustado
+ */
+
+import { useState, useEffect } from "react";
+import { Star, Play, X } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function Home() {
   const [, navigate] = useLocation();
-  const [heroVisible, setHeroVisible] = useState(false);
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
+  const testimonials = [
+    {
+      name: "Marcos Filho",
+      role: "Cliente",
+      text: "Ótimo atendimento e recepção. Dispostos a ajudar e servir.",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marcos",
+    },
+    {
+      name: "Milennar Baby",
+      role: "Local Guide",
+      text: "Contamos com os serviços da Loc7 há 8 anos e sempre nos atendem prontamente com equipamentos sempre em ótimo estado e com preço justo. Recomendamos a Loc7 sempre!!!",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Milennar",
+    },
+    {
+      name: "Raquel Carneiro",
+      role: "Cliente",
+      text: "Loc 7 sempre entrega tudo que promete, equipamento e atendimento impecável!",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Raquel",
+    },
+    {
+      name: "Diogo Garcia de Menezes Santos",
+      role: "Cliente",
+      text: "Sempre solícitos e preocupados em nos proporcionar o melhor setup para a execução dos projetos na melhor excelência possível",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Diogo",
+    },
+    {
+      name: "Jeniffer Carvalho",
+      role: "Cliente",
+      text: "Minha experiência foi ótima, foram super solicitos e sempre dispostos a ajudar, super recomendo",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jeniffer",
+    },
+    {
+      name: "Gabriel Silva",
+      role: "Cliente",
+      text: "Excelente atendimento, me ajudaram e tiraram todas minhas duvidas, otima localização!",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Gabriel",
+    },
+  ];
+
+  const categories = [
+    { id: 1, name: "Câmeras", slug: "cameras" },
+    { id: 2, name: "Lentes", slug: "lentes" },
+    { id: 3, name: "Iluminação", slug: "iluminacao" },
+    { id: 4, name: "Áudio", slug: "audio" },
+    { id: 5, name: "Estabilização", slug: "estabilizacao" },
+    { id: 6, name: "Transmissão", slug: "transmissao" },
+    { id: 7, name: "Acessórios", slug: "acessorios" },
+    { id: 8, name: "Suportes", slug: "suportes" },
+  ];
+
+  const products = [
+    {
+      id: 1,
+      name: "Sony FX9 6K Full Frame",
+      brand: "SONY",
+      price: 850,
+      image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80",
+    },
+    {
+      id: 2,
+      name: "Zeiss Supreme Prime Set",
+      brand: "ZEISS",
+      price: 2200,
+      image: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=400&q=80",
+    },
+    {
+      id: 3,
+      name: "Aputure 600D Pro",
+      brand: "APUTURE",
+      price: 600,
+      image: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=400&q=80",
+    },
+    {
+      id: 4,
+      name: "Canon C300 Mark III",
+      brand: "CANON",
+      price: 950,
+      image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&q=80",
+    },
+    {
+      id: 5,
+      name: "DZO Pictor Zoom Set",
+      brand: "DZO",
+      price: 1500,
+      image: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=400&q=80",
+    },
+    {
+      id: 6,
+      name: "RED Komodo 6K",
+      brand: "RED",
+      price: 1000,
+      image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80",
+    },
+    {
+      id: 7,
+      name: "Godox AD600 Pro II",
+      brand: "GODOX",
+      price: 400,
+      image: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=400&q=80",
+    },
+    {
+      id: 8,
+      name: "Blackmagic Pyxis 6K",
+      brand: "BLACKMAGIC",
+      price: 900,
+      image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80",
+    },
+  ];
 
   useEffect(() => {
-    const timer = setTimeout(() => setHeroVisible(true), 120);
-    return () => clearTimeout(timer);
+    const interval = setInterval(() => {
+      setTestimonialIndex((prev) => (prev === 0 ? 3 : 0));
+    }, 6000);
+    return () => clearInterval(interval);
   }, []);
 
+  const getVisibleTestimonials = () => {
+    const visible = [];
+    for (let i = 0; i < 3; i++) {
+      visible.push(testimonials[(testimonialIndex + i) % testimonials.length]);
+    }
+    return visible;
+  };
+
   return (
-    <div className="bg-black text-white">
+    <div className="min-h-screen bg-[oklch(0.08_0_0)] pointer-events-auto">
       {/* HERO */}
-      <section className="relative min-h-screen flex items-end md:items-center justify-center md:justify-start text-center md:text-left px-6 pb-16 md:pb-0 overflow-hidden">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="/video-expedicao-loc7.mp4" type="video/mp4" />
-        </video>
-
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/35" />
-
-        <div
-          className={`max-w-5xl relative z-10 transition-all duration-700 ease-out ${
-            heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
-          <h1 className="leading-[0.92] tracking-tight">
-            <span className="block text-white/65 text-lg md:text-xl font-medium uppercase tracking-[0.22em] mb-2">
-              Locadora de
-            </span>
-
-            <span className="block text-white/80 text-2xl md:text-3xl font-light lowercase mb-1">
-              equipamentos
-            </span>
-
-            <span className="block text-white text-6xl md:text-[7.5rem] font-black uppercase">
-              AUDIOVISUAIS
-            </span>
-
-            <span className="block text-white/55 text-lg md:text-xl font-normal mt-2">
-              em São Paulo
-            </span>
-          </h1>
-
-          <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 justify-center md:justify-start text-[11px] md:text-xs uppercase tracking-[0.22em] text-white/55">
-            <span>Cine</span>
-            <span>·</span>
-            <span>Foto</span>
-            <span>·</span>
-            <span>Broadcast</span>
-          </div>
-
-          <p className="mt-4 text-base md:text-lg text-white/72 max-w-xl leading-relaxed">
-            Porque no set, nada é detalhe.
-          </p>
+      <section className="relative min-h-screen overflow-hidden bg-black">
+        {/* Vídeo de fundo */}
+        <div className="absolute inset-0">
+          <video
+            className="h-full w-full object-cover"
+            src="/hero-primo.mp4"
+            poster="/hero-primo-poster.jpg"
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
         </div>
-      </section>
 
-      {/* DESTAQUES */}
-      <section className="py-20 bg-black border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
-            Equipamentos em destaque
-          </h2>
+        {/* Overlay principal */}
+        <div className="absolute inset-0 bg-black/55" />
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="group">
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 mb-4 hover:scale-[1.02] transition duration-300">
-                <img
-                  src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&h=450&q=80"
-                  alt="Câmera profissional"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-              </div>
-              <h3 className="text-xl font-semibold">Câmeras Cinema</h3>
-              <p className="text-gray-400 mt-2">RED, Sony, Canon e Blackmagic</p>
-            </div>
+        {/* Gradientes para leitura premium */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_32%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.88)_0%,rgba(0,0,0,0.74)_40%,rgba(0,0,0,0.50)_68%,rgba(0,0,0,0.72)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.42)_0%,rgba(0,0,0,0.18)_22%,rgba(0,0,0,0.44)_100%)]" />
 
-            <div className="group">
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 mb-4 hover:scale-[1.02] transition duration-300">
-                <img
-                  src="https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=600&h=450&q=80"
-                  alt="Lentes profissionais"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-              </div>
-              <h3 className="text-xl font-semibold">Lentes Premium</h3>
-              <p className="text-gray-400 mt-2">Zeiss, Leitz, DZO e Anamórficas</p>
-            </div>
+        {/* Grid sutil */}
+        <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:44px_44px]" />
 
-            <div className="group">
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 mb-4 hover:scale-[1.02] transition duration-300">
-                <img
-                  src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=600&h=450&q=80"
-                  alt="Iluminação profissional"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-              </div>
-              <h3 className="text-xl font-semibold">Iluminação LED</h3>
-              <p className="text-gray-400 mt-2">Aputure, Godox e Nanlite</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CATEGORIAS DE LOCAÇÃO */}
-      <section className="py-20 bg-gray-950 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
-            Categorias de locação
-          </h2>
-
-          <div className="grid md:grid-cols-4 gap-6">
-            <button
-              onClick={() => navigate("/catalogo/cameras")}
-              className="p-6 bg-black border border-gray-800 rounded-2xl hover:border-white hover:bg-gray-900 hover:scale-[1.02] transition text-left"
-            >
-              <h3 className="text-xl font-semibold mb-2">Câmeras</h3>
-              <p className="text-gray-400">12+ equipamentos</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/catalogo/lentes")}
-              className="p-6 bg-black border border-gray-800 rounded-2xl hover:border-white hover:bg-gray-900 hover:scale-[1.02] transition text-left"
-            >
-              <h3 className="text-xl font-semibold mb-2">Lentes</h3>
-              <p className="text-gray-400">25+ equipamentos</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/catalogo/iluminacao")}
-              className="p-6 bg-black border border-gray-800 rounded-2xl hover:border-white hover:bg-gray-900 hover:scale-[1.02] transition text-left"
-            >
-              <h3 className="text-xl font-semibold mb-2">Iluminação</h3>
-              <p className="text-gray-400">18+ equipamentos</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/catalogo/audio")}
-              className="p-6 bg-black border border-gray-800 rounded-2xl hover:border-white hover:bg-gray-900 hover:scale-[1.02] transition text-left"
-            >
-              <h3 className="text-xl font-semibold mb-2">Áudio</h3>
-              <p className="text-gray-400">15+ equipamentos</p>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* DIFERENCIAIS */}
-      <section className="py-20 bg-black border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
-            Por que escolher a Loc7
-          </h2>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🎬</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Equipamentos prontos para set</h3>
-              <p className="text-gray-400">
-                Marcas de referência mundial em cinema e broadcast, testados e calibrados
+        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl items-center px-5 pb-16 pt-32 sm:px-6 md:px-8 md:pt-36 lg:px-10 lg:pt-40">
+          <div className="w-full max-w-4xl">
+            {/* Kicker */}
+            <div className="mb-7">
+              <p className="text-[10px] font-medium uppercase tracking-[0.34em] text-white/58 sm:text-[11px] md:text-xs">
+                CINE • FOTO • BROADCAST
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">⚡</span>
+            {/* Headline hierárquica */}
+            <div className="max-w-[980px]">
+              <div className="text-white">
+                <div className="mb-1 sm:mb-2">
+                  <span className="block text-[0.78rem] font-medium uppercase tracking-[0.38em] text-white/74 sm:text-[0.86rem] md:text-[0.96rem]">
+                    LOCADORA DE
+                  </span>
+                </div>
+
+                <div className="leading-[0.90]">
+                  <span className="block text-[2.9rem] font-semibold tracking-[-0.06em] text-white sm:text-[4.25rem] md:text-[5.4rem] lg:text-[6.1rem] xl:text-[6.55rem]">
+                    EQUIPAMENTOS
+                  </span>
+                </div>
+
+                <div className="mt-1 leading-[0.92] sm:mt-2">
+                  <span className="block text-[2.05rem] font-semibold tracking-[-0.05em] text-white/92 sm:text-[3rem] md:text-[4rem] lg:text-[4.75rem] xl:text-[5rem]">
+                    AUDIOVISUAIS
+                  </span>
+                </div>
+
+                <div className="mt-2 sm:mt-3">
+                  <span className="block text-[0.84rem] font-normal uppercase tracking-[0.26em] text-white/66 sm:text-[0.94rem] md:text-[1.04rem]">
+                    EM SÃO PAULO
+                  </span>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Curadoria técnica especializada</h3>
-              <p className="text-gray-400">
-                Equipe experiente para consultoria, setup e suporte durante produção
+            </div>
+
+            {/* Linha institucional */}
+            <div className="mt-8 max-w-2xl">
+              <p className="text-base font-light leading-relaxed text-white/78 sm:text-[1.05rem] md:text-[1.14rem]">
+                Estrutura, acervo e operação técnica para produções que exigem precisão de set,
+                agilidade de atendimento e padrão profissional de entrega.
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🚀</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Atendimento consultivo real</h3>
-              <p className="text-gray-400">
-                Entrega rápida em São Paulo e região, com logística dedicada
+            {/* Assinatura */}
+            <div className="mt-8">
+              <p className="text-[0.98rem] font-normal tracking-[0.01em] text-white/82 md:text-[1.05rem]">
+                No set, nada é detalhe.
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">💰</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Agilidade na operação</h3>
-              <p className="text-gray-400">
-                Preços competitivos com melhor custo-benefício do mercado
-              </p>
+            {/* Ações */}
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <button
+                onClick={() => setIsVideoOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-sm border border-white/18 bg-white/10 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition hover:border-white/28 hover:bg-white/16"
+              >
+                <Play className="h-4 w-4" />
+                Ver operação
+              </button>
+
+              <button
+                onClick={() => navigate("/catalogo")}
+                className="inline-flex items-center justify-center rounded-sm border border-white/20 px-6 py-3 text-sm font-medium text-white transition hover:bg-white hover:text-black"
+              >
+                Ver catálogo
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* EM OPERAÇÃO */}
-      <section className="py-20 bg-gray-950 border-t border-gray-800">
-        <div className="max-w-[1400px] mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-            Em operação
-          </h2>
-
-          <p className="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-            Em operação em grandes produções nacionais
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 relative group hover:scale-[1.02] transition duration-300">
-              <img
-                src="/the-voice.webp"
-                alt="The Voice Brasil"
-                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
-                THE VOICE BRASIL
-              </div>
-            </div>
-
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 relative group hover:scale-[1.02] transition duration-300">
-              <img
-                src="/esquadrao-moda.png"
-                alt="SBT Esquadrão da Moda"
-                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
-                SBT — ESQUADRÃO DA MODA
-              </div>
-            </div>
-
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 relative group hover:scale-[1.02] transition duration-300">
-              <img
-                src="/bbb.webp"
-                alt="Big Brother Brasil"
-                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
-                BBB
-              </div>
-            </div>
-
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 relative group hover:scale-[1.02] transition duration-300">
-              <img
-                src="/operacao.webp"
-                alt="Band Pesadelo na Cozinha"
-                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-3 left-3 text-[11px] text-white/90 tracking-wide uppercase z-10 font-medium">
-                BAND — PESADELO NA COZINHA
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* PRODUÇÃO */}
-      <section className="py-20 bg-black border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 hover:scale-[1.02] transition duration-300">
-            <img
-              src="/operacao.webp"
-              alt="Produção completa"
-              className="w-full h-full object-cover"
+      {/* Modal de vídeo */}
+      {isVideoOpen && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/90 p-4 pointer-events-auto">
+          <div className="relative w-full max-w-2xl">
+            <button
+              onClick={() => setIsVideoOpen(false)}
+              className="absolute -top-12 right-0 text-white transition hover:text-gray-300"
+            >
+              <X className="h-8 w-8" />
+            </button>
+            <video
+              src="/hero-primo.mp4"
+              poster="/hero-primo-poster.jpg"
+              controls
+              autoPlay
+              className="w-full rounded-lg"
             />
           </div>
+        </div>
+      )}
 
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Produção completa
-            </h2>
-
-            <p className="text-gray-400 mb-6">
-              Estrutura completa com equipe técnica e soluções personalizadas para grandes projetos. Desde consultoria até execução final.
-            </p>
-
-            <button
-              onClick={() => navigate("/producao")}
-              className="border border-white px-8 py-3 rounded-lg hover:bg-white hover:text-black transition font-semibold"
-            >
-              Ver produção
-            </button>
+      {/* Categories Section */}
+      <section className="bg-[oklch(0.08_0_0)] px-4 py-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-12 text-center text-3xl font-bold text-white">Categorias</h2>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {categories.map((cat) => (
+              <a
+                key={cat.id}
+                href={`/catalogo`}
+                className="group relative aspect-square overflow-hidden rounded-lg border border-[oklch(0.2_0_0)] bg-[oklch(0.15_0_0)] transition hover:border-[oklch(0.45_0.25_25)] hover:bg-[oklch(0.2_0_0)]"
+              >
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <h3 className="text-lg font-bold text-white transition group-hover:text-[oklch(0.45_0.25_25)]">
+                      {cat.name}
+                    </h3>
+                  </div>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA FINAL */}
-      <section className="py-20 bg-white text-black text-center border-t border-gray-200">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Precisa do setup ideal para sua produção?
-          </h2>
+      {/* Featured Products */}
+      <section className="bg-[oklch(0.1_0_0)] px-4 py-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-12 text-center text-3xl font-bold text-white">Produtos em Destaque</h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="overflow-hidden rounded-lg border border-[oklch(0.2_0_0)] bg-[oklch(0.12_0_0)] transition hover:border-[oklch(0.45_0.25_25)] hover:bg-[oklch(0.15_0_0)]"
+              >
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-48 w-full object-cover"
+                />
+                <div className="p-4">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-[oklch(0.45_0.25_25)]">
+                    {product.brand}
+                  </p>
+                  <h3 className="mb-2 line-clamp-2 font-semibold text-white">{product.name}</h3>
+                  <p className="font-bold text-[oklch(0.8_0_0)]">
+                    R$ {product.price.toFixed(2)}
+                    <span className="text-xs font-normal text-[oklch(0.45_0_0)]">/dia</span>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          <p className="text-gray-600 mb-8 text-lg">
-            Fale com nossa equipe e monte seu setup ideal.
+      {/* Testimonials */}
+      <section className="bg-[oklch(0.08_0_0)] px-4 py-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-12 text-center text-3xl font-bold text-white">O que nossos clientes dizem</h2>
+
+          <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+            {getVisibleTestimonials().map((testimonial, i) => (
+              <div
+                key={i}
+                className="flex flex-col items-center rounded-lg border border-[oklch(0.2_0_0)] bg-[oklch(0.12_0_0)] p-6 text-center transition hover:border-[oklch(0.3_0_0)]"
+              >
+                <img
+                  src={testimonial.avatar}
+                  alt={testimonial.name}
+                  className="mb-4 h-16 w-16 rounded-full border-2 border-white"
+                />
+                <h3 className="mb-1 font-semibold text-white">{testimonial.name}</h3>
+                <p className="mb-4 text-sm text-[oklch(0.45_0.25_25)]">{testimonial.role}</p>
+
+                <div className="mb-4 flex gap-1">
+                  {[...Array(5)].map((_, starIndex) => (
+                    <Star key={starIndex} className="h-5 w-5 fill-white text-white" />
+                  ))}
+                </div>
+
+                <p className="text-sm leading-relaxed text-[oklch(0.7_0_0)]">{testimonial.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-center gap-2">
+            <button
+              onClick={() => setTestimonialIndex(0)}
+              className={`h-2 w-2 rounded-full transition ${
+                testimonialIndex === 0 ? "bg-white" : "bg-[oklch(0.3_0_0)] hover:bg-white"
+              }`}
+            />
+            <button
+              onClick={() => setTestimonialIndex(3)}
+              className={`h-2 w-2 rounded-full transition ${
+                testimonialIndex === 3 ? "bg-white" : "bg-[oklch(0.3_0_0)] hover:bg-white"
+              }`}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="bg-[oklch(0.1_0_0)] px-4 py-16">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className="mb-6 text-3xl font-bold text-white">Pronto para começar?</h2>
+          <p className="mb-8 text-lg text-[oklch(0.7_0_0)]">
+            Entre em contato conosco para solicitar um orçamento ou agendar uma visita
           </p>
-
-          <button
-            onClick={() => navigate("/orcamento")}
-            className="bg-black text-white px-8 py-4 rounded-xl font-semibold hover:bg-gray-800 transition"
+          <a
+            href="https://wa.me/message/WOIONHHSTABQF1"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block rounded bg-[oklch(0.45_0.25_25)] px-8 py-3 font-semibold text-white transition hover:bg-[oklch(0.5_0.25_25)]"
           >
-            Solicitar orçamento
-          </button>
+            Enviar Mensagem no WhatsApp
+          </a>
         </div>
       </section>
     </div>
