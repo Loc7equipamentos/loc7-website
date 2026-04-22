@@ -25,50 +25,42 @@ export default function Home() {
           <source src="/video-expedicao-loc7.mp4" type="video/mp4" />
         </video>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/35" />
 
         <div
-          className={`max-w-4xl relative z-10 transition-all duration-700 ease-out ${
+          className={`max-w-5xl relative z-10 transition-all duration-700 ease-out ${
             heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
-          <h1 className="font-bold leading-[0.95] tracking-tight">
-            <span className="block text-gray-300 text-xl md:text-2xl font-medium mb-1">
-              LOCADORA DE
+          <h1 className="leading-[0.92] tracking-tight">
+            <span className="block text-white/65 text-lg md:text-xl font-medium uppercase tracking-[0.22em] mb-2">
+              Locadora de
             </span>
 
-            <span className="block text-white text-5xl md:text-7xl font-extrabold leading-[0.95]">
-              EQUIPAMENTOS
+            <span className="block text-white/80 text-2xl md:text-3xl font-light lowercase mb-1">
+              equipamentos
             </span>
 
-            <span className="block text-white text-5xl md:text-7xl font-extrabold leading-[0.95]">
+            <span className="block text-white text-6xl md:text-[7.5rem] font-black uppercase">
               AUDIOVISUAIS
             </span>
 
-            <span className="block text-gray-400 text-lg md:text-xl font-medium mt-1">
-              EM SÃO PAULO
+            <span className="block text-white/55 text-lg md:text-xl font-normal mt-2">
+              em São Paulo
             </span>
           </h1>
 
-          <p className="mt-3 text-lg md:text-xl text-gray-400 max-w-xl leading-snug">
-            Equipamentos prontos para produção, com agilidade e suporte técnico real.
-          </p>
-
-          <div className="mt-5 flex flex-col sm:flex-row gap-4 md:justify-start justify-center">
-            <button
-              onClick={() => navigate("/catalogo")}
-              className="bg-white text-black px-6 py-3 rounded-xl font-semibold hover:scale-105 transition"
-            >
-              Ver equipamentos
-            </button>
-
-            <button
-              onClick={() => navigate("/orcamento")}
-              className="border border-white/40 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition"
-            >
-              Solicitar orçamento
-            </button>
+          <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 justify-center md:justify-start text-[11px] md:text-xs uppercase tracking-[0.22em] text-white/55">
+            <span>Cine</span>
+            <span>·</span>
+            <span>Foto</span>
+            <span>·</span>
+            <span>Broadcast</span>
           </div>
+
+          <p className="mt-4 text-base md:text-lg text-white/72 max-w-xl leading-relaxed">
+            Porque no set, nada é detalhe.
+          </p>
         </div>
       </section>
 
