@@ -28,25 +28,25 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/35" />
 
         <div
-          className={`max-w-5xl relative z-10 transition-all duration-700 ease-out ${
+          className={`max-w-5xl relative z-10 -mt-20 transition-all duration-700 ease-out ${
             heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
           <h1 className="leading-[0.92] tracking-tight">
-            <span className="block text-white/65 text-lg md:text-xl font-medium uppercase tracking-[0.22em] mb-0 relative top-1">
-              LOCADORA DE
+            <span className="block text-white/65 text-lg md:text-xl font-medium uppercase tracking-[0.22em] mb-2">
+              Locadora de
             </span>
 
-            <span className="block text-white/80 text-[2.45rem] md:text-[3.3rem] font-light uppercase mb-1">
-              EQUIPAMENTOS
+            <span className="block text-white/80 text-2xl md:text-3xl font-light lowercase mb-1">
+              equipamentos
             </span>
 
             <span className="block text-white text-6xl md:text-[7.5rem] font-black uppercase">
               AUDIOVISUAIS
             </span>
 
-            <span className="block text-white/55 text-xl md:text-[1.35rem] font-normal mt-2 uppercase">
-              EM SÃO PAULO
+            <span className="block text-white/55 text-lg md:text-xl font-normal mt-2">
+              em São Paulo
             </span>
           </h1>
 
