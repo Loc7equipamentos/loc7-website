@@ -1,10 +1,11 @@
 /*
  * LOC 7 — Página Individual de Produto
  * Ajuste de densidade e composição para 13"
- * Correção importante:
+ * Correções:
  * - image_url = capa principal
  * - images[] = imagens secundárias
- * - a página abre com a capa correta
+ * - página abre com a capa correta
+ * - sem zoom na imagem principal
  */
 
 import { useParams } from "wouter";
