@@ -536,7 +536,7 @@ export default function AdminDashboard() {
                         price: parseFloat(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
                 </div>
 
@@ -547,7 +547,7 @@ export default function AdminDashboard() {
                     placeholder="Ex: FULLFRAME"
                     value={newProduct.badge}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, badge: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
                 </div>
 
@@ -563,7 +563,7 @@ export default function AdminDashboard() {
                         catalog_order: e.target.value ? Number(e.target.value) : null,
                       }))
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
                 </div>
 
@@ -575,7 +575,7 @@ export default function AdminDashboard() {
                     onChange={(e) =>
                       setNewProduct((prev) => ({ ...prev, description: e.target.value }))
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                     rows={3}
                   />
                 </div>
@@ -588,7 +588,7 @@ export default function AdminDashboard() {
                     onChange={(e) =>
                       setNewProduct((prev) => ({ ...prev, includes: e.target.value }))
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                     rows={2}
                   />
                 </div>
@@ -625,7 +625,7 @@ export default function AdminDashboard() {
                               featured_order: e.target.value ? Number(e.target.value) : null,
                             }))
                           }
-                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                         />
                         <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
                       </div>
