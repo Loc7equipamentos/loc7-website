@@ -73,8 +73,21 @@ const SUBCATEGORY_MAP: Record<string, string[]> = {
   iluminacao: ["LED", "Fresnel", "Tubos", "Painéis", "Modificadores"],
 };
 
+function safeString(value: unknown, fallback: string = ""): string {
+  return typeof value === "string" ? value : fallback;
+}
+
+function safeNullableString(value: unknown): string | null {
+  return typeof value === "string" && value.trim() !== "" ? value : null;
+}
+
+function safeNumber(value: unknown): number | null {
+  return typeof value === "number" && !Number.isNaN(value) ? value : null;
+}
+
 function normalizeCategory(value?: string | null) {
-  if (!value) return "";
+  if (!value || typeof value !== "string") return "";
+
   return value
     .toLowerCase()
     .normalize("NFD")
@@ -89,11 +102,39 @@ function getCategoryLabel(slug: string) {
   return CATEGORY_LABELS[slug] || slug;
 }
 
+function sanitizeProduct(raw: any): Product | null {
+  if (!raw || typeof raw !== "object") return null;
+
+  const id =
+    typeof raw.id === "string" || typeof raw.id === "number"
+      ? String(raw.id)
+      : "";
+
+  const name = safeString(raw.name).trim();
+
+  if (!id || !name) return null;
+
+  return {
+    id,
+    name,
+    slug: safeNullableString(raw.slug),
+    category: safeNullableString(raw.category),
+    subcategory: safeNullableString(raw.subcategory),
+    price: safeNumber(raw.price),
+    description: safeNullableString(raw.description),
+    includes: raw.includes ?? null,
+    image_url: safeNullableString(raw.image_url),
+    images: raw.images ?? null,
+    badge: safeNullableString(raw.badge),
+    is_featured: typeof raw.is_featured === "boolean" ? raw.is_featured : null,
+    featured_order: safeNumber(raw.featured_order),
+  };
+}
+
 export default function Catalogo() {
   const [location, setLocation] = useLocation();
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("Todos");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -109,10 +150,10 @@ export default function Catalogo() {
   const availableCategories = useMemo(() => {
     const set = new Set<string>();
 
-    products.forEach((product) => {
+    for (const product of products) {
       const normalized = normalizeCategory(product.category);
       if (normalized) set.add(normalized);
-    });
+    }
 
     const fromOrder = CATEGORY_ORDER.filter((cat) => set.has(cat));
     const remaining = Array.from(set).filter((cat) => !CATEGORY_ORDER.includes(cat));
@@ -129,43 +170,20 @@ export default function Catalogo() {
 
     const subs = new Set<string>();
 
-    products.forEach((product) => {
-      if (normalizeCategory(product.category) === categoryFromRoute && product.subcategory) {
+    for (const product of products) {
+      if (
+        normalizeCategory(product.category) === categoryFromRoute &&
+        typeof product.subcategory === "string" &&
+        product.subcategory.trim() !== ""
+      ) {
         subs.add(product.subcategory);
       }
-    });
+    }
 
     return Array.from(subs);
   }, [products, categoryFromRoute]);
 
-  useEffect(() => {
-    const loadProducts = async () => {
-      setLoading(true);
-      setError(null);
-
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .order("name", { ascending: true });
-
-      if (error) {
-        console.error("Erro ao carregar produtos:", error);
-        setError("Não foi possível carregar o catálogo.");
-        setProducts([]);
-        setFilteredProducts([]);
-        setLoading(false);
-        return;
-      }
-
-      const safeProducts = (data || []).filter((item) => item?.name);
-      setProducts(safeProducts);
-      setLoading(false);
-    };
-
-    loadProducts();
-  }, []);
-
-  useEffect(() => {
+  const filteredProducts = useMemo(() => {
     let next = [...products];
 
     if (categoryFromRoute) {
@@ -178,12 +196,47 @@ export default function Catalogo() {
       next = next.filter((product) => product.subcategory === selectedSubcategory);
     }
 
-    setFilteredProducts(next);
+    return next;
   }, [products, categoryFromRoute, selectedSubcategory]);
 
   useEffect(() => {
     setSelectedSubcategory("Todos");
   }, [categoryFromRoute]);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .order("name", { ascending: true });
+
+        if (error) {
+          console.error("Erro ao carregar produtos:", error);
+          setError("Não foi possível carregar o catálogo.");
+          setProducts([]);
+          return;
+        }
+
+        const sanitized = Array.isArray(data)
+          ? data.map(sanitizeProduct).filter(Boolean) as Product[]
+          : [];
+
+        setProducts(sanitized);
+      } catch (err) {
+        console.error("Erro inesperado no catálogo:", err);
+        setError("Ocorreu um erro ao montar o catálogo.");
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   const currentCategoryLabel = categoryFromRoute
     ? getCategoryLabel(categoryFromRoute)
