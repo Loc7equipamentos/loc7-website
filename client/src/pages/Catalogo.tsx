@@ -1,145 +1,328 @@
-import { useEffect, useState } from "react";
-import { useParams, useLocation } from "wouter";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "wouter";
+import ProductCard from "../components/ProductCard";
 import { supabase } from "../lib/supabase";
 
-interface Product {
+type Product = {
   id: string;
   name: string;
-  category: string;
-  subcategory?: string;
-  price?: number;
-  image_url?: string;
-  images?: string[];
-  badge?: string;
   slug: string;
-  catalog_order?: number;
+  category?: string | null;
+  subcategory?: string | null;
+  price?: number | null;
+  description?: string | null;
+  includes?: string[] | string | null;
+  image_url?: string | null;
+  images?: string[] | null;
+  badge?: string | null;
+  is_featured?: boolean | null;
+  featured_order?: number | null;
+};
+
+const CATEGORY_LABELS: Record<string, string> = {
+  audio: "Áudio",
+  cameras: "Câmeras",
+  computadorestablets: "Computadores e Tablets",
+  comunicadores: "Comunicadores",
+  conversoresdistribuidores: "Conversores e Distribuidores",
+  estabilizadores: "Estabilizadores",
+  filtros: "Filtros",
+  followfocus: "Follow Focus",
+  gravadores: "Gravadores",
+  hdscartoes: "HDs e Cartões",
+  iluminacao: "Iluminação",
+  lentes: "Lentes",
+  maquinaria: "Maquinária",
+  mattebox: "Mattebox",
+  monitores: "Monitores",
+  movimento: "Movimento",
+  still: "Still",
+  switchers: "Switchers",
+  teleprompter: "Teleprompter",
+  transmissores: "Transmissores",
+  tripes: "Tripés",
+};
+
+const CATEGORY_ORDER = [
+  "cameras",
+  "lentes",
+  "iluminacao",
+  "audio",
+  "monitores",
+  "movimento",
+  "transmissores",
+  "switchers",
+  "tripes",
+  "estabilizadores",
+  "gravadores",
+  "filtros",
+  "mattebox",
+  "followfocus",
+  "maquinaria",
+  "still",
+  "comunicadores",
+  "conversoresdistribuidores",
+  "computadorestablets",
+  "hdscartoes",
+  "teleprompter",
+];
+
+const SUBCATEGORY_MAP: Record<string, string[]> = {
+  cameras: ["PTZ", "Broadcast", "Mirrorless", "Cinema"],
+  lentes: ["E-Mount", "EF-Mount", "RF-Mount", "PL-Mount", "Broadcast"],
+  iluminacao: ["LED", "Fresnel", "Tubos", "Painéis", "Modificadores"],
+};
+
+function normalizeCategory(value?: string | null) {
+  if (!value) return "";
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, "e")
+    .replace(/\//g, "")
+    .replace(/\s+/g, "")
+    .replace(/-/g, "");
+}
+
+function getCategoryLabel(slug: string) {
+  return CATEGORY_LABELS[slug] || slug;
 }
 
 export default function Catalogo() {
-  const { category } = useParams();
-  const [, navigate] = useLocation();
+  const [location, setLocation] = useLocation();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("Todos");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const normalize = (str?: string) =>
-    (str || "")
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, "-");
-
-  useEffect(() => {
-    fetchProducts();
-  }, [category]);
-
-  const fetchProducts = async () => {
-    setLoading(true);
-
-    const { data, error } = await supabase.from("products").select("*");
-
-    if (error) {
-      console.error(error);
-      setLoading(false);
-      return;
+  const categoryFromRoute = useMemo(() => {
+    const parts = location.split("/").filter(Boolean);
+    if (parts[0] === "catalogo" && parts[1]) {
+      return normalizeCategory(parts[1]);
     }
+    return "";
+  }, [location]);
 
-    const currentCategory = normalize(category);
+  const availableCategories = useMemo(() => {
+    const set = new Set<string>();
 
-    const filtered = category
-      ? data.filter((p: Product) => normalize(p.category) === currentCategory)
-      : data;
-
-    const sorted = [...filtered].sort((a: Product, b: Product) => {
-      const orderA = a.catalog_order ?? 9999;
-      const orderB = b.catalog_order ?? 9999;
-      return orderA - orderB;
+    products.forEach((product) => {
+      const normalized = normalizeCategory(product.category);
+      if (normalized) set.add(normalized);
     });
 
-    setProducts(sorted);
-    setFilteredProducts(sorted);
+    const fromOrder = CATEGORY_ORDER.filter((cat) => set.has(cat));
+    const remaining = Array.from(set).filter((cat) => !CATEGORY_ORDER.includes(cat));
 
-    setLoading(false);
-  };
+    return [...fromOrder, ...remaining];
+  }, [products]);
 
-  const formatPrice = (price?: number) => {
-    if (!price) return "";
-    return `R$ ${price.toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
-  };
+  const availableSubcategories = useMemo(() => {
+    if (!categoryFromRoute) return [];
 
-  const getImage = (p: Product) => {
-    if (p.images && p.images.length > 0) return p.images[0];
-    return p.image_url;
-  };
+    if (SUBCATEGORY_MAP[categoryFromRoute]) {
+      return SUBCATEGORY_MAP[categoryFromRoute];
+    }
 
-  if (loading) {
-    return (
-      <div className="pt-32 text-center text-white">
-        Carregando catálogo...
-      </div>
-    );
-  }
+    const subs = new Set<string>();
+
+    products.forEach((product) => {
+      if (normalizeCategory(product.category) === categoryFromRoute && product.subcategory) {
+        subs.add(product.subcategory);
+      }
+    });
+
+    return Array.from(subs);
+  }, [products, categoryFromRoute]);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      setLoading(true);
+      setError(null);
+
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("name", { ascending: true });
+
+      if (error) {
+        console.error("Erro ao carregar produtos:", error);
+        setError("Não foi possível carregar o catálogo.");
+        setProducts([]);
+        setFilteredProducts([]);
+        setLoading(false);
+        return;
+      }
+
+      const safeProducts = (data || []).filter((item) => item?.slug && item?.name);
+      setProducts(safeProducts);
+      setLoading(false);
+    };
+
+    loadProducts();
+  }, []);
+
+  useEffect(() => {
+    let next = [...products];
+
+    if (categoryFromRoute) {
+      next = next.filter(
+        (product) => normalizeCategory(product.category) === categoryFromRoute
+      );
+    }
+
+    if (selectedSubcategory !== "Todos") {
+      next = next.filter((product) => product.subcategory === selectedSubcategory);
+    }
+
+    setFilteredProducts(next);
+  }, [products, categoryFromRoute, selectedSubcategory]);
+
+  useEffect(() => {
+    setSelectedSubcategory("Todos");
+  }, [categoryFromRoute]);
+
+  const currentCategoryLabel = categoryFromRoute
+    ? getCategoryLabel(categoryFromRoute)
+    : "Todos os Equipamentos";
 
   return (
-    <div className="pt-24 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 lg:px-6 py-8">
-        {/* GRID */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <div
-              key={product.id}
-              onClick={() => navigate(`/equipamentos/${product.slug}`)}
-              className="bg-white rounded-xl shadow-sm hover:shadow-md transition cursor-pointer group overflow-hidden"
-            >
-              {/* IMAGE */}
-              <div className="bg-white aspect-square flex items-center justify-center overflow-hidden">
-                <img
-                  src={getImage(product)}
-                  alt={product.name}
-                  className="object-contain w-full h-full p-4 transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
+    <main className="min-h-screen bg-[#f5f5f2] text-neutral-900">
+      <section className="border-b border-neutral-200 bg-white">
+        <div className="mx-auto max-w-[1440px] px-4 pb-10 pt-24 sm:px-6 lg:px-10 lg:pt-28">
+          <div className="max-w-3xl">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.20em] text-neutral-500">
+              Catálogo Loc7
+            </p>
 
-              {/* INFO */}
-              <div className="p-4">
-                <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">
-                  {product.name}
-                </h3>
+            <h1 className="text-3xl font-semibold tracking-[-0.03em] text-neutral-950 sm:text-4xl">
+              {currentCategoryLabel}
+            </h1>
 
-                {product.subcategory && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    {product.subcategory}
-                  </p>
-                )}
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-600 sm:text-[15px]">
+              Equipamentos profissionais para produções audiovisuais, broadcast,
+              publicidade, conteúdo e operação técnica de alto nível.
+            </p>
+          </div>
 
-                {product.badge && (
-                  <span className="inline-block mt-2 text-[10px] font-semibold bg-gray-900 text-white px-2 py-1 rounded">
-                    {product.badge}
-                  </span>
-                )}
+          <div className="mt-8 overflow-x-auto">
+            <div className="flex min-w-max gap-2 pb-1">
+              <button
+                onClick={() => setLocation("/catalogo")}
+                className={`rounded-full border px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.12em] transition-all duration-200 ${
+                  !categoryFromRoute
+                    ? "border-black bg-black text-white"
+                    : "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-400 hover:text-black"
+                }`}
+              >
+                Todos
+              </button>
 
-                {product.price && (
-                  <p className="mt-3 text-sm font-bold text-gray-900">
-                    {formatPrice(product.price)}
-                    <span className="text-xs text-gray-500 font-normal">/dia</span>
-                  </p>
-                )}
+              {availableCategories.map((category) => {
+                const isActive = categoryFromRoute === category;
+
+                return (
+                  <button
+                    key={category}
+                    onClick={() => setLocation(`/catalogo/${category}`)}
+                    className={`rounded-full border px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.12em] transition-all duration-200 ${
+                      isActive
+                        ? "border-black bg-black text-white"
+                        : "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-400 hover:text-black"
+                    }`}
+                  >
+                    {getCategoryLabel(category)}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {categoryFromRoute && availableSubcategories.length > 0 && (
+            <div className="mt-5 overflow-x-auto">
+              <div className="flex min-w-max gap-2 pb-1">
+                <button
+                  onClick={() => setSelectedSubcategory("Todos")}
+                  className={`rounded-full px-4 py-2 text-[12px] font-medium transition-all duration-200 ${
+                    selectedSubcategory === "Todos"
+                      ? "bg-neutral-900 text-white"
+                      : "bg-neutral-200 text-neutral-700 hover:bg-neutral-300 hover:text-black"
+                  }`}
+                >
+                  Todos
+                </button>
+
+                {availableSubcategories.map((sub) => (
+                  <button
+                    key={sub}
+                    onClick={() => setSelectedSubcategory(sub)}
+                    className={`rounded-full px-4 py-2 text-[12px] font-medium transition-all duration-200 ${
+                      selectedSubcategory === sub
+                        ? "bg-neutral-900 text-white"
+                        : "bg-neutral-200 text-neutral-700 hover:bg-neutral-300 hover:text-black"
+                    }`}
+                  >
+                    {sub}
+                  </button>
+                ))}
               </div>
             </div>
-          ))}
+          )}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <div className="text-[12px] font-medium uppercase tracking-[0.14em] text-neutral-500">
+            {loading
+              ? "Carregando catálogo..."
+              : `${filteredProducts.length} ${
+                  filteredProducts.length === 1 ? "produto" : "produtos"
+                }`}
+          </div>
         </div>
 
-        {/* Empty state */}
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-gray-500 text-lg">Nenhum produto encontrado nesta categoria.</p>
+        {loading ? (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div
+                key={index}
+                className="overflow-hidden rounded-[18px] border border-neutral-200 bg-white"
+              >
+                <div className="aspect-[4/3] w-full animate-pulse bg-neutral-200" />
+                <div className="space-y-3 p-4">
+                  <div className="h-3 w-20 animate-pulse rounded bg-neutral-200" />
+                  <div className="h-4 w-full animate-pulse rounded bg-neutral-200" />
+                  <div className="h-4 w-4/5 animate-pulse rounded bg-neutral-200" />
+                  <div className="h-4 w-24 animate-pulse rounded bg-neutral-200" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
+            {error}
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="rounded-2xl border border-neutral-200 bg-white px-6 py-12 text-center">
+            <h2 className="text-lg font-semibold text-neutral-900">
+              Nenhum produto encontrado
+            </h2>
+            <p className="mt-2 text-sm text-neutral-600">
+              Tente trocar a categoria ou subcategoria para visualizar outros itens.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
