@@ -21,14 +21,14 @@ const submenuCategories = [
 ];
 
 const slugToCategoryName: Record<string, string> = {
-  'cameras': 'Câmeras',
-  'lentes': 'Lentes',
-  'iluminacao': 'Iluminação',
-  'audio': 'Áudio',
-  'monitores': 'Monitores',
-  'movimento': 'Movimento',
-  'transmissores': 'Transmissores',
-  'maquinaria': 'Maquinária',
+  cameras: "Câmeras",
+  lentes: "Lentes",
+  iluminacao: "Iluminação",
+  audio: "Áudio",
+  monitores: "Monitores",
+  movimento: "Movimento",
+  transmissores: "Transmissores",
+  maquinaria: "Maquinária",
 };
 
 // Fallback categories (usado se Supabase falhar)
@@ -75,26 +75,26 @@ export default function Navbar() {
       try {
         setLoadingCategories(true);
         const { data, error } = await supabase
-          .from('categories')
-          .select('name')
-          .order('name');
+          .from("categories")
+          .select("name")
+          .order("name");
 
         if (error) {
-          console.warn('[DEBUG] Erro ao carregar categorias:', error);
+          console.warn("[DEBUG] Erro ao carregar categorias:", error);
           setDropdownCategories(fallbackCategories);
         } else if (data && data.length > 0) {
-          console.log('[DEBUG] Categorias carregadas do Supabase:', data);
+          console.log("[DEBUG] Categorias carregadas do Supabase:", data);
           const categories = data.map((cat: any) => ({
             name: cat.name.toUpperCase(),
-            href: `/catalogo/${cat.name.toLowerCase().replace(/\s+/g, '-')}`
+            href: `/catalogo/${cat.name.toLowerCase().replace(/\s+/g, "-")}`,
           }));
           setDropdownCategories(categories);
         } else {
-          console.warn('[DEBUG] Nenhuma categoria encontrada, usando fallback');
+          console.warn("[DEBUG] Nenhuma categoria encontrada, usando fallback");
           setDropdownCategories(fallbackCategories);
         }
       } catch (err) {
-        console.error('[DEBUG] Erro ao carregar categorias:', err);
+        console.error("[DEBUG] Erro ao carregar categorias:", err);
         setDropdownCategories(fallbackCategories);
       } finally {
         setLoadingCategories(false);
@@ -105,12 +105,12 @@ export default function Navbar() {
 
     // Inscrever em mudanças em tempo real
     const subscription = supabase
-      .channel('categories-changes')
+      .channel("categories-changes")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'categories' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "categories" },
         () => {
-          console.log('[DEBUG] Categorias atualizadas, recarregando...');
+          console.log("[DEBUG] Categorias atualizadas, recarregando...");
           loadCategories();
         }
       )
@@ -135,15 +135,15 @@ export default function Navbar() {
   return (
     <>
       {/* Main navbar */}
-      <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-black shadow-lg shadow-black/40' : 'bg-black'}`}>
+      <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black shadow-lg shadow-black/40" : "bg-black"}`}>
         <div className="container">
           <div className="flex items-stretch justify-between">
-            {/* Logo - Loc 7 Brand - Maior e com mais presença */}
+            {/* Logo - Loc 7 Brand */}
             <Link href="/" className="flex items-center py-3 group">
               <img
                 src="/logo-loc7-navbar.png"
                 alt="Loc 7 Equipamentos"
-                className="h-[7.5rem] w-auto transition-transform duration-300 group-hover:scale-105"
+                className="h-[8.625rem] w-auto transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
 
@@ -151,28 +151,34 @@ export default function Navbar() {
             <div className="flex flex-col flex-1 relative">
               {/* Main nav */}
               <div className="flex items-center justify-center h-20 flex-1">
-                {/* Desktop nav - Centralizado e elegante */}
+                {/* Desktop nav */}
                 <div className="hidden md:flex items-center gap-16 justify-center flex-1 relative overflow-visible">
                   {navLinks.map((link) => (
-                    <div 
-                      key={link.name} 
+                    <div
+                      key={link.name}
                       className="relative group whitespace-nowrap overflow-visible pointer-events-auto"
                       onMouseEnter={() => link.hasDropdown && setIsCatalogOpen(true)}
                       onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
                     >
                       {link.hasDropdown ? (
-                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_4px_rgba(255,255,255,0.2)] transition-all duration-200 ease-out ${location.startsWith('/catalogo') ? 'text-gray-300' : ''}`}>
+                        <Link
+                          href={link.href}
+                          className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.28)] transition-all duration-200 ease-out ${location.startsWith("/catalogo") ? "text-gray-300" : ""}`}
+                        >
                           {link.name}
                         </Link>
                       ) : (
-                        <Link href={link.href} className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_4px_rgba(255,255,255,0.2)] transition-all duration-200 ease-out ${location === link.href ? 'text-gray-300' : ''}`}>
+                        <Link
+                          href={link.href}
+                          className={`text-base font-semibold tracking-wide text-white hover:text-white hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.28)] transition-all duration-200 ease-out ${location === link.href ? "text-gray-300" : ""}`}
+                        >
                           {link.name}
                         </Link>
                       )}
-                      
+
                       {/* Dropdown vertical - Abaixo de LOCAÇÃO */}
                       {link.hasDropdown && isCatalogOpen && (
-                        <div className="loc7-dropdown z-[9999] bg-black border border-white/10 shadow-2xl backdrop-blur-none" style={{pointerEvents: 'auto'}}>
+                        <div className="loc7-dropdown z-[9999] bg-black border border-white/10 shadow-2xl backdrop-blur-none" style={{ pointerEvents: "auto" }}>
                           {loadingCategories ? (
                             <div className="px-4 py-3 text-white text-sm text-center">Carregando...</div>
                           ) : (
@@ -203,7 +209,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Submenu horizontal com ícones - Centralizado e refinado */}
+          {/* Submenu horizontal com ícones */}
           <div className="hidden md:block bg-black h-16">
             <div className="flex items-center justify-center gap-2 py-2">
               {submenuCategories.map((cat) => {
