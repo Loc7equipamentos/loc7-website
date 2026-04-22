@@ -121,6 +121,66 @@ export default function AdminDashboard() {
     ? getSubcategoriesForCategory(editingProduct.category)
     : [];
 
+  const getCombinedImages = (imageUrl?: string | null, images?: string[] | null) => {
+    return [imageUrl, ...(images || [])].filter(Boolean) as string[];
+  };
+
+  const moveImage = (
+    index: number,
+    direction: 'left' | 'right',
+    isEditing: boolean = false
+  ) => {
+    if (isEditing && editingProduct) {
+      const allImages = getCombinedImages(editingProduct.image_url, editingProduct.images);
+      const newIndex = direction === 'left' ? index - 1 : index + 1;
+      if (newIndex < 0 || newIndex >= allImages.length) return;
+
+      [allImages[index], allImages[newIndex]] = [allImages[newIndex], allImages[index]];
+
+      setEditingProduct({
+        ...editingProduct,
+        image_url: allImages[0] || null,
+        images: allImages.slice(1),
+      });
+      return;
+    }
+
+    const allImages = getCombinedImages(newProduct.image_url, newProduct.images);
+    const newIndex = direction === 'left' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= allImages.length) return;
+
+    [allImages[index], allImages[newIndex]] = [allImages[newIndex], allImages[index]];
+
+    setNewProduct((prev) => ({
+      ...prev,
+      image_url: allImages[0] || '',
+      images: allImages.slice(1),
+    }));
+  };
+
+  const removeImage = (index: number, isEditing: boolean = false) => {
+    if (isEditing && editingProduct) {
+      const allImages = getCombinedImages(editingProduct.image_url, editingProduct.images);
+      allImages.splice(index, 1);
+
+      setEditingProduct({
+        ...editingProduct,
+        image_url: allImages[0] || null,
+        images: allImages.slice(1),
+      });
+      return;
+    }
+
+    const allImages = getCombinedImages(newProduct.image_url, newProduct.images);
+    allImages.splice(index, 1);
+
+    setNewProduct((prev) => ({
+      ...prev,
+      image_url: allImages[0] || '',
+      images: allImages.slice(1),
+    }));
+  };
+
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -169,10 +229,7 @@ export default function AdminDashboard() {
     const uploadedUrls: string[] = [];
 
     for (const file of Array.from(files)) {
-      if (!file) {
-        console.warn('[DEBUG] Nenhum arquivo selecionado');
-        continue;
-      }
+      if (!file) continue;
 
       try {
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -216,27 +273,25 @@ export default function AdminDashboard() {
     }
 
     if (isEditing && editingProduct) {
-      const currentImages = [editingProduct.image_url, ...(editingProduct.images || [])].filter(
-        Boolean
-      ) as string[];
+      const currentImages = getCombinedImages(editingProduct.image_url, editingProduct.images);
       const allImages = [...currentImages, ...uploadedUrls];
+
       setEditingProduct((prev) =>
         prev
           ? {
               ...prev,
-              image_url: allImages[0],
+              image_url: allImages[0] || null,
               images: allImages.slice(1),
             }
           : prev
       );
     } else {
-      const currentImages = newProduct.image_url
-        ? [newProduct.image_url, ...newProduct.images]
-        : newProduct.images;
+      const currentImages = getCombinedImages(newProduct.image_url, newProduct.images);
       const allImages = [...currentImages, ...uploadedUrls];
+
       setNewProduct((prev) => ({
         ...prev,
-        image_url: allImages[0],
+        image_url: allImages[0] || '',
         images: allImages.slice(1),
       }));
     }
@@ -286,6 +341,7 @@ export default function AdminDashboard() {
     } else {
       setIsDragOverNewProduct(false);
     }
+
     const files = e.dataTransfer.files;
     if (files) {
       await processFiles(files, isEditing);
@@ -373,6 +429,7 @@ export default function AdminDashboard() {
         .eq('id', editingProduct.id);
 
       if (err) throw err;
+
       setShowEditModal(false);
       setEditingProduct(null);
       await loadProducts();
@@ -436,6 +493,11 @@ export default function AdminDashboard() {
       </div>
     );
   }
+
+  const newProductPreviewImages = getCombinedImages(newProduct.image_url, newProduct.images);
+  const editingProductPreviewImages = editingProduct
+    ? getCombinedImages(editingProduct.image_url, editingProduct.images)
+    : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -660,26 +722,45 @@ export default function AdminDashboard() {
                       <p className="text-xs text-gray-500 mt-1">JPG, PNG ou WebP (máx 10MB)</p>
                     </label>
 
-                    {(newProduct.image_url || newProduct.images.length > 0) && (
-                      <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                        {newProduct.image_url && (
-                          <div className="text-center">
-                            <img
-                              src={newProduct.image_url}
-                              alt="Capa"
-                              className="w-12 h-12 object-cover border border-gray-300 rounded"
-                            />
-                            <p className="text-xs mt-1 text-gray-600">Capa</p>
-                          </div>
-                        )}
-                        {newProduct.images.map((img, index) => (
-                          <div key={index} className="text-center">
+                    {newProductPreviewImages.length > 0 && (
+                      <div className="mt-6 flex flex-wrap gap-4 justify-center">
+                        {newProductPreviewImages.map((img, index) => (
+                          <div key={`${img}-${index}`} className="relative w-16">
                             <img
                               src={img}
-                              alt={`Img ${index}`}
-                              className="w-12 h-12 object-cover border border-gray-300 rounded"
+                              alt={`Imagem ${index + 1}`}
+                              className="w-16 h-16 object-cover border border-gray-300 rounded"
                             />
-                            <p className="text-xs mt-1 text-gray-600">#{index + 1}</p>
+
+                            {index === 0 && (
+                              <span className="absolute -top-2 left-0 text-[10px] bg-black text-white px-1.5 py-0.5 rounded">
+                                CAPA
+                              </span>
+                            )}
+
+                            <div className="mt-2 flex justify-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => moveImage(index, 'left', false)}
+                                className="px-1.5 py-0.5 text-xs border border-gray-300 rounded bg-white hover:bg-gray-50"
+                              >
+                                ←
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => moveImage(index, 'right', false)}
+                                className="px-1.5 py-0.5 text-xs border border-gray-300 rounded bg-white hover:bg-gray-50"
+                              >
+                                →
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => removeImage(index, false)}
+                                className="px-1.5 py-0.5 text-xs border border-red-300 rounded bg-red-50 text-red-600 hover:bg-red-100"
+                              >
+                                X
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -1057,26 +1138,45 @@ export default function AdminDashboard() {
                       <p className="text-xs text-gray-500 mt-1">JPG, PNG ou WebP (máx 10MB)</p>
                     </label>
 
-                    {(editingProduct.image_url || (editingProduct.images && editingProduct.images.length > 0)) && (
-                      <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                        {editingProduct.image_url && (
-                          <div className="text-center">
-                            <img
-                              src={editingProduct.image_url}
-                              alt="Capa"
-                              className="w-12 h-12 object-cover border border-gray-300 rounded"
-                            />
-                            <p className="text-xs mt-1 text-gray-600">Capa</p>
-                          </div>
-                        )}
-                        {(editingProduct.images || []).map((img, index) => (
-                          <div key={index} className="text-center">
+                    {editingProductPreviewImages.length > 0 && (
+                      <div className="mt-6 flex flex-wrap gap-4 justify-center">
+                        {editingProductPreviewImages.map((img, index) => (
+                          <div key={`${img}-${index}`} className="relative w-16">
                             <img
                               src={img}
-                              alt={`Img ${index}`}
-                              className="w-12 h-12 object-cover border border-gray-300 rounded"
+                              alt={`Imagem ${index + 1}`}
+                              className="w-16 h-16 object-cover border border-gray-300 rounded"
                             />
-                            <p className="text-xs mt-1 text-gray-600">#{index + 1}</p>
+
+                            {index === 0 && (
+                              <span className="absolute -top-2 left-0 text-[10px] bg-black text-white px-1.5 py-0.5 rounded">
+                                CAPA
+                              </span>
+                            )}
+
+                            <div className="mt-2 flex justify-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => moveImage(index, 'left', true)}
+                                className="px-1.5 py-0.5 text-xs border border-gray-300 rounded bg-white hover:bg-gray-50"
+                              >
+                                ←
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => moveImage(index, 'right', true)}
+                                className="px-1.5 py-0.5 text-xs border border-gray-300 rounded bg-white hover:bg-gray-50"
+                              >
+                                →
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => removeImage(index, true)}
+                                className="px-1.5 py-0.5 text-xs border border-red-300 rounded bg-red-50 text-red-600 hover:bg-red-100"
+                              >
+                                X
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
