@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "wouter";
 
 type Product = {
   id: string;
   name: string;
-  slug: string;
+  slug?: string | null;
   category?: string | null;
   subcategory?: string | null;
   price?: number | null;
   description?: string | null;
   includes?: string[] | string | null;
   image_url?: string | null;
-  images?: string[] | null;
+  images?: string[] | string | null;
   badge?: string | null;
   is_featured?: boolean | null;
   featured_order?: number | null;
@@ -34,18 +34,41 @@ function formatPrice(price?: number | null) {
   }).format(price);
 }
 
+function parseImages(images?: string[] | string | null): string[] {
+  if (!images) return [];
+
+  if (Array.isArray(images)) {
+    return images.filter((img) => typeof img === "string" && img.trim() !== "");
+  }
+
+  if (typeof images === "string") {
+    try {
+      const parsed = JSON.parse(images);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((img) => typeof img === "string" && img.trim() !== "");
+      }
+      return [];
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+}
+
 export default function ProductCard({ product }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const coverImage = product.image_url || PLACEHOLDER_IMAGE;
-  const hoverImage =
-    product.images && product.images.length > 0 ? product.images[0] : null;
+  const parsedImages = useMemo(() => parseImages(product.images), [product.images]);
 
+  const coverImage = product.image_url || PLACEHOLDER_IMAGE;
+  const hoverImage = parsedImages.length > 0 ? parsedImages[0] : null;
   const displayImage = isHovered && hoverImage ? hoverImage : coverImage;
   const formattedPrice = formatPrice(product.price);
+  const productHref = product.slug ? `/equipamentos/${product.slug}` : "/catalogo";
 
   return (
-    <Link href={`/equipamentos/${product.slug}`}>
+    <Link href={productHref}>
       <a
         className="group block h-full"
         onMouseEnter={() => setIsHovered(true)}
@@ -61,7 +84,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             <img
               src={displayImage}
-              alt={product.name}
+              alt={product.name || "Produto"}
               className="h-full w-full object-cover transition-opacity duration-300"
               loading="lazy"
             />
@@ -76,12 +99,12 @@ export default function ProductCard({ product }: ProductCardProps) {
               </div>
             )}
 
-            <h3 className="line-clamp-2 min-h-[44px] text-[15px] font-semibold leading-[1.45] text-neutral-900 transition-colors duration-200 group-hover:text-black sm:text-[16px]">
+            <h3 className="min-h-[44px] text-[15px] font-semibold leading-[1.45] text-neutral-900 transition-colors duration-200 group-hover:text-black sm:text-[16px]">
               {product.name}
             </h3>
 
             {product.description ? (
-              <p className="mt-2 line-clamp-2 text-[12.5px] leading-5 text-neutral-600 sm:text-[13px]">
+              <p className="mt-2 min-h-[40px] text-[12.5px] leading-5 text-neutral-600 sm:text-[13px]">
                 {product.description}
               </p>
             ) : (
