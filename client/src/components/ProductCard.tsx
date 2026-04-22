@@ -43,7 +43,7 @@ export default function ProductCard({
           <img
             src={hovered && secondaryImage ? secondaryImage : primaryImage || ""}
             alt={name}
-            className="object-contain w-full h-full transition-opacity duration-200"
+            className="object-contain w-full h-full"
           />
         </div>
 
