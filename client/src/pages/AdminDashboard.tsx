@@ -131,8 +131,7 @@ export default function AdminDashboard() {
 
       if (err) throw err;
 
-      // Sort products: featured first (by featured_order), then non-featured
-      const sortedProducts = (data as ProductWithImages[] || []).sort((a, b) => {
+      const sortedProducts = ((data as ProductWithImages[]) || []).sort((a, b) => {
         if (a.is_featured && !b.is_featured) return -1;
         if (!a.is_featured && b.is_featured) return 1;
         if (a.is_featured && b.is_featured) {
@@ -475,7 +474,6 @@ export default function AdminDashboard() {
 
         {activeTab === 'products' && (
           <div className="space-y-8">
-            {/* FORMULÁRIO */}
             <div className="bg-white p-6 rounded border border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-6">Novo Produto</h2>
 
@@ -593,7 +591,6 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                {/* BLOCO DESTAQUE NA HOME */}
                 <div className="md:col-span-2 border-t border-gray-200 pt-4">
                   <div className="flex items-center gap-4">
                     <label className="flex items-center gap-2">
@@ -633,7 +630,6 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {/* UPLOAD DE IMAGENS */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Imagens</label>
                   <div
@@ -700,7 +696,6 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            {/* TABELA DE PRODUTOS */}
             <div className="bg-white rounded border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -780,7 +775,7 @@ export default function AdminDashboard() {
                   placeholder="Nome da categoria"
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                 />
                 <button
                   onClick={addCategory}
@@ -831,7 +826,6 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      {/* MODAL DE EDIÇÃO */}
       {showEditModal && editingProduct && (
         <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -980,7 +974,6 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                {/* BLOCO DESTAQUE NA HOME - EDIÇÃO */}
                 <div className="md:col-span-2 border-t border-gray-200 pt-4">
                   <div className="flex items-center gap-4">
                     <label className="flex items-center gap-2">
@@ -1028,7 +1021,6 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {/* UPLOAD DE IMAGENS - EDIÇÃO */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Imagens</label>
                   <div
