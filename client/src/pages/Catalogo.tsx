@@ -59,6 +59,20 @@ function sanitizeProduct(raw: any): Product | null {
   };
 }
 
+function SafeProductItem({ product }: { product: Product }) {
+  try {
+    if (!product || !product.id || !product.name) {
+      console.warn("Produto inválido ignorado:", product);
+      return null;
+    }
+
+    return <ProductCard product={product} />;
+  } catch (error) {
+    console.error("Erro ao renderizar produto:", product, error);
+    return null;
+  }
+}
+
 export default function Catalogo() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,7 +99,7 @@ export default function Catalogo() {
         }
 
         const sanitized = Array.isArray(data)
-          ? data.map(sanitizeProduct).filter(Boolean) as Product[]
+          ? (data.map(sanitizeProduct).filter(Boolean) as Product[])
           : [];
 
         setProducts(sanitized);
@@ -164,7 +178,7 @@ export default function Catalogo() {
         ) : (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <SafeProductItem key={product.id} product={product} />
             ))}
           </div>
         )}
