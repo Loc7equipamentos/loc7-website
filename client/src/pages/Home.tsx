@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
+import FeaturedProducts from "@/components/FeaturedProducts";
 
 export default function Home() {
   const [, navigate] = useLocation();
@@ -64,52 +65,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* DESTAQUES */}
-      <section className="py-20 bg-black border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
-            Equipamentos em destaque
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="group">
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 mb-4 hover:scale-[1.02] transition duration-300">
-                <img
-                  src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&h=450&q=80"
-                  alt="Câmera profissional"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-              </div>
-              <h3 className="text-xl font-semibold">Câmeras Cinema</h3>
-              <p className="text-gray-400 mt-2">RED, Sony, Canon e Blackmagic</p>
-            </div>
-
-            <div className="group">
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 mb-4 hover:scale-[1.02] transition duration-300">
-                <img
-                  src="https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=600&h=450&q=80"
-                  alt="Lentes profissionais"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-              </div>
-              <h3 className="text-xl font-semibold">Lentes Premium</h3>
-              <p className="text-gray-400 mt-2">Zeiss, Leitz, DZO e Anamórficas</p>
-            </div>
-
-            <div className="group">
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 mb-4 hover:scale-[1.02] transition duration-300">
-                <img
-                  src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=600&h=450&q=80"
-                  alt="Iluminação profissional"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-              </div>
-              <h3 className="text-xl font-semibold">Iluminação LED</h3>
-              <p className="text-gray-400 mt-2">Aputure, Godox e Nanlite</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* DESTAQUES REAIS */}
+      <FeaturedProducts />
 
       {/* CATEGORIAS DE LOCAÇÃO */}
       <section className="py-20 bg-gray-950 border-t border-gray-800">
