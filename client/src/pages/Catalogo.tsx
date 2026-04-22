@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Component, ErrorInfo, ReactNode, useEffect, useMemo, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { supabase } from "../lib/supabase";
 
@@ -59,17 +59,33 @@ function sanitizeProduct(raw: any): Product | null {
   };
 }
 
-function SafeProductItem({ product }: { product: Product }) {
-  try {
-    if (!product || !product.id || !product.name) {
-      console.warn("Produto inválido ignorado:", product);
+class ProductCardErrorBoundary extends Component<
+  { children: ReactNode; productId: string },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode; productId: string }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("Erro ao renderizar ProductCard:", {
+      productId: this.props.productId,
+      error,
+      errorInfo,
+    });
+  }
+
+  render() {
+    if (this.state.hasError) {
       return null;
     }
 
-    return <ProductCard product={product} />;
-  } catch (error) {
-    console.error("Erro ao renderizar produto:", product, error);
-    return null;
+    return this.props.children;
   }
 }
 
@@ -178,7 +194,9 @@ export default function Catalogo() {
         ) : (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {products.map((product) => (
-              <SafeProductItem key={product.id} product={product} />
+              <ProductCardErrorBoundary key={product.id} productId={product.id}>
+                <ProductCard product={product} />
+              </ProductCardErrorBoundary>
             ))}
           </div>
         )}
