@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <div className="bg-black text-white">
       {/* HERO */}
-      <section className="relative min-h-screen flex items-end md:items-center justify-center md:justify-start text-center md:text-left px-6 pb-20 md:pb-0 overflow-hidden">
+      <section className="relative min-h-screen flex items-end md:items-center justify-center md:justify-start text-center md:text-left px-6 pb-16 md:pb-0 overflow-hidden">
         <video
           autoPlay
           muted
@@ -28,35 +28,43 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/40" />
 
         <div
-          className={`max-w-4xl relative z-10 mt-20 md:mt-0 transition-all duration-700 ease-out ${
-            heroVisible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-6"
+          className={`max-w-4xl relative z-10 transition-all duration-700 ease-out ${
+            heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
-          <h1 className="text-4xl md:text-6xl font-bold leading-[0.95] text-white">
-            LOCADORA DE EQUIPAMENTOS
-            <br />
-            <span className="text-5xl md:text-7xl">AUDIOVISUAIS</span>
-            <br />
-            EM SÃO PAULO
+          <h1 className="font-bold leading-[0.95] tracking-tight">
+            <span className="block text-gray-300 text-xl md:text-2xl font-medium mb-1">
+              LOCADORA DE
+            </span>
+
+            <span className="block text-white text-5xl md:text-7xl font-extrabold leading-[0.95]">
+              EQUIPAMENTOS
+            </span>
+
+            <span className="block text-white text-5xl md:text-7xl font-extrabold leading-[0.95]">
+              AUDIOVISUAIS
+            </span>
+
+            <span className="block text-gray-400 text-lg md:text-xl font-medium mt-1">
+              EM SÃO PAULO
+            </span>
           </h1>
 
-          <p className="mt-6 text-lg text-white/85 max-w-2xl">
+          <p className="mt-3 text-lg md:text-xl text-gray-400 max-w-xl leading-snug">
             Equipamentos prontos para produção, com agilidade e suporte técnico real.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 md:justify-start justify-center">
+          <div className="mt-5 flex flex-col sm:flex-row gap-4 md:justify-start justify-center">
             <button
               onClick={() => navigate("/catalogo")}
-              className="bg-white text-black px-8 py-4 rounded-xl font-semibold hover:bg-gray-200 transition"
+              className="bg-white text-black px-6 py-3 rounded-xl font-semibold hover:scale-105 transition"
             >
               Ver equipamentos
             </button>
 
             <button
               onClick={() => navigate("/orcamento")}
-              className="border border-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-black transition"
+              className="border border-white/40 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition"
             >
               Solicitar orçamento
             </button>
