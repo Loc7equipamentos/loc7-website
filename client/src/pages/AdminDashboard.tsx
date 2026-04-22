@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { supabase, type Product, type Category } from '@/lib/supabase';
-import { Trash2, Plus, Edit2, X, Upload, Loader, Package, FolderOpen } from 'lucide-react';
+import { Trash2, Plus, Edit2, X, Upload, Loader } from 'lucide-react';
 
 type ProductWithImages = Product & {
   images?: string[] | null;
   includes?: string | null;
   catalog_order?: number | null;
+  is_featured?: boolean | null;
+  featured_order?: number | null;
 };
 
 export default function AdminDashboard() {
@@ -18,8 +20,6 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<ProductWithImages | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [isDragOverNewProduct, setIsDragOverNewProduct] = useState(false);
   const [isDragOverEditProduct, setIsDragOverEditProduct] = useState(false);
 
@@ -34,6 +34,8 @@ export default function AdminDashboard() {
     images: [] as string[],
     badge: '',
     catalog_order: null as number | null,
+    is_featured: false,
+    featured_order: null as number | null,
   });
 
   const [newCategory, setNewCategory] = useState('');
@@ -119,28 +121,6 @@ export default function AdminDashboard() {
     ? getSubcategoriesForCategory(editingProduct.category)
     : [];
 
-  const reorderImages = (
-    allImages: string[],
-    fromIndex: number,
-    toIndex: number
-  ): { image_url: string; images: string[] } => {
-    if (fromIndex === toIndex) {
-      return {
-        image_url: allImages[0],
-        images: allImages.slice(1),
-      };
-    }
-
-    const reordered = [...allImages];
-    const [movedImage] = reordered.splice(fromIndex, 1);
-    reordered.splice(toIndex, 0, movedImage);
-
-    return {
-      image_url: reordered[0],
-      images: reordered.slice(1),
-    };
-  };
-
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -150,7 +130,20 @@ export default function AdminDashboard() {
         .order('created_at', { ascending: false });
 
       if (err) throw err;
-      setProducts((data as ProductWithImages[]) || []);
+
+      // Sort products: featured first (by featured_order), then non-featured
+      const sortedProducts = (data as ProductWithImages[] || []).sort((a, b) => {
+        if (a.is_featured && !b.is_featured) return -1;
+        if (!a.is_featured && b.is_featured) return 1;
+        if (a.is_featured && b.is_featured) {
+          const orderA = a.featured_order ?? Infinity;
+          const orderB = b.featured_order ?? Infinity;
+          return orderA - orderB;
+        }
+        return 0;
+      });
+
+      setProducts(sortedProducts);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar produtos');
     } finally {
@@ -211,7 +204,7 @@ export default function AdminDashboard() {
         uploadedUrls.push(data.publicUrl);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
-        alert(`❌ Erro ao fazer upload: ${errorMessage}`);
+        alert(`Erro ao fazer upload: ${errorMessage}`);
         setError(errorMessage);
       }
     }
@@ -219,7 +212,7 @@ export default function AdminDashboard() {
     setUploadingImage(false);
 
     if (uploadedUrls.length === 0) {
-      alert('⚠️ Nenhuma imagem foi enviada com sucesso');
+      alert('Nenhuma imagem foi enviada com sucesso');
       return;
     }
 
@@ -228,16 +221,12 @@ export default function AdminDashboard() {
         Boolean
       ) as string[];
       const allImages = [...currentImages, ...uploadedUrls];
-      const reordered = {
-        image_url: allImages[0],
-        images: allImages.slice(1),
-      };
       setEditingProduct((prev) =>
         prev
           ? {
               ...prev,
-              image_url: reordered.image_url,
-              images: reordered.images,
+              image_url: allImages[0],
+              images: allImages.slice(1),
             }
           : prev
       );
@@ -246,18 +235,14 @@ export default function AdminDashboard() {
         ? [newProduct.image_url, ...newProduct.images]
         : newProduct.images;
       const allImages = [...currentImages, ...uploadedUrls];
-      const reordered = {
-        image_url: allImages[0],
-        images: allImages.slice(1),
-      };
       setNewProduct((prev) => ({
         ...prev,
-        image_url: reordered.image_url,
-        images: reordered.images,
+        image_url: allImages[0],
+        images: allImages.slice(1),
       }));
     }
 
-    alert(`✅ ${uploadedUrls.length} imagem(ns) enviada(s) com sucesso!`);
+    alert(`${uploadedUrls.length} imagem(ns) enviada(s) com sucesso!`);
   };
 
   const handleImageUpload = async (
@@ -330,6 +315,8 @@ export default function AdminDashboard() {
           badge: newProduct.badge || null,
           slug,
           catalog_order: newProduct.catalog_order || null,
+          is_featured: newProduct.is_featured,
+          featured_order: newProduct.is_featured ? newProduct.featured_order : null,
         },
       ]);
 
@@ -346,6 +333,8 @@ export default function AdminDashboard() {
         images: [],
         badge: '',
         catalog_order: null,
+        is_featured: false,
+        featured_order: null,
       });
       setError(null);
       await loadProducts();
@@ -379,6 +368,8 @@ export default function AdminDashboard() {
           badge: editingProduct.badge || null,
           slug,
           catalog_order: editingProduct.catalog_order || null,
+          is_featured: editingProduct.is_featured,
+          featured_order: editingProduct.is_featured ? editingProduct.featured_order : null,
         })
         .eq('id', editingProduct.id);
 
@@ -441,39 +432,20 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <Loader className="w-8 h-8 text-gray-600 animate-spin" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader className="w-8 h-8 text-gray-400 animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-black border-b border-gray-900 sticky top-0 z-40 shadow-lg">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-5">
-            <img
-              src="/logo.png"
-              alt="Loc 7"
-              className="h-16 w-auto object-contain"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-            <div className="border-l border-gray-700 pl-5">
-              <h1 className="text-base font-semibold text-white">Painel de Administração</h1>
-              <p className="text-xs text-gray-400">Gerenciar equipamentos e categorias</p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-400">Loc 7 Equipamentos</p>
-          </div>
-        </div>
-      </header>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Painel de Administração</h1>
+        <p className="text-gray-600 mb-8">Gerenciar produtos e categorias</p>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
             {error}
           </div>
         )}
@@ -481,53 +453,52 @@ export default function AdminDashboard() {
         <div className="flex gap-4 mb-8 border-b border-gray-200">
           <button
             onClick={() => setActiveTab('products')}
-            className={`pb-4 px-4 font-medium text-sm transition-colors ${
+            className={`pb-3 px-1 font-medium text-sm ${
               activeTab === 'products'
                 ? 'text-gray-900 border-b-2 border-gray-900'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-gray-500'
             }`}
           >
-            <Package className="inline-block mr-2 size-4" />
             Produtos
           </button>
           <button
             onClick={() => setActiveTab('categories')}
-            className={`pb-4 px-4 font-medium text-sm transition-colors ${
+            className={`pb-3 px-1 font-medium text-sm ${
               activeTab === 'categories'
                 ? 'text-gray-900 border-b-2 border-gray-900'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-gray-500'
             }`}
           >
-            <FolderOpen className="inline-block mr-2 size-4" />
             Categorias
           </button>
         </div>
 
         {activeTab === 'products' && (
-          <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <div className="space-y-8">
+            {/* FORMULÁRIO */}
+            <div className="bg-white p-6 rounded border border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-6">Novo Produto</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Nome *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
                   <input
                     type="text"
                     placeholder="Nome do produto"
                     value={newProduct.name}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Categoria *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Categoria *</label>
                   <select
                     value={newProduct.category}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, category: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                   >
-                    <option value="">Selecione uma categoria</option>
+                    <option value="">Selecione</option>
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.name}>
                         {cat.name}
@@ -537,14 +508,14 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Subcategoria</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Subcategoria</label>
                   <select
                     value={newProduct.subcategory}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, subcategory: e.target.value }))}
                     disabled={!newProduct.category}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors disabled:bg-gray-100 disabled:text-gray-500"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white disabled:bg-gray-50"
                   >
-                    <option value="">Selecione ou crie nova</option>
+                    <option value="">Selecione</option>
                     {newProductSubcategories.map((subcat) => (
                       <option key={subcat} value={subcat}>
                         {subcat}
@@ -554,7 +525,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Preço *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Preço *</label>
                   <input
                     type="number"
                     placeholder="0.00"
@@ -565,26 +536,26 @@ export default function AdminDashboard() {
                         price: parseFloat(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Badge</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Badge</label>
                   <input
                     type="text"
                     placeholder="Ex: FULLFRAME"
                     value={newProduct.badge}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, badge: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Ordem no Catálogo</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ordem no Catálogo</label>
                   <input
                     type="number"
-                    placeholder="Ex: 1, 2, 3..."
+                    placeholder="1, 2, 3..."
                     value={newProduct.catalog_order ?? ''}
                     onChange={(e) =>
                       setNewProduct((prev) => ({
@@ -592,128 +563,129 @@ export default function AdminDashboard() {
                         catalog_order: e.target.value ? Number(e.target.value) : null,
                       }))
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Descrição</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
                   <textarea
                     placeholder="Descrição do produto"
                     value={newProduct.description}
                     onChange={(e) =>
                       setNewProduct((prev) => ({ ...prev, description: e.target.value }))
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                     rows={3}
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    O que acompanha
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">O que acompanha</label>
                   <textarea
-                    placeholder={`Ex:
-2 baterias
-1 carregador
-1 case
-1 cartão de memória`}
+                    placeholder="Listar itens inclusos"
                     value={newProduct.includes}
                     onChange={(e) =>
                       setNewProduct((prev) => ({ ...prev, includes: e.target.value }))
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
-                    rows={4}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    rows={2}
                   />
                 </div>
 
+                {/* BLOCO DESTAQUE NA HOME */}
+                <div className="md:col-span-2 border-t border-gray-200 pt-4">
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={newProduct.is_featured}
+                        onChange={(e) =>
+                          setNewProduct((prev) => ({
+                            ...prev,
+                            is_featured: e.target.checked,
+                            featured_order: e.target.checked ? prev.featured_order : null,
+                          }))
+                        }
+                        className="w-4 h-4 border border-gray-300 rounded"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Destaque na Home</span>
+                    </label>
+
+                    {newProduct.is_featured && (
+                      <div className="flex items-center gap-2">
+                        <label className="text-sm text-gray-600">Ordem:</label>
+                        <input
+                          type="number"
+                          placeholder="1"
+                          value={newProduct.featured_order ?? ''}
+                          onChange={(e) =>
+                            setNewProduct((prev) => ({
+                              ...prev,
+                              featured_order: e.target.value ? Number(e.target.value) : null,
+                            }))
+                          }
+                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                        />
+                        <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* UPLOAD DE IMAGENS */}
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    Imagens do produto
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Imagens</label>
                   <div
                     onDragEnter={(e) => handleDragEnter(e, false)}
                     onDragOver={handleDragOver}
                     onDragLeave={(e) => handleDragLeave(e, false)}
                     onDrop={(e) => handleDrop(e, false)}
-                    className={`border-2 border-dashed rounded-lg p-6 transition-all cursor-pointer ${
+                    className={`border-2 border-dashed rounded p-6 text-center transition-colors ${
                       isDragOverNewProduct
-                        ? 'border-gray-900 bg-gray-100'
-                        : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                        ? 'border-gray-400 bg-gray-50'
+                        : 'border-gray-300 bg-white'
                     }`}
-                    onClick={() => document.getElementById('fileInputNew')?.click()}
                   >
-                    <div className="flex flex-col items-center justify-center">
-                      <Upload className="w-6 h-6 text-gray-400 mb-2" />
-                      <span className="text-sm font-medium text-gray-700">
-                        {isDragOverNewProduct ? 'Solte as imagens aqui' : 'Clique ou arraste imagens'}
-                      </span>
-                      <span className="text-xs text-gray-500 mt-1">
-                        JPG, PNG ou WebP até 10MB (primeira imagem = capa)
-                      </span>
-                    </div>
-
                     <input
-                      id="fileInputNew"
                       type="file"
-                      accept="image/*"
                       multiple
                       onChange={(e) => handleImageUpload(e, false)}
                       disabled={uploadingImage}
                       className="hidden"
+                      id="newProductImageInput"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
                     />
+                    <label htmlFor="newProductImageInput" className="cursor-pointer">
+                      <Upload className="w-5 h-5 text-gray-400 mx-auto mb-2" />
+                      <p className="text-sm text-gray-600">
+                        {uploadingImage ? 'Enviando...' : 'Arraste imagens ou clique para selecionar'}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">JPG, PNG ou WebP (máx 10MB)</p>
+                    </label>
 
                     {(newProduct.image_url || newProduct.images.length > 0) && (
-                      <div className="mt-4">
-                        <p className="text-xs text-gray-500 mb-2">Preview (arraste para reordenar)</p>
-                        <div className="flex gap-2 overflow-x-auto pb-2">
-                          {[newProduct.image_url, ...newProduct.images]
-                            .filter(Boolean)
-                            .map((img, index) => (
-                              <div
-                                key={`${img}-${index}`}
-                                draggable
-                                onDragStart={() => setDraggedImageIndex(index)}
-                                onDragOver={(e) => {
-                                  e.preventDefault();
-                                  setDragOverIndex(index);
-                                }}
-                                onDragLeave={() => setDragOverIndex(null)}
-                                onDrop={() => {
-                                  if (draggedImageIndex !== null && draggedImageIndex !== index) {
-                                    const allImages = [newProduct.image_url, ...newProduct.images].filter(
-                                      Boolean
-                                    ) as string[];
-                                    const reordered = reorderImages(allImages, draggedImageIndex, index);
-                                    setNewProduct((prev) => ({
-                                      ...prev,
-                                      image_url: reordered.image_url,
-                                      images: reordered.images,
-                                    }));
-                                  }
-                                  setDraggedImageIndex(null);
-                                  setDragOverIndex(null);
-                                }}
-                                onDragEnd={() => {
-                                  setDraggedImageIndex(null);
-                                  setDragOverIndex(null);
-                                }}
-                                className={`text-center shrink-0 cursor-move transition-all ${
-                                  dragOverIndex === index ? 'ring-2 ring-gray-900 scale-105' : ''
-                                } ${draggedImageIndex === index ? 'opacity-50' : ''}`}
-                              >
-                                <img
-                                  src={img}
-                                  alt={index === 0 ? 'Capa' : `Imagem ${index}`}
-                                  className="w-16 h-16 object-cover border rounded"
-                                />
-                                <p className="text-[10px] mt-1 font-medium">
-                                  {index === 0 ? 'Capa' : `#${index}`}
-                                </p>
-                              </div>
-                            ))}
-                        </div>
+                      <div className="mt-4 flex flex-wrap gap-2 justify-center">
+                        {newProduct.image_url && (
+                          <div className="text-center">
+                            <img
+                              src={newProduct.image_url}
+                              alt="Capa"
+                              className="w-12 h-12 object-cover border border-gray-300 rounded"
+                            />
+                            <p className="text-xs mt-1 text-gray-600">Capa</p>
+                          </div>
+                        )}
+                        {newProduct.images.map((img, index) => (
+                          <div key={index} className="text-center">
+                            <img
+                              src={img}
+                              alt={`Img ${index}`}
+                              className="w-12 h-12 object-cover border border-gray-300 rounded"
+                            />
+                            <p className="text-xs mt-1 text-gray-600">#{index + 1}</p>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -722,105 +694,69 @@ export default function AdminDashboard() {
 
               <button
                 onClick={addProduct}
-                className="mt-5 bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium py-2.5 px-5 rounded-lg transition-colors flex items-center gap-2"
+                className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
               >
                 <Plus size={16} /> Adicionar Produto
               </button>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+            {/* TABELA DE PRODUTOS */}
+            <div className="bg-white rounded border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Produto</th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                        Categoria
-                      </th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                        Subcategoria
-                      </th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Preço</th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Ordem</th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Badge</th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Imagem</th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Ações</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Nome</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Destaque</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Ordem</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Ações</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {loading ? (
+                  <tbody className="divide-y divide-gray-200">
+                    {products.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
-                          <Loader className="inline-block animate-spin mr-2 size-4" />
-                          Carregando...
-                        </td>
-                      </tr>
-                    ) : products.length === 0 ? (
-                      <tr>
-                        <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                        <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                           Nenhum produto cadastrado
                         </td>
                       </tr>
                     ) : (
                       products.map((product) => (
-                        <tr key={product.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-6 py-4 text-gray-900 font-medium">{product.name}</td>
-                          <td className="px-6 py-4 text-gray-600">{product.category}</td>
-                          <td className="px-6 py-4">
-                            {normalizeSubcategory(product.subcategory) ? (
-                              <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
-                                {normalizeSubcategory(product.subcategory)}
-                              </span>
+                        <tr key={product.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-gray-900 font-medium">{product.name}</td>
+                          <td className="px-4 py-3 text-gray-600">{product.category}</td>
+                          <td className="px-4 py-3 text-gray-900">R$ {formatPrice(product.price)}</td>
+                          <td className="px-4 py-3">
+                            {product.is_featured ? (
+                              <span className="text-sm text-gray-900 font-medium">Sim</span>
                             ) : (
                               <span className="text-gray-400">—</span>
                             )}
                           </td>
-                          <td className="px-6 py-4 font-mono text-gray-900 font-medium">
-                            R$ {formatPrice(product.price)}
+                          <td className="px-4 py-3 text-gray-900">
+                            {product.featured_order !== null && product.featured_order !== undefined
+                              ? product.featured_order
+                              : '—'}
                           </td>
-                          <td className="px-6 py-4">
-                            {product.catalog_order !== null && product.catalog_order !== undefined ? (
-                              <span className="inline-block bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
-                                {product.catalog_order}
-                              </span>
-                            ) : (
-                              <span className="text-gray-400">—</span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            {product.badge && (
-                              <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
-                                {product.badge}
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            {product.image_url && (
-                              <img
-                                src={product.image_url}
-                                alt={product.name}
-                                className="w-12 h-12 object-cover rounded border border-gray-200"
-                              />
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 py-3">
                             <div className="flex gap-2">
                               <button
                                 onClick={() => {
                                   setEditingProduct(product);
                                   setShowEditModal(true);
                                 }}
-                                className="p-2 hover:bg-gray-100 rounded transition-colors"
+                                className="p-1 hover:bg-gray-200 rounded"
                                 title="Editar"
                               >
                                 <Edit2 size={16} className="text-gray-600" />
                               </button>
                               <button
                                 onClick={() => deleteProduct(product.id)}
-                                className="p-2 hover:bg-red-50 rounded transition-colors"
+                                className="p-1 hover:bg-gray-200 rounded"
                                 title="Deletar"
                               >
-                                <Trash2 size={16} className="text-red-600" />
+                                <Trash2 size={16} className="text-gray-600" />
                               </button>
                             </div>
                           </td>
@@ -836,7 +772,7 @@ export default function AdminDashboard() {
 
         {activeTab === 'categories' && (
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <div className="bg-white p-6 rounded border border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Nova Categoria</h2>
               <div className="flex gap-3">
                 <input
@@ -844,44 +780,44 @@ export default function AdminDashboard() {
                   placeholder="Nome da categoria"
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                 />
                 <button
                   onClick={addCategory}
-                  className="bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium py-2.5 px-5 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
                 >
                   <Plus size={16} /> Adicionar
                 </button>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-white rounded border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Categoria</th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">Ações</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Ações</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-200">
                     {categories.length === 0 ? (
                       <tr>
-                        <td colSpan={2} className="px-6 py-8 text-center text-gray-500">
+                        <td colSpan={2} className="px-4 py-8 text-center text-gray-500">
                           Nenhuma categoria cadastrada
                         </td>
                       </tr>
                     ) : (
                       categories.map((cat) => (
-                        <tr key={cat.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-6 py-4 text-gray-900 font-medium">{cat.name}</td>
-                          <td className="px-6 py-4">
+                        <tr key={cat.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-gray-900 font-medium">{cat.name}</td>
+                          <td className="px-4 py-3">
                             <button
                               onClick={() => deleteCategory(cat.id)}
-                              className="p-2 hover:bg-red-50 rounded transition-colors"
+                              className="p-1 hover:bg-gray-200 rounded"
                               title="Deletar"
                             >
-                              <Trash2 size={16} className="text-red-600" />
+                              <Trash2 size={16} className="text-gray-600" />
                             </button>
                           </td>
                         </tr>
@@ -895,9 +831,10 @@ export default function AdminDashboard() {
         )}
       </div>
 
+      {/* MODAL DE EDIÇÃO */}
       {showEditModal && editingProduct && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-lg">
+        <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Editar Produto</h2>
               <button
@@ -905,7 +842,7 @@ export default function AdminDashboard() {
                   setShowEditModal(false);
                   setEditingProduct(null);
                 }}
-                className="p-1 hover:bg-gray-100 rounded transition-colors"
+                className="p-1 hover:bg-gray-100 rounded"
               >
                 <X size={20} className="text-gray-600" />
               </button>
@@ -914,27 +851,31 @@ export default function AdminDashboard() {
             <form onSubmit={updateProduct} className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Nome</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
                   <input
                     type="text"
                     value={editingProduct.name}
                     onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, name: e.target.value })
+                      setEditingProduct((prev) =>
+                        prev ? { ...prev, name: e.target.value } : prev
+                      )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Categoria</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
                   <select
                     value={editingProduct.category}
                     onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, category: e.target.value })
+                      setEditingProduct((prev) =>
+                        prev ? { ...prev, category: e.target.value } : prev
+                      )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                   >
-                    <option value="">Selecione uma categoria</option>
+                    <option value="">Selecione</option>
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.name}>
                         {cat.name}
@@ -944,16 +885,18 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Subcategoria</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Subcategoria</label>
                   <select
                     value={editingProduct.subcategory || ''}
                     onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, subcategory: e.target.value })
+                      setEditingProduct((prev) =>
+                        prev ? { ...prev, subcategory: e.target.value } : prev
+                      )
                     }
                     disabled={!editingProduct.category}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors disabled:bg-gray-100 disabled:text-gray-500"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white disabled:bg-gray-50"
                   >
-                    <option value="">Selecione ou crie nova</option>
+                    <option value="">Selecione</option>
                     {editingProductSubcategories.map((subcat) => (
                       <option key={subcat} value={subcat}>
                         {subcat}
@@ -963,194 +906,203 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Preço</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Preço</label>
                   <input
                     type="number"
-                    placeholder="0.00"
                     value={editingProduct.price}
                     onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        price: parseFloat(e.target.value) || 0,
-                      })
+                      setEditingProduct((prev) =>
+                        prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : prev
+                      )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Badge</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Badge</label>
                   <input
                     type="text"
-                    placeholder="Ex: FULLFRAME"
                     value={editingProduct.badge || ''}
                     onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, badge: e.target.value })
+                      setEditingProduct((prev) =>
+                        prev ? { ...prev, badge: e.target.value } : prev
+                      )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Ordem no Catálogo</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ordem no Catálogo</label>
                   <input
                     type="number"
-                    placeholder="Ex: 1, 2, 3..."
                     value={editingProduct.catalog_order ?? ''}
                     onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        catalog_order: e.target.value ? Number(e.target.value) : null,
-                      })
+                      setEditingProduct((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              catalog_order: e.target.value ? Number(e.target.value) : null,
+                            }
+                          : prev
+                      )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">Descrição</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
                   <textarea
-                    value={editingProduct.description}
+                    value={editingProduct.description || ''}
                     onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, description: e.target.value })
+                      setEditingProduct((prev) =>
+                        prev ? { ...prev, description: e.target.value } : prev
+                      )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
                     rows={3}
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    O que acompanha
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">O que acompanha</label>
                   <textarea
                     value={editingProduct.includes || ''}
                     onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, includes: e.target.value })
+                      setEditingProduct((prev) =>
+                        prev ? { ...prev, includes: e.target.value } : prev
+                      )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors"
-                    rows={4}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                    rows={2}
                   />
                 </div>
 
+                {/* BLOCO DESTAQUE NA HOME - EDIÇÃO */}
+                <div className="md:col-span-2 border-t border-gray-200 pt-4">
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={editingProduct.is_featured || false}
+                        onChange={(e) =>
+                          setEditingProduct((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  is_featured: e.target.checked,
+                                  featured_order: e.target.checked ? prev.featured_order : null,
+                                }
+                              : prev
+                          )
+                        }
+                        className="w-4 h-4 border border-gray-300 rounded"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Destaque na Home</span>
+                    </label>
+
+                    {editingProduct.is_featured && (
+                      <div className="flex items-center gap-2">
+                        <label className="text-sm text-gray-600">Ordem:</label>
+                        <input
+                          type="number"
+                          placeholder="1"
+                          value={editingProduct.featured_order ?? ''}
+                          onChange={(e) =>
+                            setEditingProduct((prev) =>
+                              prev
+                                ? {
+                                    ...prev,
+                                    featured_order: e.target.value ? Number(e.target.value) : null,
+                                  }
+                                : prev
+                            )
+                          }
+                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white"
+                        />
+                        <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* UPLOAD DE IMAGENS - EDIÇÃO */}
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    Imagens do produto
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Imagens</label>
                   <div
                     onDragEnter={(e) => handleDragEnter(e, true)}
                     onDragOver={handleDragOver}
                     onDragLeave={(e) => handleDragLeave(e, true)}
                     onDrop={(e) => handleDrop(e, true)}
-                    className={`border-2 border-dashed rounded-lg p-6 transition-all cursor-pointer ${
+                    className={`border-2 border-dashed rounded p-6 text-center transition-colors ${
                       isDragOverEditProduct
-                        ? 'border-gray-900 bg-gray-100'
-                        : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                        ? 'border-gray-400 bg-gray-50'
+                        : 'border-gray-300 bg-white'
                     }`}
-                    onClick={() => document.getElementById('fileInputEdit')?.click()}
                   >
-                    <div className="flex flex-col items-center justify-center">
-                      <Upload className="w-6 h-6 text-gray-400 mb-2" />
-                      <span className="text-sm font-medium text-gray-700">
-                        {isDragOverEditProduct ? 'Solte as imagens aqui' : 'Clique ou arraste imagens'}
-                      </span>
-                      <span className="text-xs text-gray-500 mt-1">
-                        JPG, PNG ou WebP até 10MB
-                      </span>
-                    </div>
-
                     <input
-                      id="fileInputEdit"
                       type="file"
-                      accept="image/*"
                       multiple
                       onChange={(e) => handleImageUpload(e, true)}
                       disabled={uploadingImage}
                       className="hidden"
+                      id="editProductImageInput"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
                     />
+                    <label htmlFor="editProductImageInput" className="cursor-pointer">
+                      <Upload className="w-5 h-5 text-gray-400 mx-auto mb-2" />
+                      <p className="text-sm text-gray-600">
+                        {uploadingImage ? 'Enviando...' : 'Arraste imagens ou clique para selecionar'}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">JPG, PNG ou WebP (máx 10MB)</p>
+                    </label>
 
-                    {(editingProduct.image_url || editingProduct.images?.length) && (
-                      <div className="mt-4">
-                        <p className="text-xs text-gray-500 mb-2">Preview (arraste para reordenar)</p>
-                        <div className="flex gap-2 overflow-x-auto pb-2">
-                          {[editingProduct.image_url, ...(editingProduct.images || [])]
-                            .filter(Boolean)
-                            .map((img, index) => (
-                              <div
-                                key={`${img}-${index}`}
-                                draggable
-                                onDragStart={() => setDraggedImageIndex(index)}
-                                onDragOver={(e) => {
-                                  e.preventDefault();
-                                  setDragOverIndex(index);
-                                }}
-                                onDragLeave={() => setDragOverIndex(null)}
-                                onDrop={() => {
-                                  if (draggedImageIndex !== null && draggedImageIndex !== index) {
-                                    const allImages = [editingProduct.image_url, ...(editingProduct.images || [])]
-                                      .filter(Boolean) as string[];
-                                    const reordered = reorderImages(allImages, draggedImageIndex, index);
-                                    setEditingProduct((prev) =>
-                                      prev
-                                        ? {
-                                            ...prev,
-                                            image_url: reordered.image_url,
-                                            images: reordered.images,
-                                          }
-                                        : prev
-                                    );
-                                  }
-                                  setDraggedImageIndex(null);
-                                  setDragOverIndex(null);
-                                }}
-                                onDragEnd={() => {
-                                  setDraggedImageIndex(null);
-                                  setDragOverIndex(null);
-                                }}
-                                className={`text-center shrink-0 cursor-move transition-all ${
-                                  dragOverIndex === index ? 'ring-2 ring-gray-900 scale-105' : ''
-                                } ${draggedImageIndex === index ? 'opacity-50' : ''}`}
-                              >
-                                <img
-                                  src={img}
-                                  alt={index === 0 ? 'Capa' : `Imagem ${index}`}
-                                  className="w-16 h-16 object-cover border rounded"
-                                />
-                                <p className="text-[10px] mt-1 font-medium">
-                                  {index === 0 ? 'Capa' : `#${index}`}
-                                </p>
-                              </div>
-                            ))}
-                        </div>
+                    {(editingProduct.image_url || (editingProduct.images && editingProduct.images.length > 0)) && (
+                      <div className="mt-4 flex flex-wrap gap-2 justify-center">
+                        {editingProduct.image_url && (
+                          <div className="text-center">
+                            <img
+                              src={editingProduct.image_url}
+                              alt="Capa"
+                              className="w-12 h-12 object-cover border border-gray-300 rounded"
+                            />
+                            <p className="text-xs mt-1 text-gray-600">Capa</p>
+                          </div>
+                        )}
+                        {(editingProduct.images || []).map((img, index) => (
+                          <div key={index} className="text-center">
+                            <img
+                              src={img}
+                              alt={`Img ${index}`}
+                              className="w-12 h-12 object-cover border border-gray-300 rounded"
+                            />
+                            <p className="text-xs mt-1 text-gray-600">#{index + 1}</p>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="submit"
+                  className="flex-1 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 rounded"
+                >
+                  Salvar
+                </button>
                 <button
                   type="button"
                   onClick={() => {
                     setShowEditModal(false);
                     setEditingProduct(null);
                   }}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm font-medium rounded-lg transition-colors"
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm font-medium py-2 rounded"
                 >
                   Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium py-2.5 px-5 rounded-lg transition-colors flex items-center gap-2"
-                  disabled={uploadingImage}
-                >
-                  {uploadingImage ? (
-                    <>
-                      <Loader className="w-4 h-4 animate-spin" /> Enviando...
-                    </>
-                  ) : (
-                    'Salvar Alterações'
-                  )}
                 </button>
               </div>
             </form>
