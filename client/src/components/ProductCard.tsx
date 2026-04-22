@@ -23,8 +23,9 @@ export default function ProductCard({
   const [, navigate] = useLocation();
   const [hovered, setHovered] = useState(false);
 
-  const primaryImage = images?.[0] || image_url;
-  const secondaryImage = images?.[1];
+  // 🔥 CORREÇÃO REAL AQUI
+  const primaryImage = image_url || images?.[0];
+  const secondaryImage = images?.[0]; // <-- primeira do array vira hover
 
   const formatPrice = (value: number) =>
     value.toLocaleString("pt-BR", {
@@ -39,7 +40,7 @@ export default function ProductCard({
       className="cursor-pointer group"
     >
       <div className="bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-sm">
-        
+
         {/* IMAGEM */}
         <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
           <img
@@ -51,20 +52,16 @@ export default function ProductCard({
 
         {/* INFO */}
         <div className="p-4">
-          
-          {/* NOME */}
           <h3 className="text-sm font-semibold text-neutral-900 leading-tight">
             {name}
           </h3>
 
-          {/* SUBINFO */}
           {(subcategory || category) && (
             <p className="text-xs text-neutral-500 mt-1">
               {subcategory || category}
             </p>
           )}
 
-          {/* PREÇO (DISCRETO) */}
           <p className="text-sm text-neutral-400 mt-2">
             R$ {formatPrice(price)} / diária
           </p>
