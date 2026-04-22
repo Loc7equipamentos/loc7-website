@@ -23,9 +23,8 @@ export default function ProductCard({
   const [, navigate] = useLocation();
   const [hovered, setHovered] = useState(false);
 
-  // 🔥 CORREÇÃO REAL AQUI
   const primaryImage = image_url || images?.[0];
-  const secondaryImage = images?.[0]; // <-- primeira do array vira hover
+  const secondaryImage = images?.[0];
 
   const formatPrice = (value: number) =>
     value.toLocaleString("pt-BR", {
@@ -37,20 +36,17 @@ export default function ProductCard({
       onClick={() => navigate(`/equipamentos/${slug}`)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="cursor-pointer group"
+      className="cursor-pointer"
     >
-      <div className="bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-sm">
-
-        {/* IMAGEM */}
+      <div className="bg-white rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-sm">
         <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
           <img
             src={hovered && secondaryImage ? secondaryImage : primaryImage || ""}
             alt={name}
-            className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-[1.05]"
+            className="object-contain w-full h-full transition-opacity duration-200"
           />
         </div>
 
-        {/* INFO */}
         <div className="p-4">
           <h3 className="text-sm font-semibold text-neutral-900 leading-tight">
             {name}
