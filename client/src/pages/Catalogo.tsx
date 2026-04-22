@@ -6,14 +6,14 @@ import { supabase } from "../lib/supabase";
 type Product = {
   id: string;
   name: string;
-  slug: string;
+  slug?: string | null;
   category?: string | null;
   subcategory?: string | null;
   price?: number | null;
   description?: string | null;
   includes?: string[] | string | null;
   image_url?: string | null;
-  images?: string[] | null;
+  images?: string[] | string | null;
   badge?: string | null;
   is_featured?: boolean | null;
   featured_order?: number | null;
@@ -157,7 +157,7 @@ export default function Catalogo() {
         return;
       }
 
-      const safeProducts = (data || []).filter((item) => item?.slug && item?.name);
+      const safeProducts = (data || []).filter((item) => item?.name);
       setProducts(safeProducts);
       setLoading(false);
     };
