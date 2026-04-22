@@ -27,27 +27,26 @@ export default function Home() {
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/35" />
 
-        {/* 🔧 BLOCO AJUSTADO (ÚNICA ALTERAÇÃO) */}
         <div
-          className={`max-w-5xl relative z-10 -mt-10 transition-all duration-700 ease-out ${
+          className={`max-w-5xl relative z-10 transition-all duration-700 ease-out ${
             heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
           <h1 className="leading-[0.92] tracking-tight">
-            <span className="block text-white/70 text-lg md:text-xl font-medium uppercase tracking-[0.25em] mb-2">
-              Locadora de
+            <span className="block text-white/65 text-lg md:text-xl font-medium uppercase tracking-[0.22em] mb-0 relative top-1">
+              LOCADORA DE
             </span>
 
-            <span className="block text-white/80 text-2xl md:text-3xl font-light lowercase mb-1">
-              equipamentos
+            <span className="block text-white/80 text-[2.45rem] md:text-[3.3rem] font-light uppercase mb-1">
+              EQUIPAMENTOS
             </span>
 
-            <span className="block text-white text-5xl md:text-[6.5rem] font-black uppercase">
+            <span className="block text-white text-6xl md:text-[7.5rem] font-black uppercase">
               AUDIOVISUAIS
             </span>
 
-            <span className="block text-white/55 text-lg md:text-xl font-normal mt-2">
-              em São Paulo
+            <span className="block text-white/55 text-xl md:text-[1.35rem] font-normal mt-2 uppercase">
+              EM SÃO PAULO
             </span>
           </h1>
 
@@ -59,8 +58,8 @@ export default function Home() {
             <span>Broadcast</span>
           </div>
 
-          <p className="mt-4 text-base md:text-lg text-white/80 max-w-xl leading-relaxed">
-            No set, nada é detalhe.
+          <p className="mt-4 text-base md:text-lg text-white/72 max-w-xl leading-relaxed">
+            Porque no set, nada é detalhe.
           </p>
         </div>
       </section>
