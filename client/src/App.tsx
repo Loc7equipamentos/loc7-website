@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,6 +12,16 @@ import Orcamento from "@/pages/Orcamento";
 import Producao from "@/pages/Producao";
 import AdminDashboard from "@/pages/AdminDashboard";
 
+function ScrollToTop() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [location]);
+
+  return null;
+}
+
 export default function App() {
   const [location] = useLocation();
 
@@ -18,6 +29,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
+
       {/* NAVBAR (fora do admin) */}
       {!isAdmin && <Navbar />}
 
