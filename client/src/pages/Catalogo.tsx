@@ -237,8 +237,8 @@ export default function Catalogo() {
         <div className="mx-auto max-w-[1440px] px-4 pb-8 pt-28 sm:px-6 lg:px-10">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold tracking-[-0.03em] text-neutral-950 sm:text-4xl">
-                Catálogo
+              <h1 className="text-[28px] font-bold tracking-tight text-neutral-950 sm:text-4xl">
+                CATÁLOGO
               </h1>
               <p className="mt-2 text-sm text-neutral-500">
                 {loading
