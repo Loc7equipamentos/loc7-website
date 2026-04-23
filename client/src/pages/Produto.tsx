@@ -46,22 +46,6 @@ function parseIncludes(includes: unknown): string[] {
   return [];
 }
 
-function buildSpecs(product: Product): Array<{ label: string; value: string }> {
-  const specs: Array<{ label: string; value: string }> = [];
-
-  if (product.category) specs.push({ label: "Categoria", value: product.category });
-  if (product.subcategory) specs.push({ label: "Subcategoria", value: product.subcategory });
-  if (product.badge) specs.push({ label: "Destaque", value: product.badge });
-  if (product.price) {
-    specs.push({
-      label: "Diária",
-      value: `R$ ${Number(product.price).toLocaleString("pt-BR")}`,
-    });
-  }
-
-  return specs;
-}
-
 export default function Produto() {
   const params = useParams<{ slug?: string }>();
   const slug = params.slug;
@@ -122,7 +106,6 @@ export default function Produto() {
   }, [product]);
 
   const includes = useMemo(() => (product ? parseIncludes(product.includes) : []), [product]);
-  const specs = useMemo(() => (product ? buildSpecs(product) : []), [product]);
 
   const currentImage = gallery[selectedImage] || product?.image_url || "";
 
@@ -295,11 +278,6 @@ export default function Produto() {
               <p className="text-sm text-neutral-500">
                 {[product.category, product.subcategory].filter(Boolean).join(" / ")}
               </p>
-
-              <div className="inline-flex items-center gap-2 text-sm text-neutral-700">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                Disponível
-              </div>
             </div>
 
             <div className="mt-5 space-y-3">
@@ -353,28 +331,6 @@ export default function Produto() {
         <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_1fr]">
           <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
             <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-              Highlights
-            </h2>
-
-            {[product.badge, product.description].filter(Boolean).length > 0 ? (
-              <ul className="space-y-3 text-sm text-neutral-800">
-                {[product.badge, product.description]
-                  .filter(Boolean)
-                  .slice(0, 5)
-                  .map((item, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-neutral-900" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-neutral-500">
-                Consulte nossa equipe para conhecer os principais destaques deste item.
-              </p>
-            )}
-
-            <h2 className="mb-4 mt-8 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
               O que acompanha
             </h2>
 
@@ -395,29 +351,27 @@ export default function Produto() {
           </div>
 
           <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                Especificações técnicas
-              </h2>
-            </div>
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+              Highlights
+            </h2>
 
-            <div className="space-y-3">
-              {specs.length > 0 ? (
-                specs.map((spec, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-[140px_minmax(0,1fr)] gap-4 rounded-lg bg-neutral-50 px-4 py-3 text-sm"
-                  >
-                    <span className="font-medium text-neutral-500">{spec.label}</span>
-                    <span className="text-neutral-900">{spec.value}</span>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-neutral-500">
-                  Especificações detalhadas podem ser informadas no atendimento.
-                </p>
-              )}
-            </div>
+            {[product.badge, product.description].filter(Boolean).length > 0 ? (
+              <ul className="space-y-3 text-sm text-neutral-800">
+                {[product.badge, product.description]
+                  .filter(Boolean)
+                  .slice(0, 5)
+                  .map((item, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-neutral-900" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-neutral-500">
+                Consulte nossa equipe para conhecer os principais destaques deste item.
+              </p>
+            )}
           </div>
         </section>
       </div>
