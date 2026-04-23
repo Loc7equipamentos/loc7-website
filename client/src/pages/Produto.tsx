@@ -141,9 +141,10 @@ export default function Produto() {
             <div className="rounded-2xl bg-white p-6">
               <div className="mb-4 h-5 w-20 animate-pulse rounded bg-neutral-200" />
               <div className="mb-3 h-10 w-2/3 animate-pulse rounded bg-neutral-200" />
-              <div className="mb-6 h-5 w-1/3 animate-pulse rounded bg-neutral-200" />
+              <div className="mb-3 h-5 w-1/3 animate-pulse rounded bg-neutral-200" />
               <div className="mb-3 h-12 w-full animate-pulse rounded bg-neutral-200" />
-              <div className="h-12 w-full animate-pulse rounded bg-neutral-200" />
+              <div className="mb-3 h-20 w-full animate-pulse rounded-xl bg-neutral-200" />
+              <div className="mt-5 h-8 w-1/2 animate-pulse rounded bg-neutral-200" />
             </div>
           </div>
         </div>
@@ -311,7 +312,7 @@ export default function Produto() {
 
                 <div className="min-w-0">
                   <span className="block text-sm font-medium text-neutral-900">
-                    Tirar dúvidas no WhatsApp
+                    Tirar dúvidas com um especialista
                   </span>
                   <span className="mt-1 block text-xs leading-5 text-neutral-500">
                     Fale com nossa equipe sobre kit, compatibilidade e disponibilidade.
@@ -319,6 +320,17 @@ export default function Produto() {
                 </div>
               </a>
             </div>
+
+            {product.price ? (
+              <div className="mt-5 border-t border-neutral-200 pt-5">
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                  Diária
+                </span>
+                <span className="mt-2 block text-2xl font-semibold tracking-[-0.02em] text-neutral-950">
+                  R$ {Number(product.price).toLocaleString("pt-BR")}
+                </span>
+              </div>
+            ) : null}
           </aside>
         </section>
 
