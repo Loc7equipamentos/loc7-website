@@ -366,7 +366,7 @@ export default function Home() {
               <p className="text-[oklch(0.5_0_0)]">Nenhum produto disponível</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
               {featuredProducts.map((product) => (
                 <Link
                   key={product.id}
@@ -375,7 +375,7 @@ export default function Home() {
                 >
                   <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
                     {/* Image Container */}
-                    <div className="relative overflow-hidden aspect-square bg-[oklch(0.92_0_0)]">
+                    <div className="relative overflow-hidden aspect-[4/5] sm:aspect-square bg-[oklch(0.92_0_0)]">
                       {product.image_url ? (
                         <img
                           src={product.image_url}
@@ -388,8 +388,8 @@ export default function Home() {
                         </div>
                       )}
                       {product.badge && (
-                        <div className="absolute top-3 left-3">
-                          <span className="bg-[#FF0000] text-white text-xs font-bold px-2 py-1 rounded">
+                        <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+                          <span className="bg-[#FF0000] text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">
                             {product.badge}
                           </span>
                         </div>
@@ -397,18 +397,18 @@ export default function Home() {
                     </div>
 
                     {/* Info Container */}
-                    <div className="p-4 flex-1 flex flex-col justify-between">
+                    <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
                       <div>
-                        <p className="text-[oklch(0.45_0.25_25)] text-xs uppercase tracking-widest font-semibold mb-2">
+                        <p className="text-[oklch(0.45_0.25_25)] text-[10px] sm:text-xs uppercase tracking-widest font-semibold mb-1 sm:mb-2">
                           {product.category}
                         </p>
-                        <h3 className="text-[oklch(0.08_0_0)] text-sm font-semibold mb-2 line-clamp-2">
+                        <h3 className="text-[oklch(0.08_0_0)] text-[13px] sm:text-sm font-semibold mb-2 line-clamp-2 leading-tight">
                           {product.name}
                         </h3>
                       </div>
-                      <p className="text-[#FF0000] text-lg font-bold">
+                      <p className="text-[#FF0000] text-base sm:text-lg font-bold">
                         R$ {product.price?.toFixed(2) || '0,00'}
-                        <span className="text-[oklch(0.5_0_0)] text-xs font-normal ml-1">/dia</span>
+                        <span className="text-[oklch(0.5_0_0)] text-[10px] sm:text-xs font-normal ml-1">/dia</span>
                       </p>
                     </div>
                   </div>
@@ -462,8 +462,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-
 
       {/* ===== CLIENTS ===== */}
       <section className="py-16 bg-[oklch(0.08_0_0)] border-b border-[oklch(0.15_0_0)]">
@@ -591,8 +589,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-
     </div>
   );
 }
