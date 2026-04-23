@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { SlidersHorizontal, ChevronDown, LayoutGrid, Menu, X } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, Menu, X } from "lucide-react";
 import { useParams } from "wouter";
 import ProductCard from "@/components/ProductCard";
 import { supabase, type Product } from "@/lib/supabase";
@@ -254,16 +254,6 @@ export default function Catalogo() {
               >
                 <SlidersHorizontal className="h-4 w-4" />
                 Filtros
-              </button>
-
-              <div className="hidden items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2 lg:flex">
-                <span className="text-sm text-neutral-500">Ordenar por:</span>
-                <span className="text-sm font-medium text-neutral-900">Mais relevantes</span>
-                <ChevronDown className="h-4 w-4 text-neutral-500" />
-              </div>
-
-              <button className="hidden rounded-lg border border-neutral-300 bg-white p-2 lg:inline-flex">
-                <LayoutGrid className="h-4 w-4 text-neutral-700" />
               </button>
             </div>
           </div>
