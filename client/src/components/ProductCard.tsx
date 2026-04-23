@@ -19,7 +19,7 @@ export default function ProductCard({ product }: Props) {
           <img
             src={image}
             alt={product.name}
-            className="h-full w-full object-contain"
+            className="max-h-[85%] max-w-[85%] object-contain"
           />
         </div>
 
