@@ -218,54 +218,101 @@ const normalizeCategory = (value: string | null | undefined) =>
     .toLowerCase()
     .trim();
 
+const formatProductPrice = (price?: number | null) => {
+  if (price == null) return "0,00";
+
+  return new Intl.NumberFormat("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(price);
+};
+
+const getProductImages = (product: Product) => {
+  const rawImages = (product as any)?.images;
+  const imageUrl = product.image_url;
+
+  const imagesFromArray = Array.isArray(rawImages)
+    ? rawImages.filter((img) => typeof img === "string" && img.trim().length > 0)
+    : [];
+
+  const uniqueImages = [...imagesFromArray];
+
+  if (imageUrl && !uniqueImages.includes(imageUrl)) {
+    uniqueImages.unshift(imageUrl);
+  }
+
+  return uniqueImages;
+};
+
 type HomeFeaturedCardProps = {
   product: Product;
 };
 
 function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const productImages = useMemo(() => getProductImages(product), [product]);
+  const primaryImage = productImages[0] || product.image_url || "";
+  const secondaryImage = productImages[1] || primaryImage;
+  const currentImage = isHovered && secondaryImage ? secondaryImage : primaryImage;
+
   return (
     <Link
       href={`/equipamentos/${product.slug || product.id}`}
       className="group block"
     >
-      <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
-        <div className="relative overflow-hidden aspect-[4/5] sm:aspect-square bg-[oklch(0.92_0_0)]">
-          {product.image_url ? (
+      <div
+        className="h-full overflow-hidden rounded-xl border border-black/8 bg-white shadow-[0_6px_18px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(0,0,0,0.09)]"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className="relative aspect-[4/3] overflow-hidden bg-[oklch(0.94_0_0)]">
+          {currentImage ? (
             <img
-              src={product.image_url}
+              src={currentImage}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className="w-full h-full object-contain p-2 sm:p-3"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-[oklch(0.9_0_0)]">
-              <span className="text-[oklch(0.7_0_0)] text-sm">Sem imagem</span>
+            <div className="w-full h-full flex items-center justify-center bg-[oklch(0.92_0_0)]">
+              <span className="text-[oklch(0.7_0_0)] text-xs sm:text-sm">
+                Sem imagem
+              </span>
             </div>
           )}
 
           {product.badge && (
-            <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-              <span className="bg-[#FF0000] text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">
+            <div className="absolute top-2 left-2">
+              <span className="bg-[#FF0000] text-white text-[9px] sm:text-[10px] font-bold px-2 py-1 rounded">
                 {product.badge}
               </span>
             </div>
           )}
         </div>
 
-        <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
+        <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between min-h-[104px] sm:min-h-[112px]">
           <div>
-            <p className="text-[oklch(0.45_0.25_25)] text-[10px] sm:text-xs uppercase tracking-widest font-semibold mb-1 sm:mb-2">
+            <p className="text-[oklch(0.45_0.25_25)] text-[9px] sm:text-[10px] uppercase tracking-[0.18em] font-semibold mb-1">
               {product.category}
             </p>
-            <h3 className="text-[oklch(0.08_0_0)] text-[13px] sm:text-sm font-semibold mb-2 line-clamp-2 leading-tight">
+
+            <h3 className="text-[oklch(0.08_0_0)] text-[12px] sm:text-[13px] font-semibold line-clamp-2 leading-snug min-h-[2rem] sm:min-h-[2.2rem]">
               {product.name}
             </h3>
           </div>
-          <p className="text-[#FF0000] text-base sm:text-lg font-bold">
-            R$ {product.price?.toFixed(2) || "0,00"}
-            <span className="text-[oklch(0.5_0_0)] text-[10px] sm:text-xs font-normal ml-1">
-              /dia
+
+          <div className="mt-2 flex items-end justify-between gap-2">
+            <p className="text-[#FF0000] text-[14px] sm:text-[15px] font-bold leading-none">
+              R$ {formatProductPrice(product.price)}
+              <span className="text-[oklch(0.5_0_0)] text-[9px] sm:text-[10px] font-normal ml-1">
+                /dia
+              </span>
+            </p>
+
+            <span className="text-[10px] sm:text-[11px] font-semibold text-[oklch(0.35_0_0)] transition-colors duration-300 group-hover:text-[oklch(0.08_0_0)]">
+              Ver item
             </span>
-          </p>
+          </div>
         </div>
       </div>
     </Link>
@@ -544,9 +591,9 @@ export default function Home() {
       </section>
 
       {/* ===== FEATURED PRODUCTS FROM SUPABASE ===== */}
-      <section className="py-16 bg-[oklch(0.95_0_0)]">
+      <section className="py-12 sm:py-14 lg:py-16 bg-[oklch(0.95_0_0)]">
         <div className="container">
-          <div className="mb-8 sm:mb-12">
+          <div className="mb-6 sm:mb-8">
             <span className="loc7-section-title text-lg text-[oklch(0.08_0_0)]">
               DESTAQUES
             </span>
@@ -563,7 +610,7 @@ export default function Home() {
             </div>
           ) : (
             <>
-              <div className="mb-5 sm:hidden">
+              <div className="mb-4 sm:hidden">
                 <div className="-mx-4 overflow-x-auto px-4">
                   <div className="flex min-w-max gap-2 pb-1">
                     {featuredCategoryOptions.map((category) => (
@@ -583,7 +630,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
                 {filteredFeaturedProducts.map((product) => (
                   <HomeFeaturedCard key={product.id} product={product} />
                 ))}
