@@ -283,7 +283,7 @@ Projeto privado - Loc 7 Equipamentos
 ## 👤 Autor
 
 Desenvolvido para Loc 7 Equipamentos
-
+<!-- CHECKPOINT: stable restore after home and catalog recovery -->
 <!-- STABLE VERSION CONFIRMED -->
 
 ---
