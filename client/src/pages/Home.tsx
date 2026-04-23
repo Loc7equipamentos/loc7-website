@@ -4,7 +4,7 @@
  * Hero + Carousel + Features + Categories + Products + Brands + About + CTA
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Link } from "wouter";
 import { ChevronLeft, ChevronRight, MapPin, Zap, Star, ArrowRight, Play } from "lucide-react";
 import { supabase, type Product } from "@/lib/supabase";
@@ -118,6 +118,21 @@ function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
   );
 }
 
+const normalizeCategory = (value: string | null | undefined) =>
+  (value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+const categoryLabelMap: Record<string, string> = {
+  todas: "Todas",
+  cameras: "Câmeras",
+  lentes: "Lentes",
+  iluminacao: "Iluminação",
+  audio: "Áudio",
+  monitores: "Monitores",
+  movimento: "Movimento",
+  transmissores: "Transmissores",
+  maquinaria: "Maquinária",
+};
+
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -125,6 +140,7 @@ export default function Home() {
   const [isVisible, setIsVisible] = useState<Record<string, boolean>>({});
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [selectedFeaturedCategory, setSelectedFeaturedCategory] = useState("todas");
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const heroSlides = [
@@ -188,19 +204,18 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
-  // Buscar produtos em destaque do Supabase
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
         const { data, error } = await supabase
-          .from('products')
-          .select('*')
+          .from("products")
+          .select("*")
           .limit(6);
 
         if (error) throw error;
         setFeaturedProducts(data || []);
       } catch (error) {
-        console.error('Erro ao buscar produtos:', error);
+        console.error("Erro ao buscar produtos:", error);
         setFeaturedProducts([]);
       } finally {
         setLoadingProducts(false);
@@ -230,12 +245,26 @@ export default function Home() {
     return visible;
   };
 
+  const featuredCategories = useMemo(() => {
+    const raw = featuredProducts
+      .map((product) => normalizeCategory(product.category))
+      .filter(Boolean);
+
+    const unique = Array.from(new Set(raw));
+    return ["todas", ...unique];
+  }, [featuredProducts]);
+
+  const filteredFeaturedProducts = useMemo(() => {
+    if (selectedFeaturedCategory === "todas") return featuredProducts;
+    return featuredProducts.filter(
+      (product) => normalizeCategory(product.category) === selectedFeaturedCategory
+    );
+  }, [featuredProducts, selectedFeaturedCategory]);
+
   return (
     <div className="min-h-screen bg-[oklch(0.08_0_0)]">
-      
       {/* ===== HERO SECTION ===== */}
       <section className="relative h-[70vh] min-h-[400px] overflow-hidden">
-        {/* Background - Alternating Images */}
         <div className="absolute inset-0">
           {heroSlides.map((slide, i) => {
             const heroSlideData = [
@@ -249,7 +278,7 @@ export default function Home() {
                 src={heroSlideData[i]?.img}
                 alt={slide.title}
                 className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                  i === currentSlide ? 'opacity-100' : 'opacity-0'
+                  i === currentSlide ? "opacity-100" : "opacity-0"
                 }`}
               />
             );
@@ -258,7 +287,6 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/15" />
         </div>
 
-        {/* Content */}
         <div className="relative z-10 container h-full flex items-center">
           <div className="max-w-2xl">
             <div className="mb-6 flex items-center gap-3">
@@ -267,11 +295,11 @@ export default function Home() {
                 Locadora de equipamentos audiovisuais em São Paulo
               </span>
             </div>
-            
+
             {heroSlides.map((slide, i) => (
               <div
                 key={i}
-                className={`transition-all duration-700 ${i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 absolute'}`}
+                className={`transition-all duration-700 ${i === currentSlide ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 absolute"}`}
               >
                 {i === currentSlide && (
                   <>
@@ -303,20 +331,18 @@ export default function Home() {
               </div>
             ))}
 
-            {/* Slide indicators */}
             <div className="flex gap-2 mt-10">
               {heroSlides.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentSlide(i)}
-                  className={`h-0.5 transition-all duration-300 ${i === currentSlide ? 'w-8 bg-[oklch(0.45_0.25_25)]' : 'w-4 bg-[oklch(0.35_0_0)]'}`}
+                  className={`h-0.5 transition-all duration-300 ${i === currentSlide ? "w-8 bg-[oklch(0.45_0.25_25)]" : "w-4 bg-[oklch(0.35_0_0)]"}`}
                 />
               ))}
             </div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
           <span className="text-[oklch(0.8_0_0)] text-xs uppercase tracking-widest font-semibold">Scroll</span>
           <div className="w-px h-8 bg-gradient-to-b from-[oklch(0.8_0_0)] to-transparent" />
@@ -352,7 +378,7 @@ export default function Home() {
       {/* ===== FEATURED PRODUCTS FROM SUPABASE ===== */}
       <section className="py-16 bg-[oklch(0.95_0_0)]">
         <div className="container">
-          <div className="mb-12">
+          <div className="mb-8 sm:mb-12">
             <span className="loc7-section-title text-lg text-[oklch(0.08_0_0)]">DESTAQUES</span>
             <div className="loc7-red-line" />
           </div>
@@ -366,55 +392,76 @@ export default function Home() {
               <p className="text-[oklch(0.5_0_0)]">Nenhum produto disponível</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-              {featuredProducts.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/equipamentos/${product.slug || product.id}`}
-                  className="group block"
-                >
-                  <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
-                    {/* Image Container */}
-                    <div className="relative overflow-hidden aspect-[4/5] sm:aspect-square bg-[oklch(0.92_0_0)]">
-                      {product.image_url ? (
-                        <img
-                          src={product.image_url}
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-[oklch(0.9_0_0)]">
-                          <span className="text-[oklch(0.7_0_0)] text-sm">Sem imagem</span>
-                        </div>
-                      )}
-                      {product.badge && (
-                        <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                          <span className="bg-[#FF0000] text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">
-                            {product.badge}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Info Container */}
-                    <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
-                      <div>
-                        <p className="text-[oklch(0.45_0.25_25)] text-[10px] sm:text-xs uppercase tracking-widest font-semibold mb-1 sm:mb-2">
-                          {product.category}
-                        </p>
-                        <h3 className="text-[oklch(0.08_0_0)] text-[13px] sm:text-sm font-semibold mb-2 line-clamp-2 leading-tight">
-                          {product.name}
-                        </h3>
-                      </div>
-                      <p className="text-[#FF0000] text-base sm:text-lg font-bold">
-                        R$ {product.price?.toFixed(2) || '0,00'}
-                        <span className="text-[oklch(0.5_0_0)] text-[10px] sm:text-xs font-normal ml-1">/dia</span>
-                      </p>
-                    </div>
+            <>
+              {/* CATEGORIAS VISÍVEIS NO MOBILE */}
+              <div className="mb-5 sm:hidden">
+                <div className="-mx-4 overflow-x-auto px-4">
+                  <div className="flex min-w-max gap-2 pb-1">
+                    {featuredCategories.map((category) => (
+                      <button
+                        key={category}
+                        onClick={() => setSelectedFeaturedCategory(category)}
+                        className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition-colors ${
+                          selectedFeaturedCategory === category
+                            ? "border-neutral-900 bg-neutral-900 text-white"
+                            : "border-neutral-300 bg-white text-neutral-700"
+                        }`}
+                      >
+                        {categoryLabelMap[category] || category}
+                      </button>
+                    ))}
                   </div>
-                </Link>
-              ))}
-            </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+                {filteredFeaturedProducts.map((product) => (
+                  <Link
+                    key={product.id}
+                    href={`/equipamentos/${product.slug || product.id}`}
+                    className="group block"
+                  >
+                    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
+                      <div className="relative overflow-hidden aspect-[4/5] sm:aspect-square bg-[oklch(0.92_0_0)]">
+                        {product.image_url ? (
+                          <img
+                            src={product.image_url}
+                            alt={product.name}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-[oklch(0.9_0_0)]">
+                            <span className="text-[oklch(0.7_0_0)] text-sm">Sem imagem</span>
+                          </div>
+                        )}
+                        {product.badge && (
+                          <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+                            <span className="bg-[#FF0000] text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">
+                              {product.badge}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                          <p className="text-[oklch(0.45_0.25_25)] text-[10px] sm:text-xs uppercase tracking-widest font-semibold mb-1 sm:mb-2">
+                            {product.category}
+                          </p>
+                          <h3 className="text-[oklch(0.08_0_0)] text-[13px] sm:text-sm font-semibold mb-2 line-clamp-2 leading-tight">
+                            {product.name}
+                          </h3>
+                        </div>
+                        <p className="text-[#FF0000] text-base sm:text-lg font-bold">
+                          R$ {product.price?.toFixed(2) || "0,00"}
+                          <span className="text-[oklch(0.5_0_0)] text-[10px] sm:text-xs font-normal ml-1">/dia</span>
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </section>
@@ -435,14 +482,14 @@ export default function Home() {
               <Link
                 key={cat.title}
                 href={cat.href}
-                className={`relative overflow-hidden aspect-[4/3] group block transition-all duration-500 ${isVisible.categories ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                className={`relative overflow-hidden aspect-[4/3] group block transition-all duration-500 ${isVisible.categories ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
                 style={{ transitionDelay: `${i * 100}ms` }}
               >
                 <img
                   src={cat.img}
                   alt={cat.title}
                   className={`w-full h-full object-cover transition-transform duration-700 group-hover:opacity-80 ${
-                    i === 0 || i === 1 ? 'brightness-75 group-hover:brightness-65' : 'brightness-50 group-hover:brightness-40'
+                    i === 0 || i === 1 ? "brightness-75 group-hover:brightness-65" : "brightness-50 group-hover:brightness-40"
                   }`}
                 />
                 {i === 1 && (
@@ -471,9 +518,8 @@ export default function Home() {
             <div className="loc7-red-line mx-auto" />
             <p className="text-[oklch(0.5_0_0)] text-sm mt-3">Confiança de grandes produtoras e emissoras</p>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-items-center">
-            {/* TV Globo */}
             <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/rZjUsXiiUSg0_64759b6c.png"
@@ -481,8 +527,7 @@ export default function Home() {
                 className="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity duration-300"
               />
             </div>
-            
-            {/* Multishow */}
+
             <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/aXzIbfu8r1Jl_8c062083.png"
@@ -490,8 +535,7 @@ export default function Home() {
                 className="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity duration-300"
               />
             </div>
-            
-            {/* SporTV */}
+
             <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/raZRe9yIQ4W6_5ab3e16e.png"
@@ -499,13 +543,11 @@ export default function Home() {
                 className="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity duration-300"
               />
             </div>
-            
-            {/* Placeholder 4 */}
+
             <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
               <span className="text-[oklch(0.45_0_0)] text-sm font-semibold opacity-50">+ Clientes</span>
             </div>
-            
-            {/* Placeholder 5 */}
+
             <div className="w-full flex items-center justify-center p-4 bg-[oklch(0.1_0_0)] rounded-lg border border-[oklch(0.15_0_0)] hover:border-[oklch(0.45_0.25_25)] transition-all duration-300 group">
               <span className="text-[oklch(0.45_0_0)] text-sm font-semibold opacity-50">+ Clientes</span>
             </div>
@@ -534,36 +576,32 @@ export default function Home() {
         className="py-20 bg-gradient-to-b from-[oklch(0.25_0_0)] to-[oklch(0.22_0_0)] cement-texture"
       >
         <div className="container">
-          <div className={`mb-12 transition-all duration-700 ${isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className={`mb-12 transition-all duration-700 ${isVisible.testimonials ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <span className="loc7-section-title text-lg">DEPOIMENTOS</span>
             <div className="loc7-red-line" />
             <p className="text-[oklch(0.5_0_0)] text-sm mt-3">O que nossos clientes dizem sobre a gente</p>
           </div>
 
           <div className="relative">
-            {/* Grid de 3 Testimonials */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {testimonials.slice(testimonialIndex, testimonialIndex + 3).map((testimonial, i) => (
                 <div
                   key={i}
                   className={`p-6 bg-[oklch(0.06_0_0)] border border-[oklch(0.15_0_0)] rounded-lg transition-all duration-500 min-h-[280px] flex flex-col justify-between ${
-                    isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                    isVisible.testimonials ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                   }`}
                   style={{ transitionDelay: `${i * 100}ms` }}
                 >
-                  {/* Stars - Golden */}
                   <div className="flex gap-1 mb-4">
                     {[...Array(testimonial.stars)].map((_, j) => (
-                      <span key={j} className="text-2xl" style={{ color: '#FFD700' }}>★</span>
+                      <span key={j} className="text-2xl" style={{ color: "#FFD700" }}>★</span>
                     ))}
                   </div>
-                  
-                  {/* Testimonial Text */}
+
                   <p className="text-[oklch(0.7_0_0)] text-sm mb-4 leading-relaxed italic">
                     "{testimonial.text}"
                   </p>
-                  
-                  {/* Author */}
+
                   <div>
                     <p className="text-white font-semibold text-sm">{testimonial.name}</p>
                     <p className="text-[oklch(0.5_0_0)] text-xs">{testimonial.role}</p>
@@ -572,7 +610,6 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Indicators - Grupos de 3 */}
             <div className="flex gap-2 justify-center mt-8">
               {[0, 3].map((i) => (
                 <button
@@ -580,8 +617,8 @@ export default function Home() {
                   onClick={() => setTestimonialIndex(i)}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     i === testimonialIndex
-                      ? 'w-8 bg-[#FF0000]'
-                      : 'w-2 bg-[oklch(0.3_0_0)] hover:bg-[oklch(0.4_0_0)]'
+                      ? "w-8 bg-[#FF0000]"
+                      : "w-2 bg-[oklch(0.3_0_0)] hover:bg-[oklch(0.4_0_0)]"
                   }`}
                 />
               ))}
