@@ -262,54 +262,56 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
       className="group block"
     >
       <div
-        className="h-full overflow-hidden rounded-xl border border-black/8 bg-white shadow-[0_6px_18px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(0,0,0,0.09)]"
+        className="h-full overflow-hidden rounded-xl bg-white shadow-[0_6px_18px_rgba(0,0,0,0.06)] transition-shadow duration-300 hover:shadow-[0_10px_24px_rgba(0,0,0,0.09)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative aspect-[4/3] overflow-hidden bg-[oklch(0.94_0_0)]">
-          {currentImage ? (
-            <img
-              src={currentImage}
-              alt={product.name}
-              className="w-full h-full object-contain p-2 sm:p-3"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-[oklch(0.92_0_0)]">
-              <span className="text-[oklch(0.7_0_0)] text-xs sm:text-sm">
-                Sem imagem
-              </span>
-            </div>
-          )}
-
+        <div className="relative bg-white px-3 pt-3 sm:px-4 sm:pt-4">
           {product.badge && (
-            <div className="absolute top-2 left-2">
-              <span className="bg-[#FF0000] text-white text-[9px] sm:text-[10px] font-bold px-2 py-1 rounded">
+            <div className="absolute left-2 top-2 z-10 sm:left-3 sm:top-3">
+              <span className="rounded bg-[#FF0000] px-2 py-1 text-[9px] font-bold text-white sm:text-[10px]">
                 {product.badge}
               </span>
             </div>
           )}
+
+          <div className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-white">
+            {currentImage ? (
+              <img
+                src={currentImage}
+                alt={product.name}
+                className="max-h-full max-w-full object-contain"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-white">
+                <span className="text-xs text-[oklch(0.7_0_0)] sm:text-sm">
+                  Sem imagem
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between min-h-[104px] sm:min-h-[112px]">
+        <div className="flex min-h-[106px] flex-col justify-between bg-white px-3 pb-3 pt-2.5 sm:min-h-[114px] sm:px-4 sm:pb-4 sm:pt-3">
           <div>
-            <p className="text-[oklch(0.45_0.25_25)] text-[9px] sm:text-[10px] uppercase tracking-[0.18em] font-semibold mb-1">
+            <p className="mb-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-[oklch(0.45_0.25_25)] sm:text-[10px]">
               {product.category}
             </p>
 
-            <h3 className="text-[oklch(0.08_0_0)] text-[12px] sm:text-[13px] font-semibold line-clamp-2 leading-snug min-h-[2rem] sm:min-h-[2.2rem]">
+            <h3 className="line-clamp-2 min-h-[2rem] text-[12px] font-semibold leading-snug text-[oklch(0.08_0_0)] sm:min-h-[2.2rem] sm:text-[13px]">
               {product.name}
             </h3>
           </div>
 
           <div className="mt-2 flex items-end justify-between gap-2">
-            <p className="text-[#FF0000] text-[14px] sm:text-[15px] font-bold leading-none">
+            <p className="text-[14px] font-bold leading-none text-[#FF0000] sm:text-[15px]">
               R$ {formatProductPrice(product.price)}
-              <span className="text-[oklch(0.5_0_0)] text-[9px] sm:text-[10px] font-normal ml-1">
+              <span className="ml-1 text-[9px] font-normal text-[oklch(0.5_0_0)] sm:text-[10px]">
                 /dia
               </span>
             </p>
 
-            <span className="text-[10px] sm:text-[11px] font-semibold text-[oklch(0.35_0_0)] transition-colors duration-300 group-hover:text-[oklch(0.08_0_0)]">
+            <span className="text-[10px] font-semibold text-[oklch(0.35_0_0)] transition-colors duration-300 group-hover:text-[oklch(0.08_0_0)] sm:text-[11px]">
               Ver item
             </span>
           </div>
