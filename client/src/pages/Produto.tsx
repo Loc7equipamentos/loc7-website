@@ -52,7 +52,11 @@ function buildSpecs(product: Product): Array<{ label: string; value: string }> {
   if (product.category) specs.push({ label: "Categoria", value: product.category });
   if (product.subcategory) specs.push({ label: "Subcategoria", value: product.subcategory });
   if (product.badge) specs.push({ label: "Destaque", value: product.badge });
-  if (product.price) specs.push({ label: "Diária", value: `R$ ${Number(product.price).toLocaleString("pt-BR")}` });
+  if (product.price)
+    specs.push({
+      label: "Diária",
+      value: `R$ ${Number(product.price).toLocaleString("pt-BR")}`,
+    });
 
   return specs;
 }
@@ -125,14 +129,14 @@ export default function Produto() {
     return (
       <main className="min-h-screen bg-[#f3f3f1] pt-28">
         <div className="mx-auto max-w-[1440px] px-4 pb-12 sm:px-6 lg:px-10">
-          <div className="grid gap-8 lg:grid-cols-[96px_minmax(0,1.15fr)_420px]">
+          <div className="grid gap-8 lg:grid-cols-[96px_minmax(0,1.05fr)_400px]">
             <div className="hidden lg:flex lg:flex-col lg:gap-3">
               {Array.from({ length: 5 }).map((_, index) => (
                 <div key={index} className="aspect-square animate-pulse rounded-xl bg-neutral-200" />
               ))}
             </div>
 
-            <div className="aspect-[4/3] animate-pulse rounded-2xl bg-white" />
+            <div className="h-[320px] animate-pulse rounded-2xl bg-white sm:h-[380px] lg:h-[500px]" />
             <div className="rounded-2xl bg-white p-8">
               <div className="mb-4 h-5 w-20 animate-pulse rounded bg-neutral-200" />
               <div className="mb-3 h-10 w-2/3 animate-pulse rounded bg-neutral-200" />
@@ -169,7 +173,14 @@ export default function Produto() {
             <span>›</span>
             {product.category ? (
               <>
-                <Link href={`/catalogo/${(product.category || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-")}`} className="hover:text-neutral-900">
+                <Link
+                  href={`/catalogo/${(product.category || "")
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/\s+/g, "-")}`}
+                  className="hover:text-neutral-900"
+                >
                   {product.category}
                 </Link>
                 <span>›</span>
@@ -190,7 +201,7 @@ export default function Produto() {
           </div>
         </div>
 
-        <section className="grid gap-8 lg:grid-cols-[96px_minmax(0,1.15fr)_420px]">
+        <section className="grid gap-8 lg:grid-cols-[96px_minmax(0,1.05fr)_400px]">
           <aside className="hidden lg:flex lg:flex-col lg:gap-3">
             {gallery.map((image, index) => (
               <button
@@ -203,20 +214,26 @@ export default function Produto() {
                 }`}
               >
                 <div className="aspect-square bg-white p-2">
-                  <img src={image} alt={`${product.name} ${index + 1}`} className="h-full w-full object-contain" />
+                  <img
+                    src={image}
+                    alt={`${product.name} ${index + 1}`}
+                    className="h-full w-full object-contain"
+                  />
                 </div>
               </button>
             ))}
           </aside>
 
           <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6">
-            <div className="aspect-[4/3] w-full overflow-hidden rounded-xl bg-white">
+            <div className="flex h-[320px] w-full items-center justify-center overflow-hidden rounded-xl bg-white sm:h-[380px] lg:h-[500px]">
               {currentImage ? (
-                <img
-                  src={currentImage}
-                  alt={product.name}
-                  className="h-full w-full object-contain"
-                />
+                <div className="flex h-[86%] w-[86%] items-center justify-center">
+                  <img
+                    src={currentImage}
+                    alt={product.name}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-sm text-neutral-500">
                   Sem imagem
@@ -237,7 +254,11 @@ export default function Produto() {
                     }`}
                   >
                     <div className="aspect-square bg-white p-2">
-                      <img src={image} alt={`${product.name} ${index + 1}`} className="h-full w-full object-contain" />
+                      <img
+                        src={image}
+                        alt={`${product.name} ${index + 1}`}
+                        className="h-full w-full object-contain"
+                      />
                     </div>
                   </button>
                 ))}
@@ -269,21 +290,21 @@ export default function Produto() {
 
             <div className="mt-8 space-y-3">
               <a
-                href={`https://wa.me/message/WOIONHHSTABQF1?text=Olá! Tenho interesse em alugar: ${product.name}`}
+                href={`https://wa.me/message/WOIONHHSTABQF1?text=Olá! Quero reservar: ${product.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex w-full items-center justify-center rounded-lg bg-neutral-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
               >
-                Solicitar orçamento
+                Reservar agora
               </a>
 
               <a
-                href={`https://wa.me/message/WOIONHHSTABQF1?text=Olá! Gostaria de falar com um especialista sobre: ${product.name}`}
+                href={`https://wa.me/message/WOIONHHSTABQF1?text=Olá! Tenho dúvidas sobre: ${product.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center rounded-lg border border-neutral-300 bg-white px-4 py-3 text-sm font-medium text-neutral-900 transition hover:bg-neutral-50"
+                className="inline-flex text-sm font-medium text-neutral-700 underline-offset-4 transition hover:text-neutral-950 hover:underline"
               >
-                Falar com especialista
+                Tirar dúvidas
               </a>
             </div>
           </aside>
@@ -296,12 +317,7 @@ export default function Produto() {
             </h2>
 
             <ul className="space-y-3 text-sm text-neutral-800">
-              {[
-                product.category,
-                product.subcategory,
-                product.badge,
-                product.description,
-              ]
+              {[product.badge, product.description]
                 .filter(Boolean)
                 .slice(0, 5)
                 .map((item, index) => (
