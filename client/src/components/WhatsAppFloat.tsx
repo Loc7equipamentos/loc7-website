@@ -1,5 +1,5 @@
 /*
- * LOC 7 — WhatsApp Float Component (Entrance + Subtle Shine)
+ * LOC 7 — WhatsApp Float Component (Final Refinement)
  */
 
 import { useEffect, useState } from "react";
@@ -36,7 +36,7 @@ export default function WhatsAppFloat() {
           relative flex items-center overflow-hidden
           bg-[oklch(0.12_0_0)]
           text-white
-          px-5 pr-12 py-2
+          px-5 pr-14 py-2
           rounded-full
           border border-white/10
           shadow-[0_8px_24px_rgba(0,0,0,0.25)]
@@ -50,42 +50,27 @@ export default function WhatsAppFloat() {
           Precisa de ajuda?
         </span>
 
-        {/* BRILHO PASSANDO */}
-        <span
-          className="
-            pointer-events-none
-            absolute inset-0
-            before:content-['']
-            before:absolute
-            before:top-0
-            before:-left-1/2
-            before:w-1/2
-            before:h-full
-            before:bg-gradient-to-r
-            before:from-transparent
-            before:via-white/20
-            before:to-transparent
-            before:skew-x-[-20deg]
-            before:animate-[shine_4s_linear_infinite]
-          "
-        />
+        {/* BRILHO (corrigido - elemento real, não pseudo) */}
+        <span className="pointer-events-none absolute inset-0 overflow-hidden">
+          <span className="shine-bar" />
+        </span>
 
-        {/* ÍCONE PLUG */}
+        {/* ÍCONE PLUG (+15%) */}
         <div
           className="
             absolute
-            -right-4
-            w-12 h-12
+            -right-5
+            w-[54px] h-[54px]
             rounded-full
             bg-[oklch(0.12_0_0)]
             border border-white/10
             flex items-center justify-center
-            shadow-[0_8px_20px_rgba(0,0,0,0.4)]
+            shadow-[0_10px_24px_rgba(0,0,0,0.45)]
           "
         >
           <svg
             viewBox="0 0 24 24"
-            className="w-6 h-6"
+            className="w-7 h-7"
             fill="none"
             stroke="#25D366"
             strokeWidth="1.8"
@@ -96,14 +81,30 @@ export default function WhatsAppFloat() {
         </div>
       </a>
 
-      {/* KEYFRAMES */}
+      {/* KEYFRAMES CORRIGIDO */}
       <style>
         {`
-          @keyframes shine {
-            0% { transform: translateX(0); opacity: 0; }
+          .shine-bar {
+            position: absolute;
+            top: 0;
+            left: -60%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(
+              120deg,
+              transparent 0%,
+              rgba(255,255,255,0.15) 50%,
+              transparent 100%
+            );
+            transform: skewX(-20deg);
+            animation: shineMove 4s linear infinite;
+          }
+
+          @keyframes shineMove {
+            0% { left: -60%; opacity: 0; }
             10% { opacity: 0.4; }
-            50% { transform: translateX(250%); opacity: 0.3; }
-            100% { transform: translateX(250%); opacity: 0; }
+            60% { left: 120%; opacity: 0.3; }
+            100% { left: 120%; opacity: 0; }
           }
         `}
       </style>
