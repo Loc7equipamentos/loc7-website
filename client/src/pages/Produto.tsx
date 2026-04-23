@@ -303,9 +303,20 @@ export default function Produto() {
                 href={`https://wa.me/message/WOIONHHSTABQF1?text=Olá! Tenho dúvidas sobre: ${product.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex text-sm font-medium text-neutral-700 underline-offset-4 transition hover:text-neutral-950 hover:underline"
+                className="group flex w-full items-start gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-neutral-300 hover:bg-neutral-100"
               >
-                Tirar dúvidas
+                <div className="mt-[2px] flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-base">
+                  💬
+                </div>
+
+                <div className="min-w-0">
+                  <span className="block text-sm font-medium text-neutral-900">
+                    Tirar dúvidas no WhatsApp
+                  </span>
+                  <span className="mt-1 block text-xs leading-5 text-neutral-500">
+                    Fale com nossa equipe sobre kit, compatibilidade e disponibilidade.
+                  </span>
+                </div>
               </a>
             </div>
           </aside>
