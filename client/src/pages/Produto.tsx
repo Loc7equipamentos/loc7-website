@@ -11,20 +11,19 @@
       <span className="pb-[2px] text-xs text-neutral-400">/ dia</span>
     </div>
 
-    {/* DIFERENCIAIS COM MICRO DOT */}
     <div className="mt-4 space-y-2 text-[12px] leading-relaxed text-neutral-600">
       <div className="flex items-start gap-2">
-        <span className="mt-[6px] h-[4px] w-[4px] rounded-full bg-neutral-700" />
+        <span className="mt-[6px] h-[4px] w-[4px] rounded-full bg-neutral-700"></span>
         <span>Processo ágil na liberação de equipamentos</span>
       </div>
 
       <div className="flex items-start gap-2">
-        <span className="mt-[6px] h-[4px] w-[4px] rounded-full bg-neutral-700" />
+        <span className="mt-[6px] h-[4px] w-[4px] rounded-full bg-neutral-700"></span>
         <span>Consultoria técnica especializada</span>
       </div>
 
       <div className="flex items-start gap-2">
-        <span className="mt-[6px] h-[4px] w-[4px] rounded-full bg-neutral-700" />
+        <span className="mt-[6px] h-[4px] w-[4px] rounded-full bg-neutral-700"></span>
         <span>Desenvolvimento de projetos especiais</span>
       </div>
     </div>
