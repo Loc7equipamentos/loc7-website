@@ -1,5 +1,5 @@
 /*
- * LOC 7 — WhatsApp Float Component (Premium Plug Style)
+ * LOC 7 — WhatsApp Float Component (Refined Plug Style)
  */
 
 export default function WhatsAppFloat() {
@@ -18,7 +18,7 @@ export default function WhatsAppFloat() {
           relative flex items-center
           bg-[oklch(0.12_0_0)]
           text-white
-          px-5 pr-10 py-3
+          px-5 pr-12 py-2.5
           rounded-full
           border border-white/10
           shadow-[0_8px_24px_rgba(0,0,0,0.25)]
@@ -32,22 +32,22 @@ export default function WhatsAppFloat() {
           Precisa de ajuda?
         </span>
 
-        {/* ÍCONE PLUG */}
+        {/* ÍCONE PLUG (MAIOR) */}
         <div
           className="
             absolute
-            -right-3
-            w-10 h-10
+            -right-4
+            w-12 h-12
             rounded-full
             bg-[oklch(0.12_0_0)]
             border border-white/10
             flex items-center justify-center
-            shadow-[0_6px_16px_rgba(0,0,0,0.35)]
+            shadow-[0_8px_20px_rgba(0,0,0,0.4)]
           "
         >
           <svg
             viewBox="0 0 24 24"
-            className="w-5 h-5"
+            className="w-6 h-6"
             fill="none"
             stroke="#25D366"
             strokeWidth="1.8"
