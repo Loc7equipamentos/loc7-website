@@ -8,6 +8,7 @@ type ProductWithImages = Product & {
   catalog_order?: number | null;
   is_featured?: boolean | null;
   featured_order?: number | null;
+  is_featured_special?: boolean | null;
 };
 
 export default function AdminDashboard() {
@@ -36,6 +37,7 @@ export default function AdminDashboard() {
     catalog_order: null as number | null,
     is_featured: false,
     featured_order: null as number | null,
+    is_featured_special: false,
   });
 
   const [newCategory, setNewCategory] = useState('');
@@ -372,6 +374,7 @@ export default function AdminDashboard() {
           catalog_order: newProduct.catalog_order || null,
           is_featured: newProduct.is_featured,
           featured_order: newProduct.is_featured ? newProduct.featured_order : null,
+          is_featured_special: newProduct.is_featured_special,
         },
       ]);
 
@@ -390,6 +393,7 @@ export default function AdminDashboard() {
         catalog_order: null,
         is_featured: false,
         featured_order: null,
+        is_featured_special: false,
       });
       setError(null);
       await loadProducts();
@@ -425,6 +429,7 @@ export default function AdminDashboard() {
           catalog_order: editingProduct.catalog_order || null,
           is_featured: editingProduct.is_featured,
           featured_order: editingProduct.is_featured ? editingProduct.featured_order : null,
+          is_featured_special: editingProduct.is_featured_special || false,
         })
         .eq('id', editingProduct.id);
 
@@ -654,41 +659,65 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="md:col-span-2 border-t border-gray-200 pt-4">
-                  <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={newProduct.is_featured}
-                        onChange={(e) =>
-                          setNewProduct((prev) => ({
-                            ...prev,
-                            is_featured: e.target.checked,
-                            featured_order: e.target.checked ? prev.featured_order : null,
-                          }))
-                        }
-                        className="w-4 h-4 border border-gray-300 rounded"
-                      />
-                      <span className="text-sm font-medium text-gray-700">Destaque na Home</span>
-                    </label>
-
-                    {newProduct.is_featured && (
-                      <div className="flex items-center gap-2">
-                        <label className="text-sm text-gray-600">Ordem:</label>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-2">
                         <input
-                          type="number"
-                          placeholder="1"
-                          value={newProduct.featured_order ?? ''}
+                          type="checkbox"
+                          checked={newProduct.is_featured}
                           onChange={(e) =>
                             setNewProduct((prev) => ({
                               ...prev,
-                              featured_order: e.target.value ? Number(e.target.value) : null,
+                              is_featured: e.target.checked,
+                              featured_order: e.target.checked ? prev.featured_order : null,
                             }))
                           }
-                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                          className="w-4 h-4 border border-gray-300 rounded"
                         />
-                        <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
-                      </div>
-                    )}
+                        <span className="text-sm font-medium text-gray-700">Destaque na Home</span>
+                      </label>
+
+                      {newProduct.is_featured && (
+                        <div className="flex items-center gap-2">
+                          <label className="text-sm text-gray-600">Ordem:</label>
+                          <input
+                            type="number"
+                            placeholder="1"
+                            value={newProduct.featured_order ?? ''}
+                            onChange={(e) =>
+                              setNewProduct((prev) => ({
+                                ...prev,
+                                featured_order: e.target.value ? Number(e.target.value) : null,
+                              }))
+                            }
+                            className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                          />
+                          <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <label className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={newProduct.is_featured_special}
+                        onChange={(e) =>
+                          setNewProduct((prev) => ({
+                            ...prev,
+                            is_featured_special: e.target.checked,
+                          }))
+                        }
+                        className="mt-0.5 w-4 h-4 border border-gray-300 rounded"
+                      />
+                      <span>
+                        <span className="block text-sm font-medium text-gray-800">
+                          Condições diferenciadas
+                        </span>
+                        <span className="block text-xs text-gray-500">
+                          Exibe “Item selecionado para condições diferenciadas” na página do produto
+                        </span>
+                      </span>
+                    </label>
                   </div>
                 </div>
 
@@ -1062,49 +1091,77 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="md:col-span-2 border-t border-gray-200 pt-4">
-                  <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={editingProduct.is_featured || false}
-                        onChange={(e) =>
-                          setEditingProduct((prev) =>
-                            prev
-                              ? {
-                                  ...prev,
-                                  is_featured: e.target.checked,
-                                  featured_order: e.target.checked ? prev.featured_order : null,
-                                }
-                              : prev
-                          )
-                        }
-                        className="w-4 h-4 border border-gray-300 rounded"
-                      />
-                      <span className="text-sm font-medium text-gray-700">Destaque na Home</span>
-                    </label>
-
-                    {editingProduct.is_featured && (
-                      <div className="flex items-center gap-2">
-                        <label className="text-sm text-gray-600">Ordem:</label>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-2">
                         <input
-                          type="number"
-                          placeholder="1"
-                          value={editingProduct.featured_order ?? ''}
+                          type="checkbox"
+                          checked={editingProduct.is_featured || false}
                           onChange={(e) =>
                             setEditingProduct((prev) =>
                               prev
                                 ? {
                                     ...prev,
-                                    featured_order: e.target.value ? Number(e.target.value) : null,
+                                    is_featured: e.target.checked,
+                                    featured_order: e.target.checked ? prev.featured_order : null,
                                   }
                                 : prev
                             )
                           }
-                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                          className="w-4 h-4 border border-gray-300 rounded"
                         />
-                        <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
-                      </div>
-                    )}
+                        <span className="text-sm font-medium text-gray-700">Destaque na Home</span>
+                      </label>
+
+                      {editingProduct.is_featured && (
+                        <div className="flex items-center gap-2">
+                          <label className="text-sm text-gray-600">Ordem:</label>
+                          <input
+                            type="number"
+                            placeholder="1"
+                            value={editingProduct.featured_order ?? ''}
+                            onChange={(e) =>
+                              setEditingProduct((prev) =>
+                                prev
+                                  ? {
+                                      ...prev,
+                                      featured_order: e.target.value ? Number(e.target.value) : null,
+                                    }
+                                  : prev
+                              )
+                            }
+                            className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                          />
+                          <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <label className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={editingProduct.is_featured_special || false}
+                        onChange={(e) =>
+                          setEditingProduct((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  is_featured_special: e.target.checked,
+                                }
+                              : prev
+                          )
+                        }
+                        className="mt-0.5 w-4 h-4 border border-gray-300 rounded"
+                      />
+                      <span>
+                        <span className="block text-sm font-medium text-gray-800">
+                          Condições diferenciadas
+                        </span>
+                        <span className="block text-xs text-gray-500">
+                          Exibe “Item selecionado para condições diferenciadas” na página do produto
+                        </span>
+                      </span>
+                    </label>
                   </div>
                 </div>
 
