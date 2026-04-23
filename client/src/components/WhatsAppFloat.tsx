@@ -8,10 +8,7 @@ export default function WhatsAppFloat() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setVisible(true);
-    }, 700);
-
+    const timer = window.setTimeout(() => setVisible(true), 700);
     return () => window.clearTimeout(timer);
   }, []);
 
@@ -22,7 +19,7 @@ export default function WhatsAppFloat() {
   return (
     <div
       className={`
-        fixed bottom-6 right-6 z-50
+        fixed bottom-6 right-8 z-50
         transition-all duration-700 ease-out
         ${visible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}
       `}
@@ -33,7 +30,7 @@ export default function WhatsAppFloat() {
         rel="noopener noreferrer"
         title="Precisa de ajuda?"
         className="
-          relative flex items-center overflow-hidden
+          relative flex items-center
           bg-[oklch(0.12_0_0)]
           text-white
           px-5 pr-14 py-2
@@ -45,21 +42,19 @@ export default function WhatsAppFloat() {
           hover:shadow-[0_12px_30px_rgba(0,0,0,0.35)]
         "
       >
-        {/* TEXTO */}
-        <span className="text-sm font-medium tracking-wide leading-none">
+        <span className="relative z-10 text-sm font-medium tracking-wide leading-none">
           Precisa de ajuda?
         </span>
 
-        {/* BRILHO (corrigido - elemento real, não pseudo) */}
-        <span className="pointer-events-none absolute inset-0 overflow-hidden">
+        <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
           <span className="shine-bar" />
         </span>
 
-        {/* ÍCONE PLUG (+15%) */}
         <div
           className="
             absolute
             -right-5
+            z-20
             w-[54px] h-[54px]
             rounded-full
             bg-[oklch(0.12_0_0)]
@@ -81,7 +76,6 @@ export default function WhatsAppFloat() {
         </div>
       </a>
 
-      {/* KEYFRAMES CORRIGIDO */}
       <style>
         {`
           .shine-bar {
