@@ -234,8 +234,8 @@ export default function Catalogo() {
   return (
     <main className="min-h-screen bg-[#f3f3f1] text-neutral-900">
       <section className="border-b border-neutral-200 bg-[#f3f3f1]">
-        <div className="mx-auto max-w-[1440px] px-4 pb-8 pt-28 sm:px-6 lg:px-10">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mx-auto max-w-[1440px] px-4 pb-5 pt-28 sm:px-6 lg:px-10">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h1 className="text-[28px] font-bold tracking-tight text-neutral-950 sm:text-4xl">
                 CATÁLOGO
@@ -260,8 +260,8 @@ export default function Catalogo() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
-        <div className="grid gap-10 lg:grid-cols-[260px_minmax(0,1fr)]">
+      <section className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-10 lg:py-7">
+        <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
           <aside className="hidden self-start rounded-2xl border border-neutral-200 bg-white p-6 lg:block">
             <div className="mb-6 flex items-center gap-2">
               <Menu className="h-4 w-4 text-neutral-500" />
