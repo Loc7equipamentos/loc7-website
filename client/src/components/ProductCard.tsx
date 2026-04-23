@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import { Product } from "@/lib/supabase";
 
@@ -5,42 +6,99 @@ type Props = {
   product: Product;
 };
 
+function parseImages(images: unknown): string[] {
+  if (Array.isArray(images)) {
+    return images.filter(
+      (img): img is string => typeof img === "string" && img.trim() !== ""
+    );
+  }
+
+  if (typeof images === "string") {
+    try {
+      const parsed = JSON.parse(images);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(
+          (img): img is string => typeof img === "string" && img.trim() !== ""
+        );
+      }
+    } catch {
+      return images.trim() ? [images] : [];
+    }
+  }
+
+  return [];
+}
+
 export default function ProductCard({ product }: Props) {
-  const image =
-    product.image_url ||
-    (Array.isArray(product.images) && product.images.length > 0
-      ? product.images[0]
-      : "/placeholder.jpg");
+  const gallery = useMemo(() => {
+    const parsedImages = parseImages(product.images);
+
+    const allImages = [product.image_url, ...parsedImages].filter(
+      (img): img is string => typeof img === "string" && img.trim() !== ""
+    );
+
+    return Array.from(new Set(allImages));
+  }, [product]);
+
+  const primaryImage = gallery[0] || "/placeholder.jpg";
+  const hoverImage = gallery[1] || primaryImage;
+
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <Link href={`/equipamentos/${product.slug}`}>
-      <div className="group cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all duration-300 ease-out hover:-translate-y-[3px] hover:shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
-        
-        {/* ÁREA DE IMAGEM */}
+      <div
+        className="group cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all duration-300 ease-out hover:-translate-y-[3px] hover:shadow-[0_10px_30px_rgba(0,0,0,0.06)]"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* IMAGEM */}
         <div className="relative flex h-[165px] w-full items-center justify-center overflow-hidden bg-white px-3 py-2 sm:h-[180px] sm:px-4 sm:py-3 lg:h-[190px]">
+
+          {/* imagem base */}
           <img
-            src={image}
+            src={primaryImage}
             alt={product.name}
-            className="block h-[92%] w-[92%] object-contain"
+            className={`absolute h-[92%] w-[92%] object-contain transition-opacity duration-200 ${
+              isHovered ? "opacity-0" : "opacity-100"
+            }`}
+          />
+
+          {/* imagem hover */}
+          <img
+            src={hoverImage}
+            alt={product.name}
+            className={`absolute h-[92%] w-[92%] object-contain transition-opacity duration-200 ${
+              isHovered ? "opacity-100" : "opacity-0"
+            }`}
           />
         </div>
 
         {/* INFO */}
-        <div className="flex flex-col gap-1 p-3 sm:p-4">
-          <h3 className="min-h-[40px] line-clamp-2 text-sm font-semibold leading-tight text-neutral-900">
+        <div className="flex flex-col gap-2 p-3 sm:p-4">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
+            {product.category}
+          </span>
+
+          <h3 className="min-h-[44px] text-sm font-medium leading-tight text-neutral-900">
             {product.name}
           </h3>
 
-          <p className="text-xs text-neutral-500">
-            {product.category}
-            {product.subcategory && ` • ${product.subcategory}`}
-          </p>
+          {product.subcategory && (
+            <span className="text-xs text-neutral-400">
+              {product.subcategory}
+            </span>
+          )}
 
           {product.price && (
-            <p className="mt-1 text-sm font-medium text-neutral-800">
-              R$ {Number(product.price).toLocaleString("pt-BR")}
-              <span className="text-xs text-neutral-400"> / diária</span>
-            </p>
+            <div className="mt-1 flex items-end gap-1">
+              <span className="text-sm font-semibold text-neutral-900">
+                R$ {Number(product.price).toLocaleString("pt-BR")}
+              </span>
+              <span className="pb-[1px] text-[11px] text-neutral-400">
+                / dia
+              </span>
+            </div>
           )}
         </div>
       </div>
