@@ -15,18 +15,14 @@ export default function ProductCard({ product }: Props) {
   return (
     <Link href={`/equipamentos/${product.slug}`}>
       <div className="group cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all duration-300 hover:border-neutral-300 hover:shadow-md">
-        {/* ÁREA DE IMAGEM */}
-        <div className="relative flex h-[145px] w-full items-center justify-center overflow-hidden bg-white sm:h-[160px] lg:h-[175px]">
-          <div className="flex h-[78%] w-[78%] items-center justify-center sm:h-[80%] sm:w-[80%]">
-            <img
-              src={image}
-              alt={product.name}
-              className="max-h-full max-w-full object-contain"
-            />
-          </div>
+        <div className="relative flex h-[165px] w-full items-center justify-center overflow-hidden bg-white px-5 py-4 sm:h-[180px] sm:px-6 sm:py-5 lg:h-[190px]">
+          <img
+            src={image}
+            alt={product.name}
+            className="block h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+          />
         </div>
 
-        {/* INFO */}
         <div className="flex flex-col gap-1 p-3 sm:p-4">
           <h3 className="min-h-[40px] line-clamp-2 text-sm font-semibold leading-tight text-neutral-900">
             {product.name}
