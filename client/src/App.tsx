@@ -1,45 +1,44 @@
 import { Route, Switch, useLocation } from "wouter";
-import { CartProvider } from "./contexts/CartContext";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import WhatsAppFloat from "@/components/WhatsAppFloat";
 
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Catalogo from "./pages/Catalogo";
-import Produto from "./pages/Produto";
-import Orcamento from "./pages/Orcamento";
-import Producao from "./pages/Producao";
-import AdminDashboard from "./pages/AdminDashboard";
-import NotFound from "./pages/NotFound";
-import AdminProtected from "./pages/AdminProtected"; // ✅ IMPORT CORRETO (TOPO)
+// Páginas
+import Home from "@/pages/Home";
+import Catalogo from "@/pages/Catalogo";
+import Produto from "@/pages/Produto";
+import Orcamento from "@/pages/Orcamento";
+import Producao from "@/pages/Producao";
+import AdminDashboard from "@/pages/AdminDashboard";
 
-function AppContent() {
+export default function App() {
   const [location] = useLocation();
+
   const isAdmin = location.startsWith("/admin-panel");
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen flex flex-col">
+      {/* NAVBAR (fora do admin) */}
       {!isAdmin && <Navbar />}
 
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/catalogo" component={Catalogo} />
-        <Route path="/catalogo/:category" component={Catalogo} />
-        <Route path="/equipamentos/:slug" component={Produto} />
-        <Route path="/orcamento" component={Orcamento} />
-        <Route path="/producao" component={Producao} />
+      {/* CONTEÚDO */}
+      <main className="flex-1">
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/catalogo" component={Catalogo} />
+          <Route path="/catalogo/:category" component={Catalogo} />
+          <Route path="/equipamentos/:slug" component={Produto} />
+          <Route path="/orcamento" component={Orcamento} />
+          <Route path="/producao" component={Producao} />
+          <Route path="/admin-panel" component={AdminDashboard} />
+        </Switch>
+      </main>
 
-        {/* 🔒 ADMIN PROTEGIDO */}
-        <Route path="/admin-panel" component={AdminProtected} />
+      {/* FOOTER (fora do admin) */}
+      {!isAdmin && <Footer />}
 
-        <Route component={NotFound} />
-      </Switch>
+      {/* WHATSAPP FLOAT (fora do admin) */}
+      {!isAdmin && <WhatsAppFloat />}
     </div>
-  );
-}
-
-export default function App() {
-  return (
-    <CartProvider>
-      <AppContent />
-    </CartProvider>
   );
 }
