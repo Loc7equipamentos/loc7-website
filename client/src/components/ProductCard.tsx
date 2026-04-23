@@ -48,14 +48,11 @@ export default function ProductCard({ product }: Props) {
   return (
     <Link href={`/equipamentos/${product.slug}`}>
       <div
-        className="group cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all duration-300 ease-out hover:-translate-y-[3px] hover:shadow-[0_10px_30px_rgba(0,0,0,0.06)]"
+        className="cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white transition-colors duration-200"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* IMAGEM */}
         <div className="relative flex h-[165px] w-full items-center justify-center overflow-hidden bg-white px-3 py-2 sm:h-[180px] sm:px-4 sm:py-3 lg:h-[190px]">
-
-          {/* imagem base */}
           <img
             src={primaryImage}
             alt={product.name}
@@ -64,7 +61,6 @@ export default function ProductCard({ product }: Props) {
             }`}
           />
 
-          {/* imagem hover */}
           <img
             src={hoverImage}
             alt={product.name}
@@ -74,7 +70,6 @@ export default function ProductCard({ product }: Props) {
           />
         </div>
 
-        {/* INFO */}
         <div className="flex flex-col gap-2 p-3 sm:p-4">
           <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
             {product.category}
