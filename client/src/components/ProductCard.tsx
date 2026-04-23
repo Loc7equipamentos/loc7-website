@@ -48,7 +48,7 @@ export default function ProductCard({ product }: Props) {
   return (
     <Link href={`/equipamentos/${product.slug}`}>
       <div
-        className="cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white"
+        className="cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition-shadow duration-200 hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -89,9 +89,7 @@ export default function ProductCard({ product }: Props) {
               <span className="text-[12px] font-semibold text-neutral-900 sm:text-sm">
                 R$ {Number(product.price).toLocaleString("pt-BR")}
               </span>
-              <span className="text-[10px] text-neutral-500">
-                / dia
-              </span>
+              <span className="text-[10px] text-neutral-500">/ dia</span>
             </div>
           )}
         </div>
