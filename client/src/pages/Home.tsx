@@ -119,19 +119,11 @@ function ProductCard({ product }: { product: typeof featuredProducts[0] }) {
 }
 
 const normalizeCategory = (value: string | null | undefined) =>
-  (value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-
-const categoryLabelMap: Record<string, string> = {
-  todas: "Todas",
-  cameras: "Câmeras",
-  lentes: "Lentes",
-  iluminacao: "Iluminação",
-  audio: "Áudio",
-  monitores: "Monitores",
-  movimento: "Movimento",
-  transmissores: "Transmissores",
-  maquinaria: "Maquinária",
-};
+  (value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -180,7 +172,7 @@ export default function Home() {
 
   useEffect(() => {
     const carouselTimer = setInterval(() => {
-      setCarouselIndex(prev => (prev + 1) % carouselImages.length);
+      setCarouselIndex((prev) => (prev + 1) % carouselImages.length);
     }, 4000);
     return () => clearInterval(carouselTimer);
   }, []);
@@ -188,22 +180,23 @@ export default function Home() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setIsVisible(prev => ({ ...prev, [entry.target.id]: true }));
+            setIsVisible((prev) => ({ ...prev, [entry.target.id]: true }));
           }
         });
       },
       { threshold: 0.1 }
     );
 
-    Object.values(sectionRefs.current).forEach(ref => {
+    Object.values(sectionRefs.current).forEach((ref) => {
       if (ref) observer.observe(ref);
     });
 
     return () => observer.disconnect();
   }, []);
 
+  // Buscar produtos em destaque do Supabase
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
@@ -230,11 +223,11 @@ export default function Home() {
   };
 
   const nextCarousel = () => {
-    setCarouselIndex(prev => (prev + 3) % carouselImages.length);
+    setCarouselIndex((prev) => (prev + 3) % carouselImages.length);
   };
 
   const prevCarousel = () => {
-    setCarouselIndex(prev => (prev - 3 + carouselImages.length) % carouselImages.length);
+    setCarouselIndex((prev) => (prev - 3 + carouselImages.length) % carouselImages.length);
   };
 
   const getVisibleImages = () => {
@@ -246,16 +239,29 @@ export default function Home() {
   };
 
   const featuredCategories = useMemo(() => {
-    const raw = featuredProducts
-      .map((product) => normalizeCategory(product.category))
-      .filter(Boolean);
+    const map = new Map<string, string>();
 
-    const unique = Array.from(new Set(raw));
-    return ["todas", ...unique];
+    featuredProducts.forEach((product) => {
+      const original = (product.category || "").trim();
+      const normalized = normalizeCategory(original);
+
+      if (original && normalized && !map.has(normalized)) {
+        map.set(normalized, original);
+      }
+    });
+
+    return [
+      { value: "todas", label: "Todas" },
+      ...Array.from(map.entries()).map(([value, label]) => ({
+        value,
+        label,
+      })),
+    ];
   }, [featuredProducts]);
 
   const filteredFeaturedProducts = useMemo(() => {
     if (selectedFeaturedCategory === "todas") return featuredProducts;
+
     return featuredProducts.filter(
       (product) => normalizeCategory(product.category) === selectedFeaturedCategory
     );
@@ -265,6 +271,7 @@ export default function Home() {
     <div className="min-h-screen bg-[oklch(0.08_0_0)]">
       {/* ===== HERO SECTION ===== */}
       <section className="relative h-[70vh] min-h-[400px] overflow-hidden">
+        {/* Background - Alternating Images */}
         <div className="absolute inset-0">
           {heroSlides.map((slide, i) => {
             const heroSlideData = [
@@ -287,6 +294,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/15" />
         </div>
 
+        {/* Content */}
         <div className="relative z-10 container h-full flex items-center">
           <div className="max-w-2xl">
             <div className="mb-6 flex items-center gap-3">
@@ -299,7 +307,9 @@ export default function Home() {
             {heroSlides.map((slide, i) => (
               <div
                 key={i}
-                className={`transition-all duration-700 ${i === currentSlide ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 absolute"}`}
+                className={`transition-all duration-700 ${
+                  i === currentSlide ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 absolute"
+                }`}
               >
                 {i === currentSlide && (
                   <>
@@ -331,18 +341,22 @@ export default function Home() {
               </div>
             ))}
 
+            {/* Slide indicators */}
             <div className="flex gap-2 mt-10">
               {heroSlides.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentSlide(i)}
-                  className={`h-0.5 transition-all duration-300 ${i === currentSlide ? "w-8 bg-[oklch(0.45_0.25_25)]" : "w-4 bg-[oklch(0.35_0_0)]"}`}
+                  className={`h-0.5 transition-all duration-300 ${
+                    i === currentSlide ? "w-8 bg-[oklch(0.45_0.25_25)]" : "w-4 bg-[oklch(0.35_0_0)]"
+                  }`}
                 />
               ))}
             </div>
           </div>
         </div>
 
+        {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
           <span className="text-[oklch(0.8_0_0)] text-xs uppercase tracking-widest font-semibold">Scroll</span>
           <div className="w-px h-8 bg-gradient-to-b from-[oklch(0.8_0_0)] to-transparent" />
@@ -393,21 +407,20 @@ export default function Home() {
             </div>
           ) : (
             <>
-              {/* CATEGORIAS VISÍVEIS NO MOBILE */}
               <div className="mb-5 sm:hidden">
                 <div className="-mx-4 overflow-x-auto px-4">
                   <div className="flex min-w-max gap-2 pb-1">
                     {featuredCategories.map((category) => (
                       <button
-                        key={category}
-                        onClick={() => setSelectedFeaturedCategory(category)}
+                        key={category.value}
+                        onClick={() => setSelectedFeaturedCategory(category.value)}
                         className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition-colors ${
-                          selectedFeaturedCategory === category
+                          selectedFeaturedCategory === category.value
                             ? "border-neutral-900 bg-neutral-900 text-white"
                             : "border-neutral-300 bg-white text-neutral-700"
                         }`}
                       >
-                        {categoryLabelMap[category] || category}
+                        {category.label}
                       </button>
                     ))}
                   </div>
@@ -482,7 +495,9 @@ export default function Home() {
               <Link
                 key={cat.title}
                 href={cat.href}
-                className={`relative overflow-hidden aspect-[4/3] group block transition-all duration-500 ${isVisible.categories ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                className={`relative overflow-hidden aspect-[4/3] group block transition-all duration-500 ${
+                  isVisible.categories ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
                 style={{ transitionDelay: `${i * 100}ms` }}
               >
                 <img
@@ -576,7 +591,9 @@ export default function Home() {
         className="py-20 bg-gradient-to-b from-[oklch(0.25_0_0)] to-[oklch(0.22_0_0)] cement-texture"
       >
         <div className="container">
-          <div className={`mb-12 transition-all duration-700 ${isVisible.testimonials ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <div className={`mb-12 transition-all duration-700 ${
+            isVisible.testimonials ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}>
             <span className="loc7-section-title text-lg">DEPOIMENTOS</span>
             <div className="loc7-red-line" />
             <p className="text-[oklch(0.5_0_0)] text-sm mt-3">O que nossos clientes dizem sobre a gente</p>
