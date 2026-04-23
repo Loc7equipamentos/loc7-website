@@ -1,21 +1,39 @@
 /*
- * LOC 7 — WhatsApp Float Component (Ultra Refined)
+ * LOC 7 — WhatsApp Float Component (Entrance + Subtle Shine)
  */
 
+import { useEffect, useState } from "react";
+
 export default function WhatsAppFloat() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setVisible(true);
+    }, 700);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const message = encodeURIComponent(
     "Olá! Estou no site da Loc7 e preciso de ajuda para encontrar os equipamentos ideais."
   );
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div
+      className={`
+        fixed bottom-6 right-6 z-50
+        transition-all duration-700 ease-out
+        ${visible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}
+      `}
+    >
       <a
         href={`https://wa.me/message/WOIONHHSTABQF1?text=${message}`}
         target="_blank"
         rel="noopener noreferrer"
         title="Precisa de ajuda?"
         className="
-          relative flex items-center
+          relative flex items-center overflow-hidden
           bg-[oklch(0.12_0_0)]
           text-white
           px-5 pr-12 py-2
@@ -31,6 +49,26 @@ export default function WhatsAppFloat() {
         <span className="text-sm font-medium tracking-wide leading-none">
           Precisa de ajuda?
         </span>
+
+        {/* BRILHO PASSANDO */}
+        <span
+          className="
+            pointer-events-none
+            absolute inset-0
+            before:content-['']
+            before:absolute
+            before:top-0
+            before:-left-1/2
+            before:w-1/2
+            before:h-full
+            before:bg-gradient-to-r
+            before:from-transparent
+            before:via-white/20
+            before:to-transparent
+            before:skew-x-[-20deg]
+            before:animate-[shine_4s_linear_infinite]
+          "
+        />
 
         {/* ÍCONE PLUG */}
         <div
@@ -57,6 +95,18 @@ export default function WhatsAppFloat() {
           </svg>
         </div>
       </a>
+
+      {/* KEYFRAMES */}
+      <style>
+        {`
+          @keyframes shine {
+            0% { transform: translateX(0); opacity: 0; }
+            10% { opacity: 0.4; }
+            50% { transform: translateX(250%); opacity: 0.3; }
+            100% { transform: translateX(250%); opacity: 0; }
+          }
+        `}
+      </style>
     </div>
   );
 }
