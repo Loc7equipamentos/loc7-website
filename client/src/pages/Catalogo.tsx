@@ -1,25 +1,14 @@
-/*
- * LOC 7 — Catálogo Page
- * Cinema Noir Industrial style
- * Product grid with filters, search, and WhatsApp CTA
- * Integrado com Supabase para sincronização em tempo real
- */
-
 import { useState, useEffect } from "react";
-import { Search, SlidersHorizontal, ArrowRight, Loader } from "lucide-react";
-import { useCart } from "@/contexts/CartContext";
-import { supabase, type Product } from "@/lib/supabase";
+import { SlidersHorizontal, ChevronDown, LayoutGrid, Menu, X } from "lucide-react";
 import { useParams } from "wouter";
+import ProductCard from "@/components/ProductCard";
+import { supabase, type Product } from "@/lib/supabase";
 
-const brands = ["Todas", "Sony", "Canon", "RED", "Blackmagic", "Arri", "Aputure", "Zeiss", "DJI", "Godox"];
-
-const normalize = (text: string): string => {
-  return text?.toLowerCase().trim() || "";
-};
+const normalize = (text: string): string => text?.toLowerCase().trim() || "";
 
 export default function Catalogo() {
-  const { addItem } = useCart();
   const params = useParams<{ category?: string }>();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,10 +17,7 @@ export default function Catalogo() {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [selectedSubcategory, setSelectedSubcategory] = useState("Todas");
   const [selectedBrand, setSelectedBrand] = useState("Todas");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 3000]);
-  const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState("relevance");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const slugToCategoryName: Record<string, string> = {
     cameras: "Câmeras",
@@ -62,10 +48,6 @@ export default function Catalogo() {
   }, [params.category]);
 
   useEffect(() => {
-    setSelectedSubcategory("Todas");
-  }, [selectedCategory]);
-
-  useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
@@ -84,18 +66,13 @@ export default function Catalogo() {
         const { data: productsData, error: prodError } = await supabase
           .from("products")
           .select("*")
-          .order("created_at", { ascending: false });
+          .order("name", { ascending: true });
 
         if (prodError) throw prodError;
 
         setProducts(productsData || []);
-
-        if (productsData && productsData.length > 0) {
-          const maxPrice = Math.max(...productsData.map((p) => p.price));
-          setPriceRange([0, Math.ceil(maxPrice / 100) * 100]);
-        }
       } catch (err) {
-        console.error("Erro ao carregar dados:", err);
+        console.error("Erro ao carregar catálogo:", err);
         setError("Erro ao carregar produtos. Tente novamente.");
       } finally {
         setLoading(false);
@@ -103,28 +80,13 @@ export default function Catalogo() {
     };
 
     loadData();
-
-    const subscription = supabase
-      .channel("products-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "products" },
-        () => {
-          loadData();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, []);
 
   const availableSubcategories = products
     .filter((p) =>
       selectedCategory === "Todos"
         ? true
-        : normalize(p.category) === normalize(selectedCategory)
+        : normalize(p.category || "") === normalize(selectedCategory)
     )
     .map((p) => p.subcategory)
     .filter(Boolean) as string[];
@@ -136,268 +98,254 @@ export default function Catalogo() {
     )
     .filter(Boolean);
 
-  const filtered = products
-    .filter((p) => {
-      const matchCategory =
-        selectedCategory === "Todos" ||
-        normalize(p.category) === normalize(selectedCategory);
+  const uniqueBrands = Array.from(
+    new Set(
+      products
+        .map((p) => (p.name ? p.name.split(" ")[0] : ""))
+        .filter(Boolean)
+    )
+  );
 
-      const matchSubcategory =
-        selectedSubcategory === "Todas" ||
-        normalize(p.subcategory || "") === normalize(selectedSubcategory);
+  const filteredProducts = products.filter((p) => {
+    const matchCategory =
+      selectedCategory === "Todos" ||
+      normalize(p.category || "") === normalize(selectedCategory);
 
-      const matchBrand =
-        selectedBrand === "Todas" ||
-        (p.name?.toLowerCase().includes(selectedBrand.toLowerCase()) ?? false);
+    const matchSubcategory =
+      selectedSubcategory === "Todas" ||
+      normalize(p.subcategory || "") === normalize(selectedSubcategory);
 
-      const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
+    const matchBrand =
+      selectedBrand === "Todas" ||
+      p.name?.toLowerCase().includes(selectedBrand.toLowerCase());
 
-      return (
-        matchCategory &&
-        matchSubcategory &&
-        matchBrand &&
-        matchSearch &&
-        matchPrice
-      );
-    })
-    .sort((a, b) => {
-      if (sortBy === "price-asc") return a.price - b.price;
-      if (sortBy === "price-desc") return b.price - a.price;
-      if (sortBy === "name-asc") return a.name.localeCompare(b.name);
-      if (sortBy === "name-desc") return b.name.localeCompare(a.name);
-      return 0;
-    });
+    return matchCategory && matchSubcategory && matchBrand;
+  });
+
+  const SidebarFilters = () => (
+    <div className="space-y-8">
+      <div>
+        <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+          Categorias
+        </h3>
+        <div className="space-y-2">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => {
+                setSelectedCategory(cat);
+                setSelectedSubcategory("Todas");
+              }}
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                selectedCategory === cat
+                  ? "bg-neutral-900 text-white"
+                  : "text-neutral-700 hover:bg-neutral-100"
+              }`}
+            >
+              <span>{cat}</span>
+              <ChevronDown className="h-4 w-4 opacity-60" />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {uniqueSubcategories.length > 0 && (
+        <div>
+          <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+            Subcategorias
+          </h3>
+          <div className="space-y-2">
+            <button
+              onClick={() => setSelectedSubcategory("Todas")}
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                selectedSubcategory === "Todas"
+                  ? "bg-neutral-900 text-white"
+                  : "text-neutral-700 hover:bg-neutral-100"
+              }`}
+            >
+              <span>Todas</span>
+              <ChevronDown className="h-4 w-4 opacity-60" />
+            </button>
+
+            {uniqueSubcategories.map((subcat) => (
+              <button
+                key={subcat}
+                onClick={() => setSelectedSubcategory(subcat)}
+                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                  selectedSubcategory === subcat
+                    ? "bg-neutral-900 text-white"
+                    : "text-neutral-700 hover:bg-neutral-100"
+                }`}
+              >
+                <span>{subcat}</span>
+                <ChevronDown className="h-4 w-4 opacity-60" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div>
+        <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+          Marca
+        </h3>
+        <div className="space-y-2">
+          <button
+            onClick={() => setSelectedBrand("Todas")}
+            className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+              selectedBrand === "Todas"
+                ? "bg-neutral-900 text-white"
+                : "text-neutral-700 hover:bg-neutral-100"
+            }`}
+          >
+            <span>Todas</span>
+            <ChevronDown className="h-4 w-4 opacity-60" />
+          </button>
+
+          {uniqueBrands.map((brand) => (
+            <button
+              key={brand}
+              onClick={() => setSelectedBrand(brand)}
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                selectedBrand === brand
+                  ? "bg-neutral-900 text-white"
+                  : "text-neutral-700 hover:bg-neutral-100"
+              }`}
+            >
+              <span>{brand}</span>
+              <ChevronDown className="h-4 w-4 opacity-60" />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[oklch(0.08_0_0)] pt-32 pb-16">
-        <div className="container">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-white mb-4">Erro ao carregar catálogo</h1>
-            <p className="text-[oklch(0.7_0_0)] mb-8">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="loc7-btn-primary"
-            >
-              Tentar novamente
-            </button>
-          </div>
+      <main className="min-h-screen bg-[#f3f3f1] px-4 pb-16 pt-28 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1440px] rounded-2xl border border-red-200 bg-red-50 px-6 py-5 text-sm text-red-700">
+          {error}
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[oklch(0.08_0_0)] pt-32 pb-16">
-      <div className="container">
-        <div className="mb-12">
-          <h1 className="text-5xl font-bold text-white mb-2">CATÁLOGO</h1>
-          <p className="text-[oklch(0.7_0_0)] text-lg">
-            {loading ? "Carregando produtos..." : `${filtered.length} produtos encontrados`}
-          </p>
-        </div>
+    <main className="min-h-screen bg-[#f3f3f1] text-neutral-900">
+      <section className="border-b border-neutral-200 bg-[#f3f3f1]">
+        <div className="mx-auto max-w-[1440px] px-4 pb-8 pt-28 sm:px-6 lg:px-10">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h1 className="text-3xl font-semibold tracking-[-0.03em] text-neutral-950 sm:text-4xl">
+                Catálogo
+              </h1>
+              <p className="mt-2 text-sm text-neutral-500">
+                {loading
+                  ? "Carregando produtos..."
+                  : `${filteredProducts.length} produtos encontrados`}
+              </p>
+            </div>
 
-        <div className="mb-8 flex flex-col gap-4">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[oklch(0.45_0_0)]" />
-            <input
-              type="text"
-              placeholder="Buscar equipamento..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-[oklch(0.12_0_0)] border border-[oklch(0.18_0_0)] rounded text-white placeholder-[oklch(0.45_0_0)] focus:outline-none focus:border-[oklch(0.45_0.25_25)]"
-            />
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowMobileFilters(true)}
+                className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-800 lg:hidden"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                Filtros
+              </button>
+
+              <div className="hidden items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2 lg:flex">
+                <span className="text-sm text-neutral-500">Ordenar por:</span>
+                <span className="text-sm font-medium text-neutral-900">Mais relevantes</span>
+                <ChevronDown className="h-4 w-4 text-neutral-500" />
+              </div>
+
+              <button className="hidden rounded-lg border border-neutral-300 bg-white p-2 lg:inline-flex">
+                <LayoutGrid className="h-4 w-4 text-neutral-700" />
+              </button>
+            </div>
           </div>
+        </div>
+      </section>
 
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 text-[oklch(0.45_0.25_25)] hover:text-white transition-colors"
-          >
-            <SlidersHorizontal className="w-5 h-5" />
-            {showFilters ? "Ocultar filtros" : "Mostrar filtros"}
-          </button>
+      <section className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
+        <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+          <aside className="hidden self-start rounded-2xl border border-neutral-200 bg-white p-6 lg:block">
+            <div className="mb-6 flex items-center gap-2">
+              <Menu className="h-4 w-4 text-neutral-500" />
+              <span className="text-sm font-semibold uppercase tracking-[0.14em] text-neutral-700">
+                Filtros
+              </span>
+            </div>
+            <SidebarFilters />
+          </aside>
 
-          {showFilters && (
-            <div className="bg-[oklch(0.12_0_0)] border border-[oklch(0.18_0_0)] rounded p-6 space-y-6">
-              <div>
-                <h3 className="text-white font-semibold mb-3">Categorias</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  {categories.map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`px-3 py-2 rounded text-sm transition-colors ${
-                        selectedCategory === cat
-                          ? "bg-[oklch(0.45_0.25_25)] text-white"
-                          : "bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white"
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {uniqueSubcategories.length > 0 && (
-                <div>
-                  <h3 className="text-white font-semibold mb-3">Subcategorias</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    <button
-                      onClick={() => setSelectedSubcategory("Todas")}
-                      className={`px-3 py-2 rounded text-sm transition-colors ${
-                        selectedSubcategory === "Todas"
-                          ? "bg-[oklch(0.45_0.25_25)] text-white"
-                          : "bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white"
-                      }`}
-                    >
-                      Todas
-                    </button>
-                    {uniqueSubcategories.map((subcat) => (
-                      <button
-                        key={subcat}
-                        onClick={() => setSelectedSubcategory(subcat)}
-                        className={`px-3 py-2 rounded text-sm transition-colors ${
-                          selectedSubcategory === subcat
-                            ? "bg-[oklch(0.45_0.25_25)] text-white"
-                            : "bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white"
-                        }`}
-                      >
-                        {subcat}
-                      </button>
-                    ))}
+          <div>
+            {loading ? (
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="overflow-hidden rounded-xl border border-neutral-200 bg-white"
+                  >
+                    <div className="aspect-[4/3] w-full animate-pulse bg-neutral-100" />
+                    <div className="space-y-3 p-4">
+                      <div className="h-4 w-24 animate-pulse rounded bg-neutral-100" />
+                      <div className="h-4 w-full animate-pulse rounded bg-neutral-100" />
+                      <div className="h-4 w-2/3 animate-pulse rounded bg-neutral-100" />
+                    </div>
                   </div>
-                </div>
-              )}
-
-              <div>
-                <h3 className="text-white font-semibold mb-3">Marcas</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  {brands.map((brand) => (
-                    <button
-                      key={brand}
-                      onClick={() => setSelectedBrand(brand)}
-                      className={`px-3 py-2 rounded text-sm transition-colors ${
-                        selectedBrand === brand
-                          ? "bg-[oklch(0.45_0.25_25)] text-white"
-                          : "bg-[oklch(0.18_0_0)] text-[oklch(0.7_0_0)] hover:text-white"
-                      }`}
-                    >
-                      {brand}
-                    </button>
-                  ))}
-                </div>
+                ))}
               </div>
-
-              <div>
-                <h3 className="text-white font-semibold mb-3">Faixa de Preço</h3>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="range"
-                    min="0"
-                    max="5000"
-                    value={priceRange[0]}
-                    onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
-                    className="flex-1"
-                  />
-                  <input
-                    type="range"
-                    min="0"
-                    max="5000"
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                    className="flex-1"
-                  />
-                </div>
-                <p className="text-[oklch(0.7_0_0)] text-sm mt-2">
-                  R$ {priceRange[0]} - R$ {priceRange[1]}
+            ) : filteredProducts.length === 0 ? (
+              <div className="rounded-2xl border border-neutral-200 bg-white px-6 py-12 text-center">
+                <h2 className="text-lg font-semibold text-neutral-900">
+                  Nenhum produto encontrado
+                </h2>
+                <p className="mt-2 text-sm text-neutral-600">
+                  Ajuste os filtros para encontrar outros equipamentos.
                 </p>
               </div>
-
-              <div>
-                <h3 className="text-white font-semibold mb-3">Ordenar por</h3>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-3 py-2 bg-[oklch(0.18_0_0)] border border-[oklch(0.18_0_0)] rounded text-white focus:outline-none focus:border-[oklch(0.45_0.25_25)]"
-                >
-                  <option value="relevance">Relevância</option>
-                  <option value="price-asc">Menor Preço</option>
-                  <option value="price-desc">Maior Preço</option>
-                  <option value="name-asc">Nome A-Z</option>
-                  <option value="name-desc">Nome Z-A</option>
-                </select>
+            ) : (
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
               </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {showMobileFilters && (
+        <div className="fixed inset-0 z-50 bg-black/40 lg:hidden">
+          <div className="ml-auto h-full w-full max-w-sm overflow-y-auto bg-white p-6 shadow-2xl">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4 text-neutral-500" />
+                <span className="text-sm font-semibold uppercase tracking-[0.14em] text-neutral-700">
+                  Filtros
+                </span>
+              </div>
+
+              <button onClick={() => setShowMobileFilters(false)}>
+                <X className="h-5 w-5 text-neutral-700" />
+              </button>
             </div>
-          )}
+
+            <SidebarFilters />
+
+            <button
+              onClick={() => setShowMobileFilters(false)}
+              className="mt-8 w-full rounded-lg bg-neutral-950 px-4 py-3 text-sm font-medium text-white"
+            >
+              Aplicar filtros
+            </button>
+          </div>
         </div>
-
-        {loading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader className="w-8 h-8 text-[oklch(0.45_0.25_25)] animate-spin" />
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-[oklch(0.7_0_0)] text-lg">
-              Nenhum produto encontrado com os filtros selecionados.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filtered.map((product) => {
-              const productLink = product.slug ? `/equipamentos/${product.slug}` : null;
-              const coverImage = [product.image_url, ...(product.images || [])].filter(Boolean)[0];
-
-              return (
-                <a
-                  key={product.id}
-                  href={productLink || "#"}
-                  className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow"
-                >
-                  <div className="relative overflow-hidden aspect-square bg-gray-100">
-                    <img
-                      src={coverImage || "https://via.placeholder.com/400x400?text=Sem+imagem"}
-                      alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <p className="text-gray-500 text-xs uppercase tracking-widest font-semibold mb-2">
-                      {product.subcategory || product.category}
-                    </p>
-                    <h3 className="text-gray-900 text-sm font-semibold leading-tight mb-3 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    {product.badge && (
-                      <p className="text-blue-600 text-xs font-semibold mb-3">{product.badge}</p>
-                    )}
-                    <p className="text-gray-900 text-lg font-bold">
-                      R$ {product.price.toFixed(2)}
-                      <span className="text-gray-500 text-sm font-normal">/dia</span>
-                    </p>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-        )}
-
-        <div className="mt-16 bg-gradient-to-r from-[oklch(0.12_0_0)] to-[oklch(0.08_0_0)] border border-[oklch(0.18_0_0)] rounded-lg p-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-3">Não encontrou o que procura?</h2>
-          <p className="text-[oklch(0.7_0_0)] mb-6">
-            Fale com nossos especialistas para soluções customizadas
-          </p>
-          <a
-            href="https://wa.me/5511997237850"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="loc7-btn-primary inline-flex items-center gap-2"
-          >
-            Falar com especialista
-            <ArrowRight className="w-4 h-4" />
-          </a>
-        </div>
-      </div>
-    </div>
+      )}
+    </main>
   );
 }
