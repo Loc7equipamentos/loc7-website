@@ -15,24 +15,19 @@ export default function ProductCard({ product }: Props) {
   return (
     <Link href={`/equipamentos/${product.slug}`}>
       <div className="group cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all duration-300 hover:border-neutral-300 hover:shadow-md">
-
-        {/* ÁREA FIXA DE IMAGEM */}
-        <div className="relative w-full h-[220px] flex items-center justify-center bg-white">
-
-          {/* CAIXA INTERNA PADRONIZADA */}
-          <div className="w-[85%] h-[85%] flex items-center justify-center">
-
+        {/* ÁREA DE IMAGEM */}
+        <div className="relative flex h-[145px] w-full items-center justify-center overflow-hidden bg-white sm:h-[160px] lg:h-[175px]">
+          <div className="flex h-[78%] w-[78%] items-center justify-center sm:h-[80%] sm:w-[80%]">
             <img
               src={image}
               alt={product.name}
               className="max-h-full max-w-full object-contain"
             />
-
           </div>
         </div>
 
         {/* INFO */}
-        <div className="flex flex-col gap-1 p-4">
+        <div className="flex flex-col gap-1 p-3 sm:p-4">
           <h3 className="min-h-[40px] line-clamp-2 text-sm font-semibold leading-tight text-neutral-900">
             {product.name}
           </h3>
