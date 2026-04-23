@@ -9,8 +9,7 @@ type Props = {
 function parseImages(images: unknown): string[] {
   if (Array.isArray(images)) {
     return images.filter(
-      (img): img is string =>
-        typeof img === "string" && img.trim() !== ""
+      (img): img is string => typeof img === "string" && img.trim() !== ""
     );
   }
 
@@ -19,8 +18,7 @@ function parseImages(images: unknown): string[] {
       const parsed = JSON.parse(images);
       if (Array.isArray(parsed)) {
         return parsed.filter(
-          (img): img is string =>
-            typeof img === "string" && img.trim() !== ""
+          (img): img is string => typeof img === "string" && img.trim() !== ""
         );
       }
     } catch {
@@ -35,12 +33,8 @@ export default function ProductCard({ product }: Props) {
   const gallery = useMemo(() => {
     const parsedImages = parseImages(product.images);
 
-    const allImages = [
-      product.image_url,
-      ...parsedImages,
-    ].filter(
-      (img): img is string =>
-        typeof img === "string" && img.trim() !== ""
+    const allImages = [product.image_url, ...parsedImages].filter(
+      (img): img is string => typeof img === "string" && img.trim() !== ""
     );
 
     return Array.from(new Set(allImages));
@@ -58,46 +52,44 @@ export default function ProductCard({ product }: Props) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* IMAGEM MAIS COMPACTA */}
-        <div className="relative flex h-[140px] w-full items-center justify-center overflow-hidden bg-white px-2 py-2 sm:h-[160px] sm:px-3 lg:h-[180px]">
+        <div className="relative flex h-[118px] w-full items-center justify-center overflow-hidden bg-white px-2 py-1.5 sm:h-[145px] sm:px-3 sm:py-2 lg:h-[180px]">
           <img
             src={primaryImage}
             alt={product.name}
-            className={`absolute h-[92%] w-[92%] object-contain transition-opacity duration-200 ${
+            className={`absolute h-[90%] w-[90%] object-contain transition-opacity duration-200 ${
               isHovered ? "opacity-0" : "opacity-100"
             }`}
           />
           <img
             src={hoverImage}
             alt={product.name}
-            className={`absolute h-[92%] w-[92%] object-contain transition-opacity duration-200 ${
+            className={`absolute h-[90%] w-[90%] object-contain transition-opacity duration-200 ${
               isHovered ? "opacity-100" : "opacity-0"
             }`}
           />
         </div>
 
-        {/* TEXTO MAIS COMPACTO */}
-        <div className="flex flex-col gap-1.5 p-2.5 sm:p-3">
-          <span className="text-[10px] uppercase text-neutral-400">
+        <div className="flex flex-col gap-1 p-2.5 sm:gap-1.5 sm:p-3">
+          <span className="text-[9px] uppercase tracking-[0.16em] text-neutral-400">
             {product.category}
           </span>
 
-          <h3 className="text-[13px] font-semibold text-neutral-900 leading-tight">
+          <h3 className="min-h-[34px] text-[12px] font-semibold leading-tight text-neutral-900 sm:min-h-[40px] sm:text-[13px]">
             {product.name}
           </h3>
 
           {product.subcategory && (
-            <span className="text-xs text-neutral-500">
+            <span className="line-clamp-1 text-[11px] text-neutral-500">
               {product.subcategory}
             </span>
           )}
 
           {product.price && (
-            <div className="mt-1 flex items-end gap-1">
-              <span className="text-sm font-semibold text-neutral-900">
+            <div className="mt-0.5 flex items-end gap-1">
+              <span className="text-[12px] font-semibold text-neutral-900 sm:text-sm">
                 R$ {Number(product.price).toLocaleString("pt-BR")}
               </span>
-              <span className="text-[11px] text-neutral-500">
+              <span className="text-[10px] text-neutral-500">
                 / dia
               </span>
             </div>
