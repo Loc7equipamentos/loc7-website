@@ -1,5 +1,5 @@
 /*
- * LOC 7 — WhatsApp Float Component (Refined Plug Style)
+ * LOC 7 — WhatsApp Float Component (Ultra Refined)
  */
 
 export default function WhatsAppFloat() {
@@ -18,7 +18,7 @@ export default function WhatsAppFloat() {
           relative flex items-center
           bg-[oklch(0.12_0_0)]
           text-white
-          px-5 pr-12 py-2.5
+          px-5 pr-12 py-2
           rounded-full
           border border-white/10
           shadow-[0_8px_24px_rgba(0,0,0,0.25)]
@@ -28,11 +28,11 @@ export default function WhatsAppFloat() {
         "
       >
         {/* TEXTO */}
-        <span className="text-sm font-medium tracking-wide">
+        <span className="text-sm font-medium tracking-wide leading-none">
           Precisa de ajuda?
         </span>
 
-        {/* ÍCONE PLUG (MAIOR) */}
+        {/* ÍCONE PLUG */}
         <div
           className="
             absolute
