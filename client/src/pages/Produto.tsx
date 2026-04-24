@@ -299,6 +299,12 @@ export default function Produto() {
                   <span className="pb-[2px] text-xs text-neutral-400">/ dia</span>
                 </div>
 
+                {(product as Product & { is_featured_special?: boolean | null }).is_featured_special && (
+                  <div className="mt-3 rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2 text-[12px] font-medium text-neutral-700">
+                    Item selecionado para condições diferenciadas
+                  </div>
+                )}
+
                 <div className="mt-4 space-y-2 text-[12px] leading-relaxed text-neutral-600">
                   <div className="flex items-start gap-2">
                     <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-neutral-700"></span>
