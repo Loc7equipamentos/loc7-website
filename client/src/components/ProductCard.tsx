@@ -57,12 +57,6 @@ export default function ProductCard({ product }: Props) {
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className="relative flex h-[118px] w-full items-center justify-center overflow-hidden bg-white px-2 py-1.5 sm:h-[145px] sm:px-3 sm:py-2 lg:h-[180px]">
-          {product.is_featured_special && (
-            <span className="absolute left-2 top-2 z-10 rounded-full border border-red-500/20 bg-red-500/5 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-red-700/80 shadow-[0_6px_18px_rgba(0,0,0,0.08)] backdrop-blur-sm sm:text-[9px]">
-              Condição especial
-            </span>
-          )}
-
           <img
             src={primaryImage}
             alt={product.name}
@@ -95,12 +89,20 @@ export default function ProductCard({ product }: Props) {
           )}
 
           {product.price && (
-            <div className="mt-0.5 flex items-end gap-1">
-              <span className="text-[12px] font-semibold text-neutral-900 sm:text-sm">
-                R$ {Number(product.price).toLocaleString("pt-BR")}
-              </span>
-              <span className="text-[10px] text-neutral-500">/ dia</span>
-            </div>
+            <>
+              <div className="mt-0.5 flex items-end gap-1">
+                <span className="text-[12px] font-semibold text-neutral-900 sm:text-sm">
+                  R$ {Number(product.price).toLocaleString("pt-BR")}
+                </span>
+                <span className="text-[10px] text-neutral-500">/ dia</span>
+              </div>
+
+              {product.is_featured_special && (
+                <span className="mt-1 inline-block text-[10px] font-medium text-neutral-600">
+                  Condição especial
+                </span>
+              )}
+            </>
           )}
         </div>
       </div>
