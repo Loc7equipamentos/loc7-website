@@ -52,7 +52,7 @@ export default function ProductCard({ product }: Props) {
   return (
     <Link href={`/equipamentos/${product.slug}`}>
       <div
-        className="relative cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition-shadow duration-200 hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)]"
+        className="cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition-shadow duration-200 hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -78,6 +78,14 @@ export default function ProductCard({ product }: Props) {
             {product.category}
           </span>
 
+          <div className="h-[18px]">
+            {product.is_featured_special && (
+              <span className="inline-flex w-fit items-center rounded-full border border-red-500/20 bg-red-500/5 px-2 py-0.5 text-[8px] font-semibold uppercase tracking-[0.12em] text-red-700/80 sm:text-[9px]">
+                Condição especial
+              </span>
+            )}
+          </div>
+
           <h3 className="min-h-[34px] text-[12px] font-semibold leading-tight text-neutral-900 sm:min-h-[40px] sm:text-[13px]">
             {product.name}
           </h3>
@@ -97,12 +105,6 @@ export default function ProductCard({ product }: Props) {
             </div>
           )}
         </div>
-
-        {product.is_featured_special && (
-          <span className="pointer-events-none absolute bottom-2 left-3 inline-flex w-fit items-center rounded-full border border-red-500/20 bg-red-500/5 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-red-700/80">
-            Condição especial
-          </span>
-        )}
       </div>
     </Link>
   );
