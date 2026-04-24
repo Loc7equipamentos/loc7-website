@@ -57,9 +57,11 @@ export default function ProductCard({ product }: Props) {
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className="relative flex h-[118px] w-full items-center justify-center overflow-hidden bg-white px-2 py-1.5 sm:h-[145px] sm:px-3 sm:py-2 lg:h-[180px]">
+          
+          {/* 🔥 SELO REFINADO */}
           {product.is_featured_special && (
-            <span className="absolute left-2 top-2 z-10 rounded-md border border-neutral-200 bg-white/90 px-2 py-1 text-[9px] font-medium uppercase tracking-[0.12em] text-neutral-700 shadow-sm backdrop-blur-sm">
-              Condição especial
+            <span className="absolute left-2 top-2 z-10 rounded-full border border-neutral-200 bg-white/90 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.14em] text-neutral-600 shadow-sm backdrop-blur-sm">
+              Selecionado
             </span>
           )}
 
