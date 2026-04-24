@@ -234,7 +234,7 @@ export default function Produto() {
               )}
             </div>
 
-            {gallery.length > 1 ? (
+            {gallery.length > 1 && (
               <div className="mt-4 grid grid-cols-4 gap-3 lg:hidden">
                 {gallery.map((image, index) => (
                   <button
@@ -256,7 +256,7 @@ export default function Produto() {
                   </button>
                 ))}
               </div>
-            ) : null}
+            )}
           </div>
 
           <aside className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
@@ -271,25 +271,14 @@ export default function Produto() {
             </div>
 
             <div className="mt-5 space-y-3">
-              <a
-                href={reserveLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex w-full items-center justify-center rounded-lg bg-neutral-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
-              >
+              <a href={reserveLink} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center rounded-lg bg-neutral-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800">
                 Reservar agora
               </a>
 
-              <a
-                href={questionLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex w-full items-start gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-neutral-300 hover:bg-neutral-100"
-              >
+              <a href={questionLink} target="_blank" rel="noopener noreferrer" className="group flex w-full items-start gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-neutral-300 hover:bg-neutral-100">
                 <div className="mt-[2px] flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-base">
                   💬
                 </div>
-
                 <div className="min-w-0">
                   <span className="block text-sm font-medium text-neutral-900">
                     Tirar dúvidas com um especialista
@@ -301,7 +290,7 @@ export default function Produto() {
               </a>
             </div>
 
-            {product.price ? (
+            {product.price && (
               <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4">
                 <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                   Diária
@@ -315,9 +304,17 @@ export default function Produto() {
                 </div>
 
                 {(product as Product & { is_featured_special?: boolean | null }).is_featured_special && (
-                  <div className="mt-3 rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2 text-[12px] font-medium text-neutral-700">
+                  <a
+                    href={getWhatsAppLink({
+                      context: "product_special",
+                      productName: product.name,
+                    })}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 block rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2 text-[12px] font-medium text-neutral-700 transition hover:bg-neutral-100"
+                  >
                     Item selecionado para condições diferenciadas
-                  </div>
+                  </a>
                 )}
 
                 <div className="mt-4 space-y-2 text-[12px] leading-relaxed text-neutral-600">
@@ -325,19 +322,17 @@ export default function Produto() {
                     <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-neutral-700"></span>
                     <span>Processo ágil na liberação de equipamentos</span>
                   </div>
-
                   <div className="flex items-start gap-2">
                     <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-neutral-700"></span>
                     <span>Consultoria técnica especializada</span>
                   </div>
-
                   <div className="flex items-start gap-2">
                     <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-neutral-700"></span>
                     <span>Desenvolvimento de projetos especiais</span>
                   </div>
                 </div>
               </div>
-            ) : null}
+            )}
           </aside>
         </section>
 
