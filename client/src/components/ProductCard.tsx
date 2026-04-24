@@ -82,15 +82,17 @@ export default function ProductCard({ product }: Props) {
             {product.name}
           </h3>
 
+          <div className="flex h-[18px] items-center">
+            {product.is_featured_special && (
+              <span className="truncate whitespace-nowrap text-[10px] font-medium text-red-700/80 underline decoration-red-700/25 underline-offset-4 sm:text-[11px]">
+                Condição especial
+              </span>
+            )}
+          </div>
+
           {product.subcategory && (
             <span className="line-clamp-1 text-[11px] text-neutral-500">
               {product.subcategory}
-            </span>
-          )}
-
-          {product.is_featured_special && (
-            <span className="mt-0.5 text-[10px] font-medium text-red-700/80 underline decoration-red-700/25 underline-offset-4 sm:text-[11px]">
-              Condições diferenciadas disponíveis
             </span>
           )}
 
