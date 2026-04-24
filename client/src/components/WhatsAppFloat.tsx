@@ -3,6 +3,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { getWhatsAppLink } from "@/lib/whatsapp";
 
 export default function WhatsAppFloat() {
   const [visible, setVisible] = useState(false);
@@ -12,9 +13,7 @@ export default function WhatsAppFloat() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const message = encodeURIComponent(
-    "Olá! Estou no site da Loc7 e preciso de ajuda para encontrar os equipamentos ideais."
-  );
+  const whatsappLink = getWhatsAppLink({ context: "floating" });
 
   return (
     <div
@@ -25,7 +24,7 @@ export default function WhatsAppFloat() {
       `}
     >
       <a
-        href={`https://wa.me/message/WOIONHHSTABQF1?text=${message}`}
+        href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
         title="Precisa de ajuda?"
