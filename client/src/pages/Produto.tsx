@@ -130,17 +130,25 @@ export default function Produto() {
       <main className="min-h-screen bg-[#f3f3f1] pt-24">
         <div className="mx-auto max-w-[1240px] px-4 pb-10 sm:px-6 lg:px-8">
           <div className="mb-3 h-4 w-64 animate-pulse rounded bg-neutral-200" />
+
           <div className="grid gap-5 lg:grid-cols-[88px_minmax(0,1fr)_360px]">
             <div className="hidden lg:flex lg:flex-col lg:gap-2">
               {Array.from({ length: 5 }).map((_, index) => (
                 <div key={index} className="aspect-square animate-pulse rounded-xl bg-neutral-200" />
               ))}
             </div>
+
             <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5">
               <div className="h-[320px] animate-pulse rounded-xl bg-neutral-100 sm:h-[380px] lg:h-[440px]" />
             </div>
+
             <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
               <div className="mb-4 h-10 w-3/4 animate-pulse rounded bg-neutral-200" />
+              <div className="mb-2 h-4 w-32 animate-pulse rounded bg-neutral-200" />
+              <div className="mb-5 h-4 w-24 animate-pulse rounded bg-neutral-200" />
+              <div className="mb-3 h-12 w-full animate-pulse rounded-lg bg-neutral-200" />
+              <div className="mb-5 h-20 w-full animate-pulse rounded-xl bg-neutral-200" />
+              <div className="h-[74px] w-full animate-pulse rounded-xl bg-neutral-200" />
             </div>
           </div>
         </div>
@@ -163,45 +171,216 @@ export default function Produto() {
   return (
     <main className="min-h-screen bg-[#f3f3f1] pt-24 text-neutral-900">
       <div className="mx-auto max-w-[1240px] px-4 pb-10 sm:px-6 lg:px-8">
+        <div className="mb-3 flex items-center gap-2 text-xs text-neutral-500">
+          <Link href="/" className="hover:text-neutral-900">
+            Início
+          </Link>
+          <span>›</span>
+          {product.category ? (
+            <>
+              <Link
+                href={`/catalogo/${(product.category || "")
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .replace(/\s+/g, "-")}`}
+                className="hover:text-neutral-900"
+              >
+                {product.category}
+              </Link>
+              <span>›</span>
+            </>
+          ) : null}
+          <span className="text-neutral-900">{product.name}</span>
+        </div>
+
         <section className="grid gap-5 lg:grid-cols-[88px_minmax(0,1fr)_360px]">
+          <aside className="hidden lg:flex lg:flex-col lg:gap-2">
+            {gallery.map((image, index) => (
+              <button
+                key={image + index}
+                onClick={() => setSelectedImage(index)}
+                className={`overflow-hidden rounded-xl border bg-white transition-all ${
+                  selectedImage === index
+                    ? "border-neutral-900 shadow-sm"
+                    : "border-neutral-200 hover:border-neutral-300"
+                }`}
+              >
+                <div className="aspect-square bg-white p-2">
+                  <img
+                    src={image}
+                    alt={`${product.name} ${index + 1}`}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+              </button>
+            ))}
+          </aside>
+
           <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5">
-            <img src={currentImage} alt={product.name} className="object-contain" />
+            <div className="flex h-[320px] w-full items-center justify-center overflow-hidden rounded-xl bg-white sm:h-[380px] lg:h-[440px]">
+              {currentImage ? (
+                <div className="flex h-[90%] w-[90%] items-center justify-center">
+                  <img
+                    src={currentImage}
+                    alt={product.name}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-sm text-neutral-500">
+                  Sem imagem
+                </div>
+              )}
+            </div>
+
+            {gallery.length > 1 && (
+              <div className="mt-4 grid grid-cols-4 gap-3 lg:hidden">
+                {gallery.map((image, index) => (
+                  <button
+                    key={image + index}
+                    onClick={() => setSelectedImage(index)}
+                    className={`overflow-hidden rounded-xl border bg-white transition-all ${
+                      selectedImage === index
+                        ? "border-neutral-900 shadow-sm"
+                        : "border-neutral-200 hover:border-neutral-300"
+                    }`}
+                  >
+                    <div className="aspect-square bg-white p-2">
+                      <img
+                        src={image}
+                        alt={`${product.name} ${index + 1}`}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <aside className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
-            <h1 className="text-3xl font-semibold">{product.name}</h1>
+            <h1 className="text-3xl font-semibold tracking-[-0.03em] text-neutral-950 sm:text-[2rem]">
+              {product.name}
+            </h1>
+
+            <div className="mt-2 space-y-2">
+              <p className="text-sm text-neutral-500">
+                {[product.category, product.subcategory].filter(Boolean).join(" / ")}
+              </p>
+            </div>
 
             <div className="mt-5 space-y-3">
-              <a href={reserveLink} target="_blank" className="block bg-black text-white p-3 rounded">
+              <a href={reserveLink} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center rounded-lg bg-neutral-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800">
                 Reservar agora
               </a>
 
-              <a href={questionLink} target="_blank" className="block border p-3 rounded">
-                Tirar dúvidas com especialista
+              <a href={questionLink} target="_blank" rel="noopener noreferrer" className="group flex w-full items-start gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-neutral-300 hover:bg-neutral-100">
+                <div className="mt-[2px] flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-base">
+                  💬
+                </div>
+                <div className="min-w-0">
+                  <span className="block text-sm font-medium text-neutral-900">
+                    Tirar dúvidas com um especialista
+                  </span>
+                  <span className="mt-1 block text-xs leading-5 text-neutral-500">
+                    Fale com nosso time sobre kit, disponibilidade e configurações ideais.
+                  </span>
+                </div>
               </a>
             </div>
 
             {product.price && (
-              <div className="mt-5">
-                <div className="text-2xl font-semibold">
-                  R$ {Number(product.price).toLocaleString("pt-BR")}
+              <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4">
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                  Diária
+                </span>
+
+                <div className="mt-1 flex items-end gap-2">
+                  <span className="text-2xl font-semibold text-neutral-950">
+                    R$ {Number(product.price).toLocaleString("pt-BR")}
+                  </span>
+                  <span className="pb-[2px] text-xs text-neutral-400">/ dia</span>
                 </div>
 
-                {(product as any).is_featured_special && (
+                {(product as Product & { is_featured_special?: boolean | null }).is_featured_special && (
                   <a
                     href={getWhatsAppLink({
                       context: "product_special",
                       productName: product.name,
                     })}
                     target="_blank"
-                    className="mt-3 block rounded-md border border-red-500/15 bg-red-500/5 px-3 py-2 text-[12px] font-medium text-red-800/80 transition hover:bg-red-500/10"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex text-[12px] font-medium text-red-700/80 underline decoration-red-700/25 underline-offset-4 transition hover:text-red-800 hover:decoration-red-800/60"
                   >
                     Condições diferenciadas disponíveis
                   </a>
                 )}
+
+                <div className="mt-4 space-y-2 text-[12px] leading-relaxed text-neutral-600">
+                  <div className="flex items-start gap-2">
+                    <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-neutral-700"></span>
+                    <span>Processo ágil na liberação de equipamentos</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-neutral-700"></span>
+                    <span>Consultoria técnica especializada</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-neutral-700"></span>
+                    <span>Desenvolvimento de projetos especiais</span>
+                  </div>
+                </div>
               </div>
             )}
           </aside>
+        </section>
+
+        <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_1fr]">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+              O que acompanha
+            </h2>
+
+            {includes.length > 0 ? (
+              <ul className="space-y-3 text-sm text-neutral-800">
+                {includes.map((item, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-neutral-500">
+                Consulte nossa equipe para confirmar o kit completo deste item.
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+              Highlights
+            </h2>
+
+            {[product.badge, product.description].filter(Boolean).length > 0 ? (
+              <ul className="space-y-3 text-sm text-neutral-800">
+                {[product.badge, product.description]
+                  .filter(Boolean)
+                  .slice(0, 5)
+                  .map((item, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-neutral-900" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-neutral-500">
+                Consulte nossa equipe para conhecer os principais destaques deste item.
+              </p>
+            )}
+          </div>
         </section>
       </div>
     </main>
