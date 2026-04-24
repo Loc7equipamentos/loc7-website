@@ -271,17 +271,28 @@ export default function Produto() {
             </div>
 
             <div className="mt-5 space-y-3">
-              <a href={reserveLink} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center rounded-lg bg-neutral-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800">
-                Reservar agora
+              <a
+                href={reserveLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center rounded-lg bg-neutral-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+              >
+                Consultar disponibilidade
               </a>
 
-              <a href={questionLink} target="_blank" rel="noopener noreferrer" className="group flex w-full items-start gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-neutral-300 hover:bg-neutral-100">
-                <div className="mt-[2px] flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-base">
+              <a
+                href={questionLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex w-full items-start gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-neutral-300 hover:bg-neutral-100"
+              >
+                <div className="mt-[2px] flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-white shadow-sm transition group-hover:bg-neutral-800">
                   💬
                 </div>
+
                 <div className="min-w-0">
                   <span className="block text-sm font-medium text-neutral-900">
-                    Tirar dúvidas com um especialista
+                    Falar com especialista
                   </span>
                   <span className="mt-1 block text-xs leading-5 text-neutral-500">
                     Fale com nosso time sobre kit, disponibilidade e configurações ideais.
@@ -313,21 +324,23 @@ export default function Produto() {
                     rel="noopener noreferrer"
                     className="mt-3 inline-flex text-[12px] font-medium text-red-700/80 underline decoration-red-700/25 underline-offset-4 transition hover:text-red-800 hover:decoration-red-800/60"
                   >
-                    Condições diferenciadas disponíveis
+                    Condições diferenciadas
                   </a>
                 )}
 
-                <div className="mt-4 space-y-2 text-[12px] leading-relaxed text-neutral-600">
-                  <div className="flex items-start gap-2">
-                    <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-neutral-700"></span>
-                    <span>Processo ágil na liberação de equipamentos</span>
+                <div className="mt-4 flex flex-col gap-1.5 text-[12px]">
+                  <div className="flex items-center gap-2 text-neutral-800">
+                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-800" />
+                    <span>Liberação ágil de equipamentos</span>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-neutral-700"></span>
+
+                  <div className="flex items-center gap-2 text-neutral-600">
+                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-400" />
                     <span>Consultoria técnica especializada</span>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-neutral-700"></span>
+
+                  <div className="flex items-center gap-2 text-neutral-600">
+                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-400" />
                     <span>Desenvolvimento de projetos especiais</span>
                   </div>
                 </div>
