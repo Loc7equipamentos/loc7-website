@@ -52,7 +52,7 @@ export default function ProductCard({ product }: Props) {
   return (
     <Link href={`/equipamentos/${product.slug}`}>
       <div
-        className="cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition-shadow duration-200 hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)]"
+        className="relative cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition-shadow duration-200 hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -89,22 +89,20 @@ export default function ProductCard({ product }: Props) {
           )}
 
           {product.price && (
-            <>
-              <div className="mt-0.5 flex items-end gap-1">
-                <span className="text-[12px] font-semibold text-neutral-900 sm:text-sm">
-                  R$ {Number(product.price).toLocaleString("pt-BR")}
-                </span>
-                <span className="text-[10px] text-neutral-500">/ dia</span>
-              </div>
-
-              {product.is_featured_special && (
-                <span className="mt-1.5 inline-flex w-fit items-center rounded-full border border-red-500/20 bg-red-500/5 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-red-700/80">
-                  Condição especial
-                </span>
-              )}
-            </>
+            <div className="mt-0.5 flex items-end gap-1">
+              <span className="text-[12px] font-semibold text-neutral-900 sm:text-sm">
+                R$ {Number(product.price).toLocaleString("pt-BR")}
+              </span>
+              <span className="text-[10px] text-neutral-500">/ dia</span>
+            </div>
           )}
         </div>
+
+        {product.is_featured_special && (
+          <span className="pointer-events-none absolute bottom-2 left-3 inline-flex w-fit items-center rounded-full border border-red-500/20 bg-red-500/5 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-red-700/80">
+            Condição especial
+          </span>
+        )}
       </div>
     </Link>
   );
