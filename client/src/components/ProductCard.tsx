@@ -98,7 +98,7 @@ export default function ProductCard({ product }: Props) {
               </div>
 
               {product.is_featured_special && (
-                <span className="mt-1 inline-block text-[10px] font-medium text-neutral-600">
+                <span className="mt-1.5 inline-flex w-fit items-center rounded-full border border-red-500/20 bg-red-500/5 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-red-700/80">
                   Condição especial
                 </span>
               )}
