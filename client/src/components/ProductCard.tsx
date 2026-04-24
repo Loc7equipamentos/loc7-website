@@ -78,14 +78,6 @@ export default function ProductCard({ product }: Props) {
             {product.category}
           </span>
 
-          <div className="h-[18px]">
-            {product.is_featured_special && (
-              <span className="inline-flex w-fit items-center rounded-full border border-red-500/20 bg-red-500/5 px-2 py-0.5 text-[8px] font-semibold uppercase tracking-[0.12em] text-red-700/80 sm:text-[9px]">
-                Condição especial
-              </span>
-            )}
-          </div>
-
           <h3 className="min-h-[34px] text-[12px] font-semibold leading-tight text-neutral-900 sm:min-h-[40px] sm:text-[13px]">
             {product.name}
           </h3>
@@ -93,6 +85,12 @@ export default function ProductCard({ product }: Props) {
           {product.subcategory && (
             <span className="line-clamp-1 text-[11px] text-neutral-500">
               {product.subcategory}
+            </span>
+          )}
+
+          {product.is_featured_special && (
+            <span className="mt-0.5 text-[10px] font-medium text-red-700/80 underline decoration-red-700/25 underline-offset-4 sm:text-[11px]">
+              Condições diferenciadas disponíveis
             </span>
           )}
 
