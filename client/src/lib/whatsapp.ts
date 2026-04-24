@@ -8,7 +8,7 @@ export type WhatsAppContext =
   | "catalog"
   | "category";
 
-const PHONE = "5511999999999"; // Trocar depois pelo número real da Loc7
+const PHONE = "5511919671611"; // Trocar depois pelo número real da Loc7
 
 export function getWhatsAppLink({
   context,
