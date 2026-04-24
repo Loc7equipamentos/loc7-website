@@ -8,7 +8,7 @@ export type WhatsAppContext =
   | "catalog"
   | "category";
 
-const PHONE = "5511919671611"; // Trocar depois pelo número real da Loc7
+const PHONE = "5511919671611";
 
 export function getWhatsAppLink({
   context,
@@ -28,15 +28,21 @@ export function getWhatsAppLink({
       break;
 
     case "product_reserve":
-      message = `Olá! Quero reservar o equipamento: ${productName}.`;
+      message = productName
+        ? `Olá! Quero reservar o equipamento: ${productName}.`
+        : "Olá! Quero reservar um equipamento da Loc7.";
       break;
 
     case "product_question":
-      message = `Olá! Tenho dúvidas sobre o equipamento: ${productName}. Podem me ajudar com kit, compatibilidade e disponibilidade?`;
+      message = productName
+        ? `Olá! Tenho dúvidas sobre o equipamento: ${productName}. Podem me ajudar com kit, compatibilidade e disponibilidade?`
+        : "Olá! Tenho dúvidas sobre um equipamento da Loc7. Podem me ajudar com kit, compatibilidade e disponibilidade?";
       break;
 
     case "product_special":
-      message = `Olá! Vi que este item foi selecionado para condições diferenciadas: ${productName}. Gostaria de entender melhor.`;
+      message = productName
+        ? `Olá! Vi que este item tem condições diferenciadas: ${productName}. Gostaria de entender melhor.`
+        : "Olá! Vi que alguns itens têm condições diferenciadas. Gostaria de entender melhor.";
       break;
 
     case "catalog":
@@ -45,7 +51,9 @@ export function getWhatsAppLink({
       break;
 
     case "category":
-      message = `Olá! Estou vendo equipamentos de ${category} e preciso de ajuda para escolher o melhor setup.`;
+      message = category
+        ? `Olá! Estou vendo equipamentos de ${category} e preciso de ajuda para escolher o melhor setup.`
+        : "Olá! Estou vendo o catálogo da Loc7 e preciso de ajuda para escolher o melhor setup.";
       break;
 
     default:
