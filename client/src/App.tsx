@@ -25,6 +25,7 @@ import Portfolio from "./pages/Portfolio";
 import Sobre from "./pages/Sobre";
 import Cadastro from "./pages/Cadastro";
 import RegistrationStatus from "./pages/RegistrationStatus";
+import AdminLogin from "./pages/AdminLogin";
 
 import AdminProtected from "./pages/AdminProtected";
 import Produto from "./pages/Produto";
@@ -128,6 +129,12 @@ function Router() {
       <Route path="/status-cadastro">
         <Layout>
           <RegistrationStatus />
+        </Layout>
+      </Route>
+
+      <Route path="/admin-login">
+        <Layout>
+          <AdminLogin />
         </Layout>
       </Route>
 
