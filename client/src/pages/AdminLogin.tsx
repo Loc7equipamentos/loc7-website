@@ -29,29 +29,17 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen bg-[#f4f5f7] flex items-center justify-center px-4">
-      <div className="relative w-full max-w-[470px]">
+      <div className="relative w-full max-w-[460px]">
         <div className="absolute -top-8 -left-8 h-full w-full rounded-2xl bg-gray-200/80 shadow-sm" />
 
         <div className="relative rounded-2xl border border-gray-200 bg-white px-10 py-9 shadow-xl">
-          <div className="mb-10 flex items-center justify-center gap-7">
-            <div className="rounded-lg bg-black px-3 py-2 shadow-sm">
-              <img
-                src="/logo-loc7.png"
-                alt="Loc7 Equipamentos"
-                className="h-8 w-auto object-contain"
-              />
-            </div>
-
-            <div className="h-12 w-px bg-gray-300" />
-
-            <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-black">
-                ACESSO INTERNO
-              </h1>
-              <p className="mt-1 text-sm font-medium text-gray-500">
-                Controle Operacional Loc7
-              </p>
-            </div>
+          <div className="mb-9 text-center">
+            <h1 className="text-3xl font-extrabold tracking-tight text-black">
+              ACESSO INTERNO
+            </h1>
+            <p className="mt-1 text-base font-medium text-gray-500">
+              Controle Operacional Loc7
+            </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
