@@ -11,16 +11,11 @@ export default function AdminProtected({ children }: AdminProtectedProps) {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
-
     async function checkSession() {
       const { data } = await supabase.auth.getSession();
 
-      if (!mounted) return;
-
       if (!data.session) {
-        const redirectTo = encodeURIComponent(location);
-        setLocation(`/admin-login?redirect=${redirectTo}`);
+        setLocation(`/admin-login?redirect=${encodeURIComponent(location)}`);
         return;
       }
 
@@ -28,11 +23,8 @@ export default function AdminProtected({ children }: AdminProtectedProps) {
     }
 
     checkSession();
-
-    return () => {
-      mounted = false;
-    };
-  }, [location, setLocation]);
+    // 🔥 NÃO depende de location
+  }, []); 
 
   if (checking) {
     return (
