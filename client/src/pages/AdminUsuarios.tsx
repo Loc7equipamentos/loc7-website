@@ -1,89 +1,96 @@
-import { useState } from "react";
-import { useLocation } from "wouter";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Eye, EyeOff } from "lucide-react";
 
-export default function AdminLogin() {
-  const [, setLocation] = useLocation();
+type User = {
+  id: string;
+  email: string;
+  role: string;
+  is_active: boolean;
+  created_at: string;
+};
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+export default function AdminUsuarios() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  async function fetchUsers() {
     setLoading(true);
-    setError("");
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    if (error) {
-      setError("Credenciais inválidas");
-      setLoading(false);
-      return;
-    }
-
-    if (data.user) {
-      setLocation("/admin-panel");
+    if (!error && data) {
+      setUsers(data);
     }
 
     setLoading(false);
-  };
+  }
+
+  async function toggleUser(id: string, current: boolean) {
+    await supabase
+      .from("admin_users")
+      .update({ is_active: !current })
+      .eq("id", id);
+
+    fetchUsers();
+  }
+
+  async function deleteUser(id: string) {
+    const confirmDelete = confirm("Excluir usuário?");
+    if (!confirmDelete) return;
+
+    await supabase.from("admin_users").delete().eq("id", id);
+
+    fetchUsers();
+  }
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl p-8 shadow-xl">
-        <h1 className="text-2xl font-bold mb-6 text-center">
-          Acesso Interno Loc7
-        </h1>
+    <div className="min-h-screen bg-white p-8">
+      <h1 className="text-2xl font-bold mb-6">Usuários</h1>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="E-mail"
-            className="w-full border rounded-lg px-4 py-2"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Senha"
-              className="w-full border rounded-lg px-4 py-2 pr-10"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-
-            <button
-              type="button"
-              className="absolute right-3 top-2.5"
-              onClick={() => setShowPassword(!showPassword)}
+      {loading ? (
+        <p>Carregando...</p>
+      ) : (
+        <div className="space-y-4">
+          {users.map((user) => (
+            <div
+              key={user.id}
+              className="border rounded-lg p-4 flex justify-between items-center"
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
+              <div>
+                <p className="font-medium">{user.email}</p>
+                <p className="text-sm text-gray-500">{user.role}</p>
+              </div>
 
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
-          )}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => toggleUser(user.id, user.is_active)}
+                  className={`px-3 py-1 rounded text-sm ${
+                    user.is_active
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-300"
+                  }`}
+                >
+                  {user.is_active ? "Ativo" : "Inativo"}
+                </button>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-black text-white py-2 rounded-lg hover:opacity-90 transition"
-          >
-            {loading ? "Entrando..." : "Entrar"}
-          </button>
-        </form>
-      </div>
+                <button
+                  onClick={() => deleteUser(user.id)}
+                  className="px-3 py-1 rounded bg-red-500 text-white text-sm"
+                >
+                  Excluir
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
