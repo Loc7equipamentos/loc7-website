@@ -1,57 +1,86 @@
-import { useEffect } from "react";
-import { Route, Switch, useLocation } from "wouter";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import WhatsAppFloat from "@/components/WhatsAppFloat";
+/*
+ * LOC 7 EQUIPAMENTOS — App Router
+ * Cinema Noir Industrial style
+ */
 
-// Páginas
-import Home from "@/pages/Home";
-import Catalogo from "@/pages/Catalogo";
-import Produto from "@/pages/Produto";
-import Orcamento from "@/pages/Orcamento";
-import Producao from "@/pages/Producao";
-import AdminDashboard from "@/pages/AdminDashboard";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import NotFound from "@/pages/NotFound";
+import { Route, Switch } from "wouter";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { CartProvider } from "./contexts/CartContext";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import WhatsAppFloat from "./components/WhatsAppFloat";
 
-function ScrollToTop() {
-  const [location] = useLocation();
+import Home from "./pages/Home";
+import Catalogo from "./pages/Catalogo";
+import Orcamento from "./pages/Orcamento";
+import Servicos from "./pages/Servicos";
+import Contato from "./pages/Contato";
+import Blog from "./pages/Blog";
+import Portfolio from "./pages/Portfolio";
+import Sobre from "./pages/Sobre";
+import Cadastro from "./pages/Cadastro";
+import RegistrationStatus from "./pages/RegistrationStatus";
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [location]);
+import AdminProtected from "./pages/AdminProtected";
+import Produto from "./pages/Produto";
 
-  return null;
-}
-
-export default function App() {
-  const [location] = useLocation();
-
-  const isAdmin = location.startsWith("/admin-panel");
-
+function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <ScrollToTop />
-
-      {/* NAVBAR (fora do admin) */}
-      {!isAdmin && <Navbar />}
-
-      {/* CONTEÚDO */}
-      <main className="flex-1">
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/catalogo" component={Catalogo} />
-          <Route path="/catalogo/:category" component={Catalogo} />
-          <Route path="/equipamentos/:slug" component={Produto} />
-          <Route path="/orcamento" component={Orcamento} />
-          <Route path="/producao" component={Producao} />
-          <Route path="/admin-panel" component={AdminDashboard} />
-        </Switch>
-      </main>
-
-      {/* FOOTER (fora do admin) */}
-      {!isAdmin && <Footer />}
-
-      {/* WHATSAPP FLOAT (fora do admin) */}
-      {!isAdmin && <WhatsAppFloat />}
+    <div className="flex flex-col min-h-screen bg-[oklch(0.08_0_0)]">
+      <Navbar />
+      <main className="flex-1">{children}</main>
+      <Footer />
+      <WhatsAppFloat />
     </div>
   );
 }
+
+function Router() {
+  return (
+    <Switch>
+      {/* SITE */}
+      <Route path="/" component={() => <Layout><Home /></Layout>} />
+      <Route path="/catalogo" component={() => <Layout><Catalogo /></Layout>} />
+      <Route path="/catalogo/:category" component={() => <Layout><Catalogo /></Layout>} />
+      <Route path="/equipamentos/:slug" component={() => <Layout><Produto /></Layout>} />
+      <Route path="/orcamento" component={() => <Layout><Orcamento /></Layout>} />
+      <Route path="/servicos" component={() => <Layout><Servicos /></Layout>} />
+      <Route path="/producao" component={() => <Layout><Servicos /></Layout>} />
+      <Route path="/blog" component={() => <Layout><Blog /></Layout>} />
+      <Route path="/portfolio" component={() => <Layout><Portfolio /></Layout>} />
+      <Route path="/sobre" component={() => <Layout><Sobre /></Layout>} />
+      <Route path="/contato" component={() => <Layout><Contato /></Layout>} />
+      <Route path="/cadastro" component={() => <Layout><Cadastro /></Layout>} />
+      <Route path="/status-cadastro" component={() => <Layout><RegistrationStatus /></Layout>} />
+
+      {/* ADMIN (ORDEM CORRETA) */}
+      <Route path="/admin-panel/cadastros" component={() => <AdminProtected />} />
+      <Route path="/admin-panel" component={() => <AdminProtected />} />
+
+      {/* FALLBACK */}
+      <Route path="/404" component={NotFound} />
+      <Route component={NotFound} />
+    </Switch>
+  );
+}
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <CartProvider>
+        <ThemeProvider defaultTheme="light" switchable={false}>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </ThemeProvider>
+      </CartProvider>
+    </ErrorBoundary>
+  );
+}
+
+export default App;
