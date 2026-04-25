@@ -1,32 +1,23 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { signIn } from "@/lib/auth";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  async function handleLogin(e: React.FormEvent) {
+  function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
-    setError("");
 
-    try {
-      await signIn(email, password);
-      setLocation("/admin-panel");
-    } catch {
-      setError("Credenciais inválidas");
-    } finally {
-      setLoading(false);
-    }
+    localStorage.setItem("loc7_admin_logged", "true");
+    localStorage.setItem("loc7_admin_email", email);
+
+    setLocation("/admin-panel");
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
         <h1 className="text-2xl font-bold text-center mb-2">
           ACESSO INTERNO
@@ -55,16 +46,11 @@ export default function AdminLogin() {
             required
           />
 
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
-          )}
-
           <button
             type="submit"
-            disabled={loading}
             className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:opacity-90 transition"
           >
-            {loading ? "Entrando..." : "Entrar"}
+            Entrar
           </button>
         </form>
 
