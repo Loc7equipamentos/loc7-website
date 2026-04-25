@@ -1,102 +1,119 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
+    setErrorMsg("");
 
     if (
       email === import.meta.env.VITE_ADMIN_EMAIL &&
       password === import.meta.env.VITE_ADMIN_PASSWORD
     ) {
-      localStorage.setItem("admin_auth", "true");
+      localStorage.setItem("admin-auth", "true");
+      localStorage.setItem("admin-role", "admin");
       setLocation("/admin-panel");
-    } else {
-      alert("Credenciais inválidas");
+      return;
     }
+
+    setErrorMsg("Credenciais inválidas");
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#f4f5f7] flex items-center justify-center px-4">
+      <div className="relative w-full max-w-[470px]">
+        {/* placa cinza deslocada */}
+        <div className="absolute -top-8 -left-8 h-full w-full rounded-2xl bg-gray-200/80 shadow-sm" />
 
-      <div className="relative w-full max-w-md">
+        {/* card principal */}
+        <div className="relative rounded-2xl border border-gray-200 bg-white px-10 py-9 shadow-xl">
+          {/* topo */}
+          <div className="mb-9 flex items-center justify-center gap-6">
+            <img
+              src="/logo-loc7.png"
+              alt="Loc7 Equipamentos"
+              className="h-12 w-auto object-contain"
+            />
 
-        {/* PLACA CINZA (fundo deslocado) */}
-        <div className="absolute -top-6 -left-6 w-full h-full bg-gray-200 rounded-2xl" />
+            <div className="h-12 w-px bg-gray-300" />
 
-        {/* CARD PRINCIPAL */}
-        <div className="relative bg-white border border-gray-200 rounded-2xl shadow-lg p-8">
-
-          {/* HEADER */}
-          <div className="text-center mb-6">
-            <h1 className="text-lg tracking-widest font-semibold text-gray-900">
-              ACESSO INTERNO
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Controle Operacional Loc7
-            </p>
+            <div>
+              <h1 className="text-2xl font-extrabold tracking-tight text-black">
+                ACESSO INTERNO
+              </h1>
+              <p className="mt-1 text-sm font-medium text-gray-500">
+                Controle Operacional Loc7
+              </p>
+            </div>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
-
-            {/* EMAIL */}
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="text-sm text-gray-700">
+              <label className="mb-2 block text-sm font-semibold text-black">
                 E-mail Corporativo
               </label>
               <input
                 type="email"
                 placeholder="nome@loc7.com.br"
-                className="w-full mt-1 px-4 py-3 border border-gray-300 rounded-lg
-                bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-black placeholder:text-gray-400 outline-none transition focus:border-black focus:ring-2 focus:ring-black/10"
                 required
               />
             </div>
 
-            {/* SENHA */}
             <div>
-              <label className="text-sm text-gray-700">
+              <label className="mb-2 block text-sm font-semibold text-black">
                 Senha Operacional
               </label>
-              <input
-                type="password"
-                placeholder="••••••"
-                className="w-full mt-1 px-4 py-3 border border-gray-300 rounded-lg
-                bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-12 text-base text-black placeholder:text-gray-400 outline-none transition focus:border-black focus:ring-2 focus:ring-black/10"
+                  required
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((current) => !current)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+                  aria-label="Mostrar ou ocultar senha"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
 
-            {/* BOTÃO */}
+            {errorMsg && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
+                {errorMsg}
+              </div>
+            )}
+
             <button
               type="submit"
-              className="w-full bg-black text-white py-3 rounded-lg
-              font-medium hover:bg-gray-800 transition"
+              className="w-full rounded-lg bg-black py-3 text-base font-semibold text-white transition hover:bg-gray-900"
             >
               Entrar
             </button>
           </form>
 
-          {/* FOOTER */}
-          <div className="text-center text-xs text-gray-400 mt-6">
-            © Loc7 • Sistema Interno
+          <div className="mt-8 text-center text-sm font-medium text-gray-500">
+            © Loc7 Equipamentos • Sistema Interno
           </div>
         </div>
-
-        {/* ÁREA DA LOGO (na placa cinza) */}
-        <div className="absolute -top-10 left-4 text-gray-400 text-sm tracking-wide">
-          Loc7 Equipamentos
-        </div>
-
       </div>
     </div>
   );
