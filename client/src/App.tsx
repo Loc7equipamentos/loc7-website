@@ -11,14 +11,14 @@ import Orcamento from "./pages/Orcamento";
 
 // Admin
 import AdminDashboard from "./pages/AdminDashboard";
-import Cadastros from "./pages/Cadastros";
+import AdminCadastros from "./pages/AdminCadastros";
 import AdminLogin from "./pages/AdminLogin";
 import AdminProtected from "./components/AdminProtected";
 
 export default function App() {
   const [location] = useLocation();
 
-  // 🔒 Detecta se é rota admin
+  // 🔒 Detecta rotas admin
   const isAdminRoute =
     location.startsWith("/admin-panel") ||
     location.startsWith("/admin-login");
@@ -48,7 +48,7 @@ export default function App() {
 
         <Route path="/admin-panel/cadastros">
           <AdminProtected>
-            <Cadastros />
+            <AdminCadastros />
           </AdminProtected>
         </Route>
       </Switch>
