@@ -21,6 +21,7 @@ export default function AdminUsuarios() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function loadUsers() {
     const { data } = await supabase
@@ -108,6 +109,63 @@ export default function AdminUsuarios() {
       .eq("id", user.id);
 
     loadUsers();
+  }
+
+  async function deleteUser(user: User) {
+    setError("");
+
+    const confirmed = window.confirm(
+      `Excluir definitivamente o usuário ${user.name}?\n\nIsso remove o usuário do Supabase Auth e da tabela admin_users.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setDeletingId(user.id);
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const token = session?.access_token;
+
+      if (!token) {
+        setError("Usuário não autenticado. Faça login novamente.");
+        return;
+      }
+
+      if (session.user?.email === user.email) {
+        setError("Você não pode excluir o próprio usuário logado.");
+        return;
+      }
+
+      const response = await fetch(
+        "https://hmmxxvurfvrdvlkfbbah.supabase.co/functions/v1/delete-admin-user",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            user_id: user.id,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result?.error || "Erro ao excluir usuário.");
+        return;
+      }
+
+      await loadUsers();
+    } catch {
+      setError("Erro inesperado ao excluir usuário.");
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   return (
@@ -278,13 +336,20 @@ export default function AdminUsuarios() {
                     {user.active ? "Ativo" : "Inativo"}
                   </span>
 
-                  <div className="flex gap-4 text-sm text-black">
+                  <div className="flex gap-3 text-sm text-black">
                     <button className="underline">Editar</button>
                     <button
                       onClick={() => toggleUser(user)}
                       className="underline"
                     >
                       {user.active ? "Desativar" : "Reativar"}
+                    </button>
+                    <button
+                      onClick={() => deleteUser(user)}
+                      disabled={deletingId === user.id}
+                      className="text-red-600 underline disabled:opacity-50"
+                    >
+                      {deletingId === user.id ? "Excluindo..." : "Excluir"}
                     </button>
                   </div>
                 </div>
