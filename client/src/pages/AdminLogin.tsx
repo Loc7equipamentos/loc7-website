@@ -34,11 +34,13 @@ export default function AdminLogin() {
 
         <div className="relative rounded-2xl border border-gray-200 bg-white px-10 py-9 shadow-xl">
           <div className="mb-10 flex items-center justify-center gap-7">
-            <img
-              src="/logo-loc7.png"
-              alt="Loc7 Equipamentos"
-              className="h-9 w-auto object-contain"
-            />
+            <div className="rounded-lg bg-black px-3 py-2 shadow-sm">
+              <img
+                src="/logo-loc7.png"
+                alt="Loc7 Equipamentos"
+                className="h-8 w-auto object-contain"
+              />
+            </div>
 
             <div className="h-12 w-px bg-gray-300" />
 
