@@ -16,7 +16,6 @@ export default function AdminUsuarios() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("Operador");
 
-  // 🔐 NOVOS CAMPOS (FASE 1)
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -35,7 +34,6 @@ export default function AdminUsuarios() {
     e.preventDefault();
     setError("");
 
-    // 🔐 validação básica
     if (password !== confirmPassword) {
       setError("As senhas não coincidem");
       return;
@@ -46,7 +44,6 @@ export default function AdminUsuarios() {
       return;
     }
 
-    // ⚠️ FASE 1 → NÃO SALVA SENHA
     const { error } = await supabase.from("admin_users").insert([
       {
         name,
@@ -81,16 +78,16 @@ export default function AdminUsuarios() {
     <div className="min-h-screen bg-[#020617] flex items-center justify-center p-10">
       <div className="grid grid-cols-2 gap-10 w-full max-w-6xl">
 
-        {/* 🔹 FORM */}
+        {/* FORM */}
         <div className="bg-white p-8 rounded-2xl shadow-lg">
-          <h2 className="text-2xl font-bold mb-6">Novo Usuário</h2>
+          <h2 className="text-2xl font-bold mb-6 text-black">Novo Usuário</h2>
 
           <form onSubmit={handleCreateUser} className="space-y-4">
 
             <div>
-              <label className="text-sm">Nome completo</label>
+              <label className="text-sm text-gray-700">Nome completo</label>
               <input
-                className="w-full border rounded-lg p-3"
+                className="w-full border rounded-lg p-3 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20"
                 placeholder="Ex: João Silva"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -99,9 +96,9 @@ export default function AdminUsuarios() {
             </div>
 
             <div>
-              <label className="text-sm">E-mail corporativo</label>
+              <label className="text-sm text-gray-700">E-mail corporativo</label>
               <input
-                className="w-full border rounded-lg p-3"
+                className="w-full border rounded-lg p-3 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20"
                 placeholder="ex: nome@loc7.com.br"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -110,9 +107,9 @@ export default function AdminUsuarios() {
             </div>
 
             <div>
-              <label className="text-sm">Permissão de acesso</label>
+              <label className="text-sm text-gray-700">Permissão de acesso</label>
               <select
-                className="w-full border rounded-lg p-3"
+                className="w-full border rounded-lg p-3 bg-white text-black focus:outline-none focus:ring-2 focus:ring-black/20"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
               >
@@ -121,12 +118,11 @@ export default function AdminUsuarios() {
               </select>
             </div>
 
-            {/* 🔐 SENHA */}
             <div>
-              <label className="text-sm">Senha inicial</label>
+              <label className="text-sm text-gray-700">Senha inicial</label>
               <input
                 type="password"
-                className="w-full border rounded-lg p-3"
+                className="w-full border rounded-lg p-3 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20"
                 placeholder="Digite uma senha"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -135,10 +131,10 @@ export default function AdminUsuarios() {
             </div>
 
             <div>
-              <label className="text-sm">Confirmar senha</label>
+              <label className="text-sm text-gray-700">Confirmar senha</label>
               <input
                 type="password"
-                className="w-full border rounded-lg p-3"
+                className="w-full border rounded-lg p-3 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/20"
                 placeholder="Repita a senha"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -154,15 +150,15 @@ export default function AdminUsuarios() {
               <p className="text-red-500 text-sm">{error}</p>
             )}
 
-            <button className="w-full bg-black text-white py-3 rounded-lg font-semibold">
+            <button className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:opacity-90 transition">
               Criar Usuário
             </button>
           </form>
         </div>
 
-        {/* 🔹 LISTA */}
+        {/* LISTA */}
         <div className="bg-white p-8 rounded-2xl shadow-lg">
-          <h2 className="text-2xl font-bold mb-6">
+          <h2 className="text-2xl font-bold mb-6 text-black">
             Usuários cadastrados
           </h2>
 
@@ -173,7 +169,7 @@ export default function AdminUsuarios() {
                 className="border p-4 rounded-xl flex justify-between items-center"
               >
                 <div>
-                  <p className="font-semibold">{user.name}</p>
+                  <p className="font-semibold text-black">{user.name}</p>
                   <p className="text-sm text-gray-500">{user.email}</p>
                   <p className="text-xs text-gray-400">{user.role}</p>
                 </div>
