@@ -1,64 +1,80 @@
 <!doctype html>
 <html lang="pt-BR">
-
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
     <title>Loc 7 Rental House | Locadora Audiovisual em São Paulo</title>
+
     <meta name="description" content="Loc 7 Rental House — Locadora de equipamentos audiovisuais profissionais em São Paulo. Câmeras, lentes, iluminação, áudio e muito mais. Solicite seu orçamento agora." />
     <meta name="keywords" content="rental house, locadora audiovisual, aluguel câmera, aluguel lentes, iluminação cinema, São Paulo, equipamentos audiovisuais, câmeras profissionais, aluguel equipamentos filmagem" />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Loc 7 Equipamentos" />
-    <link rel="canonical" href="https://loc7equip-dhufj7vw.manus.space/" />
-    
+
+    <link rel="canonical" href="https://www.loc7equipamentos.com.br" />
+
     <!-- Open Graph -->
     <meta property="og:title" content="Loc 7 Equipamentos | Locadora Audiovisual" />
     <meta property="og:description" content="Equipamentos audiovisuais profissionais para locação em São Paulo." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.loc7equipamentos.com.br" />
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    
-    <!-- Schema.org structured data -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Schema.org -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "Loc 7 Rental House",
-      "description": "Rental House de equipamentos audiovisuais profissionais em São Paulo",
-      "url": "https://www.loc7equipamentos.com.br",
-      "telephone": "+55-11-99723-7850",
-      "email": "loc7@loc7equipamentos.com.br",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Av. Imperatriz Leopoldina, 957, Sala 1611",
-        "addressLocality": "São Paulo",
-        "addressRegion": "SP",
-        "postalCode": "05305-011",
-        "addressCountry": "BR"
-      },
-      "openingHours": "Mo-Fr 08:00-18:00, Sa 09:00-12:00",
-      "sameAs": [
-        "https://www.instagram.com/loc7equipamentos",
-        "https://www.facebook.com/Loc7Equipamentos",
-        "https://www.youtube.com/@loc7equipamentos"
-      ]
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Loc 7 Rental House",
+        "description": "Rental House de equipamentos audiovisuais profissionais em São Paulo",
+        "url": "https://www.loc7equipamentos.com.br",
+        "telephone": "+55-11-99723-7850",
+        "email": "loc7@loc7equipamentos.com.br",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Av. Imperatriz Leopoldina, 957, Sala 1611",
+          "addressLocality": "São Paulo",
+          "addressRegion": "SP",
+          "postalCode": "05305-011",
+          "addressCountry": "BR"
+        },
+        "openingHours": "Mo-Fr 08:00-18:00, Sa 09:00-12:00",
+        "sameAs": [
+          "https://www.instagram.com/loc7equipamentos",
+          "https://www.facebook.com/Loc7Equipamentos",
+          "https://www.youtube.com/@loc7equipamentos"
+        ]
+      }
     </script>
   </head>
 
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-    <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDummyKeyForLocalDev&libraries=marker" async defer></script>
-    <script
-      defer
-      src="%VITE_ANALYTICS_ENDPOINT%/umami"
-      data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
-  </body>
 
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Umami Analytics (carregado dinamicamente) -->
+    <script type="module">
+      const endpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT;
+      const websiteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID;
+
+      if (endpoint && websiteId) {
+        const script = document.createElement('script');
+        script.defer = true;
+
+        const baseUrl = endpoint.endsWith('/') ? endpoint : endpoint + '/';
+        script.src = baseUrl + 'umami.js';
+
+        script.setAttribute('data-website-id', websiteId);
+        document.body.appendChild(script);
+      }
+    </script>
+  </body>
 </html>
