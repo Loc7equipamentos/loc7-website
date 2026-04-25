@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
 import { supabase } from "@/lib/supabase";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function AdminLogin() {
-  const [, setLocation] = useLocation();
-
   const params = new URLSearchParams(window.location.search);
-  const redirect = params.get("redirect") || "/admin-panel";
+
+  const currentPath =
+    window.location.pathname.startsWith("/admin-panel")
+      ? window.location.pathname
+      : "/admin-panel";
+
+  const redirect = params.get("redirect") || currentPath;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +35,6 @@ export default function AdminLogin() {
       return;
     }
 
-    // 🔥 CORREÇÃO DEFINITIVA
     window.location.href = redirect;
   };
 
