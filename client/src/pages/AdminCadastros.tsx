@@ -157,39 +157,41 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
   }
 
   return (
-    <div className="min-h-screen bg-[oklch(0.08_0_0)] text-white p-6">
+    <div className="min-h-screen bg-gray-100 text-gray-900 p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Cadastros</h1>
-          <p className="text-sm text-white/50 mt-1">
+          <h1 className="text-2xl font-semibold tracking-tight">Cadastros</h1>
+          <p className="text-sm text-gray-500 mt-1">
             Análise interna de clientes e liberação de locação
           </p>
         </div>
 
         <button
           onClick={onLogout}
-          className="px-4 py-2 bg-white text-black rounded hover:bg-white/90"
+          className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition"
         >
           Sair
         </button>
       </div>
 
       {error && (
-        <div className="mb-4 border border-red-500/40 bg-red-500/10 text-red-200 px-4 py-3 rounded">
+        <div className="mb-4 border border-red-200 bg-red-50 text-red-700 px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
 
       {loading ? (
-        <p className="text-white/70">Carregando...</p>
+        <div className="bg-white border border-gray-200 rounded-xl p-6 text-gray-500 shadow-sm">
+          Carregando...
+        </div>
       ) : data.length === 0 ? (
-        <div className="border border-white/10 bg-white/5 rounded p-6 text-white/60">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 text-gray-500 shadow-sm">
           Nenhum cadastro encontrado.
         </div>
       ) : (
-        <div className="overflow-x-auto border border-white/10 rounded">
+        <div className="overflow-x-auto bg-white border border-gray-200 rounded-xl shadow-sm">
           <table className="w-full text-sm">
-            <thead className="bg-slate-800 text-white">
+            <thead className="bg-gray-50 text-gray-600 border-b border-gray-200">
               <tr>
                 <th className="p-3 text-left">Nome / Empresa</th>
                 <th className="p-3 text-left">Tipo</th>
@@ -216,19 +218,28 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
                     : item.public_status;
 
                 return (
-                  <tr key={item.id} className="border-t border-white/10">
+                  <tr
+                    key={item.id}
+                    className="border-t border-gray-100 hover:bg-gray-50 transition"
+                  >
                     <td className="p-3 align-top">
-                      <div className="font-medium">{displayName}</div>
+                      <div className="font-medium text-gray-900">
+                        {displayName}
+                      </div>
                       {item.email && (
-                        <div className="text-xs text-white/45 mt-1">{item.email}</div>
+                        <div className="text-xs text-gray-400 mt-1">
+                          {item.email}
+                        </div>
                       )}
                     </td>
 
-                    <td className="p-3 align-top uppercase">
+                    <td className="p-3 align-top uppercase text-gray-700">
                       {item.registration_type}
                     </td>
 
-                    <td className="p-3 align-top">{item.phone || "-"}</td>
+                    <td className="p-3 align-top text-gray-700">
+                      {item.phone || "-"}
+                    </td>
 
                     <td className="p-3 align-top">
                       {isEditing ? (
@@ -237,7 +248,7 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
                           onChange={(e) =>
                             setEditInternalStatus(e.target.value as InternalStatus)
                           }
-                          className="bg-black border border-white/20 rounded px-2 py-2 text-white"
+                          className="bg-white border border-gray-300 rounded-lg px-2 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
                         >
                           {internalStatusOptions.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -246,7 +257,9 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
                           ))}
                         </select>
                       ) : (
-                        item.internal_status
+                        <span className="text-gray-700">
+                          {item.internal_status}
+                        </span>
                       )}
                     </td>
 
@@ -254,8 +267,8 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
                       <span
                         className={
                           previewPublicStatus === "approved"
-                            ? "text-emerald-300"
-                            : "text-amber-300"
+                            ? "text-emerald-600 font-medium"
+                            : "text-amber-600 font-medium"
                         }
                       >
                         {previewPublicStatus}
@@ -269,7 +282,7 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
                           onChange={(e) =>
                             setEditRiskLevel(e.target.value as RiskLevel)
                           }
-                          className="bg-black border border-white/20 rounded px-2 py-2 text-white"
+                          className="bg-white border border-gray-300 rounded-lg px-2 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
                         >
                           {riskOptions.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -278,11 +291,13 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
                           ))}
                         </select>
                       ) : (
-                        item.risk_level
+                        <span className="text-gray-700">{item.risk_level}</span>
                       )}
                     </td>
 
-                    <td className="p-3 align-top">{formatDate(item.created_at)}</td>
+                    <td className="p-3 align-top text-gray-600">
+                      {formatDate(item.created_at)}
+                    </td>
 
                     <td className="p-3 align-top">
                       {isEditing ? (
@@ -290,7 +305,7 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
                           <button
                             onClick={() => saveEdit(item.id)}
                             disabled={savingId === item.id}
-                            className="px-3 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-500 disabled:opacity-60"
+                            className="px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 disabled:opacity-60 transition"
                           >
                             {savingId === item.id ? "Salvando..." : "Salvar"}
                           </button>
@@ -298,7 +313,7 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
                           <button
                             onClick={cancelEdit}
                             disabled={savingId === item.id}
-                            className="px-3 py-2 bg-white/10 text-white rounded hover:bg-white/20 disabled:opacity-60"
+                            className="px-3 py-2 bg-gray-100 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-200 disabled:opacity-60 transition"
                           >
                             Cancelar
                           </button>
@@ -306,7 +321,7 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
                       ) : (
                         <button
                           onClick={() => startEdit(item)}
-                          className="px-3 py-2 bg-white text-black rounded hover:bg-white/90"
+                          className="px-3 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition"
                         >
                           Editar
                         </button>
@@ -319,11 +334,11 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
           </table>
 
           {editingId && (
-            <div className="border-t border-white/10 bg-white/5 p-4">
-              <label className="block text-sm font-medium mb-2">
+            <div className="border-t border-gray-200 bg-gray-50 p-4">
+              <label className="block text-sm font-medium mb-2 text-gray-800">
                 Observação interna
                 {(editRiskLevel === "danger" || editRiskLevel === "blacklist") && (
-                  <span className="text-red-300"> *</span>
+                  <span className="text-red-600"> *</span>
                 )}
               </label>
 
@@ -332,12 +347,12 @@ export default function AdminCadastros({ onLogout }: { onLogout: () => void }) {
                 onChange={(e) => setEditInternalNotes(e.target.value)}
                 rows={4}
                 placeholder="Anotações internas da equipe Loc7..."
-                className="w-full bg-black border border-white/20 rounded p-3 text-white placeholder:text-white/30"
+                className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
               />
 
-              <p className="text-xs text-white/40 mt-2">
-                Esta informação é interna. O cliente não visualiza risco, reprovação
-                ou observações.
+              <p className="text-xs text-gray-500 mt-2">
+                Esta informação é interna. O cliente não visualiza risco,
+                reprovação ou observações.
               </p>
             </div>
           )}
