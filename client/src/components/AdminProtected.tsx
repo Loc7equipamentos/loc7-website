@@ -1,48 +1,43 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { supabase } from "@/lib/supabase";
 
-export default function AdminProtected({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [, setLocation] = useLocation();
-  const [loading, setLoading] = useState(true);
+type AdminProtectedProps = {
+  children: ReactNode;
+};
+
+export default function AdminProtected({ children }: AdminProtectedProps) {
+  const [location, setLocation] = useLocation();
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    async function checkUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    let mounted = true;
 
-      if (!user) {
-        setLocation("/admin-login");
+    async function checkSession() {
+      const { data } = await supabase.auth.getSession();
+
+      if (!mounted) return;
+
+      if (!data.session) {
+        const redirectTo = encodeURIComponent(location);
+        setLocation(`/admin-login?redirect=${redirectTo}`);
         return;
       }
 
-      const { data } = await supabase
-        .from("admin_users")
-        .select("active")
-        .eq("email", user.email)
-        .single();
-
-      if (!data || !data.active) {
-        await supabase.auth.signOut();
-        setLocation("/admin-login");
-        return;
-      }
-
-      setLoading(false);
+      setChecking(false);
     }
 
-    checkUser();
-  }, []);
+    checkSession();
 
-  if (loading) {
+    return () => {
+      mounted = false;
+    };
+  }, [location, setLocation]);
+
+  if (checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Verificando acesso...
+      <div className="min-h-screen bg-black flex items-center justify-center text-white">
+        Carregando painel...
       </div>
     );
   }
