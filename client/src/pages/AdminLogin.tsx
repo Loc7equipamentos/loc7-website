@@ -3,26 +3,15 @@ import { supabase } from "@/lib/supabase";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function AdminLogin() {
+  const initialRedirect =
+    new URLSearchParams(window.location.search).get("redirect") || "/admin-panel";
+
+  const [redirectPath] = useState(initialRedirect);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const getRedirectPath = () => {
-    const params = new URLSearchParams(window.location.search);
-    const redirectParam = params.get("redirect");
-
-    if (redirectParam) {
-      return redirectParam;
-    }
-
-    if (window.location.pathname.startsWith("/admin-panel")) {
-      return window.location.pathname;
-    }
-
-    return "/admin-panel";
-  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +30,7 @@ export default function AdminLogin() {
       return;
     }
 
-    window.location.assign(getRedirectPath());
+    window.location.href = redirectPath;
   };
 
   return (
@@ -55,7 +44,7 @@ export default function AdminLogin() {
           <input
             type="email"
             placeholder="E-mail"
-            className="w-full border rounded-lg px-4 py-2"
+            className="w-full border rounded-lg px-4 py-2 text-black placeholder:text-gray-400 bg-white"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -65,7 +54,7 @@ export default function AdminLogin() {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Senha"
-              className="w-full border rounded-lg px-4 py-2 pr-10"
+              className="w-full border rounded-lg px-4 py-2 pr-10 text-black placeholder:text-gray-400 bg-white"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -73,16 +62,14 @@ export default function AdminLogin() {
 
             <button
               type="button"
-              className="absolute right-3 top-2.5"
+              className="absolute right-3 top-2.5 text-gray-500"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
 
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
-          )}
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
           <button
             type="submit"
