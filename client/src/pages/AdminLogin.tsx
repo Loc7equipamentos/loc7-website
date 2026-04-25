@@ -22,71 +22,81 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center px-4">
-      
-      <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center px-4">
 
-        {/* HEADER */}
-        <div className="mb-6 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-black">
-            Admin Loc7
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            acesso restrito • operação interna
-          </p>
-        </div>
+      <div className="relative w-full max-w-md">
 
-        {/* FORM */}
-        <form onSubmit={handleLogin} className="space-y-4">
+        {/* PLACA CINZA (fundo deslocado) */}
+        <div className="absolute -top-6 -left-6 w-full h-full bg-gray-200 rounded-2xl" />
 
-          {/* EMAIL */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              placeholder="admin@loc7.com"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg 
-              focus:outline-none focus:ring-2 focus:ring-black 
-              text-gray-900 placeholder-gray-400 bg-white"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+        {/* CARD PRINCIPAL */}
+        <div className="relative bg-white border border-gray-200 rounded-2xl shadow-lg p-8">
+
+          {/* HEADER */}
+          <div className="text-center mb-6">
+            <h1 className="text-lg tracking-widest font-semibold text-gray-900">
+              ACESSO INTERNO
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Controle Operacional Loc7
+            </p>
           </div>
 
-          {/* SENHA */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Senha
-            </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg 
-              focus:outline-none focus:ring-2 focus:ring-black 
-              text-gray-900 placeholder-gray-400 bg-white"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          <form onSubmit={handleLogin} className="space-y-4">
+
+            {/* EMAIL */}
+            <div>
+              <label className="text-sm text-gray-700">
+                E-mail Corporativo
+              </label>
+              <input
+                type="email"
+                placeholder="nome@loc7.com.br"
+                className="w-full mt-1 px-4 py-3 border border-gray-300 rounded-lg
+                bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* SENHA */}
+            <div>
+              <label className="text-sm text-gray-700">
+                Senha Operacional
+              </label>
+              <input
+                type="password"
+                placeholder="••••••"
+                className="w-full mt-1 px-4 py-3 border border-gray-300 rounded-lg
+                bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* BOTÃO */}
+            <button
+              type="submit"
+              className="w-full bg-black text-white py-3 rounded-lg
+              font-medium hover:bg-gray-800 transition"
+            >
+              Entrar
+            </button>
+          </form>
+
+          {/* FOOTER */}
+          <div className="text-center text-xs text-gray-400 mt-6">
+            © Loc7 • Sistema Interno
           </div>
-
-          {/* BOTÃO */}
-          <button
-            type="submit"
-            className="w-full bg-black text-white py-3 rounded-lg 
-            font-medium hover:bg-gray-800 transition"
-          >
-            Entrar no painel
-          </button>
-        </form>
-
-        {/* FOOTER */}
-        <div className="mt-6 text-center text-xs text-gray-400">
-          Sistema interno Loc7 • acesso monitorado
         </div>
+
+        {/* ÁREA DA LOGO (na placa cinza) */}
+        <div className="absolute -top-10 left-4 text-gray-400 text-sm tracking-wide">
+          Loc7 Equipamentos
+        </div>
+
       </div>
     </div>
   );
