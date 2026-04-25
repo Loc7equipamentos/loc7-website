@@ -13,7 +13,7 @@ import Orcamento from "./pages/Orcamento";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCadastros from "./pages/AdminCadastros";
 import AdminLogin from "./pages/AdminLogin";
-import AdminProtected from "./components/AdminProtected";
+import AdminProtected from "./pages/AdminProtected"; // ✅ corrigido
 
 export default function App() {
   const [location] = useLocation();
