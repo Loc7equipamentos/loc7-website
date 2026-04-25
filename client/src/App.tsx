@@ -10,6 +10,7 @@ import Orcamento from "./pages/Orcamento";
 
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCadastros from "./pages/AdminCadastros";
+import AdminUsuarios from "./pages/AdminUsuarios";
 import AdminLogin from "./pages/AdminLogin";
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/admin-login" component={AdminLogin} />
         <Route path="/admin-panel" component={AdminDashboard} />
         <Route path="/admin-panel/cadastros" component={AdminCadastros} />
+        <Route path="/admin-panel/usuarios" component={AdminUsuarios} />
       </Switch>
 
       {!isAdminRoute && <WhatsAppFloat />}
