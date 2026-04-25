@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminCadastros from "./pages/AdminCadastros";
 import AdminUsuarios from "./pages/AdminUsuarios";
 import AdminLogin from "./pages/AdminLogin";
+import AdminProtected from "./components/AdminProtected";
 
 export default function App() {
   const [location] = useLocation();
@@ -33,9 +34,24 @@ export default function App() {
         <Route path="/orcamento" component={Orcamento} />
 
         <Route path="/admin-login" component={AdminLogin} />
-        <Route path="/admin-panel" component={AdminDashboard} />
-        <Route path="/admin-panel/cadastros" component={AdminCadastros} />
-        <Route path="/admin-panel/usuarios" component={AdminUsuarios} />
+
+        <Route path="/admin-panel">
+          <AdminProtected>
+            <AdminDashboard />
+          </AdminProtected>
+        </Route>
+
+        <Route path="/admin-panel/cadastros">
+          <AdminProtected>
+            <AdminCadastros />
+          </AdminProtected>
+        </Route>
+
+        <Route path="/admin-panel/usuarios">
+          <AdminProtected>
+            <AdminUsuarios />
+          </AdminProtected>
+        </Route>
       </Switch>
 
       {!isAdminRoute && <WhatsAppFloat />}
