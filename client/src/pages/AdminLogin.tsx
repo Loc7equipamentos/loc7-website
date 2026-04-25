@@ -32,7 +32,7 @@ export default function AdminLogin() {
       return;
     }
 
-    // 🔥 HARD REDIRECT (resolve bug definitivamente)
+    // 🔥 CORREÇÃO DEFINITIVA
     window.location.href = redirect;
   };
 
@@ -72,12 +72,14 @@ export default function AdminLogin() {
             </button>
           </div>
 
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-black text-white py-2 rounded-lg hover:opacity-90 transition disabled:opacity-60"
+            className="w-full bg-black text-white py-2 rounded-lg hover:opacity-90 transition"
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>
