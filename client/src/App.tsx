@@ -28,6 +28,7 @@ export default function App() {
 
       <Switch>
         <Route path="/" component={Home} />
+
         <Route path="/catalogo" component={Catalogo} />
         <Route path="/catalogo/:category" component={Catalogo} />
         <Route path="/equipamentos/:slug" component={Produto} />
@@ -35,9 +36,10 @@ export default function App() {
 
         <Route path="/admin-login" component={AdminLogin} />
 
-        <Route path="/admin-panel">
+        {/* Rotas específicas primeiro */}
+        <Route path="/admin-panel/usuarios">
           <AdminProtected>
-            <AdminDashboard />
+            <AdminUsuarios />
           </AdminProtected>
         </Route>
 
@@ -47,9 +49,10 @@ export default function App() {
           </AdminProtected>
         </Route>
 
-        <Route path="/admin-panel/usuarios">
+        {/* Rota geral por último */}
+        <Route path="/admin-panel">
           <AdminProtected>
-            <AdminUsuarios />
+            <AdminDashboard />
           </AdminProtected>
         </Route>
       </Switch>
