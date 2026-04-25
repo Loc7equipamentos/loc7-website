@@ -13,7 +13,6 @@ import Orcamento from "./pages/Orcamento";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCadastros from "./pages/AdminCadastros";
 import AdminLogin from "./pages/AdminLogin";
-import AdminProtected from "./pages/AdminProtected"; // ✅ corrigido
 
 export default function App() {
   const [location] = useLocation();
@@ -36,21 +35,10 @@ export default function App() {
         <Route path="/equipamentos/:slug" component={Produto} />
         <Route path="/orcamento" component={Orcamento} />
 
-        {/* LOGIN ADMIN */}
+        {/* ADMIN (SEM PROTEÇÃO AINDA) */}
         <Route path="/admin-login" component={AdminLogin} />
-
-        {/* ADMIN PROTEGIDO */}
-        <Route path="/admin-panel">
-          <AdminProtected>
-            <AdminDashboard />
-          </AdminProtected>
-        </Route>
-
-        <Route path="/admin-panel/cadastros">
-          <AdminProtected>
-            <AdminCadastros />
-          </AdminProtected>
-        </Route>
+        <Route path="/admin-panel" component={AdminDashboard} />
+        <Route path="/admin-panel/cadastros" component={AdminCadastros} />
       </Switch>
 
       {/* WhatsApp só no site */}
