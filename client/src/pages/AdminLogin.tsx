@@ -28,11 +28,11 @@ export default function AdminLogin() {
 
         {/* HEADER */}
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Painel Administrativo
+          <h1 className="text-3xl font-bold tracking-tight text-black">
+            Admin Loc7
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Acesso restrito Loc7 Equipamentos
+            acesso restrito • operação interna
           </p>
         </div>
 
