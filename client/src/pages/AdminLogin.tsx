@@ -1,58 +1,77 @@
-import { Route, Switch, useLocation } from "wouter";
-import Navbar from "./components/Navbar";
-import WhatsAppFloat from "./components/WhatsAppFloat";
+import { useState } from "react";
+import { useLocation } from "wouter";
+import { signIn } from "@/lib/auth";
 
-import Home from "./pages/Home";
-import Catalogo from "./pages/Catalogo";
-import Produto from "./pages/Produto";
-import Orcamento from "./pages/Orcamento";
+export default function AdminLogin() {
+  const [, setLocation] = useLocation();
 
-import AdminDashboard from "./pages/AdminDashboard";
-import Cadastros from "./pages/Cadastros";
-import AdminLogin from "./pages/AdminLogin";
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-import AdminProtected from "@/components/AdminProtected";
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-export default function App() {
-  const [location] = useLocation();
-
-  // 🔒 ROTAS ADMIN (ISOLAMENTO TOTAL)
-  const isAdminRoute =
-    location.startsWith("/admin-panel") ||
-    location.startsWith("/admin-login");
+    try {
+      await signIn(email, password);
+      setLocation("/admin-panel");
+    } catch {
+      setError("Credenciais inválidas");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <>
-      {/* 🔥 Navbar só no site */}
-      {!isAdminRoute && <Navbar />}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
+        <h1 className="text-2xl font-bold text-center mb-2">
+          ACESSO INTERNO
+        </h1>
 
-      <Switch>
-        {/* SITE */}
-        <Route path="/" component={Home} />
-        <Route path="/catalogo" component={Catalogo} />
-        <Route path="/catalogo/:category" component={Catalogo} />
-        <Route path="/equipamentos/:slug" component={Produto} />
-        <Route path="/orcamento" component={Orcamento} />
+        <p className="text-center text-gray-500 mb-6">
+          Controle Operacional Loc7
+        </p>
 
-        {/* LOGIN ADMIN */}
-        <Route path="/admin-login" component={AdminLogin} />
+        <form onSubmit={handleLogin} className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email corporativo"
+            className="w-full border rounded-lg p-3"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        {/* ADMIN PROTEGIDO */}
-        <Route path="/admin-panel">
-          <AdminProtected>
-            <AdminDashboard />
-          </AdminProtected>
-        </Route>
+          <input
+            type="password"
+            placeholder="Senha operacional"
+            className="w-full border rounded-lg p-3"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-        <Route path="/admin-panel/cadastros">
-          <AdminProtected>
-            <Cadastros />
-          </AdminProtected>
-        </Route>
-      </Switch>
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
 
-      {/* 🔥 WhatsApp só no site */}
-      {!isAdminRoute && <WhatsAppFloat />}
-    </>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:opacity-90 transition"
+          >
+            {loading ? "Entrando..." : "Entrar"}
+          </button>
+        </form>
+
+        <p className="text-center text-xs text-gray-400 mt-6">
+          © Loc7 Equipamentos • Sistema Interno
+        </p>
+      </div>
+    </div>
   );
 }
