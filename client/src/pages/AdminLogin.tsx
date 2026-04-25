@@ -30,17 +30,14 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-[#f4f5f7] flex items-center justify-center px-4">
       <div className="relative w-full max-w-[470px]">
-        {/* placa cinza deslocada */}
         <div className="absolute -top-8 -left-8 h-full w-full rounded-2xl bg-gray-200/80 shadow-sm" />
 
-        {/* card principal */}
         <div className="relative rounded-2xl border border-gray-200 bg-white px-10 py-9 shadow-xl">
-          {/* topo */}
-          <div className="mb-9 flex items-center justify-center gap-6">
+          <div className="mb-10 flex items-center justify-center gap-7">
             <img
               src="/logo-loc7.png"
               alt="Loc7 Equipamentos"
-              className="h-12 w-auto object-contain"
+              className="h-9 w-auto object-contain"
             />
 
             <div className="h-12 w-px bg-gray-300" />
