@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
@@ -8,24 +9,61 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
 
-    localStorage.setItem("loc7_admin_logged", "true");
-    setLocation("/admin-panel");
+    setLoading(true);
+    setError("");
+
+    try {
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (authError) {
+        setError("E-mail ou senha inválidos.");
+        return;
+      }
+
+      const { data: adminUser, error: userError } = await supabase
+        .from("admin_users")
+        .select("id, email, role, active")
+        .eq("email", email.trim())
+        .single();
+
+      if (userError || !adminUser) {
+        await supabase.auth.signOut();
+        setError("Usuário sem permissão administrativa.");
+        return;
+      }
+
+      if (!adminUser.active) {
+        await supabase.auth.signOut();
+        setError("Usuário inativo. Fale com o administrador.");
+        return;
+      }
+
+      localStorage.setItem("loc7_admin_logged", "true");
+      localStorage.setItem("loc7_admin_email", adminUser.email);
+      localStorage.setItem("loc7_admin_role", adminUser.role);
+
+      setLocation("/admin-panel");
+    } catch {
+      setError("Erro ao entrar. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      
-      {/* FUNDO */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200" />
 
-      {/* CARD */}
       <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        
-        {/* HEADER */}
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">
             ACESSO INTERNO
@@ -35,10 +73,7 @@ export default function AdminLogin() {
           </p>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleLogin} className="space-y-4">
-          
-          {/* EMAIL */}
           <div>
             <label className="text-sm text-gray-600">
               E-mail Corporativo
@@ -46,21 +81,19 @@ export default function AdminLogin() {
             <input
               type="email"
               placeholder="ex: nome@loc7.com.br"
-              className="w-full mt-1 border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full mt-1 border border-gray-300 rounded-lg p-3 bg-white text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
 
-          {/* SENHA */}
           <div>
             <div className="flex justify-between items-center">
               <label className="text-sm text-gray-600">
                 Senha Operacional
               </label>
 
-              {/* RECUPERAR SENHA */}
               <button
                 type="button"
                 className="text-xs text-gray-500 hover:text-black transition"
@@ -74,13 +107,12 @@ export default function AdminLogin() {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                className="w-full border border-gray-300 rounded-lg p-3 pr-10 focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full border border-gray-300 rounded-lg p-3 pr-10 bg-white text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
 
-              {/* ÍCONE OLHO */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -91,16 +123,19 @@ export default function AdminLogin() {
             </div>
           </div>
 
-          {/* BOTÃO */}
+          {error && (
+            <p className="text-sm text-red-600 text-center">{error}</p>
+          )}
+
           <button
             type="submit"
-            className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:opacity-90 transition"
+            disabled={loading}
+            className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-60"
           >
-            Entrar
+            {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
 
-        {/* FOOTER */}
         <p className="text-center text-xs text-gray-400 mt-6">
           © Loc7 Equipamentos • Sistema Interno
         </p>
