@@ -32,7 +32,8 @@ export default function AdminLogin() {
       return;
     }
 
-    setLocation(redirect);
+    // 🔥 HARD REDIRECT (resolve bug definitivamente)
+    window.location.href = redirect;
   };
 
   return (
