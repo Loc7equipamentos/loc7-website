@@ -10,6 +10,8 @@ import {
 export default function AdminUsuarios() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -19,10 +21,12 @@ export default function AdminUsuarios() {
 
   async function loadUsers() {
     try {
+      setError("");
+      setLoading(true);
       const data = await getAdminUsers();
       setUsers(data);
-    } catch (err) {
-      console.error("Erro ao carregar usuários", err);
+    } catch (err: any) {
+      setError(err?.message || "Erro ao carregar usuários.");
     } finally {
       setLoading(false);
     }
@@ -36,7 +40,14 @@ export default function AdminUsuarios() {
     e.preventDefault();
 
     try {
-      await createAdminUser(form);
+      setSaving(true);
+      setError("");
+
+      await createAdminUser({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        role: form.role,
+      });
 
       setForm({
         name: "",
@@ -44,18 +55,21 @@ export default function AdminUsuarios() {
         role: "Administrador",
       });
 
-      loadUsers();
-    } catch (err) {
-      console.error("Erro ao criar usuário", err);
+      await loadUsers();
+    } catch (err: any) {
+      setError(err?.message || "Erro ao criar usuário.");
+    } finally {
+      setSaving(false);
     }
   }
 
   async function toggleActive(user: AdminUser) {
     try {
+      setError("");
       await updateAdminUserStatus(user.id, !user.active);
-      loadUsers();
-    } catch (err) {
-      console.error("Erro ao atualizar status", err);
+      await loadUsers();
+    } catch (err: any) {
+      setError(err?.message || "Erro ao atualizar status.");
     }
   }
 
@@ -66,6 +80,12 @@ export default function AdminUsuarios() {
           <h2 className="text-2xl font-extrabold text-black mb-5">
             Novo Usuário
           </h2>
+
+          {error && (
+            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleAddUser} className="space-y-4">
             <div>
@@ -103,10 +123,7 @@ export default function AdminUsuarios() {
               <select
                 value={form.role}
                 onChange={(e) =>
-                  setForm({
-                    ...form,
-                    role: e.target.value as AdminUserRole,
-                  })
+                  setForm({ ...form, role: e.target.value as AdminUserRole })
                 }
                 className="w-full h-11 rounded-md border border-gray-300 px-3 text-black bg-white focus:outline-none focus:ring-2 focus:ring-black"
               >
@@ -117,9 +134,10 @@ export default function AdminUsuarios() {
 
             <button
               type="submit"
-              className="w-full h-12 bg-black text-white rounded-md font-bold hover:scale-[1.01] hover:brightness-110 transition"
+              disabled={saving}
+              className="w-full h-12 bg-black text-white rounded-md font-bold hover:scale-[1.01] hover:brightness-110 transition disabled:opacity-60"
             >
-              Criar Usuário
+              {saving ? "Criando..." : "Criar Usuário"}
             </button>
           </form>
         </section>
@@ -131,6 +149,10 @@ export default function AdminUsuarios() {
 
           {loading ? (
             <p className="text-black">Carregando...</p>
+          ) : users.length === 0 ? (
+            <p className="text-sm text-gray-500">
+              Nenhum usuário cadastrado ainda.
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
