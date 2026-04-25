@@ -11,18 +11,19 @@ type User = {
 
 export default function AdminUsuarios() {
   const [users, setUsers] = useState<User[]>([]);
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("Administrador");
-
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [error, setError] = useState("");
 
   async function loadUsers() {
-    const { data } = await supabase.from("admin_users").select("*");
+    const { data } = await supabase
+      .from("admin_users")
+      .select("*")
+      .order("created_at", { ascending: false });
+
     if (data) setUsers(data);
   }
 
@@ -50,14 +51,15 @@ export default function AdminUsuarios() {
 
     if (error) {
       setError(error.message);
-    } else {
-      setName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
-      setRole("Administrador");
-      loadUsers();
+      return;
     }
+
+    setName("");
+    setEmail("");
+    setRole("Administrador");
+    setPassword("");
+    setConfirmPassword("");
+    loadUsers();
   }
 
   async function toggleUser(user: User) {
@@ -70,172 +72,163 @@ export default function AdminUsuarios() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] px-12 py-14">
+    <div className="min-h-screen bg-[#020617] px-5 py-7 lg:px-10 lg:py-8">
+      <div className="mx-auto w-full max-w-[1240px]">
+        <header className="mb-6">
+          <h1 className="text-[34px] leading-tight font-extrabold tracking-[-0.03em] text-white lg:text-[42px]">
+            Usuários do Sistema
+          </h1>
+          <p className="mt-1 text-base text-slate-400">
+            Controle de acessos e permissões
+          </p>
+        </header>
 
-      {/* HEADLINE (EXATAMENTE COMO GEMINI) */}
-      <div className="mb-10">
-        <h1 className="text-4xl font-semibold text-white">
-          Usuários do Sistema
-        </h1>
-        <p className="text-gray-400 mt-2">
-          Controle de acessos e permissões
-        </p>
-      </div>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[390px_1fr]">
+          <section className="rounded-2xl bg-white p-6 shadow-2xl lg:p-6">
+            <h2 className="mb-5 text-[24px] font-extrabold tracking-[-0.02em] text-black">
+              Novo Usuário
+            </h2>
 
-      <div className="grid grid-cols-2 gap-8 max-w-6xl">
-
-        {/* CARD ESQUERDA */}
-        <div className="bg-white rounded-2xl p-8 shadow-xl">
-
-          <h2 className="text-xl font-semibold mb-6 text-black">
-            Novo Usuário
-          </h2>
-
-          <form onSubmit={handleCreateUser} className="space-y-4">
-
-            <div>
-              <label className="text-sm text-gray-700">
-                Nome completo
-              </label>
-              <input
-                className="w-full mt-1 border rounded-lg p-3 bg-[#f9fafb] text-black placeholder-gray-400 focus:ring-2 focus:ring-black/20"
-                placeholder="Ex: João Silva"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-700">
-                E-mail corporativo
-              </label>
-              <input
-                className="w-full mt-1 border rounded-lg p-3 bg-[#f9fafb] text-black placeholder-gray-400 focus:ring-2 focus:ring-black/20"
-                placeholder="ex: nome@loc7.com.br"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-700">
-                Permissão de acesso
-              </label>
-              <select
-                className="w-full mt-1 border rounded-lg p-3 bg-[#f9fafb] text-black focus:ring-2 focus:ring-black/20"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-              >
-                <option>Administrador</option>
-                <option>Operador</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-700">
-                Senha inicial
-              </label>
-              <input
-                type="password"
-                className="w-full mt-1 border rounded-lg p-3 bg-[#f9fafb] text-black"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-700">
-                Confirmar senha
-              </label>
-              <input
-                type="password"
-                className="w-full mt-1 border rounded-lg p-3 bg-[#f9fafb] text-black"
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <p className="text-xs text-gray-400">
-              A senha será utilizada quando o login real for ativado.
-            </p>
-
-            {error && (
-              <p className="text-red-500 text-sm">{error}</p>
-            )}
-
-            <button className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:opacity-90 transition">
-              Criar Usuário
-            </button>
-          </form>
-        </div>
-
-        {/* CARD DIREITA */}
-        <div className="bg-white rounded-2xl p-8 shadow-xl">
-
-          <h2 className="text-xl font-semibold mb-6 text-black">
-            Usuários cadastrados
-          </h2>
-
-          {/* HEADER */}
-          <div className="grid grid-cols-5 text-sm text-gray-500 mb-4 px-2">
-            <span>Nome</span>
-            <span>E-mail</span>
-            <span>Permissão</span>
-            <span>Status</span>
-            <span>Ações</span>
-          </div>
-
-          <div className="space-y-4">
-            {users.map((user) => (
-              <div
-                key={user.id}
-                className="grid grid-cols-5 items-center border-t pt-4"
-              >
-                <div>
-                  <p className="font-medium text-black">{user.name}</p>
-                  <p className="text-xs text-gray-400">
-                    Profissional interno
-                  </p>
-                </div>
-
-                <span className="text-sm text-black">{user.email}</span>
-
-                <span className="text-sm text-black">{user.role}</span>
-
-                <span
-                  className={`text-xs px-3 py-1 rounded-full w-fit ${
-                    user.active
-                      ? "bg-green-100 text-green-600"
-                      : "bg-red-100 text-red-600"
-                  }`}
-                >
-                  {user.active ? "Ativo" : "Inativo"}
-                </span>
-
-                <div className="flex gap-3 text-sm">
-                  <button className="underline">Editar</button>
-                  <button
-                    onClick={() => toggleUser(user)}
-                    className="underline"
-                  >
-                    {user.active ? "Desativar" : "Reativar"}
-                  </button>
-                </div>
+            <form onSubmit={handleCreateUser} className="space-y-3">
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-black">
+                  Nome completo
+                </label>
+                <input
+                  className="h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  placeholder="Ex: João Silva"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
               </div>
-            ))}
 
-            {users.length === 0 && (
-              <p className="text-gray-400 text-sm">
-                Nenhum usuário cadastrado ainda.
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-black">
+                  E-mail corporativo
+                </label>
+                <input
+                  className="h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  placeholder="ex: nome@loc7.com.br"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-black">
+                  Permissão de acesso
+                </label>
+                <select
+                  className="h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-black focus:outline-none focus:ring-2 focus:ring-black/20"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                >
+                  <option>Administrador</option>
+                  <option>Operador</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-black">
+                  Senha inicial
+                </label>
+                <input
+                  type="password"
+                  className="h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-black">
+                  Confirmar senha
+                </label>
+                <input
+                  type="password"
+                  className="h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <p className="text-xs text-slate-500">
+                A senha será utilizada quando o login real for ativado.
               </p>
-            )}
-          </div>
+
+              {error && <p className="text-sm text-red-600">{error}</p>}
+
+              <button className="h-12 w-full rounded-md bg-black font-bold text-white transition hover:brightness-110">
+                Criar Usuário
+              </button>
+            </form>
+          </section>
+
+          <section className="rounded-2xl bg-white p-6 shadow-2xl lg:p-6">
+            <h2 className="mb-5 text-[24px] font-extrabold tracking-[-0.02em] text-black">
+              Usuários cadastrados
+            </h2>
+
+            <div className="hidden rounded-md bg-slate-100 px-5 py-3 text-sm font-bold text-black lg:grid lg:grid-cols-[1.5fr_2fr_1.2fr_0.8fr_1.2fr]">
+              <span>Nome</span>
+              <span>E-mail</span>
+              <span>Permissão</span>
+              <span>Status</span>
+              <span>Ações</span>
+            </div>
+
+            <div className="mt-4 space-y-0">
+              {users.map((user) => (
+                <div
+                  key={user.id}
+                  className="grid gap-3 border-b border-slate-200 py-4 text-black lg:grid-cols-[1.5fr_2fr_1.2fr_0.8fr_1.2fr] lg:items-center"
+                >
+                  <div>
+                    <p className="font-bold text-black">{user.name}</p>
+                    <p className="text-xs text-slate-500">
+                      Profissional interno
+                    </p>
+                  </div>
+
+                  <p className="break-all text-sm text-black">{user.email}</p>
+
+                  <p className="text-sm text-black">{user.role}</p>
+
+                  <span
+                    className={`w-fit rounded-full px-3 py-1 text-xs font-bold ${
+                      user.active
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {user.active ? "Ativo" : "Inativo"}
+                  </span>
+
+                  <div className="flex gap-4 text-sm text-black">
+                    <button className="underline">Editar</button>
+                    <button
+                      onClick={() => toggleUser(user)}
+                      className="underline"
+                    >
+                      {user.active ? "Desativar" : "Reativar"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {users.length === 0 && (
+                <p className="text-sm text-slate-500">
+                  Nenhum usuário cadastrado ainda.
+                </p>
+              )}
+            </div>
+          </section>
         </div>
       </div>
     </div>
