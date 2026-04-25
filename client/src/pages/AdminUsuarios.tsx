@@ -20,6 +20,7 @@ export default function AdminUsuarios() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
   async function loadUsers() {
     const { data } = await supabase
@@ -43,31 +44,61 @@ export default function AdminUsuarios() {
       return;
     }
 
-    if (password.length < 4) {
-      setError("Senha muito curta");
+    if (password.length < 6) {
+      setError("Senha muito curta. Use no mínimo 6 caracteres.");
       return;
     }
 
-    const { error } = await supabase.from("admin_users").insert([
-      {
-        name,
-        email,
-        role,
-        active: true,
-      },
-    ]);
+    try {
+      setSaving(true);
 
-    if (error) {
-      setError(error.message);
-      return;
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const token = session?.access_token;
+
+      if (!token) {
+        setError("Usuário não autenticado. Faça login novamente.");
+        return;
+      }
+
+      const response = await fetch(
+        "https://hmmxxvurfvrdvlkfbbah.supabase.co/functions/v1/create-admin-user",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: name.trim(),
+            email: email.trim(),
+            password,
+            role,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result?.error || "Erro ao criar usuário.");
+        return;
+      }
+
+      setName("");
+      setEmail("");
+      setRole("Administrador");
+      setPassword("");
+      setConfirmPassword("");
+
+      await loadUsers();
+    } catch {
+      setError("Erro inesperado ao criar usuário.");
+    } finally {
+      setSaving(false);
     }
-
-    setName("");
-    setEmail("");
-    setRole("Administrador");
-    setPassword("");
-    setConfirmPassword("");
-    loadUsers();
   }
 
   async function toggleUser(user: User) {
@@ -193,13 +224,16 @@ export default function AdminUsuarios() {
               </div>
 
               <p className="text-xs text-slate-500">
-                A senha será utilizada quando o login real for ativado.
+                A senha será criada no Supabase Auth e vinculada ao usuário.
               </p>
 
               {error && <p className="text-sm text-red-600">{error}</p>}
 
-              <button className="h-12 w-full rounded-md bg-black font-bold text-white transition hover:brightness-110">
-                Criar Usuário
+              <button
+                disabled={saving}
+                className="h-12 w-full rounded-md bg-black font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saving ? "Criando..." : "Criar Usuário"}
               </button>
             </form>
           </section>
