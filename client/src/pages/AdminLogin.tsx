@@ -11,40 +11,58 @@ export default function AdminLogin() {
     e.preventDefault();
 
     localStorage.setItem("loc7_admin_logged", "true");
-    localStorage.setItem("loc7_admin_email", email);
-
     setLocation("/admin-panel");
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
-        <h1 className="text-2xl font-bold text-center mb-2">
-          ACESSO INTERNO
-        </h1>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      
+      {/* FUNDO SUAVE (cinza corporativo) */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200" />
 
-        <p className="text-center text-gray-500 mb-6">
-          Controle Operacional Loc7
-        </p>
+      {/* CARD */}
+      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+        
+        {/* HEADER */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">
+            ACESSO INTERNO
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Controle Operacional Loc7
+          </p>
+        </div>
 
+        {/* FORM */}
         <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email corporativo"
-            className="w-full border rounded-lg p-3"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          
+          <div>
+            <label className="text-sm text-gray-600">
+              E-mail Corporativo
+            </label>
+            <input
+              type="email"
+              placeholder="ex: nome@loc7.com.br"
+              className="w-full mt-1 border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-black"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Senha operacional"
-            className="w-full border rounded-lg p-3"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div>
+            <label className="text-sm text-gray-600">
+              Senha Operacional
+            </label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              className="w-full mt-1 border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-black"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
           <button
             type="submit"
@@ -54,6 +72,7 @@ export default function AdminLogin() {
           </button>
         </form>
 
+        {/* FOOTER */}
         <p className="text-center text-xs text-gray-400 mt-6">
           © Loc7 Equipamentos • Sistema Interno
         </p>
