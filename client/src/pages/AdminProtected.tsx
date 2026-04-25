@@ -1,194 +1,155 @@
-import { useState, useEffect } from "react";
-import { Lock, AlertTriangle } from "lucide-react";
-import { useLocation } from "wouter";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
-import AdminDashboard from "./AdminDashboard";
-import AdminCadastros from "./AdminCadastros";
+type Cadastro = {
+  id: string;
+  registration_type: string;
+  full_name: string;
+  company_name: string | null;
+  phone: string;
+  internal_status: string;
+  public_status: string;
+  risk_level: string;
+  created_at: string;
+  email?: string;
+};
 
-type UserRole =
-  | "owner"
-  | "admin"
-  | "registration_analyst"
-  | "sales"
-  | "product_manager";
-
-export default function AdminProtected() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+export default function AdminCadastros() {
+  const [cadastros, setCadastros] = useState<Cadastro[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState<UserRole>("admin");
 
-  const [location] = useLocation();
+  const fetchCadastros = async () => {
+    const { data, error } = await supabase
+      .from("rental_registrations")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-  const correctPassword = import.meta.env.VITE_ADMIN_PASSWORD;
-
-  const currentPage = location.startsWith("/admin-panel/cadastros")
-    ? "cadastros"
-    : "dashboard";
-
-  useEffect(() => {
-    if (!correctPassword) {
-      setIsAuthenticated(false);
-      setLoading(false);
-      return;
-    }
-
-    const savedAuth = localStorage.getItem("admin-auth");
-    const savedRole =
-      (localStorage.getItem("admin-role") as UserRole) || "admin";
-
-    if (savedAuth === "true") {
-      setIsAuthenticated(true);
-      setUserRole(savedRole);
-    } else {
-      setIsAuthenticated(false);
+    if (!error && data) {
+      setCadastros(data);
     }
 
     setLoading(false);
-  }, [correctPassword]);
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!correctPassword) {
-      setError("Admin indisponível — senha não configurada");
-      return;
-    }
-
-    if (!password.trim()) {
-      setError("Digite a senha");
-      return;
-    }
-
-    if (password === correctPassword) {
-      localStorage.setItem("admin-auth", "true");
-      localStorage.setItem("admin-role", "admin");
-      setIsAuthenticated(true);
-      setPassword("");
-    } else {
-      setError("Senha incorreta");
-      setPassword("");
-    }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin-auth");
-    localStorage.removeItem("admin-role");
-    window.location.href = "/";
-  };
+  useEffect(() => {
+    fetchCadastros();
+  }, []);
 
-  // LOADING
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="w-8 h-8 border-4 border-gray-600 border-t-white rounded-full animate-spin" />
+  return (
+    <div className="max-w-6xl mx-auto">
+      {/* HEADER */}
+      <div className="mb-6">
+        <div className="text-xs uppercase text-gray-500 tracking-widest">
+          LOC7 OPERAÇÕES
+        </div>
+
+        <h1 className="text-3xl font-bold mt-1">Cadastros</h1>
+
+        <p className="text-gray-500 mt-1">
+          Análise interna de clientes, risco e liberação de locação.
+        </p>
       </div>
-    );
-  }
 
-  // SEM SENHA CONFIGURADA
-  if (!correctPassword) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black p-4">
-        <div className="bg-red-900/20 border border-red-700 rounded-xl p-8 text-center text-red-200">
-          <AlertTriangle className="mx-auto mb-4" />
-          <h1 className="text-xl font-bold">Admin indisponível</h1>
-          <p className="text-sm mt-2">
-            Senha não configurada no ambiente
+      {/* CARD */}
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm">
+        <div className="px-6 py-4 border-b border-gray-100">
+          <h2 className="font-semibold text-gray-800">
+            Cadastros recebidos
+          </h2>
+          <p className="text-sm text-gray-500">
+            {cadastros.length} registro(s) no sistema
           </p>
         </div>
-      </div>
-    );
-  }
 
-  // LOGIN
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black p-4">
-        <form
-          onSubmit={handleLogin}
-          className="bg-gray-900 p-8 rounded-xl w-full max-w-sm"
-        >
-          <div className="flex justify-center mb-6 text-white">
-            <Lock />
-          </div>
+        {/* TABLE */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="text-gray-500 border-b border-gray-100">
+              <tr className="text-left">
+                <th className="px-6 py-3">Nome / Empresa</th>
+                <th className="px-4 py-3">Tipo</th>
+                <th className="px-4 py-3">Telefone</th>
+                <th className="px-4 py-3">Status Interno</th>
+                <th className="px-4 py-3">Status Público</th>
+                <th className="px-4 py-3">Risco</th>
+                <th className="px-4 py-3">Data</th>
+                <th className="px-6 py-3 text-right">Ações</th>
+              </tr>
+            </thead>
 
-          <h1 className="text-white text-xl text-center mb-6">
-            Painel Admin
-          </h1>
+            <tbody>
+              {loading && (
+                <tr>
+                  <td colSpan={8} className="text-center py-10 text-gray-400">
+                    Carregando...
+                  </td>
+                </tr>
+              )}
 
-          <input
-            type="password"
-            placeholder="Senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 rounded bg-gray-800 text-white mb-4"
-          />
+              {!loading && cadastros.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="text-center py-10 text-gray-400">
+                    Nenhum cadastro encontrado
+                  </td>
+                </tr>
+              )}
 
-          {error && (
-            <div className="text-red-400 text-sm mb-3">{error}</div>
-          )}
+              {cadastros.map((c) => (
+                <tr
+                  key={c.id}
+                  className="border-b border-gray-100 hover:bg-gray-50 transition"
+                >
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-gray-800">
+                      {c.full_name}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      {c.email || ""}
+                    </div>
+                  </td>
 
-          <button className="w-full bg-white text-black p-3 rounded font-semibold">
-            Entrar
-          </button>
-        </form>
-      </div>
-    );
-  }
+                  <td className="px-4 py-4">
+                    <span className="px-2 py-1 rounded bg-gray-100 text-gray-700 text-xs">
+                      {c.registration_type?.toUpperCase()}
+                    </span>
+                  </td>
 
-  // ADMIN COM MENU
-  return (
-    <div className="min-h-screen bg-gray-100 text-black">
-      
-      {/* MENU SUPERIOR */}
-      <div className="border-b border-gray-200 bg-white px-6 py-4 flex justify-between items-center">
-        
-        <div className="flex gap-3">
+                  <td className="px-4 py-4 text-gray-700">
+                    {c.phone}
+                  </td>
 
-          <button
-            onClick={() => (window.location.href = "/admin-panel")}
-            className={`px-4 py-2 rounded-lg font-semibold transition ${
-              currentPage === "dashboard"
-                ? "bg-black text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            Produtos
-          </button>
+                  <td className="px-4 py-4">
+                    <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs">
+                      {c.internal_status}
+                    </span>
+                  </td>
 
-          <button
-            onClick={() =>
-              (window.location.href = "/admin-panel/cadastros")
-            }
-            className={`px-4 py-2 rounded-lg font-semibold transition ${
-              currentPage === "cadastros"
-                ? "bg-black text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            Cadastros
-          </button>
+                  <td className="px-4 py-4">
+                    <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs">
+                      {c.public_status}
+                    </span>
+                  </td>
 
+                  <td className="px-4 py-4">
+                    <span className="px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-xs">
+                      {c.risk_level}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-4 text-gray-500">
+                    {new Date(c.created_at).toLocaleDateString("pt-BR")}
+                  </td>
+
+                  <td className="px-6 py-4 text-right">
+                    <button className="px-4 py-2 bg-black text-white rounded-lg text-xs font-semibold hover:opacity-90">
+                      Editar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-
-        <button
-          onClick={handleLogout}
-          className="text-sm font-semibold text-gray-500 hover:text-black"
-        >
-          Sair
-        </button>
-      </div>
-
-      {/* CONTEÚDO */}
-      <div className="p-6">
-        {currentPage === "cadastros" ? (
-          <AdminCadastros onLogout={handleLogout} />
-        ) : (
-          <AdminDashboard onLogout={handleLogout} />
-        )}
       </div>
     </div>
   );
