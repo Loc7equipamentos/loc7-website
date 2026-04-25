@@ -15,7 +15,8 @@ export default function AdminProtected({ children }: Props) {
       const { data } = await supabase.auth.getSession();
 
       if (!data.session) {
-        setLocation(`/admin-login?redirect=${encodeURIComponent(location)}`);
+        const redirectUrl = encodeURIComponent(window.location.pathname);
+        window.location.href = `/admin-login?redirect=${redirectUrl}`;
         return;
       }
 
