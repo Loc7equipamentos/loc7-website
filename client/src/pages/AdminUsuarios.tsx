@@ -14,8 +14,29 @@ export default function AdminUsuarios() {
   const [users, setUsers] = useState<User[]>([
     {
       id: "1",
-      name: "Administrador",
-      email: "admin@loc7.com.br",
+      name: "João Silva",
+      email: "joao@loc7.com.br",
+      role: "Administrador",
+      active: true,
+    },
+    {
+      id: "2",
+      name: "Maria Santos",
+      email: "maria@loc7.com.br",
+      role: "Operador",
+      active: true,
+    },
+    {
+      id: "3",
+      name: "Pedro Gomes",
+      email: "pedro@loc7.com.br",
+      role: "Operador",
+      active: false,
+    },
+    {
+      id: "4",
+      name: "Ana Lima",
+      email: "ana@loc7.com.br",
       role: "Administrador",
       active: true,
     },
@@ -24,7 +45,7 @@ export default function AdminUsuarios() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    role: "Operador" as Role,
+    role: "Administrador" as Role,
   });
 
   function handleAddUser(e: React.FormEvent) {
@@ -43,133 +64,145 @@ export default function AdminUsuarios() {
     setForm({
       name: "",
       email: "",
-      role: "Operador",
+      role: "Administrador",
     });
   }
 
   function toggleActive(id: string) {
     setUsers((prev) =>
-      prev.map((u) =>
-        u.id === id ? { ...u, active: !u.active } : u
+      prev.map((user) =>
+        user.id === id ? { ...user, active: !user.active } : user
       )
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-6xl grid md:grid-cols-2 gap-6">
-
-        {/* CARD FORM */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">
+    <div className="min-h-screen bg-[#07111f] px-6 py-16 flex items-center justify-center">
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6">
+        <section className="bg-white rounded-2xl shadow-2xl p-6">
+          <h2 className="text-2xl font-extrabold text-black mb-5">
             Novo Usuário
           </h2>
 
           <form onSubmit={handleAddUser} className="space-y-4">
-            
             <div>
-              <label className="text-sm text-gray-600">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Nome completo
               </label>
               <input
                 type="text"
                 placeholder="Ex: João Silva"
-                className="w-full mt-1 border rounded-lg p-3"
                 value={form.name}
-                onChange={(e) =>
-                  setForm({ ...form, name: e.target.value })
-                }
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full h-11 rounded-md border border-gray-300 px-3 text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
                 required
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-600">
+              <label className="block text-sm font-semibold text-black mb-2">
                 E-mail corporativo
               </label>
               <input
                 type="email"
                 placeholder="ex: nome@loc7.com.br"
-                className="w-full mt-1 border rounded-lg p-3"
                 value={form.email}
-                onChange={(e) =>
-                  setForm({ ...form, email: e.target.value })
-                }
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full h-11 rounded-md border border-gray-300 px-3 text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
                 required
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-600">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Permissão de acesso
               </label>
               <select
-                className="w-full mt-1 border rounded-lg p-3"
                 value={form.role}
                 onChange={(e) =>
                   setForm({ ...form, role: e.target.value as Role })
                 }
+                className="w-full h-11 rounded-md border border-gray-300 px-3 text-black bg-white focus:outline-none focus:ring-2 focus:ring-black"
               >
-                <option>Administrador</option>
-                <option>Operador</option>
+                <option value="Administrador">Administrador</option>
+                <option value="Operador">Operador</option>
               </select>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:opacity-90"
+              className="w-full h-12 bg-black text-white rounded-md font-bold hover:scale-[1.01] hover:brightness-110 transition"
             >
               Criar Usuário
             </button>
           </form>
-        </div>
+        </section>
 
-        {/* CARD LISTA */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">
+        <section className="bg-white rounded-2xl shadow-2xl p-6">
+          <h2 className="text-2xl font-extrabold text-black mb-5">
             Usuários cadastrados
           </h2>
 
-          <div className="space-y-4">
-            {users.map((user) => (
-              <div
-                key={user.id}
-                className="border rounded-xl p-4 flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-medium">{user.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {user.email}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {user.role}
-                  </p>
-                </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-100 text-black text-sm">
+                  <th className="px-4 py-3 rounded-l-md font-bold">Nome</th>
+                  <th className="px-4 py-3 font-bold">E-mail</th>
+                  <th className="px-4 py-3 font-bold">Permissão</th>
+                  <th className="px-4 py-3 font-bold">Status</th>
+                  <th className="px-4 py-3 rounded-r-md font-bold">Ações</th>
+                </tr>
+              </thead>
 
-                <div className="flex items-center gap-4">
-                  
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full font-semibold ${
-                      user.active
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {user.active ? "Ativo" : "Inativo"}
-                  </span>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id} className="border-b border-gray-200">
+                    <td className="px-4 py-4">
+                      <p className="font-bold text-black">{user.name}</p>
+                      <p className="text-xs text-gray-500">
+                        Profissional interno
+                      </p>
+                    </td>
 
-                  <button
-                    onClick={() => toggleActive(user.id)}
-                    className="text-sm text-gray-600 hover:text-black"
-                  >
-                    {user.active ? "Desativar" : "Reativar"}
-                  </button>
-                </div>
-              </div>
-            ))}
+                    <td className="px-4 py-4 text-sm text-black">
+                      {user.email}
+                    </td>
+
+                    <td className="px-4 py-4 text-sm text-black">
+                      {user.role}
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <span
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${
+                          user.active
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {user.active ? "Ativo" : "Inativo"}
+                      </span>
+                    </td>
+
+                    <td className="px-4 py-4 text-sm">
+                      <button className="text-black underline mr-4">
+                        Editar
+                      </button>
+
+                      <button
+                        onClick={() => toggleActive(user.id)}
+                        className="text-black underline"
+                      >
+                        {user.active ? "Desativar" : "Reativar"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
-
+        </section>
       </div>
     </div>
   );
