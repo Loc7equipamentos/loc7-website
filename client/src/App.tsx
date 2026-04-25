@@ -10,6 +10,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import WhatsAppFloat from "./components/WhatsAppFloat";
@@ -42,26 +43,94 @@ function Layout({ children }: { children: React.ReactNode }) {
 function Router() {
   return (
     <Switch>
+      {/* ADMIN — rotas específicas antes das públicas */}
+      <Route path="/admin-panel/cadastros">
+        <AdminProtected />
+      </Route>
+
+      <Route path="/admin-panel">
+        <AdminProtected />
+      </Route>
+
       {/* SITE */}
-      <Route path="/" component={() => <Layout><Home /></Layout>} />
-      <Route path="/catalogo" component={() => <Layout><Catalogo /></Layout>} />
-      <Route path="/catalogo/:category" component={() => <Layout><Catalogo /></Layout>} />
-      <Route path="/equipamentos/:slug" component={() => <Layout><Produto /></Layout>} />
-      <Route path="/orcamento" component={() => <Layout><Orcamento /></Layout>} />
-      <Route path="/servicos" component={() => <Layout><Servicos /></Layout>} />
-      <Route path="/producao" component={() => <Layout><Servicos /></Layout>} />
-      <Route path="/blog" component={() => <Layout><Blog /></Layout>} />
-      <Route path="/portfolio" component={() => <Layout><Portfolio /></Layout>} />
-      <Route path="/sobre" component={() => <Layout><Sobre /></Layout>} />
-      <Route path="/contato" component={() => <Layout><Contato /></Layout>} />
-      <Route path="/cadastro" component={() => <Layout><Cadastro /></Layout>} />
-      <Route path="/status-cadastro" component={() => <Layout><RegistrationStatus /></Layout>} />
+      <Route path="/">
+        <Layout>
+          <Home />
+        </Layout>
+      </Route>
 
-      {/* ADMIN (ORDEM CORRETA) */}
-      <Route path="/admin-panel/cadastros" component={() => <AdminProtected />} />
-      <Route path="/admin-panel" component={() => <AdminProtected />} />
+      <Route path="/catalogo">
+        <Layout>
+          <Catalogo />
+        </Layout>
+      </Route>
 
-      {/* FALLBACK */}
+      <Route path="/catalogo/:category">
+        <Layout>
+          <Catalogo />
+        </Layout>
+      </Route>
+
+      <Route path="/equipamentos/:slug">
+        <Layout>
+          <Produto />
+        </Layout>
+      </Route>
+
+      <Route path="/orcamento">
+        <Layout>
+          <Orcamento />
+        </Layout>
+      </Route>
+
+      <Route path="/servicos">
+        <Layout>
+          <Servicos />
+        </Layout>
+      </Route>
+
+      <Route path="/producao">
+        <Layout>
+          <Servicos />
+        </Layout>
+      </Route>
+
+      <Route path="/blog">
+        <Layout>
+          <Blog />
+        </Layout>
+      </Route>
+
+      <Route path="/portfolio">
+        <Layout>
+          <Portfolio />
+        </Layout>
+      </Route>
+
+      <Route path="/sobre">
+        <Layout>
+          <Sobre />
+        </Layout>
+      </Route>
+
+      <Route path="/contato">
+        <Layout>
+          <Contato />
+        </Layout>
+      </Route>
+
+      <Route path="/cadastro">
+        <Layout>
+          <Cadastro />
+        </Layout>
+      </Route>
+
+      <Route path="/status-cadastro">
+        <Layout>
+          <RegistrationStatus />
+        </Layout>
+      </Route>
+
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
