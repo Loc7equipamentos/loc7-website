@@ -3,20 +3,26 @@ import { supabase } from "@/lib/supabase";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function AdminLogin() {
-  const params = new URLSearchParams(window.location.search);
-
-  const currentPath =
-    window.location.pathname.startsWith("/admin-panel")
-      ? window.location.pathname
-      : "/admin-panel";
-
-  const redirect = params.get("redirect") || currentPath;
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const getRedirectPath = () => {
+    const params = new URLSearchParams(window.location.search);
+    const redirectParam = params.get("redirect");
+
+    if (redirectParam) {
+      return redirectParam;
+    }
+
+    if (window.location.pathname.startsWith("/admin-panel")) {
+      return window.location.pathname;
+    }
+
+    return "/admin-panel";
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +41,7 @@ export default function AdminLogin() {
       return;
     }
 
-    window.location.href = redirect;
+    window.location.assign(getRedirectPath());
   };
 
   return (
