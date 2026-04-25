@@ -62,8 +62,6 @@ export default function AdminUsuarios() {
   return (
     <div className="min-h-screen bg-[#07111f] px-6 py-16 flex items-center justify-center">
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6">
-
-        {/* FORM */}
         <section className="bg-white rounded-2xl shadow-2xl p-6">
           <h2 className="text-2xl font-extrabold text-black mb-5">
             Novo Usuário
@@ -78,10 +76,8 @@ export default function AdminUsuarios() {
                 type="text"
                 placeholder="Ex: João Silva"
                 value={form.name}
-                onChange={(e) =>
-                  setForm({ ...form, name: e.target.value })
-                }
-                className="w-full h-11 rounded-md border border-gray-300 px-3"
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full h-11 rounded-md border border-gray-300 px-3 text-black bg-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
                 required
               />
             </div>
@@ -94,10 +90,8 @@ export default function AdminUsuarios() {
                 type="email"
                 placeholder="ex: nome@loc7.com.br"
                 value={form.email}
-                onChange={(e) =>
-                  setForm({ ...form, email: e.target.value })
-                }
-                className="w-full h-11 rounded-md border border-gray-300 px-3"
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full h-11 rounded-md border border-gray-300 px-3 text-black bg-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
                 required
               />
             </div>
@@ -114,58 +108,63 @@ export default function AdminUsuarios() {
                     role: e.target.value as AdminUserRole,
                   })
                 }
-                className="w-full h-11 rounded-md border border-gray-300 px-3"
+                className="w-full h-11 rounded-md border border-gray-300 px-3 text-black bg-white focus:outline-none focus:ring-2 focus:ring-black"
               >
                 <option value="Administrador">Administrador</option>
                 <option value="Operador">Operador</option>
               </select>
             </div>
 
-            <button className="w-full h-12 bg-black text-white rounded-md font-bold">
+            <button
+              type="submit"
+              className="w-full h-12 bg-black text-white rounded-md font-bold hover:scale-[1.01] hover:brightness-110 transition"
+            >
               Criar Usuário
             </button>
           </form>
         </section>
 
-        {/* LISTA */}
         <section className="bg-white rounded-2xl shadow-2xl p-6">
           <h2 className="text-2xl font-extrabold text-black mb-5">
             Usuários cadastrados
           </h2>
 
           {loading ? (
-            <p>Carregando...</p>
+            <p className="text-black">Carregando...</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-100 text-black text-sm">
-                    <th className="px-4 py-3">Nome</th>
-                    <th className="px-4 py-3">E-mail</th>
-                    <th className="px-4 py-3">Permissão</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Ações</th>
+                    <th className="px-4 py-3 rounded-l-md font-bold">Nome</th>
+                    <th className="px-4 py-3 font-bold">E-mail</th>
+                    <th className="px-4 py-3 font-bold">Permissão</th>
+                    <th className="px-4 py-3 font-bold">Status</th>
+                    <th className="px-4 py-3 rounded-r-md font-bold">Ações</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {users.map((user) => (
-                    <tr key={user.id} className="border-b">
+                    <tr key={user.id} className="border-b border-gray-200">
                       <td className="px-4 py-4">
-                        <p className="font-bold">{user.name}</p>
+                        <p className="font-bold text-black">{user.name}</p>
+                        <p className="text-xs text-gray-500">
+                          Profissional interno
+                        </p>
                       </td>
 
-                      <td className="px-4 py-4 text-sm">
+                      <td className="px-4 py-4 text-sm text-black">
                         {user.email}
                       </td>
 
-                      <td className="px-4 py-4 text-sm">
+                      <td className="px-4 py-4 text-sm text-black">
                         {user.role}
                       </td>
 
                       <td className="px-4 py-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${
                             user.active
                               ? "bg-green-100 text-green-700"
                               : "bg-red-100 text-red-700"
@@ -176,17 +175,15 @@ export default function AdminUsuarios() {
                       </td>
 
                       <td className="px-4 py-4 text-sm">
-                        <button className="underline mr-4">
+                        <button className="text-black underline mr-4">
                           Editar
                         </button>
 
                         <button
                           onClick={() => toggleActive(user)}
-                          className="underline"
+                          className="text-black underline"
                         >
-                          {user.active
-                            ? "Desativar"
-                            : "Reativar"}
+                          {user.active ? "Desativar" : "Reativar"}
                         </button>
                       </td>
                     </tr>
@@ -196,7 +193,6 @@ export default function AdminUsuarios() {
             </div>
           )}
         </section>
-
       </div>
     </div>
   );
