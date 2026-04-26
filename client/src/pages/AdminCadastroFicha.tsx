@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useRoute } from "wouter";
+import { useLocation, useRoute } from "wouter";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminCadastroFicha() {
-  // ✅ ROTA CORRIGIDA
   const [, params] = useRoute("/admin-panel/cadastro/:id");
+  const [, setLocation] = useLocation();
 
   const [data, setData] = useState<any>(null);
 
@@ -34,9 +34,15 @@ export default function AdminCadastroFicha() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white text-black">
+      <button
+        onClick={() => setLocation("/admin-panel/cadastros")}
+        className="mb-4 text-sm text-gray-600 hover:underline"
+      >
+        ← Voltar para lista
+      </button>
+
       <h1 className="text-2xl font-bold mb-6">Ficha de Cadastro</h1>
 
-      {/* DADOS PRINCIPAIS */}
       <div className="mb-6">
         <h2 className="font-semibold text-lg mb-2">Dados Principais</h2>
         <p><strong>Nome:</strong> {data.full_name}</p>
@@ -45,13 +51,11 @@ export default function AdminCadastroFicha() {
         <p><strong>Tipo:</strong> {data.registration_type}</p>
       </div>
 
-      {/* DOCUMENTO */}
       <div className="mb-6">
         <h2 className="font-semibold text-lg mb-2">Documento</h2>
         <p><strong>CPF/CNPJ:</strong> {f.cpf || f.cnpj}</p>
       </div>
 
-      {/* ENDEREÇO */}
       <div className="mb-6">
         <h2 className="font-semibold text-lg mb-2">Endereço</h2>
         <p>{f.endereco}</p>
@@ -59,20 +63,22 @@ export default function AdminCadastroFicha() {
         <p>CEP: {f.cep}</p>
       </div>
 
-      {/* REFERÊNCIAS */}
       <div className="mb-6">
         <h2 className="font-semibold text-lg mb-2">Referências</h2>
 
-        {f.referencias?.map((ref: any, i: number) => (
-          <div key={i} className="mb-2">
-            <p><strong>Empresa:</strong> {ref.empresa}</p>
-            <p><strong>Contato:</strong> {ref.nome}</p>
-            <p><strong>Telefone:</strong> {ref.telefone}</p>
-          </div>
-        ))}
+        {f.referencias?.length ? (
+          f.referencias.map((ref: any, i: number) => (
+            <div key={i} className="mb-2">
+              <p><strong>Empresa:</strong> {ref.empresa}</p>
+              <p><strong>Contato:</strong> {ref.nome}</p>
+              <p><strong>Telefone:</strong> {ref.telefone}</p>
+            </div>
+          ))
+        ) : (
+          <p>Sem referências cadastradas.</p>
+        )}
       </div>
 
-      {/* BOTÃO PDF */}
       <button
         onClick={() => window.print()}
         className="bg-black text-white px-4 py-2 rounded"
