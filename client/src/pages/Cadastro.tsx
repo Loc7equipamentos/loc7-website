@@ -213,58 +213,69 @@ export default function CadastroPage() {
   const sectionClass =
     "rounded-2xl border border-black/10 bg-white p-6 shadow-sm";
 
-  if (success) {
-    return (
-     <main className="min-h-screen bg-[#d6d7da] px-4 py-16 text-zinc-900">
-  <div className="mx-auto max-w-2xl">
-    <div className="rounded-2xl border border-black/10 bg-white p-10 text-center shadow-sm">
+ if (success) {
+  return (
+    <main className="relative min-h-screen overflow-hidden bg-zinc-950 px-4 py-16 text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.10),rgba(24,24,27,0.45)_35%,rgba(0,0,0,0.96)_78%)]" />
 
-      {/* Status topo */}
-      <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-emerald-600">
-        ✔ Cadastro recebido
-      </p>
+      <div className="relative mx-auto flex min-h-[calc(100vh-8rem)] max-w-5xl items-center justify-center">
+        <div className="grid w-full items-center gap-10 md:grid-cols-[0.9fr_1.1fr]">
+          <div className="hidden justify-center md:flex">
+            <div className="flex h-56 w-56 items-center justify-center rounded-full border border-white/15 bg-white/5 shadow-[0_0_80px_rgba(255,255,255,0.18)] backdrop-blur">
+              <span className="text-8xl font-light text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.55)]">
+                ✓
+              </span>
+            </div>
+          </div>
 
-      {/* Headline */}
-      <h1 className="mb-4 text-3xl font-semibold text-zinc-950">
-        Cadastro concluído com sucesso.
-      </h1>
+          <div className="rounded-3xl border border-white/10 bg-white p-10 text-center text-zinc-950 shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:p-12">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700">
+              Cadastro recebido
+            </p>
 
-      {/* Subtexto */}
-      <p className="mb-6 text-zinc-600">
-        Seu cadastro foi enviado para análise da equipe Loc7.
-      </p>
+            <h1 className="mb-4 text-3xl font-semibold leading-tight md:text-5xl">
+              Cadastro concluído com sucesso.
+            </h1>
 
-      {/* Status atual */}
-      <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-orange-100 px-4 py-1 text-sm font-medium text-orange-700">
-        Status: Em validação
+            <p className="mx-auto mb-6 max-w-xl text-base leading-relaxed text-zinc-600 md:text-lg">
+              Seu cadastro foi enviado para análise da equipe Loc7.
+            </p>
+
+            <div className="mb-8 inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700">
+              Status: Em validação
+            </div>
+
+            <div className="mx-auto mb-10 max-w-xl space-y-4 text-sm leading-relaxed text-zinc-600 md:text-base">
+              <p>
+                Nossa equipe irá validar seus dados para dar sequência ao processo de locação.
+              </p>
+              <p>
+                Você receberá uma atualização por WhatsApp e/ou e-mail.
+              </p>
+              <p>
+                Fique atento aos canais informados no cadastro.
+              </p>
+              <p className="text-zinc-500">
+                Caso necessário, entraremos em contato diretamente com você.
+              </p>
+            </div>
+
+            <Link
+              href="/"
+              className="inline-flex rounded-xl bg-zinc-950 px-7 py-3 font-semibold text-white transition hover:scale-[1.02] hover:bg-black"
+            >
+              Voltar ao site
+            </Link>
+
+            <p className="mt-5 text-xs text-zinc-500">
+              Dúvidas? Aguarde nosso contato ou acompanhe pelos canais informados.
+            </p>
+          </div>
+        </div>
       </div>
-
-      {/* Próximo passo */}
-      <p className="mb-8 text-zinc-600">
-        Nossa equipe irá validar seus dados e liberar seu acesso para locação.
-        <br />
-        <br />
-        Você receberá uma atualização por WhatsApp e/ou e-mail.
-      </p>
-
-      {/* CTA */}
-      <Link
-        href="/"
-        className="inline-flex rounded-xl bg-zinc-950 px-6 py-3 font-semibold text-white transition hover:bg-black"
-      >
-        Voltar ao site
-      </Link>
-
-      {/* CTA secundário */}
-      <p className="mt-4 text-xs text-zinc-500">
-        Dúvidas? Aguarde nosso contato ou acompanhe pelos canais informados.
-      </p>
-
-    </div>
-  </div>
-</main>
-    );
-  }
+    </main>
+  );
+}
 
   return (
     <main className="min-h-screen bg-[#d6d7da] px-4 py-10 text-zinc-900">
