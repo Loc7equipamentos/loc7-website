@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [registrations, setRegistrations] = useState<any[]>([]);
+  const [selectedRegistration, setSelectedRegistration] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'registrations'>('products');
@@ -994,7 +995,11 @@ export default function AdminDashboard() {
                       const data = item.form_data || {};
 
                       return (
-                        <tr key={item.id} className="hover:bg-gray-50">
+                       <tr
+  key={item.id}
+  onClick={() => setSelectedRegistration(item)}
+  className="cursor-pointer hover:bg-gray-50"
+>
                           <td className="px-4 py-3 text-gray-900 font-medium">
                             {item.full_name || data.nomeCompleto || data.razaoSocial || '-'}
                           </td>
@@ -1024,7 +1029,34 @@ export default function AdminDashboard() {
         )}
 
       </div>
+</div>
 
+{/* MODAL CADASTRO */}
+{selectedRegistration && (
+  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto">
+      <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Detalhes do Cadastro
+        </h2>
+        <button
+          onClick={() => setSelectedRegistration(null)}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          Fechar
+        </button>
+      </div>
+
+      <div className="p-6">
+        <pre className="text-xs bg-gray-100 p-4 rounded overflow-auto">
+          {JSON.stringify(selectedRegistration.form_data, null, 2)}
+        </pre>
+      </div>
+    </div>
+  </div>
+)}
+
+{showEditModal && editingProduct && (
       {showEditModal && editingProduct && (
         <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded max-w-2xl w-full max-h-[90vh] overflow-y-auto">
