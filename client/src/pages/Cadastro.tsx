@@ -213,63 +213,53 @@ export default function CadastroPage() {
   const sectionClass =
     "rounded-2xl border border-black/10 bg-white p-6 shadow-sm";
 
- if (success) {
+if (success) {
   return (
-    <main className="min-h-screen bg-zinc-900 flex items-center justify-center px-4">
-      <div className="w-full max-w-lg text-center">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#111214] px-4 py-16 text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_42%)]" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-        {/* CHECK + HEADER */}
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <span className="text-emerald-500 text-xl">✔</span>
-          <span className="text-xs uppercase tracking-[0.25em] text-emerald-600 font-medium">
-            Cadastro recebido
-          </span>
+      <div className="relative w-full max-w-xl animate-[fadeIn_0.7s_ease-out] text-center">
+        <div className="mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10 shadow-[0_0_45px_rgba(16,185,129,0.25)]">
+          <span className="text-3xl text-emerald-400">✓</span>
         </div>
 
-        {/* TÍTULO */}
-        <h1 className="text-3xl md:text-4xl font-semibold text-white leading-tight mb-4">
+        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.32em] text-emerald-400">
+          Cadastro recebido
+        </p>
+
+        <h1 className="mb-5 text-4xl font-semibold leading-tight tracking-[-0.03em] text-white md:text-5xl">
           Cadastro concluído com sucesso.
         </h1>
 
-        {/* SUB */}
-        <p className="text-zinc-400 text-base md:text-lg leading-relaxed mb-6">
+        <p className="mx-auto mb-7 max-w-md text-base leading-relaxed text-zinc-400 md:text-lg">
           Seu cadastro foi enviado para análise da equipe Loc7.
         </p>
 
-        {/* STATUS */}
-        <div className="mb-10 inline-flex items-center rounded-full bg-orange-500/10 px-4 py-2 text-sm font-medium text-orange-400 border border-orange-500/20">
+        <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-orange-400/20 bg-orange-400/10 px-4 py-2 text-sm font-medium text-orange-300">
+          <span className="h-2 w-2 rounded-full bg-orange-300 shadow-[0_0_12px_rgba(251,191,36,0.7)]" />
           Status: Em validação
         </div>
 
-        {/* TEXTO FLUIDO (SEM BULLET) */}
-        <div className="space-y-4 text-zinc-400 text-sm md:text-base leading-relaxed max-w-md mx-auto mb-10">
-          <p>
-            Nossa equipe irá validar seus dados para dar sequência ao processo de locação.
-          </p>
-          <p>
-            Você receberá uma atualização por WhatsApp e/ou e-mail.
-          </p>
-          <p>
-            Fique atento aos canais informados no cadastro.
-          </p>
+        <div className="mx-auto mb-10 max-w-md space-y-4 text-sm leading-relaxed text-zinc-400 md:text-base">
+          <p>Nossa equipe irá validar seus dados para dar sequência ao processo de locação.</p>
+          <p>Você receberá uma atualização por WhatsApp e/ou e-mail.</p>
+          <p>Fique atento aos canais informados no cadastro.</p>
           <p className="text-zinc-500">
             Caso necessário, entraremos em contato diretamente com você.
           </p>
         </div>
 
-        {/* CTA */}
         <Link
           href="/"
-          className="inline-flex items-center justify-center rounded-full bg-white text-zinc-900 px-6 py-3 text-sm font-semibold transition hover:bg-zinc-200 active:scale-[0.98]"
+          className="inline-flex rounded-full bg-white px-7 py-3 text-sm font-semibold text-zinc-950 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:scale-[1.02] hover:bg-zinc-200 active:scale-[0.98]"
         >
           Voltar ao site
         </Link>
 
-        {/* FOOT */}
-        <p className="mt-6 text-xs text-zinc-600">
-          Em caso de dúvidas, nossa equipe entrará em contato em breve.
+        <p className="mt-7 text-xs text-zinc-600">
+          Loc7 Equipamentos — processo seguro para locação profissional.
         </p>
-
       </div>
     </main>
   );
