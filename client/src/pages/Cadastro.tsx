@@ -215,38 +215,54 @@ export default function CadastroPage() {
 
   if (success) {
     return (
-      <main className="min-h-screen bg-[#d6d7da] px-4 py-16 text-zinc-900">
-        <div className="mx-auto max-w-3xl">
-          <div className="rounded-2xl border border-black/10 bg-white p-8 text-center shadow-sm">
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-emerald-700">
-              Cadastro Loc7
-            </p>
+     <main className="min-h-screen bg-[#d6d7da] px-4 py-16 text-zinc-900">
+  <div className="mx-auto max-w-2xl">
+    <div className="rounded-2xl border border-black/10 bg-white p-10 text-center shadow-sm">
 
-            <h1 className="mb-3 text-3xl font-semibold text-zinc-950">
-              Cadastro recebido.
-            </h1>
+      {/* Status topo */}
+      <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-emerald-600">
+        ✔ Cadastro recebido
+      </p>
 
-            <p className="mb-6 text-zinc-600">
-             Seu cadastro foi enviado para análise da equipe Loc7.
-              <br />
-              <br />
+      {/* Headline */}
+      <h1 className="mb-4 text-3xl font-semibold text-zinc-950">
+        Cadastro concluído com sucesso.
+      </h1>
 
-Você receberá uma atualização por WhatsApp e/ou e-mail com o status da validação.
-              <br />
-              <br />
+      {/* Subtexto */}
+      <p className="mb-6 text-zinc-600">
+        Seu cadastro foi enviado para análise da equipe Loc7.
+      </p>
 
-Fique atento aos canais informados no cadastro.
-               <br />
-              <br />
-              Caso necessário, nossa equipe entrará em contato diretamente com você.
-            </p>
+      {/* Status atual */}
+      <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-orange-100 px-4 py-1 text-sm font-medium text-orange-700">
+        Status: Em validação
+      </div>
 
-           <Link href="/" className="inline-flex rounded-xl bg-zinc-950 px-5 py-3 font-semibold text-white transition hover:bg-black">
-  Voltar ao site
-</Link>
-          </div>
-        </div>
-      </main>
+      {/* Próximo passo */}
+      <p className="mb-8 text-zinc-600">
+        Nossa equipe irá validar seus dados e liberar seu acesso para locação.
+        <br />
+        <br />
+        Você receberá uma atualização por WhatsApp e/ou e-mail.
+      </p>
+
+      {/* CTA */}
+      <Link
+        href="/"
+        className="inline-flex rounded-xl bg-zinc-950 px-6 py-3 font-semibold text-white transition hover:bg-black"
+      >
+        Voltar ao site
+      </Link>
+
+      {/* CTA secundário */}
+      <p className="mt-4 text-xs text-zinc-500">
+        Dúvidas? Aguarde nosso contato ou acompanhe pelos canais informados.
+      </p>
+
+    </div>
+  </div>
+</main>
     );
   }
 
