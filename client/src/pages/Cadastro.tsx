@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "wouter";
 import { supabase } from "@/lib/supabase";
 
 type TipoCadastro = "pf" | "pj";
@@ -229,12 +230,9 @@ export default function CadastroPage() {
               Nossa equipe fará a validação e retornará em breve.
             </p>
 
-            <a
-              href="/"
-              className="inline-flex rounded-xl bg-zinc-950 px-5 py-3 font-semibold text-white transition hover:bg-black"
-            >
-              Voltar ao site
-            </a>
+           <Link href="/" className="inline-flex rounded-xl bg-zinc-950 px-5 py-3 font-semibold text-white transition hover:bg-black">
+  Voltar ao site
+</Link>
           </div>
         </div>
       </main>
