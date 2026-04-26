@@ -215,62 +215,66 @@ export default function CadastroPage() {
 
  if (success) {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-zinc-950 px-4 py-16 text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.10),rgba(24,24,27,0.45)_35%,rgba(0,0,0,0.96)_78%)]" />
+    <main className="min-h-screen bg-zinc-900 px-4 py-16 flex items-center justify-center">
+      <div className="w-full max-w-xl">
+        <div className="rounded-3xl bg-white p-10 md:p-12 text-center shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
 
-      <div className="relative mx-auto flex min-h-[calc(100vh-8rem)] max-w-5xl items-center justify-center">
-        <div className="grid w-full items-center gap-10 md:grid-cols-[0.9fr_1.1fr]">
-          <div className="hidden justify-center md:flex">
-            <div className="flex h-56 w-56 items-center justify-center rounded-full border border-white/15 bg-white/5 shadow-[0_0_80px_rgba(255,255,255,0.18)] backdrop-blur">
-              <span className="text-8xl font-light text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.55)]">
-                ✓
-              </span>
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-white/10 bg-white p-10 text-center text-zinc-950 shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:p-12">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700">
+          {/* HEADER COM CHECK + TEXTO */}
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <span className="text-2xl text-emerald-600 font-bold">✔</span>
+            <p className="text-sm font-semibold tracking-[0.2em] uppercase text-emerald-700">
               Cadastro recebido
             </p>
-
-            <h1 className="mb-4 text-3xl font-semibold leading-tight md:text-5xl">
-              Cadastro concluído com sucesso.
-            </h1>
-
-            <p className="mx-auto mb-6 max-w-xl text-base leading-relaxed text-zinc-600 md:text-lg">
-              Seu cadastro foi enviado para análise da equipe Loc7.
-            </p>
-
-            <div className="mb-8 inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700">
-              Status: Em validação
-            </div>
-
-            <div className="mx-auto mb-10 max-w-xl space-y-4 text-sm leading-relaxed text-zinc-600 md:text-base">
-              <p>
-                Nossa equipe irá validar seus dados para dar sequência ao processo de locação.
-              </p>
-              <p>
-                Você receberá uma atualização por WhatsApp e/ou e-mail.
-              </p>
-              <p>
-                Fique atento aos canais informados no cadastro.
-              </p>
-              <p className="text-zinc-500">
-                Caso necessário, entraremos em contato diretamente com você.
-              </p>
-            </div>
-
-            <Link
-              href="/"
-              className="inline-flex rounded-xl bg-zinc-950 px-7 py-3 font-semibold text-white transition hover:scale-[1.02] hover:bg-black"
-            >
-              Voltar ao site
-            </Link>
-
-            <p className="mt-5 text-xs text-zinc-500">
-              Dúvidas? Aguarde nosso contato ou acompanhe pelos canais informados.
-            </p>
           </div>
+
+          {/* TÍTULO */}
+          <h1 className="text-3xl md:text-4xl font-semibold text-zinc-950 mb-4 leading-tight">
+            Cadastro concluído com sucesso.
+          </h1>
+
+          {/* SUB */}
+          <p className="text-zinc-600 mb-6">
+            Seu cadastro foi enviado para análise da equipe Loc7.
+          </p>
+
+          {/* STATUS */}
+          <div className="mb-8 inline-flex rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700">
+            Status: Em validação
+          </div>
+
+          {/* LISTA ORGANIZADA */}
+          <ul className="text-left text-zinc-600 space-y-3 mb-10 text-sm md:text-base max-w-md mx-auto">
+            <li className="flex gap-2">
+              <span>•</span>
+              <span>Nossa equipe irá validar seus dados para dar sequência ao processo de locação.</span>
+            </li>
+            <li className="flex gap-2">
+              <span>•</span>
+              <span>Você receberá uma atualização por WhatsApp e/ou e-mail.</span>
+            </li>
+            <li className="flex gap-2">
+              <span>•</span>
+              <span>Fique atento aos canais informados no cadastro.</span>
+            </li>
+            <li className="flex gap-2 text-zinc-500">
+              <span>•</span>
+              <span>Caso necessário, entraremos em contato diretamente com você.</span>
+            </li>
+          </ul>
+
+          {/* CTA */}
+          <Link
+            href="/"
+            className="inline-flex rounded-xl bg-zinc-950 px-8 py-3 font-semibold text-white transition hover:scale-[1.03] hover:bg-black"
+          >
+            Voltar ao site
+          </Link>
+
+          {/* FOOT MELHORADO */}
+          <p className="mt-6 text-sm text-zinc-500">
+            Em caso de dúvidas, nossa equipe entrará em contato em breve.
+          </p>
+
         </div>
       </div>
     </main>
