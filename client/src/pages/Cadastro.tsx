@@ -223,11 +223,22 @@ export default function CadastroPage() {
             </p>
 
             <h1 className="mb-3 text-3xl font-semibold text-zinc-950">
-              Cadastro concluído. Seguimos com você.
+              Cadastro recebido.
             </h1>
 
             <p className="mb-6 text-zinc-600">
-              Nossa equipe fará a validação e retornará em breve.
+             Seu cadastro foi enviado para análise da equipe Loc7.
+              <br />
+              <br />
+
+Você receberá uma atualização por WhatsApp e/ou e-mail com o status da validação.
+              <br />
+              <br />
+
+Fique atento aos canais informados no cadastro.
+               <br />
+              <br />
+              Caso necessário, nossa equipe entrará em contato diretamente com você.
             </p>
 
            <Link href="/" className="inline-flex rounded-xl bg-zinc-950 px-5 py-3 font-semibold text-white transition hover:bg-black">
