@@ -14,9 +14,10 @@ type ProductWithImages = Product & {
 export default function AdminDashboard() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [registrations, setRegistrations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'products' | 'categories'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'registrations'>('products');
 
   const [editingProduct, setEditingProduct] = useState<ProductWithImages | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -49,6 +50,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     loadProducts();
     loadCategories();
+    loadRegistrations();
   }, []);
 
   useEffect(() => {
@@ -220,6 +222,21 @@ export default function AdminDashboard() {
       setCategories(data || []);
     } catch (err) {
       console.error('Erro ao carregar categorias:', err);
+    }
+  };
+
+  const loadRegistrations = async () => {
+    try {
+      const { data, error: err } = await supabase
+        .from('rental_registrations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (err) throw err;
+
+      setRegistrations(data || []);
+    } catch (err) {
+      console.error('Erro ao carregar cadastros:', err);
     }
   };
 
@@ -536,6 +553,16 @@ export default function AdminDashboard() {
             }`}
           >
             Categorias
+          </button>
+          <button
+            onClick={() => setActiveTab('registrations')}
+            className={`pb-3 px-1 font-medium text-sm ${
+              activeTab === 'registrations'
+                ? 'text-gray-900 border-b-2 border-gray-900'
+                : 'text-gray-500'
+            }`}
+          >
+            Cadastros
           </button>
         </div>
 
