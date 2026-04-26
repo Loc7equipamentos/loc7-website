@@ -92,6 +92,7 @@ export default function AdminCadastroFicha() {
 
               <div className="no-print grid gap-3 md:min-w-[430px]">
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+
                   <SelectField
                     label="Status interno"
                     value={data.status_internal || ""}
@@ -126,6 +127,7 @@ export default function AdminCadastroFicha() {
                     onChange={(value) => updateField("risk", value)}
                     options={["Baixo", "Médio", "Alto", "Restrito"]}
                   />
+
                 </div>
 
                 <div className="flex flex-wrap justify-end gap-2">
@@ -228,7 +230,7 @@ export default function AdminCadastroFicha() {
                 }))
               }
               onBlur={(e) => updateField("internal_notes", e.target.value)}
-              placeholder="Adicione observações internas sobre análise, contato, documentação ou restrições..."
+              placeholder="Adicione observações internas..."
             />
 
             <div className="hidden print:block rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-900">
@@ -255,8 +257,8 @@ export default function AdminCadastroFicha() {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="mb-6 rounded-xl border border-gray-200 bg-[#fafafa] p-5 shadow-sm print:bg-white print:shadow-none">
-      <h2 className="mb-4 border-l-4 border-[#b91c1c] pl-3 text-lg font-black uppercase tracking-tight text-gray-950">
+    <section className="mb-6 rounded-xl border border-gray-200 bg-[#fafafa] p-5 shadow-sm">
+      <h2 className="mb-4 border-l-4 border-[#b91c1c] pl-3 text-lg font-black uppercase text-gray-950">
         {title}
       </h2>
       {children}
@@ -264,20 +266,10 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function Field({
-  label,
-  value,
-  className = "",
-}: {
-  label: string;
-  value?: any;
-  className?: string;
-}) {
+function Field({ label, value, className = "" }: any) {
   return (
-    <div className={`rounded-lg border border-gray-200 bg-white p-4 shadow-sm ${className}`}>
-      <div className="mb-1 text-[11px] font-black uppercase tracking-wide text-gray-600">
-        {label}
-      </div>
+    <div className={`rounded-lg border border-gray-200 bg-white p-4 ${className}`}>
+      <div className="text-xs font-black uppercase text-gray-600">{label}</div>
       <div className="text-base font-semibold text-gray-950">
         {value || "—"}
       </div>
@@ -285,50 +277,33 @@ function Field({
   );
 }
 
-function SelectField({
-  label,
-  value,
-  options,
-  onChange,
-  tone,
-}: {
-  label: string;
-  value: string;
-  options: string[];
-  onChange: (value: string) => void;
-  tone: string;
-}) {
+function SelectField({ label, value, options, onChange, tone }: any) {
   return (
-    <label className="block">
-      <span className="mb-1 block text-[11px] font-black uppercase tracking-wide text-gray-600">
-        {label}
-      </span>
-
+    <label>
+      <span className="text-xs font-black uppercase text-gray-600">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full rounded-md border px-3 py-2 text-xs font-bold outline-none ${tone}`}
+        className={`w-full mt-1 rounded-md border px-3 py-2 text-xs font-bold ${tone}`}
       >
         <option value="">—</option>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
+        {options.map((o: string) => (
+          <option key={o}>{o}</option>
         ))}
       </select>
     </label>
   );
 }
 
-function Pill({ label, value, tone }: { label: string; value?: string; tone: string }) {
+function Pill({ label, value, tone }: any) {
   return (
-    <div className={`rounded-full border px-3 py-1 text-[11px] font-black uppercase ${tone}`}>
-      <span className="opacity-70">{label}: </span>
-      {value || "—"}
+    <div className={`px-3 py-1 text-xs font-bold rounded-full border ${tone}`}>
+      {label}: {value || "—"}
     </div>
   );
 }
 
+/* 🔥 CORRIGIDO COM LARANJA */
 function getStatusTone(value?: string) {
   const v = normalize(value);
 
@@ -336,7 +311,11 @@ function getStatusTone(value?: string) {
     return "border-green-300 bg-green-50 text-green-800";
   }
 
-  if (v.includes("analise") || v.includes("pendente")) {
+  if (v.includes("pendente documentacao")) {
+    return "border-orange-300 bg-orange-50 text-orange-800";
+  }
+
+  if (v.includes("analise")) {
     return "border-yellow-300 bg-yellow-50 text-yellow-800";
   }
 
@@ -344,7 +323,7 @@ function getStatusTone(value?: string) {
     return "border-red-300 bg-red-50 text-red-800";
   }
 
-  if (v.includes("recebido")) {
+  if (v.includes("recebido") || v.includes("pendente")) {
     return "border-gray-300 bg-gray-50 text-gray-800";
   }
 
