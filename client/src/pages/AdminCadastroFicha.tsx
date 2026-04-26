@@ -3,7 +3,9 @@ import { useRoute } from "wouter";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminCadastroFicha() {
-  const [, params] = useRoute("/admin-cadastro/:id");
+  // ✅ ROTA CORRIGIDA
+  const [, params] = useRoute("/admin-panel/cadastro/:id");
+
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
