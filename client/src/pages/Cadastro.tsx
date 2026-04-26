@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
 
-type TipoCadastro = "pf" | "pj"
+type TipoCadastro = "pf" | "pj";
 
 function formatCPF(value: string) {
   return value
@@ -8,7 +9,7 @@ function formatCPF(value: string) {
     .slice(0, 11)
     .replace(/(\d{3})(\d)/, "$1.$2")
     .replace(/(\d{3})(\d)/, "$1.$2")
-    .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+    .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 }
 
 function formatCNPJ(value: string) {
@@ -18,7 +19,7 @@ function formatCNPJ(value: string) {
     .replace(/^(\d{2})(\d)/, "$1.$2")
     .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
     .replace(/\.(\d{3})(\d)/, ".$1/$2")
-    .replace(/(\d{4})(\d)/, "$1-$2")
+    .replace(/(\d{4})(\d)/, "$1-$2");
 }
 
 function formatRG(value: string) {
@@ -27,139 +28,200 @@ function formatRG(value: string) {
     .slice(0, 9)
     .replace(/(\d{2})(\d)/, "$1.$2")
     .replace(/(\d{3})(\d)/, "$1.$2")
-    .replace(/(\d{3})(\d{1})$/, "$1-$2")
+    .replace(/(\d{3})(\d{1})$/, "$1-$2");
 }
 
 function formatPhone(value: string) {
-  const digits = value.replace(/\D/g, "").slice(0, 11)
+  const digits = value.replace(/\D/g, "").slice(0, 11);
 
   if (digits.length <= 10) {
     return digits
       .replace(/^(\d{2})(\d)/, "($1) $2")
-      .replace(/(\d{4})(\d)/, "$1-$2")
+      .replace(/(\d{4})(\d)/, "$1-$2");
   }
 
   return digits
     .replace(/^(\d{2})(\d)/, "($1) $2")
-    .replace(/(\d{5})(\d)/, "$1-$2")
+    .replace(/(\d{5})(\d)/, "$1-$2");
 }
 
 function formatCEP(value: string) {
   return value
     .replace(/\D/g, "")
     .slice(0, 8)
-    .replace(/(\d{5})(\d)/, "$1-$2")
+    .replace(/(\d{5})(\d)/, "$1-$2");
+}
+
+function getFormValue(formData: FormData, key: string) {
+  const value = formData.get(key);
+  return typeof value === "string" ? value.trim() : "";
 }
 
 export default function CadastroPage() {
-  const [tipo, setTipo] = useState<TipoCadastro>("pf")
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState("")
-  const [telefone, setTelefone] = useState("")
-  const [cpf, setCpf] = useState("")
-  const [cnpj, setCnpj] = useState("")
-  const [rg, setRg] = useState("")
-  const [cep, setCep] = useState("")
-  const [endereco, setEndereco] = useState("")
-  const [bairro, setBairro] = useState("")
-  const [cidade, setCidade] = useState("")
-  const [uf, setUf] = useState("")
+  const [tipo, setTipo] = useState<TipoCadastro>("pf");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const [telefone, setTelefone] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [cnpj, setCnpj] = useState("");
+  const [rg, setRg] = useState("");
+  const [cep, setCep] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [uf, setUf] = useState("");
 
   async function buscarCep(value: string) {
-    const clean = value.replace(/\D/g, "")
-    if (clean.length !== 8) return
+    const clean = value.replace(/\D/g, "");
+    if (clean.length !== 8) return;
 
     try {
-      const response = await fetch(`https://viacep.com.br/ws/${clean}/json/`)
-      const data = await response.json()
+      const response = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+      const data = await response.json();
 
       if (!data.erro) {
-        setEndereco(data.logradouro || "")
-        setBairro(data.bairro || "")
-        setCidade(data.localidade || "")
-        setUf(data.uf || "")
+        setEndereco(data.logradouro || "");
+        setBairro(data.bairro || "");
+        setCidade(data.localidade || "");
+        setUf(data.uf || "");
       }
     } catch (err) {
-      console.error("Erro ao buscar CEP:", err)
+      console.error("Erro ao buscar CEP:", err);
     }
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
+    e.preventDefault();
 
-    const form = e.currentTarget
-    const formData = new FormData(form)
+    setLoading(true);
+    setError("");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const email = getFormValue(formData, "email");
+    const phone = getFormValue(formData, "telefone");
+
+    const fullName =
+      tipo === "pf"
+        ? getFormValue(formData, "nomeCompleto")
+        : getFormValue(formData, "razaoSocial");
+
+    if (!fullName) {
+      setError("Preencha o nome completo ou razão social.");
+      setLoading(false);
+      return;
+    }
+
+    if (!email) {
+      setError("Preencha o e-mail.");
+      setLoading(false);
+      return;
+    }
+
+    if (!phone) {
+      setError("Preencha o telefone.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      const response = await fetch("https://formspree.io/f/mreojwrr", {
-        method: "POST",
-        body: formData,
-      })
+      const payload = {
+        full_name: fullName,
+        email,
+        phone,
+        registration_type: tipo,
+        status_internal: "Novo cadastro",
+        status_public: "Cadastro recebido",
+        risk: "Não avaliado",
+      };
 
-      const rawText = await response.text()
-      console.log("FORM RESPONSE STATUS:", response.status)
-      console.log("FORM RESPONSE BODY:", rawText)
+      const { error: insertError } = await supabase
+        .from("rental_registrations")
+        .insert([payload]);
 
-      if (!response.ok) {
-        setError(`Erro ao enviar. Status: ${response.status}. Veja o console.`)
-        return
+      if (insertError) {
+        console.error("Erro Supabase:", insertError);
+        setError(`Erro ao salvar cadastro: ${insertError.message}`);
+        setLoading(false);
+        return;
       }
 
-      setSuccess(true)
-      form.reset()
+      setSuccess(true);
+      form.reset();
+
+      setTelefone("");
+      setCpf("");
+      setCnpj("");
+      setRg("");
+      setCep("");
+      setEndereco("");
+      setBairro("");
+      setCidade("");
+      setUf("");
+      setTipo("pf");
     } catch (err) {
-      console.error("ERRO DE REDE:", err)
-      setError("Erro de conexão ao enviar o formulário.")
+      console.error("Erro inesperado:", err);
+      setError("Erro inesperado ao enviar o cadastro.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   if (success) {
     return (
-      <main className="min-h-screen bg-black text-white pt-32 pb-16">
-        <div className="max-w-4xl mx-auto px-4">
+      <main className="min-h-screen bg-black pt-32 pb-16 text-white">
+        <div className="mx-auto max-w-4xl px-4">
           <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-            <h1 className="text-3xl font-bold mb-3">Cadastro enviado com sucesso</h1>
-            <p className="text-zinc-300 mb-6">
-              Recebemos suas informações. Nossa equipe fará a validação para seguir com a locação.
+            <h1 className="mb-3 text-3xl font-bold">
+              Cadastro enviado com sucesso
+            </h1>
+
+            <p className="mb-6 text-zinc-300">
+              Recebemos suas informações. Nossa equipe fará a validação para
+              seguir com a locação.
             </p>
+
             <a
               href="/"
-              className="inline-flex rounded-xl bg-red-600 px-5 py-3 font-semibold hover:bg-red-700 transition"
+              className="inline-flex rounded-xl bg-red-600 px-5 py-3 font-semibold transition hover:bg-red-700"
             >
               Voltar ao site
             </a>
           </div>
         </div>
       </main>
-    )
+    );
   }
 
   return (
-    <main className="min-h-screen bg-black text-white pt-32 pb-16">
-      <div className="max-w-5xl mx-auto px-4">
+    <main className="min-h-screen bg-black pt-32 pb-16 text-white">
+      <div className="mx-auto max-w-5xl px-4">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Cadastro para locação</h1>
+          <h1 className="mb-2 text-4xl font-bold">Cadastro para locação</h1>
+
           <p className="text-zinc-300">
-            Este cadastro é necessário para liberação de equipamentos. Após o envio, nossa equipe fará a validação.
+            Este cadastro é necessário para liberação de equipamentos. Após o
+            envio, nossa equipe fará a validação.
           </p>
         </div>
 
         <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/5 p-4">
           <p className="text-sm text-zinc-200">
-            Envie os documentos no próprio formulário para agilizar a aprovação.
+            Preencha os dados com atenção. A equipe Loc7 entrará em contato caso
+            precise de documentos complementares.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
           <input type="hidden" name="tipoCadastro" value={tipo} />
 
           <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h2 className="text-xl font-semibold mb-4">1. Tipo de cadastro</h2>
+            <h2 className="mb-4 text-xl font-semibold">
+              1. Tipo de cadastro
+            </h2>
 
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -189,21 +251,23 @@ export default function CadastroPage() {
           </section>
 
           <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h2 className="text-xl font-semibold mb-4">2. Dados principais</h2>
+            <h2 className="mb-4 text-xl font-semibold">
+              2. Dados principais
+            </h2>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm mb-2">Nome completo</label>
+                <label className="mb-2 block text-sm">Nome completo</label>
                 <input
                   name="nomeCompleto"
-                  required
+                  required={tipo === "pf"}
                   className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
                   placeholder="Seu nome completo"
                 />
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Email</label>
+                <label className="mb-2 block text-sm">Email</label>
                 <input
                   type="email"
                   name="email"
@@ -214,7 +278,7 @@ export default function CadastroPage() {
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Telefone</label>
+                <label className="mb-2 block text-sm">Telefone</label>
                 <input
                   name="telefone"
                   required
@@ -226,7 +290,7 @@ export default function CadastroPage() {
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Rede social</label>
+                <label className="mb-2 block text-sm">Rede social</label>
                 <input
                   name="redeSocial"
                   className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -237,20 +301,21 @@ export default function CadastroPage() {
           </section>
 
           <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h2 className="text-xl font-semibold mb-4">3. Endereço</h2>
+            <h2 className="mb-4 text-xl font-semibold">3. Endereço</h2>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm mb-2">CEP</label>
+                <label className="mb-2 block text-sm">CEP</label>
                 <input
                   name="cep"
                   required
                   value={cep}
                   onChange={(e) => {
-                    const formatted = formatCEP(e.target.value)
-                    setCep(formatted)
+                    const formatted = formatCEP(e.target.value);
+                    setCep(formatted);
+
                     if (formatted.replace(/\D/g, "").length === 8) {
-                      buscarCep(formatted)
+                      buscarCep(formatted);
                     }
                   }}
                   className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -259,20 +324,20 @@ export default function CadastroPage() {
               </div>
 
               <div>
-                <label className="block text-sm mb-2">UF</label>
+                <label className="mb-2 block text-sm">UF</label>
                 <input
                   name="uf"
                   required
                   value={uf}
                   onChange={(e) => setUf(e.target.value.toUpperCase())}
                   maxLength={2}
-                  className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none uppercase"
+                  className="w-full rounded-xl bg-white px-4 py-3 text-black uppercase outline-none"
                   placeholder="SP"
                 />
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Endereço</label>
+                <label className="mb-2 block text-sm">Endereço</label>
                 <input
                   name="endereco"
                   required
@@ -284,7 +349,7 @@ export default function CadastroPage() {
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Número</label>
+                <label className="mb-2 block text-sm">Número</label>
                 <input
                   name="numero"
                   required
@@ -294,7 +359,7 @@ export default function CadastroPage() {
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Bairro</label>
+                <label className="mb-2 block text-sm">Bairro</label>
                 <input
                   name="bairro"
                   required
@@ -306,7 +371,7 @@ export default function CadastroPage() {
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Cidade</label>
+                <label className="mb-2 block text-sm">Cidade</label>
                 <input
                   name="cidade"
                   required
@@ -322,11 +387,13 @@ export default function CadastroPage() {
           {tipo === "pf" && (
             <>
               <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h2 className="text-xl font-semibold mb-4">4. Pessoa Física</h2>
+                <h2 className="mb-4 text-xl font-semibold">
+                  4. Pessoa Física
+                </h2>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm mb-2">CPF</label>
+                    <label className="mb-2 block text-sm">CPF</label>
                     <input
                       name="cpf"
                       required
@@ -338,7 +405,7 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-2">RG</label>
+                    <label className="mb-2 block text-sm">RG</label>
                     <input
                       name="rg"
                       value={rg}
@@ -349,7 +416,9 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-2">Data de nascimento</label>
+                    <label className="mb-2 block text-sm">
+                      Data de nascimento
+                    </label>
                     <input
                       type="date"
                       name="dataNascimento"
@@ -359,7 +428,7 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-2">Nome da mãe</label>
+                    <label className="mb-2 block text-sm">Nome da mãe</label>
                     <input
                       name="nomeMae"
                       required
@@ -369,7 +438,7 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-2">CNH válida</label>
+                    <label className="mb-2 block text-sm">CNH válida</label>
                     <select
                       name="cnhValida"
                       className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -381,7 +450,7 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-2">Ocupação</label>
+                    <label className="mb-2 block text-sm">Ocupação</label>
                     <input
                       name="ocupacao"
                       className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -392,13 +461,17 @@ export default function CadastroPage() {
               </section>
 
               <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h2 className="text-xl font-semibold mb-4">5. Referências comerciais</h2>
+                <h2 className="mb-4 text-xl font-semibold">
+                  5. Referências comerciais
+                </h2>
 
                 <div className="space-y-6">
                   {[1, 2, 3].map((n) => (
-                    <div key={n} className="grid md:grid-cols-3 gap-4">
+                    <div key={n} className="grid gap-4 md:grid-cols-3">
                       <div>
-                        <label className="block text-sm mb-2">{`Empresa ${n}`}</label>
+                        <label className="mb-2 block text-sm">
+                          Empresa {n}
+                        </label>
                         <input
                           name={`empresa${n}`}
                           className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -407,7 +480,9 @@ export default function CadastroPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm mb-2">{`Contato ${n}`}</label>
+                        <label className="mb-2 block text-sm">
+                          Contato {n}
+                        </label>
                         <input
                           name={`nomeContato${n}`}
                           className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -416,7 +491,9 @@ export default function CadastroPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm mb-2">{`Telefone ${n}`}</label>
+                        <label className="mb-2 block text-sm">
+                          Telefone {n}
+                        </label>
                         <input
                           name={`telefoneContato${n}`}
                           className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -427,55 +504,19 @@ export default function CadastroPage() {
                   ))}
                 </div>
               </section>
-
-              <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h2 className="text-xl font-semibold mb-4">6. Documentos</h2>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm mb-2">RG ou CNH</label>
-                    <input
-                      type="file"
-                      name="documentoIdentidadePf"
-                      required
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      className="block w-full text-sm text-zinc-200 file:mr-4 file:rounded-lg file:border-0 file:bg-white file:px-4 file:py-2 file:text-black"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm mb-2">CPF</label>
-                    <input
-                      type="file"
-                      name="documentoCpfPf"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      className="block w-full text-sm text-zinc-200 file:mr-4 file:rounded-lg file:border-0 file:bg-white file:px-4 file:py-2 file:text-black"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label className="block text-sm mb-2">Comprovante de residência</label>
-                    <input
-                      type="file"
-                      name="comprovanteResidenciaPf"
-                      required
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      className="block w-full text-sm text-zinc-200 file:mr-4 file:rounded-lg file:border-0 file:bg-white file:px-4 file:py-2 file:text-black"
-                    />
-                  </div>
-                </div>
-              </section>
             </>
           )}
 
           {tipo === "pj" && (
             <>
               <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h2 className="text-xl font-semibold mb-4">4. Pessoa Jurídica</h2>
+                <h2 className="mb-4 text-xl font-semibold">
+                  4. Pessoa Jurídica
+                </h2>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm mb-2">Razão social</label>
+                    <label className="mb-2 block text-sm">Razão social</label>
                     <input
                       name="razaoSocial"
                       required
@@ -485,7 +526,7 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-2">CNPJ</label>
+                    <label className="mb-2 block text-sm">CNPJ</label>
                     <input
                       name="cnpj"
                       required
@@ -497,7 +538,7 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-2">Responsável</label>
+                    <label className="mb-2 block text-sm">Responsável</label>
                     <input
                       name="responsavel"
                       required
@@ -507,7 +548,9 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-2">Data de fundação</label>
+                    <label className="mb-2 block text-sm">
+                      Data de fundação
+                    </label>
                     <input
                       type="date"
                       name="dataFundacao"
@@ -516,7 +559,9 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-2">Ramo de atividade</label>
+                    <label className="mb-2 block text-sm">
+                      Ramo de atividade
+                    </label>
                     <input
                       name="ramoAtividadePj"
                       className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -525,7 +570,9 @@ export default function CadastroPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm mb-2">Ocupação / função</label>
+                    <label className="mb-2 block text-sm">
+                      Ocupação / função
+                    </label>
                     <input
                       name="ocupacaoPj"
                       className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -536,13 +583,17 @@ export default function CadastroPage() {
               </section>
 
               <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h2 className="text-xl font-semibold mb-4">5. Referências comerciais</h2>
+                <h2 className="mb-4 text-xl font-semibold">
+                  5. Referências comerciais
+                </h2>
 
                 <div className="space-y-6">
                   {[1, 2, 3].map((n) => (
-                    <div key={n} className="grid md:grid-cols-3 gap-4">
+                    <div key={n} className="grid gap-4 md:grid-cols-3">
                       <div>
-                        <label className="block text-sm mb-2">{`Empresa ${n}`}</label>
+                        <label className="mb-2 block text-sm">
+                          Empresa {n}
+                        </label>
                         <input
                           name={`empresa${n}Pj`}
                           className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -551,7 +602,9 @@ export default function CadastroPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm mb-2">{`Contato ${n}`}</label>
+                        <label className="mb-2 block text-sm">
+                          Contato {n}
+                        </label>
                         <input
                           name={`nomeContato${n}Pj`}
                           className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -560,7 +613,9 @@ export default function CadastroPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm mb-2">{`Telefone ${n}`}</label>
+                        <label className="mb-2 block text-sm">
+                          Telefone {n}
+                        </label>
                         <input
                           name={`telefoneContato${n}Pj`}
                           className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
@@ -569,45 +624,6 @@ export default function CadastroPage() {
                       </div>
                     </div>
                   ))}
-                </div>
-              </section>
-
-              <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h2 className="text-xl font-semibold mb-4">6. Documentos</h2>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm mb-2">Contrato social ou estatuto</label>
-                    <input
-                      type="file"
-                      name="contratoSocial"
-                      required
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      className="block w-full text-sm text-zinc-200 file:mr-4 file:rounded-lg file:border-0 file:bg-white file:px-4 file:py-2 file:text-black"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm mb-2">CNPJ</label>
-                    <input
-                      type="file"
-                      name="documentoCnpj"
-                      required
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      className="block w-full text-sm text-zinc-200 file:mr-4 file:rounded-lg file:border-0 file:bg-white file:px-4 file:py-2 file:text-black"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label className="block text-sm mb-2">Comprovante de residência do responsável</label>
-                    <input
-                      type="file"
-                      name="comprovanteResidenciaPj"
-                      required
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      className="block w-full text-sm text-zinc-200 file:mr-4 file:rounded-lg file:border-0 file:bg-white file:px-4 file:py-2 file:text-black"
-                    />
-                  </div>
                 </div>
               </section>
             </>
@@ -622,12 +638,12 @@ export default function CadastroPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-red-600 px-6 py-4 font-bold text-white hover:bg-red-700 transition disabled:opacity-50"
+            className="w-full rounded-xl bg-red-600 px-6 py-4 font-bold text-white transition hover:bg-red-700 disabled:opacity-50"
           >
             {loading ? "Enviando..." : "Enviar cadastro"}
           </button>
         </form>
       </div>
     </main>
-  )
+  );
 }
