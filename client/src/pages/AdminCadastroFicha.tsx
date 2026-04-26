@@ -36,139 +36,184 @@ export default function AdminCadastroFicha() {
     if (!error) {
       setData((prev: any) => ({ ...prev, [field]: value }));
     } else {
-      console.error("ERRO SUPABASE:", error);
-
-      alert(
-        `Erro ao salvar alteração:\n\n${error.message || "Sem mensagem"}`
-      );
+      alert("Erro ao salvar alteração");
     }
 
     setSaving(false);
   }
 
   if (!data) {
-    return (
-      <div className="min-h-screen bg-gray-100 p-8 text-gray-700">
-        Carregando ficha...
-      </div>
-    );
+    return <div className="p-6">Carregando...</div>;
   }
 
   const form = data.form_data || {};
   const isPF = data.registration_type === "pf";
 
   return (
-    <div className="min-h-screen bg-[#f3f4f6] px-4 py-8 text-gray-900 print:bg-white print:p-0">
-      <div className="mx-auto mb-5 flex max-w-5xl items-center justify-between no-print">
-        <Link href="/admin-panel/cadastros">
-          <button className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50">
-            ← Voltar para lista
+    <div className="min-h-screen bg-[#f3f4f6] px-4 py-8">
+      <div className="max-w-5xl mx-auto">
+
+        {/* TOPO */}
+        <div className="mb-5 flex justify-between no-print">
+          <Link href="/admin-panel/cadastros">
+            <button className="border px-4 py-2 rounded">
+              ← Voltar
+            </button>
+          </Link>
+
+          <button
+            onClick={() => window.print()}
+            className="bg-black text-white px-4 py-2 rounded"
+          >
+            Imprimir
           </button>
-        </Link>
+        </div>
 
-        <button
-          onClick={() => window.print()}
-          className="rounded-md bg-black px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800"
-        >
-          Imprimir / PDF
-        </button>
-      </div>
+        {/* CARD */}
+        <div className="bg-white rounded-xl border shadow">
 
-      <main className="mx-auto max-w-5xl rounded-xl border border-gray-200 bg-white shadow-lg">
-        <div className="h-1.5 rounded-t-xl bg-[#b91c1c]" />
+          {/* HEADER */}
+          <div className="border-b p-6">
+            <div className="flex justify-between items-start flex-wrap gap-4">
 
-        <div className="p-8">
-          <header className="mb-8 border-b border-gray-300 pb-6">
-            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
-                <h1 className="text-2xl font-black uppercase">
+                <h1 className="text-2xl font-bold">
                   Ficha de Cadastro {isPF ? "PF" : "PJ"}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  Controle operacional / análise de cadastro
+                  {new Date(data.created_at).toLocaleString("pt-BR")}
                 </p>
               </div>
 
-              <div className="grid gap-3 md:min-w-[360px]">
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                  
-                  <SelectField
-                    label="Status interno"
-                    value={data.status_internal || ""}
-                    onChange={(value) => updateField("status_internal", value)}
-                    options={[
-                      "Recebido",
-                      "Em análise",
-                      "Liberado",
-                      "Recusado interno",
-                    ]}
-                  />
+              {/* STATUS */}
+              <div className="grid grid-cols-3 gap-3 min-w-[300px]">
 
-                  <SelectField
-                    label="Status público"
-                    value={data.status_public || ""}
-                    onChange={(value) => updateField("status_public", value)}
-                    options={[
-                      "Recebido",
-                      "Em análise",
-                      "Liberado",
-                    ]}
-                  />
+                <SelectField
+                  label="Status interno"
+                  value={data.status_internal || ""}
+                  onChange={(v) => updateField("status_internal", v)}
+                  options={[
+                    "Recebido",
+                    "Em análise",
+                    "Liberado",
+                    "Recusado interno",
+                  ]}
+                />
 
-                  <SelectField
-                    label="Risco"
-                    value={data.risk || ""}
-                    onChange={(value) => updateField("risk", value)}
-                    options={[
-                      "Baixo",
-                      "Médio",
-                      "Alto",
-                      "Restrito",
-                    ]}
-                  />
-                </div>
+                <SelectField
+                  label="Status público"
+                  value={data.status_public || ""}
+                  onChange={(v) => updateField("status_public", v)}
+                  options={[
+                    "Recebido",
+                    "Em análise",
+                    "Liberado",
+                  ]}
+                />
 
-                {saving && (
-                  <div className="text-right text-xs text-gray-500">
-                    Salvando...
-                  </div>
-                )}
+                <SelectField
+                  label="Risco"
+                  value={data.risk || ""}
+                  onChange={(v) => updateField("risk", v)}
+                  options={[
+                    "Baixo",
+                    "Médio",
+                    "Alto",
+                    "Restrito",
+                  ]}
+                />
+
               </div>
-            </div>
-          </header>
 
-          <Section title="Dados pessoais">
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Nome completo" value={form.nomeCompleto} />
-              <Field label="CPF" value={form.cpf} />
-              <Field label="Data de nascimento" value={form.dataNascimento} />
-              <Field label="Nome da mãe" value={form.nomeMae} />
-              <Field label="E-mail" value={form.email} />
-              <Field label="Telefone" value={form.telefone} />
             </div>
+
+            {saving && (
+              <div className="text-xs text-gray-500 mt-2">
+                Salvando...
+              </div>
+            )}
+          </div>
+
+          {/* DADOS */}
+          <Section title={isPF ? "Dados pessoais" : "Dados da empresa"}>
+            <Grid>
+              {isPF ? (
+                <>
+                  <Field label="Nome completo" value={form.nomeCompleto} />
+                  <Field label="CPF" value={form.cpf} />
+                  <Field label="Data nascimento" value={form.dataNascimento} />
+                  <Field label="Nome da mãe" value={form.nomeMae} />
+                  <Field label="Email" value={form.email} />
+                  <Field label="Telefone" value={form.telefone} />
+                </>
+              ) : (
+                <>
+                  <Field label="Razão social" value={form.razaoSocial} />
+                  <Field label="CNPJ" value={form.cnpj} />
+                  <Field label="Responsável" value={form.nomeResponsavel} />
+                  <Field label="Email" value={form.email} />
+                  <Field label="Telefone" value={form.telefone} />
+                </>
+              )}
+            </Grid>
           </Section>
+
+          {/* ENDEREÇO */}
+          <Section title="Endereço">
+            <Grid>
+              <Field label="CEP" value={form.cep} />
+              <Field label="Endereço" value={form.endereco} />
+              <Field label="Número" value={form.numero} />
+              <Field label="Complemento" value={form.complemento} />
+              <Field label="Cidade" value={form.cidade} />
+              <Field label="UF" value={form.uf} />
+            </Grid>
+          </Section>
+
+          {/* OBS */}
+          <Section title="Observações internas">
+            <textarea
+              className="w-full border rounded p-3"
+              value={data.internal_notes || ""}
+              onChange={(e) =>
+                setData({ ...data, internal_notes: e.target.value })
+              }
+              onBlur={(e) =>
+                updateField("internal_notes", e.target.value)
+              }
+            />
+          </Section>
+
         </div>
-      </main>
+      </div>
     </div>
   );
 }
 
 /* COMPONENTES */
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+function Section({ title, children }: any) {
   return (
-    <section className="mb-6 border p-4 rounded-lg">
-      <h2 className="mb-4 font-bold uppercase">{title}</h2>
+    <div className="p-6 border-b">
+      <h2 className="font-bold mb-4">{title}</h2>
       {children}
-    </section>
+    </div>
+  );
+}
+
+function Grid({ children }: any) {
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      {children}
+    </div>
   );
 }
 
 function Field({ label, value }: any) {
   return (
-    <div className="border p-3 rounded">
+    <div className="border rounded p-3">
       <div className="text-xs text-gray-500">{label}</div>
-      <div>{value || "—"}</div>
+      <div className="font-medium">{value || "—"}</div>
     </div>
   );
 }
@@ -180,7 +225,7 @@ function SelectField({ label, value, options, onChange }: any) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full border rounded px-2 py-2"
+        className="w-full border rounded px-2 py-2 text-sm"
       >
         <option value="">—</option>
         {options.map((o: string) => (
