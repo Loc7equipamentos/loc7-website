@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Catalogo from "./pages/Catalogo";
 import Produto from "./pages/Produto";
 import Orcamento from "./pages/Orcamento";
+import CadastroPage from "./pages/CadastroPage"; // ✅ NOVO
 
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCadastros from "./pages/AdminCadastros";
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/catalogo/:category" component={Catalogo} />
         <Route path="/equipamentos/:slug" component={Produto} />
         <Route path="/orcamento" component={Orcamento} />
+        <Route path="/cadastro-locacao" component={CadastroPage} /> {/* ✅ NOVO */}
 
         {/* LOGIN */}
         <Route path="/admin-login" component={AdminLogin} />
