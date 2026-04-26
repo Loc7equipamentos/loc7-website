@@ -11,6 +11,7 @@ import CadastroPage from "./pages/Cadastro";
 
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCadastros from "./pages/AdminCadastros";
+import AdminCadastroFicha from "./pages/AdminCadastroFicha";
 import AdminUsuarios from "./pages/AdminUsuarios";
 import AdminLogin from "./pages/AdminLogin";
 import AdminProtected from "./components/AdminProtected";
@@ -40,7 +41,7 @@ export default function App() {
         {/* LOGIN */}
         <Route path="/admin-login" component={AdminLogin} />
 
-        {/* 🔥 ORDEM CORRETA (ESPECÍFICAS PRIMEIRO) */}
+        {/* ADMIN */}
         <Route path="/admin-panel/usuarios">
           <AdminProtected>
             <AdminUsuarios />
@@ -50,6 +51,12 @@ export default function App() {
         <Route path="/admin-panel/cadastros">
           <AdminProtected>
             <AdminCadastros />
+          </AdminProtected>
+        </Route>
+
+        <Route path="/admin-panel/cadastro/:id">
+          <AdminProtected>
+            <AdminCadastroFicha />
           </AdminProtected>
         </Route>
 
