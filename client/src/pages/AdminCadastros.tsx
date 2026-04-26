@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { Link } from "wouter";
 
 type Cadastro = {
   id: string;
@@ -131,10 +132,18 @@ export default function AdminCadastros() {
                 </td>
 
                 {/* AÇÕES */}
-                <td className="px-4 text-right">
+                <td className="px-4 text-right space-x-2">
+
+                  <Link href={`/admin-panel/cadastro/${c.id}`}>
+                    <button className="bg-gray-800 text-white text-xs px-3 py-2 rounded-md hover:opacity-90 transition">
+                      Ver ficha
+                    </button>
+                  </Link>
+
                   <button className="bg-black text-white text-xs px-4 py-2 rounded-md hover:opacity-90 transition">
                     Editar
                   </button>
+
                 </td>
               </tr>
             ))}
