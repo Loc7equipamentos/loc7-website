@@ -95,6 +95,7 @@ export default function AdminCadastroFicha() {
                   <SelectField
                     label="Status interno"
                     value={data.status_internal || ""}
+                    tone={getStatusTone(data.status_internal)}
                     onChange={(value) => updateField("status_internal", value)}
                     options={[
                       "Recebido",
@@ -108,6 +109,7 @@ export default function AdminCadastroFicha() {
                   <SelectField
                     label="Status público"
                     value={data.status_public || ""}
+                    tone={getStatusTone(data.status_public)}
                     onChange={(value) => updateField("status_public", value)}
                     options={[
                       "Recebido",
@@ -120,9 +122,16 @@ export default function AdminCadastroFicha() {
                   <SelectField
                     label="Risco"
                     value={data.risk || ""}
+                    tone={getRiskTone(data.risk)}
                     onChange={(value) => updateField("risk", value)}
                     options={["Baixo", "Médio", "Alto", "Restrito"]}
                   />
+                </div>
+
+                <div className="flex flex-wrap justify-end gap-2">
+                  <Pill label="Interno" value={data.status_internal} tone={getStatusTone(data.status_internal)} />
+                  <Pill label="Público" value={data.status_public} tone={getStatusTone(data.status_public)} />
+                  <Pill label="Risco" value={data.risk} tone={getRiskTone(data.risk)} />
                 </div>
 
                 {saving && (
@@ -281,11 +290,13 @@ function SelectField({
   value,
   options,
   onChange,
+  tone,
 }: {
   label: string;
   value: string;
   options: string[];
   onChange: (value: string) => void;
+  tone: string;
 }) {
   return (
     <label className="block">
@@ -296,7 +307,7 @@ function SelectField({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-bold text-gray-900 outline-none focus:border-[#b91c1c]"
+        className={`w-full rounded-md border px-3 py-2 text-xs font-bold outline-none ${tone}`}
       >
         <option value="">—</option>
         {options.map((option) => (
@@ -307,6 +318,66 @@ function SelectField({
       </select>
     </label>
   );
+}
+
+function Pill({ label, value, tone }: { label: string; value?: string; tone: string }) {
+  return (
+    <div className={`rounded-full border px-3 py-1 text-[11px] font-black uppercase ${tone}`}>
+      <span className="opacity-70">{label}: </span>
+      {value || "—"}
+    </div>
+  );
+}
+
+function getStatusTone(value?: string) {
+  const v = normalize(value);
+
+  if (v.includes("liberado")) {
+    return "border-green-300 bg-green-50 text-green-800";
+  }
+
+  if (v.includes("analise") || v.includes("pendente")) {
+    return "border-yellow-300 bg-yellow-50 text-yellow-800";
+  }
+
+  if (v.includes("recusado")) {
+    return "border-red-300 bg-red-50 text-red-800";
+  }
+
+  if (v.includes("recebido")) {
+    return "border-gray-300 bg-gray-50 text-gray-800";
+  }
+
+  return "border-gray-300 bg-white text-gray-900";
+}
+
+function getRiskTone(value?: string) {
+  const v = normalize(value);
+
+  if (v.includes("baixo")) {
+    return "border-green-300 bg-green-50 text-green-800";
+  }
+
+  if (v.includes("medio")) {
+    return "border-yellow-300 bg-yellow-50 text-yellow-800";
+  }
+
+  if (v.includes("alto")) {
+    return "border-red-300 bg-red-50 text-red-800";
+  }
+
+  if (v.includes("restrito")) {
+    return "border-gray-900 bg-gray-900 text-white";
+  }
+
+  return "border-gray-300 bg-white text-gray-900";
+}
+
+function normalize(value?: string) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 function formatDate(date?: string) {
