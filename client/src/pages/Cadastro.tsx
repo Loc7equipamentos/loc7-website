@@ -54,9 +54,12 @@ function formatCEP(value: string) {
     .replace(/(\d{5})(\d)/, "$1-$2");
 }
 
-function getFormValue(formData: FormData, key: string) {
-  const value = formData.get(key);
-  return typeof value === "string" ? value.trim() : "";
+function formatDateBR(value: string) {
+  return value
+    .replace(/\D/g, "")
+    .slice(0, 8)
+    .replace(/(\d{2})(\d)/, "$1/$2")
+    .replace(/(\d{2})(\d)/, "$1/$2");
 }
 
 export default function CadastroPage() {
@@ -65,6 +68,8 @@ export default function CadastroPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  const [formState, setFormState] = useState<Record<string, string>>({});
 
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
@@ -80,6 +85,13 @@ export default function CadastroPage() {
     return Math.round((step / TOTAL_STEPS) * 100);
   }, [step]);
 
+  function updateForm(name: string, value: string) {
+    setFormState((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
   async function buscarCep(value: string) {
     const clean = value.replace(/\D/g, "");
     if (clean.length !== 8) return;
@@ -93,6 +105,11 @@ export default function CadastroPage() {
         setBairro(data.bairro || "");
         setCidade(data.localidade || "");
         setUf(data.uf || "");
+
+        updateForm("endereco", data.logradouro || "");
+        updateForm("bairro", data.bairro || "");
+        updateForm("cidade", data.localidade || "");
+        updateForm("uf", data.uf || "");
       }
     } catch (err) {
       console.error("Erro ao buscar CEP:", err);
@@ -117,16 +134,13 @@ export default function CadastroPage() {
     setLoading(true);
     setError("");
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
-    const email = getFormValue(formData, "email");
-    const phone = getFormValue(formData, "telefone");
+    const email = formState.email || "";
+    const phone = formState.telefone || "";
 
     const fullName =
       tipo === "pf"
-        ? getFormValue(formData, "nomeCompleto")
-        : getFormValue(formData, "razaoSocial");
+        ? formState.nomeCompleto || ""
+        : formState.razaoSocial || "";
 
     if (!fullName) {
       setError("Preencha o nome completo ou razão social.");
@@ -172,7 +186,6 @@ export default function CadastroPage() {
       }
 
       setSuccess(true);
-      form.reset();
 
       setStep(1);
       setTelefone("");
@@ -185,6 +198,7 @@ export default function CadastroPage() {
       setCidade("");
       setUf("");
       setTipo("pf");
+      setFormState({});
     } catch (err) {
       console.error("Erro inesperado:", err);
       setError("Erro inesperado ao enviar o cadastro.");
@@ -193,27 +207,34 @@ export default function CadastroPage() {
     }
   }
 
+  const inputClass =
+    "w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-zinc-950 outline-none transition focus:border-zinc-900 focus:bg-white focus:ring-2 focus:ring-zinc-900/10";
+
+  const labelClass = "mb-2 block text-sm font-medium text-zinc-700";
+
+  const sectionClass =
+    "rounded-2xl border border-black/10 bg-white p-6 shadow-sm";
+
   if (success) {
     return (
-      <main className="min-h-screen bg-black px-4 py-16 text-white">
+      <main className="min-h-screen bg-[#d6d7da] px-4 py-16 text-zinc-900">
         <div className="mx-auto max-w-3xl">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-red-500">
+          <div className="rounded-2xl border border-black/10 bg-white p-8 text-center shadow-sm">
+            <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-emerald-700">
               Cadastro Loc7
             </p>
 
-            <h1 className="mb-3 text-3xl font-bold">
-              Cadastro enviado com sucesso
+            <h1 className="mb-3 text-3xl font-semibold text-zinc-950">
+              Cadastro concluído. Seguimos com você.
             </h1>
 
-            <p className="mb-6 text-zinc-300">
-              Recebemos suas informações. Nossa equipe fará a validação para
-              seguir com a locação.
+            <p className="mb-6 text-zinc-600">
+              Nossa equipe fará a validação e retornará em breve.
             </p>
 
             <a
               href="/"
-              className="inline-flex rounded-xl bg-red-600 px-5 py-3 font-semibold transition hover:bg-red-700"
+              className="inline-flex rounded-xl bg-zinc-950 px-5 py-3 font-semibold text-white transition hover:bg-black"
             >
               Voltar ao site
             </a>
@@ -224,45 +245,87 @@ export default function CadastroPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-4 py-10 text-white">
+    <main className="min-h-screen bg-[#d6d7da] px-4 py-10 text-zinc-900">
       <div className="mx-auto max-w-5xl">
-        <header className="mb-8">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-red-500">
+        <header className="mb-8 text-center">
+          <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-zinc-600">
             Loc7 Equipamentos
           </p>
 
-          <h1 className="mb-2 text-4xl font-bold">Cadastro para locação</h1>
+          <h1 className="mb-2 text-4xl font-semibold text-zinc-950">
+            Cadastro para locação
+          </h1>
 
-          <p className="max-w-3xl text-zinc-300">
+          <p className="mx-auto max-w-3xl text-zinc-600">
             Este cadastro é necessário para liberação de equipamentos. Após o
             envio, nossa equipe fará a validação.
           </p>
         </header>
 
-        <div className="mb-8 rounded-2xl border border-white/10 bg-white/5 p-5">
-          <div className="mb-3 flex items-center justify-between gap-4">
-            <span className="text-sm font-semibold text-white">
-              Etapa {step} de {TOTAL_STEPS}
+        <div className="mb-8 rounded-2xl border border-black/10 bg-white p-5 shadow-sm">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <span className="text-sm font-medium text-zinc-700">
+              Etapa{" "}
+              <span className="font-semibold text-orange-600">{step}</span> de{" "}
+              {TOTAL_STEPS}
             </span>
-            <span className="text-sm text-zinc-400">{progress}% concluído</span>
+
+            <span className="text-sm text-zinc-500">{progress}% concluído</span>
           </div>
 
-          <div className="h-2 overflow-hidden rounded-full bg-white/10">
+          <div className="relative flex items-center">
+            <div className="absolute left-0 right-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-zinc-300" />
+
             <div
-              className="h-full rounded-full bg-red-600 transition-all duration-300"
-              style={{ width: `${progress}%` }}
+              className="absolute left-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-emerald-600 transition-all duration-500 ease-out"
+              style={{
+                width: `${((step - 1) / (TOTAL_STEPS - 1)) * 100}%`,
+              }}
             />
+
+            <div className="relative z-10 flex w-full items-center justify-between">
+              {Array.from({ length: TOTAL_STEPS }).map((_, index) => {
+                const currentStep = index + 1;
+                const isCompleted = currentStep < step;
+                const isCurrent = currentStep === step;
+
+                return (
+                  <div
+                    key={currentStep}
+                    className={`flex h-3 w-3 items-center justify-center rounded-full transition-all duration-300 ${
+                      isCompleted
+                        ? "bg-emerald-600"
+                        : isCurrent
+                          ? "scale-110 border-2 border-orange-500 bg-white"
+                          : "border-2 border-zinc-300 bg-white"
+                    }`}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <input type="hidden" name="tipoCadastro" value={tipo} />
+        <form
+          onSubmit={handleSubmit}
+          onChange={(e) => {
+            const target = e.target as HTMLInputElement | HTMLSelectElement;
+
+            if (target.name && target.type !== "file") {
+              updateForm(target.name, target.value);
+            }
+          }}
+          className="space-y-8"
+        >
+          <input type="hidden" name="tipoCadastro" value={tipo} readOnly />
 
           {step === 1 && (
-            <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-              <h2 className="mb-2 text-2xl font-bold">1. Tipo de cadastro</h2>
+            <section className={sectionClass}>
+              <h2 className="mb-2 text-2xl font-semibold text-zinc-950">
+                1. Tipo de cadastro
+              </h2>
 
-              <p className="mb-6 text-sm text-zinc-400">
+              <p className="mb-6 text-sm text-zinc-600">
                 Escolha se o cadastro será feito como pessoa física ou pessoa
                 jurídica.
               </p>
@@ -273,8 +336,8 @@ export default function CadastroPage() {
                   onClick={() => setTipo("pf")}
                   className={`rounded-xl border px-4 py-4 font-semibold transition ${
                     tipo === "pf"
-                      ? "border-red-500 bg-red-600 text-white"
-                      : "border-white/15 bg-transparent text-zinc-200 hover:bg-white/5"
+                      ? "border-zinc-950 bg-zinc-950 text-white"
+                      : "border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50"
                   }`}
                 >
                   Pessoa Física
@@ -285,8 +348,8 @@ export default function CadastroPage() {
                   onClick={() => setTipo("pj")}
                   className={`rounded-xl border px-4 py-4 font-semibold transition ${
                     tipo === "pj"
-                      ? "border-red-500 bg-red-600 text-white"
-                      : "border-white/15 bg-transparent text-zinc-200 hover:bg-white/5"
+                      ? "border-zinc-950 bg-zinc-950 text-white"
+                      : "border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50"
                   }`}
                 >
                   Pessoa Jurídica
@@ -296,10 +359,12 @@ export default function CadastroPage() {
           )}
 
           {step === 2 && (
-            <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-              <h2 className="mb-2 text-2xl font-bold">2. Dados principais</h2>
+            <section className={sectionClass}>
+              <h2 className="mb-2 text-2xl font-semibold text-zinc-950">
+                2. Dados principais
+              </h2>
 
-              <p className="mb-6 text-sm text-zinc-400">
+              <p className="mb-6 text-sm text-zinc-600">
                 Informe os principais dados de contato para validação da equipe
                 Loc7.
               </p>
@@ -307,54 +372,70 @@ export default function CadastroPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 {tipo === "pf" ? (
                   <div>
-                    <label className="mb-2 block text-sm">Nome completo</label>
+                    <label className={labelClass}>Nome completo</label>
                     <input
                       name="nomeCompleto"
                       required
-                      className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                      value={formState.nomeCompleto || ""}
+                      onChange={(e) =>
+                        updateForm("nomeCompleto", e.target.value)
+                      }
+                      className={inputClass}
                       placeholder="Seu nome completo"
                     />
                   </div>
                 ) : (
                   <div>
-                    <label className="mb-2 block text-sm">Razão social</label>
+                    <label className={labelClass}>Razão social</label>
                     <input
                       name="razaoSocial"
                       required
-                      className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                      value={formState.razaoSocial || ""}
+                      onChange={(e) =>
+                        updateForm("razaoSocial", e.target.value)
+                      }
+                      className={inputClass}
                       placeholder="Razão social da empresa"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="mb-2 block text-sm">Email</label>
+                  <label className={labelClass}>Email</label>
                   <input
                     type="email"
                     name="email"
                     required
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.email || ""}
+                    onChange={(e) => updateForm("email", e.target.value)}
+                    className={inputClass}
                     placeholder="voce@email.com"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">Telefone</label>
+                  <label className={labelClass}>Telefone</label>
                   <input
                     name="telefone"
                     required
                     value={telefone}
-                    onChange={(e) => setTelefone(formatPhone(e.target.value))}
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    onChange={(e) => {
+                      const formatted = formatPhone(e.target.value);
+                      setTelefone(formatted);
+                      updateForm("telefone", formatted);
+                    }}
+                    className={inputClass}
                     placeholder="(11) 99999-9999"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">Rede social</label>
+                  <label className={labelClass}>Rede social</label>
                   <input
                     name="redeSocial"
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.redeSocial || ""}
+                    onChange={(e) => updateForm("redeSocial", e.target.value)}
+                    className={inputClass}
                     placeholder="@instagram ou link"
                   />
                 </div>
@@ -363,16 +444,18 @@ export default function CadastroPage() {
           )}
 
           {step === 3 && (
-            <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-              <h2 className="mb-2 text-2xl font-bold">3. Endereço</h2>
+            <section className={sectionClass}>
+              <h2 className="mb-2 text-2xl font-semibold text-zinc-950">
+                3. Endereço
+              </h2>
 
-              <p className="mb-6 text-sm text-zinc-400">
+              <p className="mb-6 text-sm text-zinc-600">
                 Endereço usado para análise cadastral e conferência de dados.
               </p>
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm">CEP</label>
+                  <label className={labelClass}>CEP</label>
                   <input
                     name="cep"
                     required
@@ -380,71 +463,87 @@ export default function CadastroPage() {
                     onChange={(e) => {
                       const formatted = formatCEP(e.target.value);
                       setCep(formatted);
+                      updateForm("cep", formatted);
 
                       if (formatted.replace(/\D/g, "").length === 8) {
                         buscarCep(formatted);
                       }
                     }}
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    className={inputClass}
                     placeholder="00000-000"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">UF</label>
+                  <label className={labelClass}>UF</label>
                   <input
                     name="uf"
                     required
                     value={uf}
-                    onChange={(e) => setUf(e.target.value.toUpperCase())}
+                    onChange={(e) => {
+                      const upper = e.target.value.toUpperCase();
+                      setUf(upper);
+                      updateForm("uf", upper);
+                    }}
                     maxLength={2}
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black uppercase outline-none"
+                    className={inputClass}
                     placeholder="SP"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">Endereço</label>
+                  <label className={labelClass}>Endereço</label>
                   <input
                     name="endereco"
                     required
                     value={endereco}
-                    onChange={(e) => setEndereco(e.target.value)}
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    onChange={(e) => {
+                      setEndereco(e.target.value);
+                      updateForm("endereco", e.target.value);
+                    }}
+                    className={inputClass}
                     placeholder="Rua / Avenida"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">Número</label>
+                  <label className={labelClass}>Número</label>
                   <input
                     name="numero"
                     required
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.numero || ""}
+                    onChange={(e) => updateForm("numero", e.target.value)}
+                    className={inputClass}
                     placeholder="Número"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">Bairro</label>
+                  <label className={labelClass}>Bairro</label>
                   <input
                     name="bairro"
                     required
                     value={bairro}
-                    onChange={(e) => setBairro(e.target.value)}
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    onChange={(e) => {
+                      setBairro(e.target.value);
+                      updateForm("bairro", e.target.value);
+                    }}
+                    className={inputClass}
                     placeholder="Bairro"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">Cidade</label>
+                  <label className={labelClass}>Cidade</label>
                   <input
                     name="cidade"
                     required
                     value={cidade}
-                    onChange={(e) => setCidade(e.target.value)}
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    onChange={(e) => {
+                      setCidade(e.target.value);
+                      updateForm("cidade", e.target.value);
+                    }}
+                    className={inputClass}
                     placeholder="Cidade"
                   />
                 </div>
@@ -453,64 +552,81 @@ export default function CadastroPage() {
           )}
 
           {step === 4 && tipo === "pf" && (
-            <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-              <h2 className="mb-2 text-2xl font-bold">4. Pessoa Física</h2>
+            <section className={sectionClass}>
+              <h2 className="mb-2 text-2xl font-semibold text-zinc-950">
+                4. Pessoa Física
+              </h2>
 
-              <p className="mb-6 text-sm text-zinc-400">
+              <p className="mb-6 text-sm text-zinc-600">
                 Dados necessários para análise cadastral de pessoa física.
               </p>
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm">CPF</label>
+                  <label className={labelClass}>CPF</label>
                   <input
                     name="cpf"
                     required
                     value={cpf}
-                    onChange={(e) => setCpf(formatCPF(e.target.value))}
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    onChange={(e) => {
+                      const formatted = formatCPF(e.target.value);
+                      setCpf(formatted);
+                      updateForm("cpf", formatted);
+                    }}
+                    className={inputClass}
                     placeholder="000.000.000-00"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">RG</label>
+                  <label className={labelClass}>RG</label>
                   <input
                     name="rg"
                     value={rg}
-                    onChange={(e) => setRg(formatRG(e.target.value))}
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    onChange={(e) => {
+                      const formatted = formatRG(e.target.value);
+                      setRg(formatted);
+                      updateForm("rg", formatted);
+                    }}
+                    className={inputClass}
                     placeholder="00.000.000-0"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">
-                    Data de nascimento
-                  </label>
+                  <label className={labelClass}>Data de nascimento</label>
                   <input
-                    type="date"
                     name="dataNascimento"
                     required
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.dataNascimento || ""}
+                    onChange={(e) => {
+                      const formatted = formatDateBR(e.target.value);
+                      updateForm("dataNascimento", formatted);
+                    }}
+                    className={inputClass}
+                    placeholder="DD/MM/AAAA"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">Nome da mãe</label>
+                  <label className={labelClass}>Nome da mãe</label>
                   <input
                     name="nomeMae"
                     required
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.nomeMae || ""}
+                    onChange={(e) => updateForm("nomeMae", e.target.value)}
+                    className={inputClass}
                     placeholder="Nome da mãe"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">CNH válida</label>
+                  <label className={labelClass}>CNH válida</label>
                   <select
                     name="cnhValida"
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.cnhValida || ""}
+                    onChange={(e) => updateForm("cnhValida", e.target.value)}
+                    className={inputClass}
                   >
                     <option value="">Selecione</option>
                     <option value="sim">Sim</option>
@@ -519,10 +635,12 @@ export default function CadastroPage() {
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">Ocupação</label>
+                  <label className={labelClass}>Ocupação</label>
                   <input
                     name="ocupacao"
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.ocupacao || ""}
+                    onChange={(e) => updateForm("ocupacao", e.target.value)}
+                    className={inputClass}
                     placeholder="Sua ocupação"
                   />
                 </div>
@@ -531,63 +649,79 @@ export default function CadastroPage() {
           )}
 
           {step === 4 && tipo === "pj" && (
-            <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-              <h2 className="mb-2 text-2xl font-bold">4. Pessoa Jurídica</h2>
+            <section className={sectionClass}>
+              <h2 className="mb-2 text-2xl font-semibold text-zinc-950">
+                4. Pessoa Jurídica
+              </h2>
 
-              <p className="mb-6 text-sm text-zinc-400">
+              <p className="mb-6 text-sm text-zinc-600">
                 Dados necessários para análise cadastral de pessoa jurídica.
               </p>
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm">CNPJ</label>
+                  <label className={labelClass}>CNPJ</label>
                   <input
                     name="cnpj"
                     required
                     value={cnpj}
-                    onChange={(e) => setCnpj(formatCNPJ(e.target.value))}
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    onChange={(e) => {
+                      const formatted = formatCNPJ(e.target.value);
+                      setCnpj(formatted);
+                      updateForm("cnpj", formatted);
+                    }}
+                    className={inputClass}
                     placeholder="00.000.000/0000-00"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">Responsável</label>
+                  <label className={labelClass}>Responsável</label>
                   <input
                     name="responsavel"
                     required
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.responsavel || ""}
+                    onChange={(e) => updateForm("responsavel", e.target.value)}
+                    className={inputClass}
                     placeholder="Nome do responsável"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">Data de fundação</label>
+                  <label className={labelClass}>Data de fundação</label>
                   <input
                     type="date"
                     name="dataFundacao"
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.dataFundacao || ""}
+                    onChange={(e) =>
+                      updateForm("dataFundacao", e.target.value)
+                    }
+                    className={inputClass}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm">
-                    Ramo de atividade
-                  </label>
+                  <label className={labelClass}>Ramo de atividade</label>
                   <input
                     name="ramoAtividadePj"
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.ramoAtividadePj || ""}
+                    onChange={(e) =>
+                      updateForm("ramoAtividadePj", e.target.value)
+                    }
+                    className={inputClass}
                     placeholder="Ramo de atividade"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="mb-2 block text-sm">
+                  <label className={labelClass}>
                     Ocupação / função do solicitante
                   </label>
                   <input
                     name="ocupacaoPj"
-                    className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
+                    value={formState.ocupacaoPj || ""}
+                    onChange={(e) => updateForm("ocupacaoPj", e.target.value)}
+                    className={inputClass}
                     placeholder="Função do solicitante"
                   />
                 </div>
@@ -596,71 +730,88 @@ export default function CadastroPage() {
           )}
 
           {step === 5 && (
-            <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-              <h2 className="mb-2 text-2xl font-bold">
+            <section className={sectionClass}>
+              <h2 className="mb-2 text-2xl font-semibold text-zinc-950">
                 5. Referências comerciais
               </h2>
 
-              <p className="mb-6 text-sm text-zinc-400">
+              <p className="mb-6 text-sm text-zinc-600">
                 Informe referências que possam auxiliar a validação. Se não
                 tiver todas agora, preencha as principais.
               </p>
 
               <div className="space-y-6">
-                {[1, 2, 3].map((n) => (
-                  <div key={n} className="grid gap-4 md:grid-cols-3">
-                    <div>
-                      <label className="mb-2 block text-sm">Empresa {n}</label>
-                      <input
-                        name={tipo === "pf" ? `empresa${n}` : `empresa${n}Pj`}
-                        className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
-                        placeholder="Empresa"
-                      />
-                    </div>
+                {[1, 2, 3].map((n) => {
+                  const empresaName =
+                    tipo === "pf" ? `empresa${n}` : `empresa${n}Pj`;
+                  const contatoName =
+                    tipo === "pf" ? `nomeContato${n}` : `nomeContato${n}Pj`;
+                  const telefoneName =
+                    tipo === "pf"
+                      ? `telefoneContato${n}`
+                      : `telefoneContato${n}Pj`;
 
-                    <div>
-                      <label className="mb-2 block text-sm">Contato {n}</label>
-                      <input
-                        name={
-                          tipo === "pf" ? `nomeContato${n}` : `nomeContato${n}Pj`
-                        }
-                        className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
-                        placeholder="Nome do contato"
-                      />
-                    </div>
+                  return (
+                    <div key={n} className="grid gap-4 md:grid-cols-3">
+                      <div>
+                        <label className={labelClass}>Empresa {n}</label>
+                        <input
+                          name={empresaName}
+                          value={formState[empresaName] || ""}
+                          onChange={(e) =>
+                            updateForm(empresaName, e.target.value)
+                          }
+                          className={inputClass}
+                          placeholder="Empresa"
+                        />
+                      </div>
 
-                    <div>
-                      <label className="mb-2 block text-sm">
-                        Telefone {n}
-                      </label>
-                      <input
-                        name={
-                          tipo === "pf"
-                            ? `telefoneContato${n}`
-                            : `telefoneContato${n}Pj`
-                        }
-                        className="w-full rounded-xl bg-white px-4 py-3 text-black outline-none"
-                        placeholder="(11) 99999-9999"
-                      />
+                      <div>
+                        <label className={labelClass}>Contato {n}</label>
+                        <input
+                          name={contatoName}
+                          value={formState[contatoName] || ""}
+                          onChange={(e) =>
+                            updateForm(contatoName, e.target.value)
+                          }
+                          className={inputClass}
+                          placeholder="Nome do contato"
+                        />
+                      </div>
+
+                      <div>
+                        <label className={labelClass}>Telefone {n}</label>
+                        <input
+                          name={telefoneName}
+                          value={formState[telefoneName] || ""}
+                          onChange={(e) =>
+                            updateForm(telefoneName, e.target.value)
+                          }
+                          className={inputClass}
+                          placeholder="(11) 99999-9999"
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           )}
 
           {step === 6 && (
-            <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-              <h2 className="mb-2 text-2xl font-bold">6. Revisão e envio</h2>
+            <section className={sectionClass}>
+              <h2 className="mb-2 text-2xl font-semibold text-zinc-950">
+                6. Revisão e envio
+              </h2>
 
-              <p className="mb-6 text-sm text-zinc-400">
+              <p className="mb-6 text-sm text-zinc-600">
                 Confira se os dados estão corretos. Após o envio, a equipe Loc7
                 fará a análise e entrará em contato se precisar de informações
                 complementares.
               </p>
 
-              <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-4">
-                <p className="text-sm text-zinc-200">
+              <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
+                <p className="text-sm text-zinc-700">
                   Nesta etapa, o cadastro será registrado no sistema interno da
                   Loc7. O envio de documentos será implementado na próxima fase
                   com Supabase Storage.
@@ -670,17 +821,17 @@ export default function CadastroPage() {
           )}
 
           {error && (
-            <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-4">
-              <p className="text-sm text-red-200">{error}</p>
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
+              <p className="text-sm text-red-700">{error}</p>
             </div>
           )}
 
-          <div className="flex flex-col gap-3 border-t border-white/10 pt-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-3 border-t border-zinc-300 pt-6 md:flex-row md:items-center md:justify-between">
             <button
               type="button"
               onClick={prevStep}
               disabled={step === 1 || loading}
-              className="rounded-xl border border-white/15 px-6 py-3 font-semibold text-white transition hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl border border-zinc-300 px-6 py-3 font-semibold text-zinc-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
             >
               Voltar
             </button>
@@ -690,7 +841,7 @@ export default function CadastroPage() {
                 type="button"
                 onClick={nextStep}
                 disabled={loading}
-                className="rounded-xl bg-red-600 px-6 py-3 font-bold text-white transition hover:bg-red-700 disabled:opacity-50"
+                className="rounded-xl bg-zinc-950 px-6 py-3 font-bold text-white transition hover:bg-black disabled:opacity-50"
               >
                 Próximo
               </button>
@@ -698,7 +849,7 @@ export default function CadastroPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-xl bg-red-600 px-6 py-3 font-bold text-white transition hover:bg-red-700 disabled:opacity-50"
+                className="rounded-xl bg-zinc-950 px-6 py-3 font-bold text-white transition hover:bg-black disabled:opacity-50"
               >
                 {loading ? "Enviando..." : "Enviar cadastro"}
               </button>
