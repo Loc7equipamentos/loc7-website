@@ -35,6 +35,7 @@ export default function AdminCadastroFicha() {
 
   return (
     <div className="min-h-screen bg-[#f3f4f6] px-4 py-8 text-gray-900 print:bg-white print:p-0">
+      {/* TOPO */}
       <div className="mx-auto mb-5 flex max-w-5xl items-center justify-between no-print">
         <Link href="/admin-panel/cadastros">
           <button className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50">
@@ -50,17 +51,24 @@ export default function AdminCadastroFicha() {
         </button>
       </div>
 
+      {/* CARD */}
       <main className="mx-auto max-w-5xl rounded-xl border border-gray-200 bg-white shadow-lg print:max-w-none print:rounded-none print:border-0 print:shadow-none">
         <div className="h-1.5 rounded-t-xl bg-[#b91c1c] print:hidden" />
 
         <div className="p-8 print:p-6">
+          {/* HEADER */}
           <header className="mb-8 border-b border-gray-300 pb-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+              
               <div className="flex items-center gap-5">
+                {/* LOGO COM SOMBRA SUAVE */}
                 <img
-                  src="/loc7-logo-light.png"
+                  src="/logo.png"
                   alt="Loc7 Equipamentos"
                   className="h-14 object-contain"
+                  style={{
+                    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.25))"
+                  }}
                 />
 
                 <div>
@@ -87,6 +95,7 @@ export default function AdminCadastroFicha() {
             </div>
           </header>
 
+          {/* DADOS */}
           <Section title={isPF ? "Dados pessoais" : "Dados da empresa"}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {isPF ? (
@@ -110,6 +119,7 @@ export default function AdminCadastroFicha() {
             </div>
           </Section>
 
+          {/* ENDEREÇO */}
           <Section title="Endereço">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <Field label="CEP" value={form.cep} />
@@ -122,6 +132,7 @@ export default function AdminCadastroFicha() {
             </div>
           </Section>
 
+          {/* REFERÊNCIAS */}
           <Section title="Referências comerciais">
             {Array.isArray(form.referencias) && form.referencias.length > 0 ? (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -155,12 +166,14 @@ export default function AdminCadastroFicha() {
             )}
           </Section>
 
+          {/* OBSERVAÇÕES */}
           <Section title="Observações internas">
             <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm">
               {data.internal_notes || "Sem observações internas registradas"}
             </div>
           </Section>
 
+          {/* RODAPÉ */}
           <footer className="mt-8 border-t border-gray-300 pt-4 text-xs text-gray-500">
             <div>ID do cadastro: {data.id}</div>
             <div>Documento gerado pelo sistema interno LOC7</div>
@@ -168,6 +181,7 @@ export default function AdminCadastroFicha() {
         </div>
       </main>
 
+      {/* PRINT */}
       <style>{`
         @media print {
           .no-print { display: none !important; }
@@ -177,6 +191,8 @@ export default function AdminCadastroFicha() {
     </div>
   );
 }
+
+/* COMPONENTES */
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
