@@ -53,32 +53,21 @@ export default function AdminCadastroFicha() {
 
       {/* CARD */}
       <main className="mx-auto max-w-5xl rounded-xl border border-gray-200 bg-white shadow-lg print:max-w-none print:rounded-none print:border-0 print:shadow-none">
+        {/* LINHA VERMELHA */}
         <div className="h-1.5 rounded-t-xl bg-[#b91c1c] print:hidden" />
 
         <div className="p-8 print:p-6">
           {/* HEADER */}
           <header className="mb-8 border-b border-gray-300 pb-6">
-            <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               
-              <div className="flex items-center gap-5">
-                {/* LOGO COM SOMBRA SUAVE */}
-                <img
-                  src="/logo.png"
-                  alt="Loc7 Equipamentos"
-                  className="h-14 object-contain"
-                  style={{
-                    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.25))"
-                  }}
-                />
-
-                <div>
-                  <h1 className="text-2xl font-black uppercase tracking-tight">
-                    Ficha de Cadastro {isPF ? "PF" : "PJ"}
-                  </h1>
-                  <p className="mt-1 text-sm font-medium text-gray-500">
-                    Controle operacional / análise de cadastro
-                  </p>
-                </div>
+              <div>
+                <h1 className="text-2xl font-black uppercase tracking-tight">
+                  Ficha de Cadastro {isPF ? "PF" : "PJ"}
+                </h1>
+                <p className="mt-1 text-sm font-medium text-gray-500">
+                  Controle operacional / análise de cadastro
+                </p>
               </div>
 
               <div className="grid gap-2 text-sm md:text-right">
@@ -181,7 +170,6 @@ export default function AdminCadastroFicha() {
         </div>
       </main>
 
-      {/* PRINT */}
       <style>{`
         @media print {
           .no-print { display: none !important; }
