@@ -5,9 +5,9 @@ import { Eye, EyeOff, Trash2 } from "lucide-react";
 type AdminUser = {
   id: string;
   email: string;
-  full_name?: string | null;
-  role: "admin" | "operador" | string;
-  is_active: boolean;
+  name?: string | null;
+  role: "Administrador" | "Operador" | string;
+  active: boolean;
   created_at?: string;
 };
 
@@ -19,10 +19,10 @@ export default function AdminUsuarios() {
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
-    full_name: "",
+    name: "",
     email: "",
     password: "",
-    role: "operador",
+    role: "Operador",
   });
 
   async function getToken() {
@@ -40,7 +40,7 @@ export default function AdminUsuarios() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      setError("Erro ao carregar usuários.");
+      setError(`Erro ao carregar usuários: ${error.message}`);
       setLoading(false);
       return;
     }
@@ -52,8 +52,8 @@ export default function AdminUsuarios() {
   async function createUser(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!form.email || !form.password || !form.role) {
-      setError("Preencha e-mail, senha e permissão.");
+    if (!form.name || !form.email || !form.password || !form.role) {
+      setError("Preencha nome, e-mail, senha e permissão.");
       return;
     }
 
@@ -62,12 +62,12 @@ export default function AdminUsuarios() {
 
     const token = await getToken();
 
-    const { error } = await supabase.functions.invoke("create-admin-user", {
+    const { data, error } = await supabase.functions.invoke("create-admin-user", {
       body: {
+        name: form.name.trim(),
         email: form.email.trim(),
         password: form.password,
         role: form.role,
-        full_name: form.full_name.trim() || null,
       },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -75,16 +75,22 @@ export default function AdminUsuarios() {
     });
 
     if (error) {
-      setError("Erro ao criar usuário.");
+      setError(error.message || "Erro ao criar usuário.");
+      setSaving(false);
+      return;
+    }
+
+    if (data?.success === false) {
+      setError(data?.error || "Erro ao criar usuário.");
       setSaving(false);
       return;
     }
 
     setForm({
-      full_name: "",
+      name: "",
       email: "",
       password: "",
-      role: "operador",
+      role: "Operador",
     });
 
     setSaving(false);
@@ -96,11 +102,11 @@ export default function AdminUsuarios() {
 
     const { error } = await supabase
       .from("admin_users")
-      .update({ is_active: !user.is_active })
+      .update({ active: !user.active })
       .eq("id", user.id);
 
     if (error) {
-      setError("Erro ao alterar status do usuário.");
+      setError(`Erro ao alterar status do usuário: ${error.message}`);
       return;
     }
 
@@ -115,7 +121,7 @@ export default function AdminUsuarios() {
 
     const token = await getToken();
 
-    const { error } = await supabase.functions.invoke("delete-admin-user", {
+    const { data, error } = await supabase.functions.invoke("delete-admin-user", {
       body: {
         user_id: user.id,
         email: user.email,
@@ -126,7 +132,12 @@ export default function AdminUsuarios() {
     });
 
     if (error) {
-      setError("Erro ao excluir usuário.");
+      setError(error.message || "Erro ao excluir usuário.");
+      return;
+    }
+
+    if (data?.success === false) {
+      setError(data?.error || "Erro ao excluir usuário.");
       return;
     }
 
@@ -141,7 +152,6 @@ export default function AdminUsuarios() {
     <div className="min-h-screen bg-[#07101c] px-6 py-10 text-black">
       <div className="mx-auto max-w-7xl">
         <header className="mb-12">
-          {/* 🔥 AJUSTE 1 — FONTE */}
           <h1 className="text-5xl font-semibold text-white">
             Usuários do Sistema
           </h1>
@@ -165,11 +175,12 @@ export default function AdminUsuarios() {
                 <input
                   type="text"
                   placeholder="Ex: João Silva"
-                  value={form.full_name}
+                  value={form.name}
                   onChange={(e) =>
-                    setForm((prev) => ({ ...prev, full_name: e.target.value }))
+                    setForm((prev) => ({ ...prev, name: e.target.value }))
                   }
                   className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-black placeholder:text-gray-400 outline-none focus:border-black"
+                  required
                 />
               </div>
 
@@ -226,8 +237,8 @@ export default function AdminUsuarios() {
                   }
                   className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-black outline-none focus:border-black"
                 >
-                  <option value="admin">Administrador</option>
-                  <option value="operador">Operador</option>
+                  <option value="Administrador">Administrador</option>
+                  <option value="Operador">Operador</option>
                 </select>
               </div>
 
@@ -254,9 +265,8 @@ export default function AdminUsuarios() {
 
             <div className="overflow-x-auto">
               <table className="w-full min-w-[820px] text-sm">
-                {/* 🔥 AJUSTE 2 — CENTRALIZA HEADER */}
                 <thead>
-                  <tr className="bg-gray-100 text-black text-center">
+                  <tr className="bg-gray-100 text-center text-black">
                     <th className="px-4 py-3 font-bold">Nome</th>
                     <th className="px-4 py-3 font-bold">E-mail</th>
                     <th className="px-4 py-3 font-bold">Permissão</th>
@@ -266,55 +276,77 @@ export default function AdminUsuarios() {
                 </thead>
 
                 <tbody>
-                  {users.map((user) => (
-                    <tr key={user.id} className="border-b border-gray-200 text-center">
-                      <td className="px-4 py-4">
-                        <p className="font-bold text-black">
-                          {user.full_name || "Sem nome"}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Profissional interno
-                        </p>
-                      </td>
-
-                      <td className="px-4 py-4 text-black">{user.email}</td>
-
-                      <td className="px-4 py-4 text-black">
-                        {user.role === "admin" ? "Administrador" : "Operador"}
-                      </td>
-
-                      <td className="px-4 py-4">
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-bold ${
-                            user.is_active
-                              ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-700"
-                          }`}
-                        >
-                          {user.is_active ? "Ativo" : "Inativo"}
-                        </span>
-                      </td>
-
-                      {/* 🔥 AJUSTE 3 — LIXEIRA */}
-                      <td className="px-4 py-4">
-                        <div className="flex justify-center items-center gap-4">
-                          <button
-                            onClick={() => toggleUser(user)}
-                            className="text-sm underline"
-                          >
-                            {user.is_active ? "Desativar" : "Reativar"}
-                          </button>
-
-                          <button
-                            onClick={() => deleteUser(user)}
-                            className="text-red-600 hover:opacity-70"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
+                  {loading ? (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="px-4 py-8 text-center text-gray-500"
+                      >
+                        Carregando usuários...
                       </td>
                     </tr>
-                  ))}
+                  ) : users.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="px-4 py-8 text-center text-gray-500"
+                      >
+                        Nenhum usuário cadastrado.
+                      </td>
+                    </tr>
+                  ) : (
+                    users.map((user) => (
+                      <tr
+                        key={user.id}
+                        className="border-b border-gray-200 text-center"
+                      >
+                        <td className="px-4 py-4">
+                          <p className="font-bold text-black">
+                            {user.name || "Sem nome"}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Profissional interno
+                          </p>
+                        </td>
+
+                        <td className="px-4 py-4 text-black">{user.email}</td>
+
+                        <td className="px-4 py-4 text-black">
+                          {user.role || "Operador"}
+                        </td>
+
+                        <td className="px-4 py-4">
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-bold ${
+                              user.active
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {user.active ? "Ativo" : "Inativo"}
+                          </span>
+                        </td>
+
+                        <td className="px-4 py-4">
+                          <div className="flex items-center justify-center gap-4">
+                            <button
+                              onClick={() => toggleUser(user)}
+                              className="text-sm underline"
+                            >
+                              {user.active ? "Desativar" : "Reativar"}
+                            </button>
+
+                            <button
+                              onClick={() => deleteUser(user)}
+                              className="text-red-600 hover:opacity-70"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
