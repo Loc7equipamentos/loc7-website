@@ -7,7 +7,7 @@ import Home from "./pages/Home";
 import Catalogo from "./pages/Catalogo";
 import Produto from "./pages/Produto";
 import Orcamento from "./pages/Orcamento";
-import CadastroPage from "./pages/CadastroPage"; // ✅ NOVO
+import CadastroPage from "./pages/Cadastro"; // ✅ CORRETO (Cadastro.tsx)
 
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCadastros from "./pages/AdminCadastros";
