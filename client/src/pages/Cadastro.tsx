@@ -805,9 +805,10 @@ if (success) {
                         <input
                           name={telefoneName}
                           value={formState[telefoneName] || ""}
-                          onChange={(e) =>
-                            updateForm(telefoneName, e.target.value)
-                          }
+                          onChange={(e) => {
+  const formatted = formatPhone(e.target.value);
+  updateForm(telefoneName, formatted);
+}}
                           className={inputClass}
                           placeholder="(11) 99999-9999"
                         />
