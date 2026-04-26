@@ -116,12 +116,82 @@ export default function CadastroPage() {
       console.error("Erro ao buscar CEP:", err);
     }
   }
-
-  function nextStep() {
-    setError("");
-    setStep((current) => Math.min(current + 1, TOTAL_STEPS));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+function validateStep(step: number, formState: any, tipo: string): { valid: boolean; message?: string } {
+  if (step === 1) {
+    if (!tipo) {
+      return { valid: false, message: "Selecione o tipo de cadastro (PF ou PJ)." };
+    }
   }
+
+  if (step === 2) {
+    const nome = tipo === "pf" ? formState.nomeCompleto : formState.razaoSocial;
+
+    if (!nome?.trim()) {
+      return { valid: false, message: "Preencha o nome ou razão social." };
+    }
+
+    if (!formState.email?.trim()) {
+      return { valid: false, message: "Preencha o e-mail antes de continuar." };
+    }
+
+    if (!formState.telefone?.trim()) {
+      return { valid: false, message: "Informe um telefone válido." };
+    }
+  }
+
+  if (step === 3) {
+    if (!formState.cep?.trim()) return { valid: false, message: "Preencha o CEP antes de avançar." };
+    if (!formState.uf?.trim()) return { valid: false, message: "Informe o estado (UF)." };
+    if (!formState.cidade?.trim()) return { valid: false, message: "Informe a cidade." };
+    if (!formState.endereco?.trim()) return { valid: false, message: "Informe o endereço." };
+    if (!formState.numero?.trim()) return { valid: false, message: "Informe o número." };
+    if (!formState.bairro?.trim()) return { valid: false, message: "Informe o bairro." };
+  }
+
+  if (step === 4 && tipo === "pf") {
+    if (!formState.cpf?.trim()) return { valid: false, message: "Informe o CPF." };
+    if (!formState.dataNascimento?.trim()) return { valid: false, message: "Informe a data de nascimento." };
+    if (!formState.nomeMae?.trim()) return { valid: false, message: "Informe o nome da mãe." };
+  }
+
+  if (step === 4 && tipo === "pj") {
+    if (!formState.cnpj?.trim()) return { valid: false, message: "Informe o CNPJ." };
+    if (!formState.responsavel?.trim()) return { valid: false, message: "Informe o nome do responsável." };
+  }
+
+  if (step === 5) {
+    const refs = [
+      { empresa: formState.empresa1, contato: formState.nomeContato1, telefone: formState.telefoneContato1 },
+      { empresa: formState.empresa2, contato: formState.nomeContato2, telefone: formState.telefoneContato2 },
+      { empresa: formState.empresa3, contato: formState.nomeContato3, telefone: formState.telefoneContato3 },
+    ];
+
+    const validRefs = refs.filter(
+      (r) => r.empresa?.trim() && r.contato?.trim() && r.telefone?.trim()
+    );
+
+    if (validRefs.length < 1) {
+      return {
+        valid: false,
+        message: "Preencha pelo menos uma referência comercial completa (empresa, contato e telefone)."
+      };
+    }
+  }
+
+  return { valid: true };
+}
+  function nextStep() {
+  const result = validateStep(step, formState, tipo);
+
+  if (!result.valid) {
+    setError(result.message || "Erro de validação");
+    return;
+  }
+
+  setError("");
+  setStep((current) => Math.min(current + 1, TOTAL_STEPS));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
   function prevStep() {
     setError("");
