@@ -235,12 +235,13 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
     }
 
     try {
-      const payload = {
-        full_name: fullName,
-        email,
-        phone,
-        registration_type: tipo,
-      };
+    const payload = {
+  full_name: fullName,
+  email,
+  phone,
+  registration_type: tipo,
+  form_data: formState,
+};
 
       const { error: insertError } = await supabase
         .from("rental_registrations")
