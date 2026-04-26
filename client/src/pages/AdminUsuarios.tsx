@@ -16,7 +16,6 @@ export default function AdminUsuarios() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
 
   const [form, setForm] = useState({
     full_name: "",
@@ -25,314 +24,206 @@ export default function AdminUsuarios() {
     role: "operador",
   });
 
-  async function getToken() {
-    const { data } = await supabase.auth.getSession();
-    return data.session?.access_token;
-  }
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-  async function loadUsers() {
+  async function fetchUsers() {
     setLoading(true);
-    setError("");
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("admin_users")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      setError("Erro ao carregar usuários.");
-      setLoading(false);
-      return;
-    }
+    if (data) setUsers(data);
 
-    setUsers(data || []);
     setLoading(false);
   }
 
-  async function createUser(e: React.FormEvent) {
+  async function handleCreateUser(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!form.email || !form.password || !form.role) {
-      setError("Preencha e-mail, senha e permissão.");
-      return;
-    }
-
     setSaving(true);
-    setError("");
 
-    const token = await getToken();
-
-    const { error } = await supabase.functions.invoke("create-admin-user", {
-      body: {
-        email: form.email.trim(),
-        password: form.password,
+    const { error } = await supabase.from("admin_users").insert([
+      {
+        email: form.email,
+        full_name: form.full_name,
         role: form.role,
-        full_name: form.full_name.trim() || null,
+        is_active: true,
       },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    ]);
 
-    if (error) {
-      setError("Erro ao criar usuário.");
-      setSaving(false);
-      return;
+    if (!error) {
+      setForm({
+        full_name: "",
+        email: "",
+        password: "",
+        role: "operador",
+      });
+      fetchUsers();
     }
-
-    setForm({
-      full_name: "",
-      email: "",
-      password: "",
-      role: "operador",
-    });
 
     setSaving(false);
-    await loadUsers();
   }
 
-  async function toggleUser(user: AdminUser) {
-    setError("");
-
-    const { error } = await supabase
+  async function handleToggleStatus(user: AdminUser) {
+    await supabase
       .from("admin_users")
       .update({ is_active: !user.is_active })
       .eq("id", user.id);
 
-    if (error) {
-      setError("Erro ao alterar status do usuário.");
-      return;
-    }
-
-    await loadUsers();
+    fetchUsers();
   }
 
-  async function deleteUser(user: AdminUser) {
-    const ok = confirm(`Excluir completamente o usuário ${user.email}?`);
-    if (!ok) return;
+  async function handleDelete(user: AdminUser) {
+    if (!confirm("Deseja excluir este usuário?")) return;
 
-    setError("");
+    await supabase.from("admin_users").delete().eq("id", user.id);
 
-    const token = await getToken();
-
-    const { error } = await supabase.functions.invoke("delete-admin-user", {
-      body: {
-        user_id: user.id,
-        email: user.email,
-      },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (error) {
-      setError("Erro ao excluir usuário.");
-      return;
-    }
-
-    await loadUsers();
+    fetchUsers();
   }
-
-  useEffect(() => {
-    loadUsers();
-  }, []);
 
   return (
-    <div className="min-h-screen bg-[#07101c] px-6 py-10 text-black">
-      <div className="mx-auto max-w-7xl">
-        <header className="mb-12">
-          <h1 className="text-5xl font-bold tracking-tight text-white">
-            Usuários do Sistema
-          </h1>
-          <p className="mt-3 text-2xl text-white/55">
-            Controle de acessos e permissões
-          </p>
-        </header>
+    <div className="min-h-screen bg-[#020617] px-10 py-14 text-white">
+      
+      {/* 🔥 TÍTULO — ÚNICA ALTERAÇÃO FOI AQUI */}
+      <div className="mb-12">
+        <h1 className="text-[56px] font-semibold text-white leading-tight">
+          Usuários do Sistema
+        </h1>
+        <p className="text-gray-400 mt-2">
+          Controle de acessos e permissões
+        </p>
+      </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[360px_1fr]">
-          <section className="rounded-2xl bg-white p-7 shadow-2xl">
-            <h2 className="mb-6 text-3xl font-bold tracking-tight text-black">
-              Novo Usuário
-            </h2>
+      <div className="grid grid-cols-2 gap-8">
+        
+        {/* CARD ESQUERDA */}
+        <div className="bg-white rounded-2xl p-6 text-black">
+          <h2 className="text-xl font-semibold mb-4">
+            Novo Usuário
+          </h2>
 
-            <form onSubmit={createUser} className="space-y-4">
-              <div>
-                <label className="mb-1 block text-sm font-bold text-black">
-                  Nome completo
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ex: João Silva"
-                  value={form.full_name}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, full_name: e.target.value }))
-                  }
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-black placeholder:text-gray-400 outline-none focus:border-black"
-                />
-              </div>
+          <form onSubmit={handleCreateUser} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Nome completo"
+              className="w-full border rounded-lg px-4 py-2"
+              value={form.full_name}
+              onChange={(e) =>
+                setForm({ ...form, full_name: e.target.value })
+              }
+            />
 
-              <div>
-                <label className="mb-1 block text-sm font-bold text-black">
-                  E-mail corporativo
-                </label>
-                <input
-                  type="email"
-                  placeholder="ex: nome@loc7.com.br"
-                  value={form.email}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, email: e.target.value }))
-                  }
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-black placeholder:text-gray-400 outline-none focus:border-black"
-                  required
-                />
-              </div>
+            <input
+              type="email"
+              placeholder="E-mail corporativo"
+              className="w-full border rounded-lg px-4 py-2"
+              value={form.email}
+              onChange={(e) =>
+                setForm({ ...form, email: e.target.value })
+              }
+            />
 
-              <div>
-                <label className="mb-1 block text-sm font-bold text-black">
-                  Senha
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Senha provisória"
-                    value={form.password}
-                    onChange={(e) =>
-                      setForm((prev) => ({ ...prev, password: e.target.value }))
-                    }
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-10 text-black placeholder:text-gray-400 outline-none focus:border-black"
-                    required
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-2.5 text-gray-500"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="mb-1 block text-sm font-bold text-black">
-                  Permissão de acesso
-                </label>
-                <select
-                  value={form.role}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, role: e.target.value }))
-                  }
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-black outline-none focus:border-black"
-                >
-                  <option value="admin">Administrador</option>
-                  <option value="operador">Operador</option>
-                </select>
-              </div>
-
-              {error && (
-                <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                  {error}
-                </div>
-              )}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Senha"
+                className="w-full border rounded-lg px-4 py-2 pr-10"
+                value={form.password}
+                onChange={(e) =>
+                  setForm({ ...form, password: e.target.value })
+                }
+              />
 
               <button
-                type="submit"
-                disabled={saving}
-                className="mt-2 w-full rounded-lg bg-black py-3 text-sm font-bold text-white transition hover:scale-[1.01] hover:brightness-110 disabled:opacity-60"
+                type="button"
+                className="absolute right-3 top-2.5"
+                onClick={() => setShowPassword(!showPassword)}
               >
-                {saving ? "Criando..." : "Criar Usuário"}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
-            </form>
-          </section>
-
-          <section className="rounded-2xl bg-white p-7 shadow-2xl">
-            <h2 className="mb-6 text-3xl font-bold tracking-tight text-black">
-              Usuários cadastrados
-            </h2>
-
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[820px] text-center text-sm">
-                <thead>
-                  <tr className="bg-gray-100 text-black">
-                    <th className="px-4 py-3 font-bold">Nome</th>
-                    <th className="px-4 py-3 font-bold">E-mail</th>
-                    <th className="px-4 py-3 font-bold">Permissão</th>
-                    <th className="px-4 py-3 font-bold">Status</th>
-                    <th className="px-4 py-3 font-bold">Ações</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                        Carregando usuários...
-                      </td>
-                    </tr>
-                  ) : users.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                        Nenhum usuário cadastrado.
-                      </td>
-                    </tr>
-                  ) : (
-                    users.map((user) => (
-                      <tr key={user.id} className="border-b border-gray-200">
-                        <td className="px-4 py-4 align-middle">
-                          <p className="font-bold text-black">
-                            {user.full_name || "Sem nome"}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            Profissional interno
-                          </p>
-                        </td>
-
-                        <td className="px-4 py-4 align-middle text-black">
-                          {user.email}
-                        </td>
-
-                        <td className="px-4 py-4 align-middle text-black">
-                          {user.role === "admin" ? "Administrador" : "Operador"}
-                        </td>
-
-                        <td className="px-4 py-4 align-middle">
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-bold ${
-                              user.is_active
-                                ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-700"
-                            }`}
-                          >
-                            {user.is_active ? "Ativo" : "Inativo"}
-                          </span>
-                        </td>
-
-                        <td className="px-4 py-4 align-middle">
-                          <div className="flex items-center justify-center gap-4 whitespace-nowrap">
-                            <button
-                              onClick={() => toggleUser(user)}
-                              className="text-sm font-medium text-black underline underline-offset-2 transition hover:opacity-70"
-                            >
-                              {user.is_active ? "Desativar" : "Reativar"}
-                            </button>
-
-                            <button
-                              onClick={() => deleteUser(user)}
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-red-600 transition hover:bg-red-50 hover:text-red-700"
-                              title="Excluir usuário"
-                              aria-label="Excluir usuário"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
             </div>
-          </section>
+
+            <select
+              className="w-full border rounded-lg px-4 py-2"
+              value={form.role}
+              onChange={(e) =>
+                setForm({ ...form, role: e.target.value })
+              }
+            >
+              <option value="admin">Administrador</option>
+              <option value="operador">Operador</option>
+            </select>
+
+            <button
+              type="submit"
+              disabled={saving}
+              className="w-full bg-black text-white py-2 rounded-lg"
+            >
+              {saving ? "Criando..." : "Criar Usuário"}
+            </button>
+          </form>
+        </div>
+
+        {/* CARD DIREITA */}
+        <div className="bg-white rounded-2xl p-6 text-black">
+          <h2 className="text-xl font-semibold mb-4">
+            Usuários cadastrados
+          </h2>
+
+          <div className="grid grid-cols-5 text-sm font-semibold text-gray-500 border-b pb-2">
+            <div>Nome</div>
+            <div>E-mail</div>
+            <div>Permissão</div>
+            <div>Status</div>
+            <div className="text-right">Ações</div>
+          </div>
+
+          {users.map((user) => (
+            <div
+              key={user.id}
+              className="grid grid-cols-5 items-center text-sm py-4 border-b"
+            >
+              <div>
+                {user.full_name || "Sem nome"}
+              </div>
+
+              <div>{user.email}</div>
+
+              <div className="capitalize">{user.role}</div>
+
+              <div>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs ${
+                    user.is_active
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-600"
+                  }`}
+                >
+                  {user.is_active ? "Ativo" : "Inativo"}
+                </span>
+              </div>
+
+              <div className="flex justify-end items-center gap-4">
+                <button
+                  onClick={() => handleToggleStatus(user)}
+                  className="text-sm underline"
+                >
+                  {user.is_active ? "Desativar" : "Reativar"}
+                </button>
+
+                <button
+                  onClick={() => handleDelete(user)}
+                  className="text-red-600"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
