@@ -612,7 +612,16 @@ if (success) {
                     placeholder="Número"
                   />
                 </div>
-
+<div>
+  <label className={labelClass}>Complemento</label>
+  <input
+    name="complemento"
+    value={formState.complemento || ""}
+    onChange={(e) => updateForm("complemento", e.target.value)}
+    className={inputClass}
+    placeholder="Apto, sala, bloco..."
+  />
+</div>
                 <div>
                   <label className={labelClass}>Bairro</label>
                   <input
