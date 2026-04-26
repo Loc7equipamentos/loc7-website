@@ -967,6 +967,62 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+
+        {activeTab === 'registrations' && (
+          <div className="bg-white rounded border border-gray-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-900">Nome</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-900">Tipo</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-900">Telefone</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-900">Documento</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-900">Cidade</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-900">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {registrations.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                        Nenhum cadastro encontrado
+                      </td>
+                    </tr>
+                  ) : (
+                    registrations.map((item) => {
+                      const data = item.form_data || {};
+
+                      return (
+                        <tr key={item.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-gray-900 font-medium">
+                            {item.full_name || data.nomeCompleto || data.razaoSocial || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600 uppercase">
+                            {item.registration_type || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {item.phone || data.telefone || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {data.cpf || data.cnpj || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {data.cidade || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {item.status || 'em análise'}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {showEditModal && editingProduct && (
