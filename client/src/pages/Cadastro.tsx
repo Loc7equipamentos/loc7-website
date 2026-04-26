@@ -169,8 +169,6 @@ export default function CadastroPage() {
         email,
         phone,
         registration_type: tipo,
-        status_internal: "Novo cadastro",
-        status_public: "Cadastro recebido",
       };
 
       const { error: insertError } = await supabase
