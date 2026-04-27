@@ -161,10 +161,16 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
   }
 
   if (step === 5) {
-    const refs = [
+   const refs = tipo === "pf"
+  ? [
       { empresa: formState.empresa1, contato: formState.nomeContato1, telefone: formState.telefoneContato1 },
       { empresa: formState.empresa2, contato: formState.nomeContato2, telefone: formState.telefoneContato2 },
       { empresa: formState.empresa3, contato: formState.nomeContato3, telefone: formState.telefoneContato3 },
+    ]
+  : [
+      { empresa: formState.empresa1Pj, contato: formState.nomeContato1Pj, telefone: formState.telefoneContato1Pj },
+      { empresa: formState.empresa2Pj, contato: formState.nomeContato2Pj, telefone: formState.telefoneContato2Pj },
+      { empresa: formState.empresa3Pj, contato: formState.nomeContato3Pj, telefone: formState.telefoneContato3Pj },
     ];
 
     const validRefs = refs.filter(
