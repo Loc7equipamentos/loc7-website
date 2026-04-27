@@ -72,7 +72,6 @@ export default function CadastroPage() {
   const [error, setError] = useState("");
 
   const [formState, setFormState] = useState<Record<string, string>>({});
-  const [documentFile, setDocumentFile] = useState<File | null>(null);
 
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
@@ -206,30 +205,7 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
     setStep((current) => Math.max(current - 1, 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
-const uploadDocument = async (registrationId: string) => {
-  if (!documentFile) return null;
 
-  try {
-    const fileExt = documentFile.name.split(".").pop();
-    const filePath = `${registrationId}/document.${fileExt}`;
-
-    const { error } = await supabase.storage
-      .from("documents")
-      .upload(filePath, documentFile, {
-        upsert: true,
-      });
-
-    if (error) {
-      console.error("Erro upload:", error.message);
-      return null;
-    }
-
-    return filePath;
-  } catch (err) {
-    console.error("Erro inesperado upload:", err);
-    return null;
-  }
-};
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -981,33 +957,7 @@ if (success) {
                   Nesta etapa, o cadastro será registrado no sistema interno da
                   Loc7. O envio de documentos será implementado na próxima fase
                   com Supabase Storage.
-                  <div className="mt-6">
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    Enviar documento (RG, CNH ou comprovante)
-  </label>
-
-  <input
-    type="file"
-    accept="image/*,application/pdf"
-    onChange={(e) => {
-      const file = e.target.files?.[0];
-      if (file) setDocumentFile(file);
-    }}
-    className="block w-full text-sm text-gray-600
-      file:mr-4 file:py-2 file:px-4
-      file:rounded-md file:border-0
-      file:text-sm file:font-semibold
-      file:bg-black file:text-white
-      hover:file:bg-gray-800"
-  />
-
-  {documentFile && (
-    <p className="text-xs text-gray-500 mt-2">
-      Arquivo selecionado: {documentFile.name}
-  
-  )}
-</div>
-               
+                </p>
               </div>
             </section>
           )}
