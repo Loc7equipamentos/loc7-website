@@ -981,7 +981,33 @@ if (success) {
                   Nesta etapa, o cadastro será registrado no sistema interno da
                   Loc7. O envio de documentos será implementado na próxima fase
                   com Supabase Storage.
-                </p>
+                  <div className="mt-6">
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Enviar documento (RG, CNH ou comprovante)
+  </label>
+
+  <input
+    type="file"
+    accept="image/*,application/pdf"
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+      if (file) setDocumentFile(file);
+    }}
+    className="block w-full text-sm text-gray-600
+      file:mr-4 file:py-2 file:px-4
+      file:rounded-md file:border-0
+      file:text-sm file:font-semibold
+      file:bg-black file:text-white
+      hover:file:bg-gray-800"
+  />
+
+  {documentFile && (
+    <p className="text-xs text-gray-500 mt-2">
+      Arquivo selecionado: {documentFile.name}
+  
+  )}
+</div>
+               
               </div>
             </section>
           )}
