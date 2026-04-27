@@ -24,7 +24,9 @@ export default function App() {
     location === "/admin-login" ||
     location.startsWith("/admin-panel");
 
-  const isCleanRoute = location === "/cadastro-locacao";
+const isCleanRoute =
+  location === "/cadastro-locacao" ||
+  location.startsWith("/status-cadastro");
 
   return (
     <>
