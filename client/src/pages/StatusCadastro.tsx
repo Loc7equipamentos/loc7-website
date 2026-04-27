@@ -73,7 +73,6 @@ export default function StatusCadastro() {
     <main className="min-h-screen bg-[#f3f4f6] px-4 py-12 text-zinc-900">
       <div className="mx-auto max-w-2xl">
 
-        {/* HEADER */}
         <div className="mb-8 text-center">
           <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 mb-2">
             Loc7 Equipamentos
@@ -83,10 +82,8 @@ export default function StatusCadastro() {
           </h1>
         </div>
 
-        {/* CARD */}
         <div className="bg-white border border-black/10 rounded-2xl p-8 shadow-sm">
 
-          {/* STATUS */}
           <div className="mb-6 text-center">
             <p className={`text-lg font-semibold ${statusInfo.color}`}>
               {statusInfo.label}
@@ -96,7 +93,6 @@ export default function StatusCadastro() {
             </p>
           </div>
 
-          {/* PROGRESSO */}
           <div className="mb-8">
             <div className="flex justify-between text-xs text-zinc-500 mb-2">
               <span>Recebido</span>
@@ -112,7 +108,6 @@ export default function StatusCadastro() {
             </div>
           </div>
 
-          {/* INFO */}
           <div className="grid gap-4 text-sm text-zinc-600">
             {createdAt && (
               <div>
@@ -137,9 +132,13 @@ export default function StatusCadastro() {
 function normalizeStatus(status?: string): StatusType {
   const s = (status || "").toLowerCase();
 
-  if (s.includes("approved")) return "approved";
-  if (s.includes("rejected")) return "rejected";
-  if (s.includes("processing")) return "processing";
+  if (s.includes("liberado")) return "approved";
+  if (s.includes("aprovado")) return "approved";
+
+  if (s.includes("recusado")) return "rejected";
+
+  if (s.includes("analise")) return "processing";
+  if (s.includes("pendente")) return "processing";
 
   return "received";
 }
@@ -149,28 +148,32 @@ function getStatusInfo(status: StatusType) {
     case "approved":
       return {
         label: "Cadastro aprovado",
-        message: "Seu cadastro foi aprovado. Você já pode locar equipamentos.",
+        message:
+          "Sua ficha foi validada. Você já pode avançar com a reserva dos equipamentos junto ao nosso time.",
         color: "text-green-600",
       };
 
     case "rejected":
       return {
         label: "Cadastro não aprovado",
-        message: "Nossa equipe entrará em contato para orientações.",
+        message:
+          "Nossa equipe poderá orientá-lo sobre os próximos passos, caso necessário.",
         color: "text-red-600",
       };
 
     case "processing":
       return {
         label: "Em análise",
-        message: "Estamos analisando seus dados.",
+        message:
+          "Sua ficha está sendo avaliada pela nossa equipe para validação dos dados.",
         color: "text-orange-500",
       };
 
     default:
       return {
         label: "Cadastro recebido",
-        message: "Recebemos sua ficha e iniciamos a análise.",
+        message:
+          "Sua ficha foi registrada e será encaminhada para validação pela equipe Loc7.",
         color: "text-zinc-700",
       };
   }
