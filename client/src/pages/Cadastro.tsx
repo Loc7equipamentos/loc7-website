@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 type TipoCadastro = "pf" | "pj";
 
 const TOTAL_STEPS = 6;
+const MAX_DOCUMENT_SIZE_MB = 10;
 
 function formatCPF(value: string) {
   return value
@@ -63,6 +64,15 @@ function formatDateBR(value: string) {
     .replace(/(\d{2})(\d)/, "$1/$2");
 }
 
+
+function sanitizeFileName(fileName: string) {
+  return fileName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9._-]/g, "-")
+    .replace(/-+/g, "-")
+    .toLowerCase();
+}
 export default function CadastroPage() {
   const [step, setStep] = useState(1);
   const [tipo, setTipo] = useState<TipoCadastro>("pf");
@@ -72,6 +82,7 @@ export default function CadastroPage() {
   const [error, setError] = useState("");
 
   const [formState, setFormState] = useState<Record<string, string>>({});
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
 
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
@@ -116,6 +127,27 @@ export default function CadastroPage() {
     } catch (err) {
       console.error("Erro ao buscar CEP:", err);
     }
+  }
+  async function uploadDocument(registrationId: string) {
+    if (!documentFile) return null;
+
+    const safeFileName =
+      sanitizeFileName(documentFile.name) || `documento-${Date.now()}`;
+
+    const storagePath = `${registrationId}/${Date.now()}-${safeFileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("documents")
+      .upload(storagePath, documentFile, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    return storagePath;
   }
 function validateStep(step: number, formState: any, tipo: string): { valid: boolean; message?: string } {
   if (step === 1) {
@@ -262,8 +294,37 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
         setLoading(false);
         return;
       }
-if (insertData?.id) {
-  setCadastroId(insertData.id);
+if (!insertData?.id) {
+  setError("Cadastro salvo, mas não foi possível obter o ID do registro.");
+  setLoading(false);
+  return;
+}
+
+setCadastroId(insertData.id);
+
+if (documentFile) {
+  const documentPath = await uploadDocument(insertData.id);
+
+  const updatedFormData = {
+    ...formState,
+    documents: documentPath ? [documentPath] : [],
+  };
+
+  const { error: updateError } = await supabase
+    .from("rental_registrations")
+    .update({
+      form_data: updatedFormData,
+    })
+    .eq("id", insertData.id);
+
+  if (updateError) {
+    console.error("Erro ao salvar documento no cadastro:", updateError);
+    setError(
+      "Cadastro recebido, mas houve erro ao vincular o documento. Entre em contato com a Loc7 para complementar o envio."
+    );
+    setLoading(false);
+    return;
+  }
 }
       setSuccess(true);
 
@@ -279,6 +340,7 @@ if (insertData?.id) {
       setUf("");
       setTipo("pf");
       setFormState({});
+      setDocumentFile(null);
     } catch (err) {
       console.error("Erro inesperado:", err);
       setError("Erro inesperado ao enviar o cadastro.");
@@ -955,9 +1017,56 @@ if (success) {
               <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
                 <p className="text-sm text-zinc-700">
                   Nesta etapa, o cadastro será registrado no sistema interno da
-                  Loc7. O envio de documentos será implementado na próxima fase
-                  com Supabase Storage.
+                  Loc7. O envio de documentos é opcional nesta fase e ajuda a
+                  agilizar a análise cadastral.
                 </p>
+              </div>
+
+              <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                <label className={labelClass}>
+                  Documento para análise cadastral (opcional)
+                </label>
+
+                <input
+                  type="file"
+                  name="documentoCadastro"
+                  accept=".pdf,.jpg,.jpeg,.png,.webp"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+
+                    if (!file) {
+                      setDocumentFile(null);
+                      return;
+                    }
+
+                    const fileSizeMb = file.size / 1024 / 1024;
+
+                    if (fileSizeMb > MAX_DOCUMENT_SIZE_MB) {
+                      setDocumentFile(null);
+                      e.target.value = "";
+                      setError(
+                        `O arquivo deve ter no máximo ${MAX_DOCUMENT_SIZE_MB}MB.`
+                      );
+                      return;
+                    }
+
+                    setError("");
+                    setDocumentFile(file);
+                  }}
+                  className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-700 file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-black"
+                />
+
+                <p className="mt-3 text-xs leading-relaxed text-zinc-500">
+                  PF: RG ou CNH, comprovante de endereço. PJ: documento do
+                  responsável, contrato social ou CNPJ. Formatos aceitos: PDF,
+                  JPG, PNG ou WebP até {MAX_DOCUMENT_SIZE_MB}MB.
+                </p>
+
+                {documentFile && (
+                  <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800">
+                    Arquivo selecionado: {documentFile.name}
+                  </p>
+                )}
               </div>
             </section>
           )}
