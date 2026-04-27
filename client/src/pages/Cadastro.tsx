@@ -359,14 +359,10 @@ if (success) {
         Voltar ao site
       </Link>
     </div>
-  
-
-
-   </div>
+)}
     </main>
   );
 }
-
   return (
     <main className="min-h-screen bg-[#d6d7da] px-4 py-10 text-zinc-900">
       <div className="mx-auto max-w-5xl">
