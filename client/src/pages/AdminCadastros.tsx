@@ -53,8 +53,7 @@ export default function AdminCadastros() {
         statusPublicFilter === "Todos" ||
         c.status_public === statusPublicFilter;
 
-      const matchRisk =
-        riskFilter === "Todos" || c.risk === riskFilter;
+      const matchRisk = riskFilter === "Todos" || c.risk === riskFilter;
 
       return matchSearch && matchInternal && matchPublic && matchRisk;
     });
@@ -187,19 +186,31 @@ export default function AdminCadastros() {
                   </td>
 
                   <td className="px-6">
-                    <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${getStatusTone(c.status_internal)}`}>
+                    <span
+                      className={`text-xs font-semibold px-3 py-1 rounded-full border ${getStatusTone(
+                        c.status_internal
+                      )}`}
+                    >
                       {c.status_internal || "—"}
                     </span>
                   </td>
 
                   <td className="px-6">
-                    <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${getStatusTone(c.status_public)}`}>
+                    <span
+                      className={`text-xs font-semibold px-3 py-1 rounded-full border ${getStatusTone(
+                        c.status_public
+                      )}`}
+                    >
                       {c.status_public || "—"}
                     </span>
                   </td>
 
                   <td className="px-6">
-                    <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${getRiskTone(c.risk)}`}>
+                    <span
+                      className={`text-xs font-semibold px-3 py-1 rounded-full border ${getRiskTone(
+                        c.risk
+                      )}`}
+                    >
                       {c.risk || "—"}
                     </span>
                   </td>
@@ -215,9 +226,11 @@ export default function AdminCadastros() {
                       </button>
                     </Link>
 
-                    <button className="bg-black text-white text-xs px-4 py-2 rounded-md hover:bg-gray-800 transition">
-                      Editar
-                    </button>
+                    <Link href={`/admin-panel/cadastro/${c.id}`}>
+                      <button className="bg-black text-white text-xs px-4 py-2 rounded-md hover:bg-gray-800 transition">
+                        Editar
+                      </button>
+                    </Link>
                   </td>
                 </tr>
               ))}
