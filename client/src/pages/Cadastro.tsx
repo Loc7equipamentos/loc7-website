@@ -326,42 +326,46 @@ if (success) {
           </p>
         </div>
 {cadastroId && (
-  <div className="mb-10">
-    <p className="mb-4 text-sm text-zinc-400">
+  <div className="mb-8">
+    <p className="text-sm text-zinc-400 mb-2">
       Acompanhe o status do seu cadastro:
     </p>
 
-    <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-      <a
-        href={`/status-cadastro/${cadastroId}`}
-        className="inline-flex min-w-[220px] justify-center rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange-400"
-      >
-        Ver status do cadastro
-      </a>
-
-      <button
-        type="button"
-        onClick={() => {
-          navigator.clipboard.writeText(
-            `${window.location.origin}/status-cadastro/${cadastroId}`
-          );
-          alert("Link copiado!");
-        }}
-        className="inline-flex min-w-[180px] justify-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-      >
-        Copiar link
-      </button>
-
-      <Link
-        href="/"
-        className="inline-flex min-w-[180px] justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200"
-      >
-        Voltar ao site
-      </Link>
-    </div>
+    <a
+      href={`/status-cadastro/${cadastroId}`}
+      className="inline-block rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white hover:bg-orange-400 transition"
+    >
+      Ver status do cadastro
+    </a>
+   <button
+  type="button"
+  onClick={() => {
+    navigator.clipboard.writeText(
+      `${window.location.origin}/status-cadastro/${cadastroId}`
+    );
+    alert("Link copiado!");
+  }}
+  className="mt-3 inline-block rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
+>
+  Copiar link
+</button>
+  </div>
 )}
+        <Link
+          href="/"
+          className="inline-flex rounded-full bg-white px-7 py-3 text-sm font-semibold text-zinc-950 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:scale-[1.02] hover:bg-zinc-200 active:scale-[0.98]"
+        >
+          Voltar ao site
+        </Link>
+
+        <p className="mt-7 text-xs text-zinc-600">
+          Loc7 Equipamentos — processo seguro para locação profissional.
+        </p>
+      </div>
     </main>
- 
+  );
+}
+
   return (
     <main className="min-h-screen bg-[#d6d7da] px-4 py-10 text-zinc-900">
       <div className="mx-auto max-w-5xl">
