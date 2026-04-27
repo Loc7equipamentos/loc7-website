@@ -226,15 +226,11 @@ export default function AdminCadastros() {
                       </button>
                     </Link>
 
-                   <button
-  type="button"
-  onClick={() => {
-    window.location.assign(`/admin-panel/cadastro/${c.id}`);
-  }}
- className="bg-black text-white text-xs px-4 py-2 rounded-md hover:bg-gray-800 transition relative z-50 pointer-events-auto"
->
-  Editar
-</button>                  </td>
+                  <Link href={`/admin-panel/cadastro/${c.id}`}>
+  <button className="bg-black text-white text-xs px-4 py-2 rounded-md hover:bg-gray-800 transition">
+    Editar
+  </button>
+</Link>                  </td>
                 </tr>
               ))}
 
