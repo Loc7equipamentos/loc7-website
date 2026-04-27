@@ -337,6 +337,18 @@ if (success) {
     >
       Ver status do cadastro
     </a>
+   <button
+  type="button"
+  onClick={() => {
+    navigator.clipboard.writeText(
+      `${window.location.origin}/status-cadastro/${cadastroId}`
+    );
+    alert("Link copiado!");
+  }}
+  className="mt-3 inline-block rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
+>
+  Copiar link
+</button>
   </div>
 )}
         <Link
