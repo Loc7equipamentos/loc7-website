@@ -68,6 +68,7 @@ export default function CadastroPage() {
   const [tipo, setTipo] = useState<TipoCadastro>("pf");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [cadastroId, setCadastroId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const [formState, setFormState] = useState<Record<string, string>>({});
@@ -245,7 +246,9 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
 
       const { error: insertError } = await supabase
         .from("rental_registrations")
-        .insert([payload]);
+       .insert([payload])
+.select("id")
+.single();
 
       if (insertError) {
         console.error("Erro Supabase:", insertError);
@@ -253,7 +256,9 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
         setLoading(false);
         return;
       }
-
+if (insertData?.id) {
+  setCadastroId(insertData.id);
+}
       setSuccess(true);
 
       setStep(1);
@@ -320,7 +325,20 @@ if (success) {
             Caso necessário, entraremos em contato diretamente com você.
           </p>
         </div>
+{cadastroId && (
+  <div className="mb-8">
+    <p className="text-sm text-zinc-400 mb-2">
+      Acompanhe o status do seu cadastro:
+    </p>
 
+    <a
+      href={`/status-cadastro/${cadastroId}`}
+      className="inline-block rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white hover:bg-orange-400 transition"
+    >
+      Ver status do cadastro
+    </a>
+  </div>
+)}
         <Link
           href="/"
           className="inline-flex rounded-full bg-white px-7 py-3 text-sm font-semibold text-zinc-950 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:scale-[1.02] hover:bg-zinc-200 active:scale-[0.98]"
