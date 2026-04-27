@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Link } from "wouter";
 
@@ -16,6 +16,9 @@ type Cadastro = {
 
 export default function AdminCadastros() {
   const [cadastros, setCadastros] = useState<Cadastro[]>([]);
+  const [statusInternalFilter, setStatusInternalFilter] = useState("Todos");
+  const [statusPublicFilter, setStatusPublicFilter] = useState("Todos");
+  const [riskFilter, setRiskFilter] = useState("Todos");
 
   useEffect(() => {
     fetchCadastros();
@@ -30,10 +33,27 @@ export default function AdminCadastros() {
     if (data) setCadastros(data);
   }
 
+  const filteredCadastros = useMemo(() => {
+    return cadastros.filter((c) => {
+      const matchInternal =
+        statusInternalFilter === "Todos" ||
+        c.status_internal === statusInternalFilter;
+
+      const matchPublic =
+        statusPublicFilter === "Todos" ||
+        c.status_public === statusPublicFilter;
+
+      const matchRisk =
+        riskFilter === "Todos" ||
+        c.risk === riskFilter;
+
+      return matchInternal && matchPublic && matchRisk;
+    });
+  }, [cadastros, statusInternalFilter, statusPublicFilter, riskFilter]);
+
   return (
     <div className="min-h-screen bg-[#f3f4f6] px-4 py-8">
       <div className="max-w-7xl mx-auto">
-
         {/* HEADER */}
         <div className="mb-8">
           <p className="text-xs text-gray-500 tracking-widest uppercase">
@@ -51,18 +71,74 @@ export default function AdminCadastros() {
 
         {/* CARD */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-
           <div className="px-6 py-4 border-b">
             <p className="text-sm font-semibold text-gray-900">
               Cadastros recebidos
             </p>
             <p className="text-xs text-gray-500">
-              {cadastros.length} registro(s) no sistema
+              {filteredCadastros.length} de {cadastros.length} registro(s)
             </p>
           </div>
 
-          <table className="w-full text-sm">
+          {/* FILTROS */}
+          <div className="px-6 py-4 border-b bg-gray-50">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <FilterSelect
+                label="Status interno"
+                value={statusInternalFilter}
+                onChange={setStatusInternalFilter}
+                options={[
+                  "Todos",
+                  "Recebido",
+                  "Em análise",
+                  "Pendente documentação",
+                  "Liberado",
+                  "Recusado interno",
+                ]}
+              />
 
+              <FilterSelect
+                label="Status público"
+                value={statusPublicFilter}
+                onChange={setStatusPublicFilter}
+                options={[
+                  "Todos",
+                  "Recebido",
+                  "Em análise",
+                  "Pendente contato",
+                  "Liberado",
+                ]}
+              />
+
+              <FilterSelect
+                label="Risco"
+                value={riskFilter}
+                onChange={setRiskFilter}
+                options={[
+                  "Todos",
+                  "Baixo",
+                  "Médio",
+                  "Alto",
+                  "Restrito",
+                ]}
+              />
+
+              <div className="flex items-end">
+                <button
+                  onClick={() => {
+                    setStatusInternalFilter("Todos");
+                    setStatusPublicFilter("Todos");
+                    setRiskFilter("Todos");
+                  }}
+                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-bold text-gray-700 hover:bg-gray-100 transition"
+                >
+                  Limpar filtros
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b text-xs uppercase text-gray-500 tracking-wide">
               <tr>
                 <th className="text-left px-6 py-3">Nome / Empresa</th>
@@ -77,12 +153,11 @@ export default function AdminCadastros() {
             </thead>
 
             <tbody>
-              {cadastros.map((c) => (
+              {filteredCadastros.map((c) => (
                 <tr
                   key={c.id}
                   className="border-b hover:bg-gray-50 transition"
                 >
-                  {/* NOME */}
                   <td className="px-6 py-4">
                     <div className="font-semibold text-gray-900">
                       {c.full_name}
@@ -92,47 +167,39 @@ export default function AdminCadastros() {
                     </div>
                   </td>
 
-                  {/* TIPO */}
                   <td className="px-6">
                     <span className="text-xs font-semibold bg-gray-100 text-gray-800 px-3 py-1 rounded-full">
                       {c.registration_type?.toUpperCase()}
                     </span>
                   </td>
 
-                  {/* TELEFONE */}
                   <td className="px-6 text-gray-800 font-medium">
                     {c.phone}
                   </td>
 
-                  {/* STATUS INTERNO */}
                   <td className="px-6">
                     <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${getStatusTone(c.status_internal)}`}>
                       {c.status_internal || "—"}
                     </span>
                   </td>
 
-                  {/* STATUS PUBLICO */}
                   <td className="px-6">
                     <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${getStatusTone(c.status_public)}`}>
                       {c.status_public || "—"}
                     </span>
                   </td>
 
-                  {/* RISCO */}
                   <td className="px-6">
                     <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${getRiskTone(c.risk)}`}>
                       {c.risk || "—"}
                     </span>
                   </td>
 
-                  {/* DATA */}
                   <td className="px-6 text-gray-700">
                     {new Date(c.created_at).toLocaleDateString("pt-BR")}
                   </td>
 
-                  {/* AÇÕES */}
                   <td className="px-6 text-right space-x-2">
-
                     <Link href={`/admin-panel/cadastro/${c.id}`}>
                       <button className="border border-gray-300 text-gray-800 text-xs px-3 py-2 rounded-md hover:bg-gray-100 transition">
                         Ver ficha
@@ -142,10 +209,20 @@ export default function AdminCadastros() {
                     <button className="bg-black text-white text-xs px-4 py-2 rounded-md hover:bg-gray-800 transition">
                       Editar
                     </button>
-
                   </td>
                 </tr>
               ))}
+
+              {filteredCadastros.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="px-6 py-10 text-center text-sm font-medium text-gray-500"
+                  >
+                    Nenhum cadastro encontrado com os filtros selecionados.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -154,7 +231,35 @@ export default function AdminCadastros() {
   );
 }
 
-/* 🔥 MESMA LÓGICA DA FICHA */
+function FilterSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label>
+      <span className="mb-1 block text-[11px] font-black uppercase tracking-wide text-gray-600">
+        {label}
+      </span>
+
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-bold text-gray-900 outline-none focus:border-[#b91c1c]"
+      >
+        {options.map((option) => (
+          <option key={option}>{option}</option>
+        ))}
+      </select>
+    </label>
+  );
+}
 
 function getStatusTone(value?: string) {
   const v = normalize(value);
