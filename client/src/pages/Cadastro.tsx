@@ -359,22 +359,10 @@ if (success) {
         Voltar ao site
       </Link>
     </div>
-  </div>
-)}
-    </div>
-  </div>
-)}
-        <Link
-          href="/"
-          className="inline-flex rounded-full bg-white px-7 py-3 text-sm font-semibold text-zinc-950 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:scale-[1.02] hover:bg-zinc-200 active:scale-[0.98]"
-        >
-          Voltar ao site
-        </Link>
+  
 
-        <p className="mt-7 text-xs text-zinc-600">
-          Loc7 Equipamentos — processo seguro para locação profissional.
-        </p>
-      </div>
+
+   </div>
     </main>
   );
 }
