@@ -52,7 +52,6 @@ export default function AdminCadastros() {
         {/* CARD */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 
-          {/* HEADER CARD */}
           <div className="px-6 py-4 border-b">
             <p className="text-sm font-semibold text-gray-900">
               Cadastros recebidos
@@ -62,7 +61,6 @@ export default function AdminCadastros() {
             </p>
           </div>
 
-          {/* TABELA */}
           <table className="w-full text-sm">
 
             <thead className="bg-gray-50 border-b text-xs uppercase text-gray-500 tracking-wide">
@@ -108,17 +106,23 @@ export default function AdminCadastros() {
 
                   {/* STATUS INTERNO */}
                   <td className="px-6">
-                    <StatusBadge value={c.status_internal} />
+                    <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${getStatusTone(c.status_internal)}`}>
+                      {c.status_internal || "—"}
+                    </span>
                   </td>
 
                   {/* STATUS PUBLICO */}
                   <td className="px-6">
-                    <StatusBadge value={c.status_public} />
+                    <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${getStatusTone(c.status_public)}`}>
+                      {c.status_public || "—"}
+                    </span>
                   </td>
 
                   {/* RISCO */}
                   <td className="px-6">
-                    <RiskBadge value={c.risk} />
+                    <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${getRiskTone(c.risk)}`}>
+                      {c.risk || "—"}
+                    </span>
                   </td>
 
                   {/* DATA */}
@@ -150,40 +154,59 @@ export default function AdminCadastros() {
   );
 }
 
-/* STATUS BADGE */
+/* 🔥 MESMA LÓGICA DA FICHA */
 
-function StatusBadge({ value }: { value: string }) {
-  const map: any = {
-    aprovado: "bg-green-100 text-green-800",
-    aprovado_final: "bg-green-100 text-green-800",
-    analise: "bg-yellow-100 text-yellow-800",
-    pendente: "bg-gray-100 text-gray-700",
-    reprovado: "bg-red-100 text-red-800",
-  };
+function getStatusTone(value?: string) {
+  const v = normalize(value);
 
-  const style = map[value?.toLowerCase?.()] || "bg-gray-100 text-gray-700";
+  if (v.includes("liberado")) {
+    return "border-green-300 bg-green-50 text-green-800";
+  }
 
-  return (
-    <span className={`text-xs font-semibold px-3 py-1 rounded-full ${style}`}>
-      {value || "—"}
-    </span>
-  );
+  if (v.includes("pendente documentacao")) {
+    return "border-orange-300 bg-orange-50 text-orange-800";
+  }
+
+  if (v.includes("analise")) {
+    return "border-yellow-300 bg-yellow-50 text-yellow-800";
+  }
+
+  if (v.includes("recusado")) {
+    return "border-red-300 bg-red-50 text-red-800";
+  }
+
+  if (v.includes("recebido") || v.includes("pendente")) {
+    return "border-gray-300 bg-gray-50 text-gray-800";
+  }
+
+  return "border-gray-300 bg-white text-gray-900";
 }
 
-/* RISCO BADGE */
+function getRiskTone(value?: string) {
+  const v = normalize(value);
 
-function RiskBadge({ value }: { value: string }) {
-  const map: any = {
-    baixo: "bg-green-100 text-green-800",
-    medio: "bg-yellow-100 text-yellow-800",
-    alto: "bg-red-100 text-red-800",
-  };
+  if (v.includes("baixo")) {
+    return "border-green-300 bg-green-50 text-green-800";
+  }
 
-  const style = map[value?.toLowerCase?.()] || "bg-gray-100 text-gray-700";
+  if (v.includes("medio")) {
+    return "border-yellow-300 bg-yellow-50 text-yellow-800";
+  }
 
-  return (
-    <span className={`text-xs font-semibold px-3 py-1 rounded-full ${style}`}>
-      {value || "—"}
-    </span>
-  );
+  if (v.includes("alto")) {
+    return "border-red-300 bg-red-50 text-red-800";
+  }
+
+  if (v.includes("restrito")) {
+    return "border-gray-900 bg-gray-900 text-white";
+  }
+
+  return "border-gray-300 bg-white text-gray-900";
+}
+
+function normalize(value?: string) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
