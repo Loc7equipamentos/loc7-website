@@ -72,6 +72,7 @@ export default function CadastroPage() {
   const [error, setError] = useState("");
 
   const [formState, setFormState] = useState<Record<string, string>>({});
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
 
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
