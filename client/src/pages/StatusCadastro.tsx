@@ -130,14 +130,19 @@ export default function StatusCadastro() {
 /* ========================= */
 
 function normalizeStatus(status?: string): StatusType {
-  const s = (status || "").toLowerCase();
+  const s = String(status || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
   if (s.includes("liberado")) return "approved";
   if (s.includes("aprovado")) return "approved";
 
   if (s.includes("recusado")) return "rejected";
+  if (s.includes("reprovado")) return "rejected";
 
   if (s.includes("analise")) return "processing";
+  if (s.includes("processing")) return "processing";
   if (s.includes("pendente")) return "processing";
 
   return "received";
