@@ -1,33 +1,53 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRoute } from "wouter";
 import { supabase } from "@/lib/supabase";
+
+type StatusType = "received" | "processing" | "approved" | "rejected";
 
 export default function StatusCadastro() {
   const [, params] = useRoute("/status-cadastro/:id");
 
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<StatusType>("received");
   const [createdAt, setCreatedAt] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!params?.id) return;
 
     const load = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("rental_registrations")
         .select("public_status, created_at")
         .eq("id", params.id)
         .single();
 
-      if (!error && data) {
-        setStatus(data.public_status);
+      if (data) {
+        setStatus(normalizeStatus(data.public_status));
         setCreatedAt(data.created_at);
       }
+
+      setLoading(false);
     };
 
     load();
   }, [params]);
 
-  const { label, message, color } = getStatusInfo(status);
+  const progress = useMemo(() => {
+    switch (status) {
+      case "received":
+        return 25;
+      case "processing":
+        return 60;
+      case "approved":
+        return 100;
+      case "rejected":
+        return 100;
+      default:
+        return 25;
+    }
+  }, [status]);
+
+  const statusInfo = getStatusInfo(status);
 
   function formatDate(date?: string | null) {
     if (!date) return "";
@@ -41,63 +61,117 @@ export default function StatusCadastro() {
     }).format(new Date(date));
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f3f4f6]">
+        <p className="text-sm text-gray-500">Carregando status...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f3f4f6] px-4">
-      <div className="bg-white border rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+    <main className="min-h-screen bg-[#f3f4f6] px-4 py-12 text-zinc-900">
+      <div className="mx-auto max-w-2xl">
 
-        <h1 className="text-xl font-bold text-gray-900 mb-4">
-          Status do seu cadastro
-        </h1>
-
-        <div className={`text-lg font-bold mb-3 ${color}`}>
-          {label}
+        {/* HEADER */}
+        <div className="mb-8 text-center">
+          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 mb-2">
+            Loc7 Equipamentos
+          </p>
+          <h1 className="text-3xl font-semibold">
+            Status do seu cadastro
+          </h1>
         </div>
 
-        <p className="text-sm text-gray-600 mb-6">
-          {message}
-        </p>
+        {/* CARD */}
+        <div className="bg-white border border-black/10 rounded-2xl p-8 shadow-sm">
 
-        {createdAt && (
-          <p className="text-xs text-gray-400">
-            Enviado em {formatDate(createdAt)}
-          </p>
-        )}
+          {/* STATUS */}
+          <div className="mb-6 text-center">
+            <p className={`text-lg font-semibold ${statusInfo.color}`}>
+              {statusInfo.label}
+            </p>
+            <p className="text-sm text-zinc-600 mt-2">
+              {statusInfo.message}
+            </p>
+          </div>
 
+          {/* PROGRESSO */}
+          <div className="mb-8">
+            <div className="flex justify-between text-xs text-zinc-500 mb-2">
+              <span>Recebido</span>
+              <span>Em análise</span>
+              <span>Conclusão</span>
+            </div>
+
+            <div className="h-2 bg-zinc-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-emerald-600 transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          {/* INFO */}
+          <div className="grid gap-4 text-sm text-zinc-600">
+            {createdAt && (
+              <div>
+                <span className="font-medium text-zinc-800">
+                  Data de envio:
+                </span>{" "}
+                {formatDate(createdAt)}
+              </div>
+            )}
+          </div>
+
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
 
-function getStatusInfo(status?: string | null) {
+/* ========================= */
+/* HELPERS */
+/* ========================= */
+
+function normalizeStatus(status?: string): StatusType {
   const s = (status || "").toLowerCase();
 
-  if (s.includes("liberado") || s.includes("approved")) {
-    return {
-      label: "Cadastro aprovado",
-      message: "Seu cadastro foi aprovado. Você já pode locar equipamentos.",
-      color: "text-green-600",
-    };
-  }
+  if (s.includes("approved")) return "approved";
+  if (s.includes("rejected")) return "rejected";
+  if (s.includes("processing")) return "processing";
 
-  if (s.includes("pendente")) {
-    return {
-      label: "Pendente contato",
-      message: "Nossa equipe precisa falar com você. Em breve entraremos em contato.",
-      color: "text-orange-500",
-    };
-  }
+  return "received";
+}
 
-  if (s.includes("processing") || s.includes("analise")) {
-    return {
-      label: "Em análise",
-      message: "Estamos analisando suas informações. Em breve retornaremos.",
-      color: "text-yellow-500",
-    };
-  }
+function getStatusInfo(status: StatusType) {
+  switch (status) {
+    case "approved":
+      return {
+        label: "Cadastro aprovado",
+        message: "Seu cadastro foi aprovado. Você já pode locar equipamentos.",
+        color: "text-green-600",
+      };
 
-  return {
-    label: "Cadastro recebido",
-    message: "Recebemos sua ficha e estamos iniciando a análise.",
-    color: "text-gray-600",
-  };
+    case "rejected":
+      return {
+        label: "Cadastro não aprovado",
+        message: "Nossa equipe entrará em contato para orientações.",
+        color: "text-red-600",
+      };
+
+    case "processing":
+      return {
+        label: "Em análise",
+        message: "Estamos analisando seus dados.",
+        color: "text-orange-500",
+      };
+
+    default:
+      return {
+        label: "Cadastro recebido",
+        message: "Recebemos sua ficha e iniciamos a análise.",
+        color: "text-zinc-700",
+      };
+  }
 }
