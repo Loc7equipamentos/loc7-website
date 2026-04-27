@@ -153,7 +153,7 @@ export default function AdminCadastros() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-[1180px] w-full text-sm">
+            <table className="min-w-[1280px] w-full text-sm">
               <thead className="bg-gray-50 border-b text-xs uppercase text-gray-500 tracking-wide">
                 <tr>
                   <th className="text-left px-6 py-3 w-[260px]">Nome / Empresa</th>
@@ -163,7 +163,7 @@ export default function AdminCadastros() {
                   <th className="text-left px-6 py-3 w-[160px]">Status Público</th>
                   <th className="text-left px-6 py-3 w-[140px]">Risco</th>
                   <th className="text-left px-6 py-3 w-[120px]">Data</th>
-                  <th className="text-right px-6 py-3 w-[170px]">Ações</th>
+                  <th className="text-right px-6 py-3 w-[220px]">Ações</th>
                 </tr>
               </thead>
 
@@ -221,24 +221,26 @@ export default function AdminCadastros() {
                       {new Date(c.created_at).toLocaleDateString("pt-BR")}
                     </td>
 
-                    <td className="px-6 text-right space-x-2">
-                      <Link href={`/admin-panel/cadastro/${c.id}`}>
-                        <button
-                          type="button"
-                          className="border border-gray-300 text-gray-800 text-xs px-3 py-2 rounded-md hover:bg-gray-100 transition whitespace-nowrap"
-                        >
-                          Ver ficha
-                        </button>
-                      </Link>
+                    <td className="px-6">
+                      <div className="flex items-center justify-end gap-2 whitespace-nowrap">
+                        <Link href={`/admin-panel/cadastro/${c.id}`}>
+                          <button
+                            type="button"
+                            className="rounded-md border border-gray-300 px-3 py-2 text-xs text-gray-800 hover:bg-gray-100 transition whitespace-nowrap"
+                          >
+                            Ver ficha
+                          </button>
+                        </Link>
 
-                      <Link href={`/admin-panel/cadastro/${c.id}`}>
-                        <button
-                          type="button"
-                          className="bg-black text-white text-xs px-4 py-2 rounded-md hover:bg-gray-800 transition whitespace-nowrap"
-                        >
-                          Editar
-                        </button>
-                      </Link>
+                        <Link href={`/admin-panel/cadastro/${c.id}`}>
+                          <button
+                            type="button"
+                            className="rounded-md bg-black px-4 py-2 text-xs text-white hover:bg-gray-800 transition whitespace-nowrap"
+                          >
+                            Editar
+                          </button>
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
