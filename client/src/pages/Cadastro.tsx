@@ -247,7 +247,7 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
       const { error: insertError } = await supabase
         .from("rental_registrations")
        .insert([payload])
-.select("id")
+.select()
 .single();
 
       if (insertError) {
