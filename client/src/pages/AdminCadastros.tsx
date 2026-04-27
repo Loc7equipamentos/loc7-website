@@ -61,23 +61,23 @@ export default function AdminCadastros() {
 
   return (
     <div className="min-h-screen bg-[#f3f4f6] px-4 py-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto max-w-7xl">
         <div className="mb-8">
-          <p className="text-xs text-gray-500 tracking-widest uppercase">
+          <p className="text-xs uppercase tracking-widest text-gray-500">
             LOC7 OPERAÇÕES
           </p>
 
-          <h1 className="text-3xl font-black text-gray-900 mt-1">
+          <h1 className="mt-1 text-3xl font-black text-gray-900">
             Cadastros
           </h1>
 
-          <p className="text-gray-600 mt-1 text-sm">
+          <p className="mt-1 text-sm text-gray-600">
             Análise interna de clientes, risco e liberação de locação.
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b">
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div className="border-b px-6 py-4">
             <p className="text-sm font-semibold text-gray-900">
               Cadastros recebidos
             </p>
@@ -86,8 +86,8 @@ export default function AdminCadastros() {
             </p>
           </div>
 
-          <div className="px-6 py-4 border-b bg-gray-50">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+          <div className="border-b bg-gray-50 px-6 py-4">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
               <label className="md:col-span-2">
                 <span className="mb-1 block text-[11px] font-black uppercase tracking-wide text-gray-600">
                   Buscar
@@ -97,7 +97,7 @@ export default function AdminCadastros() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Nome, e-mail, telefone, PF ou PJ"
-                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-bold text-gray-900 outline-none focus:border-[#b91c1c]"
+                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-bold text-gray-900 outline-none focus:border-black"
                 />
               </label>
 
@@ -135,15 +135,16 @@ export default function AdminCadastros() {
                 options={["Todos", "Baixo", "Médio", "Alto", "Restrito"]}
               />
 
-              <div className="md:col-span-5 flex justify-end">
+              <div className="flex justify-end md:col-span-5">
                 <button
+                  type="button"
                   onClick={() => {
                     setSearch("");
                     setStatusInternalFilter("Todos");
                     setStatusPublicFilter("Todos");
                     setRiskFilter("Todos");
                   }}
-                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-bold text-gray-700 hover:bg-gray-100 transition"
+                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-bold text-gray-700 transition hover:bg-gray-100"
                 >
                   Limpar busca e filtros
                 </button>
@@ -151,101 +152,121 @@ export default function AdminCadastros() {
             </div>
           </div>
 
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b text-xs uppercase text-gray-500 tracking-wide">
-              <tr>
-                <th className="text-left px-6 py-3">Nome / Empresa</th>
-                <th className="text-left px-6 py-3">Tipo</th>
-                <th className="text-left px-6 py-3">Telefone</th>
-                <th className="text-left px-6 py-3">Status Interno</th>
-                <th className="text-left px-6 py-3">Status Público</th>
-                <th className="text-left px-6 py-3">Risco</th>
-                <th className="text-left px-6 py-3">Data</th>
-                <th className="text-right px-6 py-3">Ações</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredCadastros.map((c) => (
-                <tr key={c.id} className="border-b hover:bg-gray-50 transition">
-                  <td className="px-6 py-4">
-                    <div className="font-semibold text-gray-900">
-                      {c.full_name}
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">{c.email}</div>
-                  </td>
-
-                  <td className="px-6">
-                    <span className="text-xs font-semibold bg-gray-100 text-gray-800 px-3 py-1 rounded-full">
-                      {c.registration_type?.toUpperCase()}
-                    </span>
-                  </td>
-
-                  <td className="px-6 text-gray-800 font-medium">
-                    {c.phone}
-                  </td>
-
-                  <td className="px-6">
-                    <span
-                      className={`text-xs font-semibold px-3 py-1 rounded-full border ${getStatusTone(
-                        c.status_internal
-                      )}`}
-                    >
-                      {c.status_internal || "—"}
-                    </span>
-                  </td>
-
-                  <td className="px-6">
-                    <span
-                      className={`text-xs font-semibold px-3 py-1 rounded-full border ${getStatusTone(
-                        c.status_public
-                      )}`}
-                    >
-                      {c.status_public || "—"}
-                    </span>
-                  </td>
-
-                  <td className="px-6">
-                    <span
-                      className={`text-xs font-semibold px-3 py-1 rounded-full border ${getRiskTone(
-                        c.risk
-                      )}`}
-                    >
-                      {c.risk || "—"}
-                    </span>
-                  </td>
-
-                  <td className="px-6 text-gray-700">
-                    {new Date(c.created_at).toLocaleDateString("pt-BR")}
-                  </td>
-
-                  <td className="px-6 text-right space-x-2">
-                    <Link href={`/admin-panel/cadastro/${c.id}`}>
-                      <button className="border border-gray-300 text-gray-800 text-xs px-3 py-2 rounded-md hover:bg-gray-100 transition">
-                        Ver ficha
-                      </button>
-                    </Link>
-
-                  <Link href={`/admin-panel/cadastro/${c.id}`}>
-  <button className="bg-black text-white text-xs px-4 py-2 rounded-md hover:bg-gray-800 transition">
-    Editar
-  </button>
-</Link>                  </td>
-                </tr>
-              ))}
-
-              {filteredCadastros.length === 0 && (
+          <div className="overflow-x-auto">
+            <table className="min-w-[1180px] w-full text-sm">
+              <thead className="border-b bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
                 <tr>
-                  <td
-                    colSpan={8}
-                    className="px-6 py-10 text-center text-sm font-medium text-gray-500"
-                  >
-                    Nenhum cadastro encontrado com a busca ou filtros selecionados.
-                  </td>
+                  <th className="w-[260px] px-6 py-3 text-left">
+                    Nome / Empresa
+                  </th>
+                  <th className="w-[90px] px-6 py-3 text-left">Tipo</th>
+                  <th className="w-[140px] px-6 py-3 text-left">Telefone</th>
+                  <th className="w-[160px] px-6 py-3 text-left">
+                    Status Interno
+                  </th>
+                  <th className="w-[160px] px-6 py-3 text-left">
+                    Status Público
+                  </th>
+                  <th className="w-[120px] px-6 py-3 text-left">Risco</th>
+                  <th className="w-[120px] px-6 py-3 text-left">Data</th>
+                  <th className="w-[170px] px-6 py-3 text-right">Ações</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {filteredCadastros.map((c) => (
+                  <tr key={c.id} className="border-b transition hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-gray-900">
+                        {c.full_name}
+                      </div>
+                      <div className="mt-1 text-xs text-gray-500">
+                        {c.email}
+                      </div>
+                    </td>
+
+                    <td className="px-6">
+                      <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-800">
+                        {c.registration_type?.toUpperCase()}
+                      </span>
+                    </td>
+
+                    <td className="px-6 font-medium text-gray-800">
+                      {c.phone}
+                    </td>
+
+                    <td className="px-6">
+                      <span
+                        className={`rounded-full border px-3 py-1 text-xs font-semibold ${getStatusTone(
+                          c.status_internal
+                        )}`}
+                      >
+                        {c.status_internal || "—"}
+                      </span>
+                    </td>
+
+                    <td className="px-6">
+                      <span
+                        className={`rounded-full border px-3 py-1 text-xs font-semibold ${getStatusTone(
+                          c.status_public
+                        )}`}
+                      >
+                        {c.status_public || "—"}
+                      </span>
+                    </td>
+
+                    <td className="px-6">
+                      <span
+                        className={`rounded-full border px-3 py-1 text-xs font-semibold ${getRiskTone(
+                          c.risk
+                        )}`}
+                      >
+                        {c.risk || "—"}
+                      </span>
+                    </td>
+
+                    <td className="px-6 text-gray-700">
+                      {new Date(c.created_at).toLocaleDateString("pt-BR")}
+                    </td>
+
+                    <td className="px-6">
+                      <div className="flex justify-end gap-2">
+                        <Link href={`/admin-panel/cadastro/${c.id}`}>
+                          <button
+                            type="button"
+                            className="whitespace-nowrap rounded-md border border-gray-300 px-3 py-2 text-xs text-gray-800 transition hover:bg-gray-100"
+                          >
+                            Ver ficha
+                          </button>
+                        </Link>
+
+                        <Link href={`/admin-panel/cadastro/${c.id}`}>
+                          <button
+                            type="button"
+                            className="whitespace-nowrap rounded-md bg-black px-4 py-2 text-xs text-white transition hover:bg-gray-800"
+                          >
+                            Editar
+                          </button>
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+
+                {filteredCadastros.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={8}
+                      className="px-6 py-10 text-center text-sm font-medium text-gray-500"
+                    >
+                      Nenhum cadastro encontrado com a busca ou filtros
+                      selecionados.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -272,7 +293,7 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-bold text-gray-900 outline-none focus:border-[#b91c1c]"
+        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-bold text-gray-900 outline-none focus:border-black"
       >
         {options.map((option) => (
           <option key={option}>{option}</option>
@@ -301,11 +322,7 @@ function getStatusTone(value?: string) {
     return "border-red-300 bg-red-50 text-red-800";
   }
 
-  if (v.includes("recebido") || v.includes("pendente")) {
-    return "border-gray-300 bg-gray-50 text-gray-800";
-  }
-
-  return "border-gray-300 bg-white text-gray-900";
+  return "border-gray-300 bg-gray-50 text-gray-800";
 }
 
 function getRiskTone(value?: string) {
