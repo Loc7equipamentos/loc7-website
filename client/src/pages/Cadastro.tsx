@@ -206,7 +206,30 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
     setStep((current) => Math.max(current - 1, 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+const uploadDocument = async (registrationId: string) => {
+  if (!documentFile) return null;
 
+  try {
+    const fileExt = documentFile.name.split(".").pop();
+    const filePath = `${registrationId}/document.${fileExt}`;
+
+    const { error } = await supabase.storage
+      .from("documents")
+      .upload(filePath, documentFile, {
+        upsert: true,
+      });
+
+    if (error) {
+      console.error("Erro upload:", error.message);
+      return null;
+    }
+
+    return filePath;
+  } catch (err) {
+    console.error("Erro inesperado upload:", err);
+    return null;
+  }
+};
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
