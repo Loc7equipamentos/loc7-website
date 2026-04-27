@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "wouter";
 import { supabase } from "@/lib/supabase";
 
@@ -78,6 +78,9 @@ export default function CadastroPage() {
   const [tipo, setTipo] = useState<TipoCadastro>("pf");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  useEffect(() => {
+  setSuccess(false);
+}, []);
   const [cadastroId, setCadastroId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
