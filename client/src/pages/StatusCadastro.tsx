@@ -4,20 +4,23 @@ import { supabase } from "@/lib/supabase";
 
 export default function StatusCadastro() {
   const [, params] = useRoute("/status-cadastro/:id");
+
   const [status, setStatus] = useState<string | null>(null);
+  const [createdAt, setCreatedAt] = useState<string | null>(null);
 
   useEffect(() => {
     if (!params?.id) return;
 
     const load = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("rental_registrations")
-        .select("status_public")
+        .select("public_status, created_at")
         .eq("id", params.id)
         .single();
 
-      if (data) {
-        setStatus(data.status_public);
+      if (!error && data) {
+        setStatus(data.public_status);
+        setCreatedAt(data.created_at);
       }
     };
 
@@ -25,6 +28,18 @@ export default function StatusCadastro() {
   }, [params]);
 
   const { label, message, color } = getStatusInfo(status);
+
+  function formatDate(date?: string | null) {
+    if (!date) return "";
+
+    return new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(date));
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f3f4f6] px-4">
@@ -38,9 +53,15 @@ export default function StatusCadastro() {
           {label}
         </div>
 
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 mb-6">
           {message}
         </p>
+
+        {createdAt && (
+          <p className="text-xs text-gray-400">
+            Enviado em {formatDate(createdAt)}
+          </p>
+        )}
 
       </div>
     </div>
@@ -50,7 +71,7 @@ export default function StatusCadastro() {
 function getStatusInfo(status?: string | null) {
   const s = (status || "").toLowerCase();
 
-  if (s.includes("liberado")) {
+  if (s.includes("liberado") || s.includes("approved")) {
     return {
       label: "Cadastro aprovado",
       message: "Seu cadastro foi aprovado. Você já pode locar equipamentos.",
@@ -66,7 +87,7 @@ function getStatusInfo(status?: string | null) {
     };
   }
 
-  if (s.includes("analise")) {
+  if (s.includes("processing") || s.includes("analise")) {
     return {
       label: "Em análise",
       message: "Estamos analisando suas informações. Em breve retornaremos.",
