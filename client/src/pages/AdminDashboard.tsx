@@ -31,8 +31,6 @@ export default function AdminCadastros() {
 
   return (
     <div className="max-w-7xl mx-auto">
-
-      {/* HEADER */}
       <div className="mb-6">
         <p className="text-xs text-gray-500 tracking-widest uppercase">
           LOC7 OPERAÇÕES
@@ -47,9 +45,7 @@ export default function AdminCadastros() {
         </p>
       </div>
 
-      {/* CARD */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-
         <div className="p-4 border-b">
           <p className="text-sm font-semibold text-gray-900">
             Cadastros recebidos
@@ -59,9 +55,7 @@ export default function AdminCadastros() {
           </p>
         </div>
 
-        {/* TABELA */}
         <table className="w-full text-sm">
-
           <thead className="bg-gray-100 border-b text-xs uppercase text-gray-600">
             <tr>
               <th className="text-left px-4 py-3">Nome / Empresa</th>
@@ -76,69 +70,58 @@ export default function AdminCadastros() {
           </thead>
 
           <tbody>
-
             {cadastros.map((c) => (
-              <tr
-                key={c.id}
-                className="border-b hover:bg-gray-50 transition"
-              >
-                {/* NOME */}
+              <tr key={c.id} className="border-b hover:bg-gray-50 transition">
                 <td className="px-4 py-4">
                   <div className="font-semibold text-gray-900">
                     {c.full_name}
                   </div>
-                  <div className="text-xs text-gray-500">
-                    {c.email}
-                  </div>
+                  <div className="text-xs text-gray-500">{c.email}</div>
                 </td>
 
-                {/* TIPO */}
                 <td className="px-4">
                   <span className="text-xs font-semibold bg-gray-200 text-gray-700 px-2 py-1 rounded">
                     {c.registration_type?.toUpperCase()}
                   </span>
                 </td>
 
-                {/* TELEFONE */}
-                <td className="px-4 font-medium text-gray-800">
-                  {c.phone}
-                </td>
+                <td className="px-4 font-medium text-gray-800">{c.phone}</td>
 
-                {/* STATUS INTERNO */}
                 <td className="px-4">
                   <span className="text-xs font-semibold bg-green-100 text-green-800 px-3 py-1 rounded-full">
-                    {c.status_internal}
+                    {c.status_internal || "—"}
                   </span>
                 </td>
 
-                {/* STATUS PUBLICO */}
                 <td className="px-4">
                   <span className="text-xs font-semibold bg-green-100 text-green-800 px-3 py-1 rounded-full">
-                    {c.status_public}
+                    {c.status_public || "—"}
                   </span>
                 </td>
 
-                {/* RISCO */}
                 <td className="px-4">
                   <span className="text-xs font-semibold bg-gray-200 text-gray-800 px-3 py-1 rounded-full">
-                    {c.risk}
+                    {c.risk || "—"}
                   </span>
                 </td>
 
-                {/* DATA */}
                 <td className="px-4 text-gray-700">
                   {new Date(c.created_at).toLocaleDateString("pt-BR")}
                 </td>
 
-                {/* AÇÕES */}
                 <td className="px-4 text-right">
-                  <button className="bg-black text-white text-xs px-4 py-2 rounded-md hover:opacity-90 transition">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      window.location.assign(`/admin-panel/cadastro/${c.id}`)
+                    }
+                    className="bg-black text-white text-xs px-4 py-2 rounded-md hover:opacity-90 transition"
+                  >
                     Editar
                   </button>
                 </td>
               </tr>
             ))}
-
           </tbody>
         </table>
       </div>
