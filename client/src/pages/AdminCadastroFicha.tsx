@@ -92,12 +92,11 @@ export default function AdminCadastroFicha() {
 
               <div className="no-print grid gap-3 md:min-w-[430px]">
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-
                   <SelectField
                     label="Status interno"
-                    value={data.status_internal || ""}
-                    tone={getStatusTone(data.status_internal)}
-                    onChange={(value) => updateField("status_internal", value)}
+                    value={data.internal_status || ""}
+                    tone={getStatusTone(data.internal_status)}
+                    onChange={(value) => updateField("internal_status", value)}
                     options={[
                       "Recebido",
                       "Em análise",
@@ -109,9 +108,9 @@ export default function AdminCadastroFicha() {
 
                   <SelectField
                     label="Status público"
-                    value={data.status_public || ""}
-                    tone={getStatusTone(data.status_public)}
-                    onChange={(value) => updateField("status_public", value)}
+                    value={data.public_status || ""}
+                    tone={getStatusTone(data.public_status)}
+                    onChange={(value) => updateField("public_status", value)}
                     options={[
                       "Recebido",
                       "Em análise",
@@ -122,18 +121,17 @@ export default function AdminCadastroFicha() {
 
                   <SelectField
                     label="Risco"
-                    value={data.risk || ""}
-                    tone={getRiskTone(data.risk)}
-                    onChange={(value) => updateField("risk", value)}
+                    value={data.risk_level || ""}
+                    tone={getRiskTone(data.risk_level)}
+                    onChange={(value) => updateField("risk_level", value)}
                     options={["Baixo", "Médio", "Alto", "Restrito"]}
                   />
-
                 </div>
 
                 <div className="flex flex-wrap justify-end gap-2">
-                  <Pill label="Interno" value={data.status_internal} tone={getStatusTone(data.status_internal)} />
-                  <Pill label="Público" value={data.status_public} tone={getStatusTone(data.status_public)} />
-                  <Pill label="Risco" value={data.risk} tone={getRiskTone(data.risk)} />
+                  <Pill label="Interno" value={data.internal_status} tone={getStatusTone(data.internal_status)} />
+                  <Pill label="Público" value={data.public_status} tone={getStatusTone(data.public_status)} />
+                  <Pill label="Risco" value={data.risk_level} tone={getRiskTone(data.risk_level)} />
                 </div>
 
                 {saving && (
@@ -144,9 +142,9 @@ export default function AdminCadastroFicha() {
               </div>
 
               <div className="hidden print:block text-sm text-gray-900">
-                <div>Status interno: {data.status_internal || "—"}</div>
-                <div>Status público: {data.status_public || "—"}</div>
-                <div>Risco: {data.risk || "—"}</div>
+                <div>Status interno: {data.internal_status || "—"}</div>
+                <div>Status público: {data.public_status || "—"}</div>
+                <div>Risco: {data.risk_level || "—"}</div>
               </div>
             </div>
           </header>
@@ -166,7 +164,7 @@ export default function AdminCadastroFicha() {
                 <>
                   <Field label="Razão social" value={form.razaoSocial} />
                   <Field label="CNPJ" value={form.cnpj} />
-                  <Field label="Responsável" value={form.nomeResponsavel} />
+                  <Field label="Responsável" value={form.responsavel || form.nomeResponsavel} />
                   <Field label="E-mail" value={form.email} />
                   <Field label="Telefone" value={form.telefone} />
                 </>
@@ -187,36 +185,32 @@ export default function AdminCadastroFicha() {
           </Section>
 
           <Section title="Referências comerciais">
-            {Array.isArray(form.referencias) && form.referencias.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                {form.referencias.map((ref: any, index: number) => (
-                  <div
-                    key={index}
-                    className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-                  >
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {[1, 2, 3].map((n) => {
+                const empresa = form[`empresa${n}`] || form[`empresa${n}Pj`];
+                const contato = form[`nomeContato${n}`] || form[`nomeContato${n}Pj`];
+                const telefone = form[`telefoneContato${n}`] || form[`telefoneContato${n}Pj`];
+
+                if (!empresa && !contato && !telefone) return null;
+
+                return (
+                  <div key={n} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
                     <div className="mb-2 text-xs font-black uppercase tracking-wide text-[#b91c1c]">
-                      Referência {index + 1}
+                      Referência {n}
                     </div>
-
                     <div className="text-base font-black text-gray-950">
-                      {ref.empresa || "Empresa não informada"}
+                      {empresa || "Empresa não informada"}
                     </div>
-
                     <div className="mt-2 text-sm font-medium text-gray-800">
-                      <strong>Contato:</strong> {ref.nome || "—"}
+                      <strong>Contato:</strong> {contato || "—"}
                     </div>
-
                     <div className="text-sm font-medium text-gray-800">
-                      <strong>Telefone:</strong> {ref.telefone || "—"}
+                      <strong>Telefone:</strong> {telefone || "—"}
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-lg border border-dashed border-gray-300 bg-white p-5 text-sm font-medium text-gray-600">
-                Nenhuma referência cadastrada
-              </div>
-            )}
+                );
+              })}
+            </div>
           </Section>
 
           <Section title="Observações internas">
@@ -270,9 +264,7 @@ function Field({ label, value, className = "" }: any) {
   return (
     <div className={`rounded-lg border border-gray-200 bg-white p-4 ${className}`}>
       <div className="text-xs font-black uppercase text-gray-600">{label}</div>
-      <div className="text-base font-semibold text-gray-950">
-        {value || "—"}
-      </div>
+      <div className="text-base font-semibold text-gray-950">{value || "—"}</div>
     </div>
   );
 }
@@ -303,29 +295,14 @@ function Pill({ label, value, tone }: any) {
   );
 }
 
-/* 🔥 CORRIGIDO COM LARANJA */
 function getStatusTone(value?: string) {
   const v = normalize(value);
 
-  if (v.includes("liberado")) {
-    return "border-green-300 bg-green-50 text-green-800";
-  }
-
-  if (v.includes("pendente documentacao")) {
-    return "border-orange-300 bg-orange-50 text-orange-800";
-  }
-
-  if (v.includes("analise")) {
-    return "border-yellow-300 bg-yellow-50 text-yellow-800";
-  }
-
-  if (v.includes("recusado")) {
-    return "border-red-300 bg-red-50 text-red-800";
-  }
-
-  if (v.includes("recebido") || v.includes("pendente")) {
-    return "border-gray-300 bg-gray-50 text-gray-800";
-  }
+  if (v.includes("liberado")) return "border-green-300 bg-green-50 text-green-800";
+  if (v.includes("pendente documentacao")) return "border-orange-300 bg-orange-50 text-orange-800";
+  if (v.includes("analise")) return "border-yellow-300 bg-yellow-50 text-yellow-800";
+  if (v.includes("recusado")) return "border-red-300 bg-red-50 text-red-800";
+  if (v.includes("recebido") || v.includes("pendente")) return "border-gray-300 bg-gray-50 text-gray-800";
 
   return "border-gray-300 bg-white text-gray-900";
 }
@@ -333,21 +310,10 @@ function getStatusTone(value?: string) {
 function getRiskTone(value?: string) {
   const v = normalize(value);
 
-  if (v.includes("baixo")) {
-    return "border-green-300 bg-green-50 text-green-800";
-  }
-
-  if (v.includes("medio")) {
-    return "border-yellow-300 bg-yellow-50 text-yellow-800";
-  }
-
-  if (v.includes("alto")) {
-    return "border-red-300 bg-red-50 text-red-800";
-  }
-
-  if (v.includes("restrito")) {
-    return "border-gray-900 bg-gray-900 text-white";
-  }
+  if (v.includes("baixo")) return "border-green-300 bg-green-50 text-green-800";
+  if (v.includes("medio")) return "border-yellow-300 bg-yellow-50 text-yellow-800";
+  if (v.includes("alto")) return "border-red-300 bg-red-50 text-red-800";
+  if (v.includes("restrito")) return "border-gray-900 bg-gray-900 text-white";
 
   return "border-gray-300 bg-white text-gray-900";
 }
