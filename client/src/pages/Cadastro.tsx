@@ -244,11 +244,11 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
   form_data: formState,
 };
 
-      const { error: insertError } = await supabase
-        .from("rental_registrations")
-       .insert([payload])
-.select()
-.single();
+     const { data: insertData, error: insertError } = await supabase
+  .from("rental_registrations")
+  .insert([payload])
+  .select()
+  .single();
 
       if (insertError) {
         console.error("Erro Supabase:", insertError);
