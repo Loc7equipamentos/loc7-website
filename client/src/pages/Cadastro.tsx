@@ -1009,13 +1009,11 @@ if (success) {
           {step === 6 && (
             <section className={sectionClass}>
               <h2 className="mb-2 text-2xl font-semibold text-zinc-950">
-                6. Revisão e envio
+                6. Envie seus documentos
               </h2>
 
               <p className="mb-6 text-sm text-zinc-600">
-                Confira se os dados estão corretos. Após o envio, a equipe Loc7
-                fará a análise e entrará em contato se precisar de informações
-                complementares.
+                Anexe os documentos necessários para concluir seu cadastro.
               </p>
 
               <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
