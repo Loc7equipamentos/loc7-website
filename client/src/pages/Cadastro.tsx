@@ -132,7 +132,7 @@ export default function CadastroPage() {
     }
   }
   async function uploadDocument(registrationId: string) {
-    async function uploadDocument(...)
+    
 
     const safeFileName =
       sanitizeFileName(documentFile.name) || `documento-${Date.now()}`;
