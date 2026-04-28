@@ -404,7 +404,7 @@ if (success) {
           </a>
 
           <a
-            href={`/status-cadastro?id=${registrationId}`}
+            href={`/status-cadastro/${cadastroId}`}
             className="text-sm text-zinc-400 underline hover:text-white"
           >
             Acompanhar status do cadastro
