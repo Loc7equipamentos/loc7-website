@@ -1099,7 +1099,7 @@ setDocumentFiles(files);
             ) : (
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || documentFiles.length === 0}
                 className="rounded-xl bg-zinc-950 px-6 py-3 font-bold text-white transition hover:bg-black disabled:opacity-50"
               >
                 {loading ? "Enviando..." : "Enviar cadastro"}
