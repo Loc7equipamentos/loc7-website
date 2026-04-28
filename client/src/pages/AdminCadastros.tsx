@@ -183,7 +183,7 @@ export default function AdminCadastros() {
                       </span>
                     </td>
 
-                    <td className="px-6 text-gray-800 font-medium">
+                    <td className="px-6 text-gray-800 font-medium whitespace-nowrap">
                       {c.phone}
                     </td>
 
