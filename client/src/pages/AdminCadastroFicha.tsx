@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useRoute } from "wouter";
+import { Link, useLocation } from "wouter";
 import { supabase } from "@/lib/supabase";
 
 type DocumentItem = {
@@ -9,17 +9,18 @@ type DocumentItem = {
 };
 
 export default function AdminCadastroFicha() {
-  const [, params] = useRoute("/admin-panel/cadastro/:id");
+  const [location] = useLocation();
+const id = location.split("/admin-panel/cadastro/")[1];
   const [data, setData] = useState<any>(null);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!params?.id) return;
+    if (!id) return;
 
     const load = async () => {
       const { data, error } = await supabase
-        .from("rental_registrations")
+       .eq("id", id)
         .select("*")
         .eq("id", params.id)
         .single();
