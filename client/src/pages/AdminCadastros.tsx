@@ -21,9 +21,24 @@ export default function AdminCadastros() {
   const [statusPublicFilter, setStatusPublicFilter] = useState("Todos");
   const [riskFilter, setRiskFilter] = useState("Todos");
 
-  useEffect(() => {
-    fetchCadastros();
-  }, []);
+ useEffect(() => {
+  const load = async () => {
+    const { data, error } = await supabase
+      .from("rental_registrations")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      setCadastros(data);
+    }
+  };
+
+  load();
+
+  const interval = setInterval(load, 5000);
+
+  return () => clearInterval(interval);
+}, []);
 
   async function fetchCadastros() {
     const { data } = await supabase
