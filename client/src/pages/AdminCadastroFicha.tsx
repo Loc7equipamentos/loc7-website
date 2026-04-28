@@ -244,9 +244,10 @@ export default function AdminCadastroFicha() {
     Abrir documento
   </a>
 
-  <a
-    href={doc.url}
-    download
+<a
+  href={doc.url}
+download={`${getDisplayId(data.id)}_DOC${index + 1}.${getFileExtension(doc.name)}`}
+                          
     className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-900"
   >
     Baixar
@@ -459,4 +460,8 @@ function getDisplayId(id?: string) {
 
   const short = id.replace(/-/g, "").slice(0, 6).toUpperCase();
   return `LOC7-${short}`;
+}
+function getFileExtension(filename: string) {
+  const parts = filename.split(".");
+  return parts.length > 1 ? parts.pop() : "file";
 }
