@@ -132,7 +132,7 @@ export default function CadastroPage() {
     }
   }
   async function uploadDocument(registrationId: string) {
-    if (!documentFile) return null;
+    async function uploadDocument(...)
 
     const safeFileName =
       sanitizeFileName(documentFile.name) || `documento-${Date.now()}`;
@@ -243,7 +243,7 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-if (!documentFile) {
+if (documentFiles.length === 0) {
   setError("Envie o documento obrigatório para concluir o cadastro.");
   return;
 }
