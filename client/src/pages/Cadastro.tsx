@@ -313,12 +313,13 @@ if (documentFile) {
     documents: documentPath ? [documentPath] : [],
   };
 
-  const { error: updateError } = await supabase
-    .from("rental_registrations")
-    .update({
-      form_data: updatedFormData,
-    })
-    .eq("id", insertData.id);
+ const { error: updateError } = await supabase
+  .from("rental_registrations")
+  .update({
+    form_data: updatedFormData,
+    documents: documentPath ? [documentPath] : [],
+  })
+  .eq("id", insertData.id);
 
   if (updateError) {
     console.error("Erro ao salvar documento no cadastro:", updateError);
