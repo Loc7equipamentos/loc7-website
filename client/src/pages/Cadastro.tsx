@@ -98,7 +98,7 @@ export default function CadastroPage() {
   const [uf, setUf] = useState("");
 
   const progress = useMemo(() => {
-    return Math.round((step / TOTAL_STEPS) * 100);
+    return Math.round(((step - 1) / (TOTAL_STEPS - 1)) * 100);
   }, [step]);
 
   function updateForm(name: string, value: string) {
@@ -158,7 +158,12 @@ export default function CadastroPage() {
 
   return uploadedPaths;
 }
-function validateStep(step: number, formState: any, tipo: string): { valid: boolean; message?: string } {
+function validateStep(
+  step: number,
+  formState: any,
+  tipo: string,
+  documentFiles: File[] = []
+): { valid: boolean; message?: string } {
   if (step === 1) {
     if (!tipo) {
       return { valid: false, message: "Selecione o tipo de cadastro (PF ou PJ)." };
@@ -226,10 +231,17 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
     }
   }
 
+  if (step === 6 && documentFiles.length === 0) {
+    return {
+      valid: false,
+      message: "Envie pelo menos um documento para concluir o cadastro.",
+    };
+  }
+
   return { valid: true };
 }
   function nextStep() {
-  const result = validateStep(step, formState, tipo);
+  const result = validateStep(step, formState, tipo, documentFiles);
 
   if (!result.valid) {
     setError(result.message || "Erro de validação");
@@ -250,7 +262,8 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 if (documentFiles.length === 0) {
-  setError("Envie o documento obrigatório para concluir o cadastro.");
+  setError("Envie pelo menos um documento para concluir o cadastro.");
+  setStep(6);
   return;
 }
     setLoading(true);
@@ -1014,6 +1027,7 @@ if (success) {
   type="file"
   multiple
   name="documentoCadastro"
+                  required
                   accept=".pdf,.jpg,.jpeg,.png,.webp"
                   onChange={(e) => {
                    const files = Array.from(e.target.files || []);
@@ -1099,7 +1113,7 @@ setDocumentFiles(files);
             ) : (
               <button
                 type="submit"
-                disabled={loading || documentFiles.length === 0}
+                disabled={loading}
                 className="rounded-xl bg-zinc-950 px-6 py-3 font-bold text-white transition hover:bg-black disabled:opacity-50"
               >
                 {loading ? "Enviando..." : "Enviar cadastro"}
