@@ -225,7 +225,7 @@ export default function AdminCadastroFicha() {
                         <div className="mt-1 text-sm font-semibold text-gray-950 truncate">
                           {doc.name}
                         </div>
-                        <div className="mt-1 break-all text-xs font-medium text-gray-500 print:block">
+                        <div className="mt-1 text-xs text-gray-400 truncate print:block">
                           {doc.path}
                         </div>
                       </div>
