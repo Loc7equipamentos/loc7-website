@@ -219,7 +219,7 @@ export default function AdminCadastroFicha() {
                       className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between"
                     >
                       <div>
-                        <div className="text-xs font-black uppercase text-gray-500">
+                        <div className="text-xs font-semibold text-gray-500">
   {"Documento " + (index + 1)}
 </div>
                         <div className="mt-1 text-sm font-semibold text-gray-950 truncate">
