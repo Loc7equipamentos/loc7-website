@@ -1015,21 +1015,20 @@ if (success) {
                 6. Envie seus documentos
               </h2>
 
-              <p className="mb-6 text-sm text-zinc-600">
-                Anexe os documentos necessários para concluir seu cadastro.
-              </p>
+             <p className="mb-6 text-sm text-zinc-600">
+  Envie os documentos obrigatórios para análise do cadastro.
+</p>
 
-              <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
-                <p className="text-sm text-zinc-700">
-                  Nesta etapa, o cadastro será registrado no sistema interno da
-                  Loc7. O envio de documentos é opcional nesta fase e ajuda a
-                  agilizar a análise cadastral.
-                </p>
-              </div>
+<div className="rounded-xl border border-red-200 bg-red-50 p-4">
+  <p className="text-sm text-zinc-700">
+    O envio dos documentos é obrigatório para concluir o cadastro.
+    Sem o envio, não será possível dar sequência na análise.
+  </p>
+</div>
 
               <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
                 <label className={labelClass}>
-                  Documento para análise cadastral (opcional)
+                 Documento obrigatório para análise cadastral
                 </label>
 
                 <input
