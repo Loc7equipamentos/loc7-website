@@ -365,77 +365,51 @@ if (documentFile) {
     "rounded-2xl border border-black/10 bg-white p-6 shadow-sm";
 
 if (success) {
+  const whatsappLink = `https://wa.me/5511919671611?text=Olá! Acabei de concluir meu cadastro no site da LOC7 e gostaria de falar com um especialista.`;
+
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#111214] px-4 py-16 text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_42%)]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="relative w-full max-w-xl animate-[fadeIn_0.7s_ease-out] text-center">
-        <div className="mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10 shadow-[0_0_45px_rgba(16,185,129,0.25)]">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10">
           <span className="text-3xl text-emerald-400">✓</span>
         </div>
 
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.32em] text-emerald-400">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.32em] text-emerald-400">
           Cadastro recebido
         </p>
 
-        <h1 className="mb-5 text-4xl font-semibold leading-tight tracking-[-0.03em] text-white md:text-5xl">
-          Cadastro concluído com sucesso.
+        <h1 className="text-3xl font-semibold leading-tight md:text-4xl">
+          Tudo certo. Seu cadastro está em análise.
         </h1>
 
-        <p className="mx-auto mb-7 max-w-md text-base leading-relaxed text-zinc-400 md:text-lg">
-          Seu cadastro foi enviado para análise da equipe Loc7.
+        <p className="mt-4 text-sm text-zinc-400 md:text-base">
+          Agora você já pode falar com um especialista e agilizar sua locação.
         </p>
 
-        <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-orange-400/20 bg-orange-400/10 px-4 py-2 text-sm font-medium text-orange-300">
-          <span className="h-2 w-2 rounded-full bg-orange-300 shadow-[0_0_12px_rgba(251,191,36,0.7)]" />
+        <div className="mt-6 inline-flex items-center rounded-full border border-orange-400/30 bg-orange-400/10 px-4 py-2 text-sm text-orange-300">
           Status: Em validação
         </div>
 
-        <div className="mx-auto mb-10 max-w-md space-y-4 text-sm leading-relaxed text-zinc-400 md:text-base">
-          <p>Nossa equipe irá validar seus dados para dar sequência ao processo de locação.</p>
-          <p>Você receberá uma atualização por WhatsApp e/ou e-mail.</p>
-          <p>Fique atento aos canais informados no cadastro.</p>
-          <p className="text-zinc-500">
-            Caso necessário, entraremos em contato diretamente com você.
-          </p>
+        <div className="mt-10 flex flex-col items-center gap-4">
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full max-w-xs rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange-600"
+          >
+            Falar com especialista no WhatsApp
+          </a>
+
+          <a
+            href={`/status-cadastro?id=${registrationId}`}
+            className="text-sm text-zinc-400 underline hover:text-white"
+          >
+            Acompanhar status do cadastro
+          </a>
         </div>
-{cadastroId && (
-  <div className="mb-8">
-    <p className="text-sm text-zinc-400 mb-2">
-      Acompanhe o status do seu cadastro:
-    </p>
-
-    <a
-      href={`/status-cadastro/${cadastroId}`}
-      className="inline-block rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white hover:bg-orange-400 transition"
-    >
-      Ver status do cadastro
-    </a>
-   <button
-  type="button"
-  onClick={() => {
-    navigator.clipboard.writeText(
-      `${window.location.origin}/status-cadastro/${cadastroId}`
-    );
-    alert("Link copiado!");
-  }}
-  className="mt-3 inline-block rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
->
-  Copiar link
-</button>
-  </div>
-)}
-        <Link
-          href="/"
-          className="inline-flex rounded-full bg-white px-7 py-3 text-sm font-semibold text-zinc-950 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:scale-[1.02] hover:bg-zinc-200 active:scale-[0.98]"
-        >
-          Voltar ao site
-        </Link>
-
-        <p className="mt-7 text-xs text-zinc-600">
-          Loc7 Equipamentos — processo seguro para locação profissional.
-        </p>
       </div>
     </main>
   );
