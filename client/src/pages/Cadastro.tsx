@@ -243,7 +243,10 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
+if (!documentFile) {
+  setError("Envie o documento obrigatório para concluir o cadastro.");
+  return;
+}
     setLoading(true);
     setError("");
 
