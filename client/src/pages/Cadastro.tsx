@@ -1006,8 +1006,9 @@ if (success) {
                 </label>
 
                 <input
-                  type="file"
-                  name="documentoCadastro"
+  type="file"
+  multiple
+  name="documentoCadastro"
                   accept=".pdf,.jpg,.jpeg,.png,.webp"
                   onChange={(e) => {
                     const file = e.target.files?.[0] || null;
