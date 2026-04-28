@@ -316,7 +316,7 @@ export default function AdminCadastroFicha() {
           </Section>
 
           <footer className="mt-8 border-t border-gray-300 pt-4 text-xs font-medium text-gray-600">
-            <div>ID do cadastro: {data.id}</div>
+            <div>ID do cadastro: {getDisplayId(data.id)}</div>
             <div>Documento gerado pelo sistema interno LOC7</div>
           </footer>
         </div>
@@ -440,4 +440,10 @@ function normalize(value?: string) {
 function formatDate(date?: string) {
   if (!date) return "—";
   return new Date(date).toLocaleString("pt-BR");
+}
+function getDisplayId(id?: string) {
+  if (!id) return "—";
+
+  const short = id.replace(/-/g, "").slice(0, 6).toUpperCase();
+  return `LOC7-${short}`;
 }
