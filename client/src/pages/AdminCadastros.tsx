@@ -8,9 +8,9 @@ type Cadastro = {
   email: string;
   phone: string;
   registration_type: string;
-  status_internal: string;
-  status_public: string;
-  risk: string;
+  internal_status: string;
+  public_status: string;
+  risk_level: string;
   created_at: string;
 };
 
@@ -62,13 +62,13 @@ export default function AdminCadastros() {
 
       const matchInternal =
         statusInternalFilter === "Todos" ||
-        c.status_internal === statusInternalFilter;
+        c.internal_status === statusInternalFilter;
 
       const matchPublic =
         statusPublicFilter === "Todos" ||
-        c.status_public === statusPublicFilter;
+        c.public_status === statusPublicFilter;
 
-      const matchRisk = riskFilter === "Todos" || c.risk === riskFilter;
+      const matchRisk = riskFilter === "Todos" || c.risk_level === riskFilter;
 
       return matchSearch && matchInternal && matchPublic && matchRisk;
     });
@@ -205,30 +205,30 @@ export default function AdminCadastros() {
                     <td className="px-6">
                       <span
                         className={`text-xs font-semibold px-3 py-1 rounded-full border whitespace-nowrap ${getStatusTone(
-                          c.status_internal
+                          c.internal_status
                         )}`}
                       >
-                        {c.status_internal || "—"}
+                        {c.internal_status || "—"}
                       </span>
                     </td>
 
                     <td className="px-6">
                       <span
                         className={`text-xs font-semibold px-3 py-1 rounded-full border whitespace-nowrap ${getStatusTone(
-                          c.status_public
+                          c.public_status
                         )}`}
                       >
-                        {c.status_public || "—"}
+                        {c.public_status || "—"}
                       </span>
                     </td>
 
                     <td className="px-6">
                       <span
                         className={`text-xs font-semibold px-3 py-1 rounded-full border whitespace-nowrap ${getRiskTone(
-                          c.risk
+                          c.risk_level
                         )}`}
                       >
-                        {c.risk || "—"}
+                        {c.risk_level || "—"}
                       </span>
                     </td>
 
