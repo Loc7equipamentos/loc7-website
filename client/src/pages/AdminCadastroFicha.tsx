@@ -22,7 +22,7 @@ const id = location.split("/admin-panel/cadastro/")[1];
       const { data, error } = await supabase
        .eq("id", id)
         .select("*")
-        .eq("id", params.id)
+        .eq("id", id)
         .single();
 
       if (!error && data) {
