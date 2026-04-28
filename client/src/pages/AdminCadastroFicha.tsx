@@ -234,7 +234,7 @@ export default function AdminCadastroFicha() {
                       </div>
 
                       {doc.url ? (
-                        <div className="no-print flex flex-wrap gap-2">
+                        <div className="no-print flex flex-col md:flex-row md:items-center gap-2">
                          <button
   onClick={() => {
     if (!doc.url) return;
