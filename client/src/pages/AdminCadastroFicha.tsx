@@ -235,14 +235,15 @@ export default function AdminCadastroFicha() {
 
                       {doc.url ? (
                         <div className="no-print flex flex-wrap gap-2">
-                          <a
-                            href={doc.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center justify-center rounded-md border border-gray-900 bg-gray-900 px-4 py-2 text-sm font-bold text-white"
-                          >
-                            Abrir documento
-                          </a>
+                         <button
+  onClick={() => {
+    if (!doc.url) return;
+    window.open(doc.url, "_blank", "noopener,noreferrer");
+  }}
+  className="inline-flex items-center justify-center rounded-md border border-gray-900 bg-gray-900 px-4 py-2 text-sm font-bold text-white"
+>
+  Abrir documento
+</button>
 
                           <button
                             type="button"
