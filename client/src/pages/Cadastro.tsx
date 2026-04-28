@@ -131,11 +131,12 @@ export default function CadastroPage() {
       console.error("Erro ao buscar CEP:", err);
     }
   }
-  async function uploadDocument(registrationId: string) {
-    const documentFile = documentFiles[0];
+  async function uploadDocuments(registrationId: string) {
+  if (documentFiles.length === 0) return [];
 
-    if (!documentFile) return null;
+  const uploadedPaths: string[] = [];
 
+  for (const documentFile of documentFiles) {
     const safeFileName =
       sanitizeFileName(documentFile.name) || `documento-${Date.now()}`;
 
@@ -152,8 +153,11 @@ export default function CadastroPage() {
       throw uploadError;
     }
 
-    return storagePath;
+    uploadedPaths.push(storagePath);
   }
+
+  return uploadedPaths;
+}
 function validateStep(step: number, formState: any, tipo: string): { valid: boolean; message?: string } {
   if (step === 1) {
     if (!tipo) {
@@ -310,30 +314,29 @@ if (!insertData?.id) {
 
 setCadastroId(insertData.id);
 
-if (documentFiles.length > 0) {
-  const documentPath = await uploadDocument(insertData.id);
 
-  const updatedFormData = {
-    ...formState,
-    documents: documentPath ? [documentPath] : [],
-  };
+      const documentPaths = await uploadDocuments(insertData.id);
 
- const { error: updateError } = await supabase
+const updatedFormData = {
+  ...formState,
+  documents: documentPaths,
+};
+
+const { error: updateError } = await supabase
   .from("rental_registrations")
   .update({
     form_data: updatedFormData,
-    documents: documentPath ? [documentPath] : [],
+    documents: documentPaths,
   })
   .eq("id", insertData.id);
 
-  if (updateError) {
-    console.error("Erro ao salvar documento no cadastro:", updateError);
-    setError(
-      "Cadastro recebido, mas houve erro ao vincular o documento. Entre em contato com a Loc7 para complementar o envio."
-    );
-    setLoading(false);
-    return;
-  }
+if (updateError) {
+  console.error("Erro ao salvar documentos no cadastro:", updateError);
+  setError(
+    "Cadastro recebido, mas houve erro ao vincular os documentos. Entre em contato com a Loc7."
+  );
+  setLoading(false);
+  return;
 }
       setSuccess(true);
 
