@@ -220,9 +220,9 @@ export default function AdminCadastroFicha() {
                     >
                       <div>
                         <div className="text-xs font-black uppercase text-gray-600">
-                          Documento {index + 1}
+                          Documento enviado
                         </div>
-                        <div className="mt-1 break-all text-sm font-semibold text-gray-950">
+                        <div className="mt-1 text-sm font-semibold text-gray-950 truncate"
                           {doc.name}
                         </div>
                         <div className="mt-1 break-all text-xs font-medium text-gray-500 print:block">
