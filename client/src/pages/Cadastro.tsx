@@ -1093,7 +1093,11 @@ if (success) {
             {step < TOTAL_STEPS ? (
               <button
                 type="button"
-                onClick={nextStep}
+                onClick={(e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  nextStep();
+}}
                 disabled={loading}
                 className="rounded-xl bg-zinc-950 px-6 py-3 font-bold text-white transition hover:bg-black disabled:opacity-50"
               >
