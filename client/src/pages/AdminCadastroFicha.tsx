@@ -374,10 +374,10 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 function Field({ label, value, className = "" }: any) {
   return (
-    <div className={`rounded-lg border border-gray-200 bg-white p-4 ${className}`}>
-      <div className="text-xs font-black uppercase text-gray-600">{label}</div>
-      <div className="text-base font-semibold text-gray-950">{value || "—"}</div>
-    </div>
+    <div className={`rounded-md border border-gray-200 bg-white px-3 py-2 ${className}`}>
+  <div className="text-[10px] font-bold uppercase text-gray-500 tracking-wide">{label}</div>
+  <div className="text-sm font-semibold text-gray-950 leading-tight">{value || "—"}</div>
+</div>
   );
 }
 
