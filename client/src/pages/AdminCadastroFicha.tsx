@@ -221,7 +221,7 @@ export default function AdminCadastroFicha() {
                       key={`${doc.path}-${index}`}
                       className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between"
                     >
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <div className="text-xs font-semibold text-gray-500">
   {"Documento " + (index + 1)}
 </div>
@@ -240,7 +240,7 @@ export default function AdminCadastroFicha() {
     if (!doc.url) return;
     window.open(doc.url, "_blank", "noopener,noreferrer");
   }}
-  className="inline-flex items-center justify-center rounded-md border border-gray-900 bg-gray-900 px-4 py-2 text-sm font-bold text-white"
+  className="inline-flex min-w-[150px] items-center justify-center whitespace-nowrap rounded-md border border-gray-900 bg-gray-900 px-4 py-2 text-sm font-bold text-white"
 >
   Abrir documento
 </button>
@@ -265,7 +265,7 @@ export default function AdminCadastroFicha() {
                               a.remove();
                               window.URL.revokeObjectURL(url);
                             }}
-                         className="inline-flex items-center justify-center whitespace-nowrap rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50"
+                         className="inline-flex min-w-[86px] items-center justify-center whitespace-nowrap rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50"
                           >
                             Baixar
                           </button>
