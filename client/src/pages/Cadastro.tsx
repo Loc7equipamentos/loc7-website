@@ -4,6 +4,30 @@ import { supabase } from "@/lib/supabase";
 
 type TipoCadastro = "pf" | "pj";
 
+type DocumentKey =
+  | "identidade"
+  | "comprovante_residencia"
+  | "cartao_cnpj"
+  | "documento_responsavel"
+  | "contrato_social";
+
+type DocumentFilesState = Record<DocumentKey, File | null>;
+
+type UploadedDocumentsResult = {
+  paths: string[];
+  byType: Partial<Record<DocumentKey, string>>;
+};
+
+function createInitialDocumentFiles(): DocumentFilesState {
+  return {
+    identidade: null,
+    comprovante_residencia: null,
+    cartao_cnpj: null,
+    documento_responsavel: null,
+    contrato_social: null,
+  };
+}
+
 const TOTAL_STEPS = 6;
 const MAX_DOCUMENT_SIZE_MB = 10;
 
@@ -85,7 +109,9 @@ export default function CadastroPage() {
   const [error, setError] = useState("");
 
   const [formState, setFormState] = useState<Record<string, string>>({});
-  const [documentFiles, setDocumentFiles] = useState<File[]>([]);
+  const [documentFiles, setDocumentFiles] = useState<DocumentFilesState>(() =>
+    createInitialDocumentFiles()
+  );
 
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
@@ -98,7 +124,7 @@ export default function CadastroPage() {
   const [uf, setUf] = useState("");
 
   const progress = useMemo(() => {
-    return Math.round(((step - 1) / (TOTAL_STEPS - 1)) * 100);
+    return Math.round((step / TOTAL_STEPS) * 100);
   }, [step]);
 
   function updateForm(name: string, value: string) {
@@ -131,39 +157,108 @@ export default function CadastroPage() {
       console.error("Erro ao buscar CEP:", err);
     }
   }
-  async function uploadDocuments(registrationId: string) {
-  if (documentFiles.length === 0) return [];
+  function handleDocumentFileChange(
+    key: DocumentKey,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const file = e.target.files?.[0] || null;
 
-  const uploadedPaths: string[] = [];
-
-  for (const documentFile of documentFiles) {
-    const safeFileName =
-      sanitizeFileName(documentFile.name) || `documento-${Date.now()}`;
-
-    const storagePath = `${registrationId}/${Date.now()}-${safeFileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("documents")
-      .upload(storagePath, documentFile, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-    if (uploadError) {
-      throw uploadError;
+    if (!file) {
+      setDocumentFiles((prev) => ({ ...prev, [key]: null }));
+      return;
     }
 
-    uploadedPaths.push(storagePath);
+    const fileSizeMb = file.size / 1024 / 1024;
+
+    if (fileSizeMb > MAX_DOCUMENT_SIZE_MB) {
+      setDocumentFiles((prev) => ({ ...prev, [key]: null }));
+      e.target.value = "";
+      setError(
+        `O arquivo "${file.name}" deve ter no máximo ${MAX_DOCUMENT_SIZE_MB}MB.`
+      );
+      return;
+    }
+
+    setError("");
+    setDocumentFiles((prev) => ({ ...prev, [key]: file }));
   }
 
-  return uploadedPaths;
-}
-function validateStep(
-  step: number,
-  formState: any,
-  tipo: string,
-  documentFiles: File[] = []
-): { valid: boolean; message?: string } {
+  function getRequiredDocumentError() {
+    if (tipo === "pf" && !documentFiles.identidade) {
+      return "Envie RG ou CNH para concluir o envio do cadastro.";
+    }
+
+    if (tipo === "pj") {
+      if (!documentFiles.cartao_cnpj) {
+        return "Envie o cartão do CNPJ para concluir o envio do cadastro.";
+      }
+
+      if (!documentFiles.documento_responsavel) {
+        return "Envie o documento do responsável para concluir o envio do cadastro.";
+      }
+    }
+
+    return "";
+  }
+
+  function getDocumentUploadEntries(): Array<[DocumentKey, File]> {
+    return Object.entries(documentFiles).filter(
+      (entry): entry is [DocumentKey, File] => Boolean(entry[1])
+    );
+  }
+
+  function getDocumentsStatus(byType: Partial<Record<DocumentKey, string>>) {
+    if (tipo === "pf") {
+      return {
+        identidade: byType.identidade ? "enviado" : "pendente",
+        comprovante_residencia: byType.comprovante_residencia
+          ? "enviado"
+          : "pendente",
+      };
+    }
+
+    return {
+      cartao_cnpj: byType.cartao_cnpj ? "enviado" : "pendente",
+      documento_responsavel: byType.documento_responsavel
+        ? "enviado"
+        : "pendente",
+      contrato_social: byType.contrato_social ? "enviado" : "pendente",
+    };
+  }
+
+  async function uploadDocuments(
+    registrationId: string
+  ): Promise<UploadedDocumentsResult> {
+    const uploadedPaths: string[] = [];
+    const uploadedByType: Partial<Record<DocumentKey, string>> = {};
+
+    for (const [documentKey, documentFile] of getDocumentUploadEntries()) {
+      const safeFileName =
+        sanitizeFileName(documentFile.name) || `documento-${Date.now()}`;
+
+      const storagePath = `${registrationId}/${documentKey}-${Date.now()}-${safeFileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("documents")
+        .upload(storagePath, documentFile, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      uploadedPaths.push(storagePath);
+      uploadedByType[documentKey] = storagePath;
+    }
+
+    return {
+      paths: uploadedPaths,
+      byType: uploadedByType,
+    };
+  }
+function validateStep(step: number, formState: any, tipo: string): { valid: boolean; message?: string } {
   if (step === 1) {
     if (!tipo) {
       return { valid: false, message: "Selecione o tipo de cadastro (PF ou PJ)." };
@@ -231,17 +326,10 @@ function validateStep(
     }
   }
 
-  if (step === 6 && documentFiles.length === 0) {
-    return {
-      valid: false,
-      message: "Envie pelo menos um documento para concluir o cadastro.",
-    };
-  }
-
   return { valid: true };
 }
   function nextStep() {
-  const result = validateStep(step, formState, tipo, documentFiles);
+  const result = validateStep(step, formState, tipo);
 
   if (!result.valid) {
     setError(result.message || "Erro de validação");
@@ -261,11 +349,14 @@ function validateStep(
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-if (documentFiles.length === 0) {
-  setError("Envie pelo menos um documento para concluir o cadastro.");
-  setStep(6);
-  return;
-}
+
+    const requiredDocumentError = getRequiredDocumentError();
+
+    if (requiredDocumentError) {
+      setError(requiredDocumentError);
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -328,11 +419,14 @@ if (!insertData?.id) {
 setCadastroId(insertData.id);
 
 
-      const documentPaths = await uploadDocuments(insertData.id);
+      const uploadedDocuments = await uploadDocuments(insertData.id);
+      const documentPaths = uploadedDocuments.paths;
 
 const updatedFormData = {
   ...formState,
   documents: documentPaths,
+  documents_by_type: uploadedDocuments.byType,
+  documents_status: getDocumentsStatus(uploadedDocuments.byType),
 };
 
 const { error: updateError } = await supabase
@@ -365,7 +459,7 @@ if (updateError) {
       setUf("");
       setTipo("pf");
       setFormState({});
-     setDocumentFiles([]);
+     setDocumentFiles(createInitialDocumentFiles());
     } catch (err) {
       console.error("Erro inesperado:", err);
       setError("Erro inesperado ao enviar o cadastro.");
@@ -1007,77 +1101,150 @@ if (success) {
                 6. Envie seus documentos
               </h2>
 
-             <p className="mb-6 text-sm text-zinc-600">
-  Envie os documentos obrigatórios para análise do cadastro.
-</p>
+              <p className="mb-6 text-sm text-zinc-600">
+                Envie os documentos obrigatórios para análise do cadastro.
+              </p>
 
-<div className="rounded-xl border border-red-200 bg-red-50 p-4">
-  <p className="text-sm text-zinc-700">
-    O envio dos documentos é obrigatório para concluir o cadastro.
-    Sem o envio, não será possível dar sequência na análise.
-  </p>
-</div>
-
-              <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-                <label className={labelClass}>
-                 Documento obrigatório para análise cadastral
-                </label>
-
-                <input
-  type="file"
-  multiple
-  name="documentoCadastro"
-                  required
-                  accept=".pdf,.jpg,.jpeg,.png,.webp"
-                  onChange={(e) => {
-                   const files = Array.from(e.target.files || []);
-
-if (files.length === 0) {
-  setDocumentFiles([]);
-  return;
-}
-
-for (const file of files) {
-  const fileSizeMb = file.size / 1024 / 1024;
-
-  if (fileSizeMb > MAX_DOCUMENT_SIZE_MB) {
-    setDocumentFiles([]);
-    e.target.value = "";
-    setError(
-      `Um dos arquivos excede o limite de ${MAX_DOCUMENT_SIZE_MB}MB.`
-    );
-    return;
-  }
-}
-
-setError("");
-setDocumentFiles(files);
-                  }}
-                  className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-700 file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-black"
-                />
-
-                <p className="mt-3 text-xs leading-relaxed text-zinc-500">
-                  PF: RG ou CNH, comprovante de endereço. PJ: documento do
-                  responsável, contrato social ou CNPJ. Formatos aceitos: PDF,
-                  JPG, PNG ou WebP até {MAX_DOCUMENT_SIZE_MB}MB.
+              <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+                <p className="text-sm text-zinc-700">
+                  O envio dos documentos obrigatórios é necessário para concluir
+                  o cadastro. Alguns documentos podem ser complementados
+                  posteriormente para finalização da validação.
                 </p>
-
-               {documentFiles.length > 0 && (
-  <div className="mt-4 space-y-2">
-    {documentFiles.map((file, index) => (
-      <div
-        key={index}
-        className="flex items-center justify-between bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-sm"
-      >
-        <span className="truncate">{file.name}</span>
-        <span className="text-xs text-gray-500">
-          {(file.size / 1024 / 1024).toFixed(2)} MB
-        </span>
-      </div>
-    ))}
-  </div>
-)}
               </div>
+
+              {tipo === "pf" ? (
+                <div className="mt-6 space-y-4">
+                  <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                    <label className={labelClass}>
+                      RG ou CNH <span className="text-red-600">*</span>
+                    </label>
+
+                    <input
+                      type="file"
+                      name="documentoIdentidade"
+                      accept=".pdf,.jpg,.jpeg,.png,.webp"
+                      onChange={(e) => handleDocumentFileChange("identidade", e)}
+                      className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-700 file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-black"
+                    />
+
+                    <p className="mt-3 text-xs leading-relaxed text-zinc-500">
+                      Obrigatório para envio do cadastro. Envie RG ou CNH em PDF,
+                      JPG, PNG ou WebP até {MAX_DOCUMENT_SIZE_MB}MB.
+                    </p>
+
+                    {documentFiles.identidade && (
+                      <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800">
+                        Arquivo selecionado: {documentFiles.identidade.name}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                    <label className={labelClass}>Comprovante de residência</label>
+
+                    <input
+                      type="file"
+                      name="comprovanteResidencia"
+                      accept=".pdf,.jpg,.jpeg,.png,.webp"
+                      onChange={(e) =>
+                        handleDocumentFileChange("comprovante_residencia", e)
+                      }
+                      className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-700 file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-black"
+                    />
+
+                    <p className="mt-3 text-xs leading-relaxed text-zinc-500">
+                      Obrigatório para aprovação final. Caso não tenha em mãos,
+                      poderá ser solicitado pela equipe Loc7 após o envio do
+                      cadastro.
+                    </p>
+
+                    {documentFiles.comprovante_residencia && (
+                      <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800">
+                        Arquivo selecionado: {documentFiles.comprovante_residencia.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-6 space-y-4">
+                  <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                    <label className={labelClass}>
+                      Cartão do CNPJ <span className="text-red-600">*</span>
+                    </label>
+
+                    <input
+                      type="file"
+                      name="cartaoCnpj"
+                      accept=".pdf,.jpg,.jpeg,.png,.webp"
+                      onChange={(e) => handleDocumentFileChange("cartao_cnpj", e)}
+                      className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-700 file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-black"
+                    />
+
+                    <p className="mt-3 text-xs leading-relaxed text-zinc-500">
+                      Obrigatório para envio do cadastro. Formatos aceitos: PDF,
+                      JPG, PNG ou WebP até {MAX_DOCUMENT_SIZE_MB}MB.
+                    </p>
+
+                    {documentFiles.cartao_cnpj && (
+                      <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800">
+                        Arquivo selecionado: {documentFiles.cartao_cnpj.name}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                    <label className={labelClass}>
+                      Documento do responsável <span className="text-red-600">*</span>
+                    </label>
+
+                    <input
+                      type="file"
+                      name="documentoResponsavel"
+                      accept=".pdf,.jpg,.jpeg,.png,.webp"
+                      onChange={(e) =>
+                        handleDocumentFileChange("documento_responsavel", e)
+                      }
+                      className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-700 file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-black"
+                    />
+
+                    <p className="mt-3 text-xs leading-relaxed text-zinc-500">
+                      Obrigatório para envio do cadastro. Envie RG ou CNH do
+                      responsável legal.
+                    </p>
+
+                    {documentFiles.documento_responsavel && (
+                      <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800">
+                        Arquivo selecionado: {documentFiles.documento_responsavel.name}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                    <label className={labelClass}>Contrato social</label>
+
+                    <input
+                      type="file"
+                      name="contratoSocial"
+                      accept=".pdf,.jpg,.jpeg,.png,.webp"
+                      onChange={(e) => handleDocumentFileChange("contrato_social", e)}
+                      className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-700 file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-black"
+                    />
+
+                    <p className="mt-3 text-xs leading-relaxed text-zinc-500">
+                      Obrigatório para aprovação final. Caso não tenha em mãos,
+                      poderá ser solicitado pela equipe Loc7 após o envio do
+                      cadastro.
+                    </p>
+
+                    {documentFiles.contrato_social && (
+                      <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800">
+                        Arquivo selecionado: {documentFiles.contrato_social.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </section>
           )}
 
@@ -1113,7 +1280,7 @@ setDocumentFiles(files);
             ) : (
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || Boolean(getRequiredDocumentError())}
                 className="rounded-xl bg-zinc-950 px-6 py-3 font-bold text-white transition hover:bg-black disabled:opacity-50"
               >
                 {loading ? "Enviando..." : "Enviar cadastro"}
