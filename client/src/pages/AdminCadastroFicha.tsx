@@ -265,7 +265,7 @@ export default function AdminCadastroFicha() {
                               a.remove();
                               window.URL.revokeObjectURL(url);
                             }}
-                           className="inline-flex whitespace-nowrap items-center justify-center rounded-md border ..."
+                         className="inline-flex items-center justify-center whitespace-nowrap rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50"
                           >
                             Baixar
                           </button>
