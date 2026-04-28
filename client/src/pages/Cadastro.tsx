@@ -1048,11 +1048,21 @@ setDocumentFiles(files);
                   JPG, PNG ou WebP até {MAX_DOCUMENT_SIZE_MB}MB.
                 </p>
 
-               {documentFiles[0] && (
-                  <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800">
-                    Arquivo selecionado: {documentFiles[0].name}
-                  </p>
-                )}
+               {documentFiles.length > 0 && (
+  <div className="mt-4 space-y-2">
+    {documentFiles.map((file, index) => (
+      <div
+        key={index}
+        className="flex items-center justify-between bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-sm"
+      >
+        <span className="truncate">{file.name}</span>
+        <span className="text-xs text-gray-500">
+          {(file.size / 1024 / 1024).toFixed(2)} MB
+        </span>
+      </div>
+    ))}
+  </div>
+)}
               </div>
             </section>
           )}
