@@ -234,14 +234,24 @@ export default function AdminCadastroFicha() {
                       </div>
 
                       {doc.url ? (
-                        <a
-                          href={doc.url}
-                          target="_blank"
-                          rel="noreferrer"
-                         className="no-print inline-flex items-center justify-center rounded-md border border-gray-900 bg-gray-900 px-4 py-2 text-sm font-bold text-white"
-                        >
-                          Abrir documento
-                        </a>
+                        <div className="no-print flex flex-wrap gap-2">
+  <a
+    href={doc.url}
+    target="_blank"
+    rel="noreferrer"
+    className="inline-flex items-center justify-center rounded-md border border-gray-900 bg-gray-900 px-4 py-2 text-sm font-bold text-white"
+  >
+    Abrir documento
+  </a>
+
+  <a
+    href={doc.url}
+    download
+    className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-900"
+  >
+    Baixar
+  </a>
+</div>
                       ) : (
                         <div className="rounded-md border border-orange-200 bg-orange-50 px-4 py-2 text-xs font-bold text-orange-800">
                           Link indisponível
