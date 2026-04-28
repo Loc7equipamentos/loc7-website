@@ -2,9 +2,16 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link, useRoute } from "wouter";
 import { supabase } from "@/lib/supabase";
 
+type DocumentItem = {
+  path: string;
+  url: string | null;
+  name: string;
+};
+
 export default function AdminCadastroFicha() {
   const [, params] = useRoute("/admin-panel/cadastro/:id");
   const [data, setData] = useState<any>(null);
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -17,11 +24,37 @@ export default function AdminCadastroFicha() {
         .eq("id", params.id)
         .single();
 
-      if (!error && data) setData(data);
+      if (!error && data) {
+        setData(data);
+        const docs = await resolveDocuments(data.documents);
+        setDocuments(docs);
+      }
     };
 
     load();
   }, [params]);
+
+  async function resolveDocuments(rawDocuments: unknown): Promise<DocumentItem[]> {
+    const paths = normalizeDocuments(rawDocuments);
+
+    if (!paths.length) return [];
+
+    const resolved = await Promise.all(
+      paths.map(async (path) => {
+        const { data } = await supabase.storage
+          .from("documents")
+          .createSignedUrl(path, 60 * 60);
+
+        return {
+          path,
+          url: data?.signedUrl || null,
+          name: getDocumentName(path),
+        };
+      })
+    );
+
+    return resolved;
+  }
 
   async function updateField(field: string, value: string) {
     if (!data?.id) return;
@@ -172,6 +205,56 @@ export default function AdminCadastroFicha() {
             </div>
           </Section>
 
+          <Section title="Documentos enviados">
+            {documents.length > 0 ? (
+              <div className="space-y-3">
+                <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-800">
+                  Documento recebido: {documents.length} arquivo{documents.length > 1 ? "s" : ""}.
+                </div>
+
+                <div className="grid grid-cols-1 gap-3">
+                  {documents.map((doc, index) => (
+                    <div
+                      key={`${doc.path}-${index}`}
+                      className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between"
+                    >
+                      <div>
+                        <div className="text-xs font-black uppercase text-gray-600">
+                          Documento {index + 1}
+                        </div>
+                        <div className="mt-1 break-all text-sm font-semibold text-gray-950">
+                          {doc.name}
+                        </div>
+                        <div className="mt-1 break-all text-xs font-medium text-gray-500 print:block">
+                          {doc.path}
+                        </div>
+                      </div>
+
+                      {doc.url ? (
+                        <a
+                          href={doc.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="no-print inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-bold text-white hover:bg-gray-800"
+                        >
+                          Abrir documento
+                        </a>
+                      ) : (
+                        <div className="rounded-md border border-orange-200 bg-orange-50 px-4 py-2 text-xs font-bold text-orange-800">
+                          Link indisponível
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800">
+                Nenhum documento vinculado a este cadastro.
+              </div>
+            )}
+          </Section>
+
           <Section title="Endereço">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <Field label="CEP" value={form.cep} />
@@ -247,6 +330,35 @@ export default function AdminCadastroFicha() {
       `}</style>
     </div>
   );
+}
+
+function normalizeDocuments(rawDocuments: unknown): string[] {
+  if (Array.isArray(rawDocuments)) {
+    return rawDocuments.filter(
+      (item): item is string => typeof item === "string" && item.trim() !== ""
+    );
+  }
+
+  if (typeof rawDocuments === "string") {
+    try {
+      const parsed = JSON.parse(rawDocuments);
+
+      if (Array.isArray(parsed)) {
+        return parsed.filter(
+          (item): item is string => typeof item === "string" && item.trim() !== ""
+        );
+      }
+    } catch {
+      return rawDocuments.trim() ? [rawDocuments] : [];
+    }
+  }
+
+  return [];
+}
+
+function getDocumentName(path: string) {
+  const parts = path.split("/");
+  return parts[parts.length - 1] || path;
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
