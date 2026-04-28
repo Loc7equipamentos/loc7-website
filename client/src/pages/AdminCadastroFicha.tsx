@@ -26,7 +26,9 @@ export default function AdminCadastroFicha() {
 
       if (!error && data) {
         setData(data);
-        const docs = await resolveDocuments(data.documents);
+        const docs = await resolveDocuments(
+  data.documents || data.form_data?.documents
+);
         setDocuments(docs);
       }
     };
