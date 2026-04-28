@@ -363,7 +363,7 @@ function getDocumentName(path: string) {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="mb-6 rounded-xl border border-gray-200 bg-[#fafafa] p-5 shadow-sm">
+   <section className="mb-4 rounded-lg border border-gray-200 bg-[#fafafa] p-4">
       <h2 className="mb-4 border-l-4 border-[#b91c1c] pl-3 text-lg font-black uppercase text-gray-950">
         {title}
       </h2>
