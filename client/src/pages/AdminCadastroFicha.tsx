@@ -10,7 +10,7 @@ type DocumentItem = {
 
 export default function AdminCadastroFicha() {
   const [location] = useLocation();
-const id = location.split("/admin-panel/cadastro/")[1];
+  const id = location.split("/admin-panel/cadastro/")[1];
   const [data, setData] = useState<any>(null);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [saving, setSaving] = useState(false);
@@ -20,7 +20,7 @@ const id = location.split("/admin-panel/cadastro/")[1];
 
     const load = async () => {
       const { data, error } = await supabase
-       .eq("id", id)
+        .from("rental_registrations")
         .select("*")
         .eq("id", id)
         .single();
@@ -35,7 +35,7 @@ const id = location.split("/admin-panel/cadastro/")[1];
     };
 
     load();
-  }, [params]);
+  }, [id]);
 
   async function resolveDocuments(rawDocuments: unknown): Promise<DocumentItem[]> {
     const paths = normalizeDocuments(rawDocuments);
