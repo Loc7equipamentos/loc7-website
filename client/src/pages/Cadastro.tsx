@@ -1016,26 +1016,28 @@ if (success) {
   name="documentoCadastro"
                   accept=".pdf,.jpg,.jpeg,.png,.webp"
                   onChange={(e) => {
-                    const file = e.target.files?.[0] || null;
+                   const files = Array.from(e.target.files || []);
 
-                    if (!file) {
-                      setDocumentFiles([]);
-                      return;
-                    }
+if (files.length === 0) {
+  setDocumentFiles([]);
+  return;
+}
 
-                    const fileSizeMb = file.size / 1024 / 1024;
+for (const file of files) {
+  const fileSizeMb = file.size / 1024 / 1024;
 
-                    if (fileSizeMb > MAX_DOCUMENT_SIZE_MB) {
-                      setDocumentFiles([]);
-                      e.target.value = "";
-                      setError(
-                        `O arquivo deve ter no máximo ${MAX_DOCUMENT_SIZE_MB}MB.`
-                      );
-                      return;
-                    }
+  if (fileSizeMb > MAX_DOCUMENT_SIZE_MB) {
+    setDocumentFiles([]);
+    e.target.value = "";
+    setError(
+      `Um dos arquivos excede o limite de ${MAX_DOCUMENT_SIZE_MB}MB.`
+    );
+    return;
+  }
+}
 
-                    setError("");
-                    setDocumentFiles(file ? [file] : []);
+setError("");
+setDocumentFiles(files);
                   }}
                   className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-700 file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-black"
                 />
