@@ -235,29 +235,40 @@ export default function AdminCadastroFicha() {
 
                       {doc.url ? (
                         <div className="no-print flex flex-wrap gap-2">
- <button
-  onClick={async () => {
-    if (!doc.url) return;
+                          <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center justify-center rounded-md border border-gray-900 bg-gray-900 px-4 py-2 text-sm font-bold text-white"
+                          >
+                            Abrir documento
+                          </a>
 
-    const response = await fetch(doc.url);
-    const blob = await response.blob();
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (!doc.url) return;
 
-    const url = window.URL.createObjectURL(blob);
+                              const response = await fetch(doc.url);
+                              const blob = await response.blob();
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${getDisplayId(data.id)}_DOC${index + 1}.${getFileExtension(doc.name)}`;
-    document.body.appendChild(a);
-    a.click();
+                              const url = window.URL.createObjectURL(blob);
 
-    a.remove();
-    window.URL.revokeObjectURL(url);
-  }}
-  className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-900"
->
-  Baixar
-</button>
-</div>
+                              const a = document.createElement("a");
+                              a.href = url;
+                              a.download = `${getDisplayId(data.id)}_DOC${index + 1}.${getFileExtension(doc.name)}`;
+
+                              document.body.appendChild(a);
+                              a.click();
+
+                              a.remove();
+                              window.URL.revokeObjectURL(url);
+                            }}
+                            className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-900"
+                          >
+                            Baixar
+                          </button>
+                        </div>
                       ) : (
                         <div className="rounded-md border border-orange-200 bg-orange-50 px-4 py-2 text-xs font-bold text-orange-800">
                           Link indisponível
