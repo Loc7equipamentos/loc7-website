@@ -132,7 +132,9 @@ export default function CadastroPage() {
     }
   }
   async function uploadDocument(registrationId: string) {
-    
+    const documentFile = documentFiles[0];
+
+    if (!documentFile) return null;
 
     const safeFileName =
       sanitizeFileName(documentFile.name) || `documento-${Date.now()}`;
@@ -308,7 +310,7 @@ if (!insertData?.id) {
 
 setCadastroId(insertData.id);
 
-if (documentFile) {
+if (documentFiles.length > 0) {
   const documentPath = await uploadDocument(insertData.id);
 
   const updatedFormData = {
@@ -1041,9 +1043,9 @@ if (success) {
                   JPG, PNG ou WebP até {MAX_DOCUMENT_SIZE_MB}MB.
                 </p>
 
-                {documentFile && (
+               {documentFiles[0] && (
                   <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800">
-                    Arquivo selecionado: {documentFile.name}
+                    Arquivo selecionado: {documentFiles[0].name}
                   </p>
                 )}
               </div>
