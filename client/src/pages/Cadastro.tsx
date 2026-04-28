@@ -85,7 +85,7 @@ export default function CadastroPage() {
   const [error, setError] = useState("");
 
   const [formState, setFormState] = useState<Record<string, string>>({});
-  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [documentFiles, setDocumentFiles] = useState<File[]>([]);
 
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
@@ -347,7 +347,7 @@ if (documentFile) {
       setUf("");
       setTipo("pf");
       setFormState({});
-      setDocumentFile(null);
+     setDocumentFiles([]);
     } catch (err) {
       console.error("Erro inesperado:", err);
       setError("Erro inesperado ao enviar o cadastro.");
@@ -1014,14 +1014,14 @@ if (success) {
                     const file = e.target.files?.[0] || null;
 
                     if (!file) {
-                      setDocumentFile(null);
+                      setDocumentFiles([]);
                       return;
                     }
 
                     const fileSizeMb = file.size / 1024 / 1024;
 
                     if (fileSizeMb > MAX_DOCUMENT_SIZE_MB) {
-                      setDocumentFile(null);
+                      setDocumentFiles([]);
                       e.target.value = "";
                       setError(
                         `O arquivo deve ter no máximo ${MAX_DOCUMENT_SIZE_MB}MB.`
@@ -1030,7 +1030,7 @@ if (success) {
                     }
 
                     setError("");
-                    setDocumentFile(file);
+                    setDocumentFiles(file ? [file] : []);
                   }}
                   className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-700 file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-black"
                 />
