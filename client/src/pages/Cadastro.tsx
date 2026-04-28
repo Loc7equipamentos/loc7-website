@@ -924,7 +924,7 @@ if (success) {
                 tiver todas agora, preencha as principais.
               </p>
 
-              <div className="space-y-6">
+              <div className="space-y-5 md:space-y-4">
                 {[1, 2, 3].map((n) => {
                   const empresaName =
                     tipo === "pf" ? `empresa${n}` : `empresa${n}Pj`;
