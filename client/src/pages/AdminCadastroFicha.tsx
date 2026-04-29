@@ -333,10 +333,7 @@ export default function AdminCadastroFicha() {
               const docStatus = getDocumentStatus(documents, isPF);
 
               return (
-                <div className="space-y-3">
-                  <div className={`rounded-lg border p-4 text-sm font-semibold ${getDocumentStatusTone(data.document_status)}`}>
-                    Status operacional: {formatDocumentStatusLabel(data.document_status)}
-                  </div>
+               
 
                   <div className={`rounded-lg border p-4 text-sm font-semibold ${docStatus.tone}`}>
                     Checagem automática: {docStatus.missing.length > 0
