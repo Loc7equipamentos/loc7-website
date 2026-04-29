@@ -91,51 +91,93 @@ export default function AdminCadastroFicha() {
   }
 
   async function updateField(field: string, value: string) {
-    if (!data?.id) return;
+  if (!data?.id) return;
 
-    const oldValue = data[field] || "";
-    const newValue = value || "";
+  const oldValue = data[field] || "";
+  const newValue = value || "";
 
-    if (String(oldValue) === String(newValue)) return;
+  if (String(oldValue) === String(newValue)) return;
 
-    setSaving(true);
+  setSaving(true);
 
-    const { error } = await supabase
-      .from("rental_registrations")
-      .update({ [field]: newValue })
-      .eq("id", data.id);
+  const updatePayload: Record<string, string> = {
+    [field]: newValue,
+  };
 
-    if (!error) {
-      const { data: currentUserData } = await supabase.auth.getUser();
-      const actorEmail = currentUserData?.user?.email || userEmail || "admin";
-
-      const { error: logError } = await supabase
-        .from("registration_analysis_logs")
-        .insert({
-          registration_id: data.id,
-          field_name: field,
-          old_value: String(oldValue || ""),
-          new_value: String(newValue || ""),
-          changed_by: actorEmail,
-          change_reason: getDefaultChangeReason(field),
-        });
-
-      if (logError) {
-        alert(
-          `Alteração salva, mas houve erro ao registrar o log:\n\n${
-            logError.message || "Erro desconhecido"
-          }`
-        );
-      }
-
-      setData((prev: any) => ({ ...prev, [field]: newValue }));
-      await loadAnalysisLogs(data.id);
-    } else {
-      alert(`Erro ao salvar alteração:\n\n${error.message || "Erro desconhecido"}`);
+  if (field === "internal_status") {
+    if (
+      newValue === "Recebido" ||
+      newValue === "Em análise" ||
+      newValue === "Pendente documentação" ||
+      newValue === "Recusado interno"
+    ) {
+      updatePayload.public_status = "Em análise";
     }
 
-    setSaving(false);
+    if (newValue === "Liberado") {
+      updatePayload.public_status = "Aprovado";
+    }
   }
+
+  const { error } = await supabase
+    .from("rental_registrations")
+    .update(updatePayload)
+    .eq("id", data.id);
+
+  if (!error) {
+    const { data: currentUserData } = await supabase.auth.getUser();
+    const actorEmail = currentUserData?.user?.email || userEmail || "admin";
+
+    const logsToInsert = [
+      {
+        registration_id: data.id,
+        field_name: field,
+        old_value: String(oldValue || ""),
+        new_value: String(newValue || ""),
+        changed_by: actorEmail,
+        change_reason: getDefaultChangeReason(field),
+      },
+    ];
+
+    if (
+      field === "internal_status" &&
+      updatePayload.public_status &&
+      updatePayload.public_status !== data.public_status
+    ) {
+      logsToInsert.push({
+        registration_id: data.id,
+        field_name: "public_status",
+        old_value: String(data.public_status || ""),
+        new_value: String(updatePayload.public_status || ""),
+        changed_by: actorEmail,
+        change_reason: "Sincronização automática com status interno",
+      });
+    }
+
+    const { error: logError } = await supabase
+      .from("registration_analysis_logs")
+      .insert(logsToInsert);
+
+    if (logError) {
+      alert(
+        `Alteração salva, mas houve erro ao registrar o log:\n\n${
+          logError.message || "Erro desconhecido"
+        }`
+      );
+    }
+
+    setData((prev: any) => ({
+      ...prev,
+      ...updatePayload,
+    }));
+
+    await loadAnalysisLogs(data.id);
+  } else {
+    alert(`Erro ao salvar alteração:\n\n${error.message || "Erro desconhecido"}`);
+  }
+
+  setSaving(false);
+}
 
   if (!data) {
     return (
