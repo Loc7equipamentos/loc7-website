@@ -14,15 +14,15 @@ export default function AdminProtected({ children }: Props) {
     async function check() {
       setChecking(true);
 
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getUser();
 
-      if (!data.session) {
+      if (!data.user) {
         const redirectUrl = encodeURIComponent(window.location.pathname);
         window.location.href = `/admin-login?redirect=${redirectUrl}`;
         return;
       }
 
-      const userEmail = data.session.user.email;
+      const userEmail = data.user.email;
 
       const { data: adminUser, error } = await supabase
         .from("admin_users")
