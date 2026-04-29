@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function AdminProtected({ children }: Props) {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -22,7 +22,6 @@ export default function AdminProtected({ children }: Props) {
 
       const userEmail = data.session.user.email;
 
-      // 🔍 Verifica na tabela admin_users
       const { data: adminUser, error } = await supabase
         .from("admin_users")
         .select("*")
@@ -30,20 +29,43 @@ export default function AdminProtected({ children }: Props) {
         .single();
 
       if (error || !adminUser) {
-        // ❌ Usuário não autorizado
         alert("Acesso não autorizado.");
         window.location.href = "/";
         return;
       }
 
       if (!adminUser.active) {
-        // ❌ Usuário desativado
         alert("Usuário inativo.");
         window.location.href = "/";
         return;
       }
 
-      // ✅ Tudo ok
+      const role = adminUser.role;
+
+      const path = window.location.pathname;
+
+      // 🔒 CONTROLE DE PERMISSÃO
+
+      // Usuários → só Administrador
+      if (path.includes("/admin-panel/usuarios")) {
+        if (role !== "Administrador") {
+          alert("Sem permissão para acessar usuários.");
+          window.location.href = "/admin-panel";
+          return;
+        }
+      }
+
+      // Produtos → só Administrador
+      if (path.includes("/admin-panel/produtos")) {
+        if (role !== "Administrador") {
+          alert("Sem permissão para acessar produtos.");
+          window.location.href = "/admin-panel";
+          return;
+        }
+      }
+
+      // Cadastros → Admin + Operador (liberado)
+
       setChecking(false);
     }
 
