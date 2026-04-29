@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "wouter";
 import { supabase } from "@/lib/supabase";
 
@@ -122,7 +122,7 @@ export default function CadastroPage() {
   const [bairro, setBairro] = useState("");
   const [cidade, setCidade] = useState("");
   const [uf, setUf] = useState("");
-const numeroInputRef = useRef<HTMLInputElement | null>(null);
+
   const progress = useMemo(() => {
     return Math.round((step / TOTAL_STEPS) * 100);
   }, [step]);
@@ -135,34 +135,27 @@ const numeroInputRef = useRef<HTMLInputElement | null>(null);
   }
 
   async function buscarCep(value: string) {
-  const clean = value.replace(/\D/g, "");
-  if (clean.length !== 8) return;
+    const clean = value.replace(/\D/g, "");
+    if (clean.length !== 8) return;
 
-  try {
-    const response = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
-    const data = await response.json();
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+      const data = await response.json();
 
-    if (!data.erro) {
-      setEndereco(data.logradouro || "");
-      setBairro(data.bairro || "");
-      setCidade(data.localidade || "");
-      setUf(data.uf || "");
+      if (!data.erro) {
+        setEndereco(data.logradouro || "");
+        setBairro(data.bairro || "");
+        setCidade(data.localidade || "");
+        setUf(data.uf || "");
 
-      updateForm("endereco", data.logradouro || "");
-      updateForm("bairro", data.bairro || "");
-      updateForm("cidade", data.localidade || "");
-      updateForm("uf", data.uf || "");
-
-      // NOVO: foco automático no campo número
-      setTimeout(() => {
-        numeroInputRef.current?.focus();
-      }, 100);
+        updateForm("endereco", data.logradouro || "");
+        updateForm("bairro", data.bairro || "");
+        updateForm("cidade", data.localidade || "");
+        updateForm("uf", data.uf || "");
+      }
+    } catch (err) {
+      console.error("Erro ao buscar CEP:", err);
     }
-  } catch (err) {
-    console.error("Erro ao buscar CEP:", err);
-  }
-}
-   
   }
   function handleDocumentFileChange(
     key: DocumentKey,
