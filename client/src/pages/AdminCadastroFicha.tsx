@@ -91,93 +91,89 @@ export default function AdminCadastroFicha() {
   }
 
   async function updateField(field: string, value: string) {
-  if (!data?.id) return;
+    if (!data?.id) return;
 
-  const oldValue = data[field] || "";
-  const newValue = value || "";
+    const oldValue = data[field] || "";
+    const newValue = value || "";
 
-  if (String(oldValue) === String(newValue)) return;
+    if (String(oldValue) === String(newValue)) return;
 
-  setSaving(true);
+    setSaving(true);
 
-  const updatePayload: Record<string, string> = {
-    [field]: newValue,
-  };
+    const updatePayload: Record<string, string> = {
+      [field]: newValue,
+    };
 
-  if (field === "internal_status") {
-    if (
-      newValue === "Recebido" ||
-      newValue === "Em análise" ||
-      newValue === "Pendente documentação" ||
-      newValue === "Recusado interno"
-    ) {
-      updatePayload.public_status = "Em análise";
+    if (field === "internal_status") {
+      if (
+        newValue === "Recebido" ||
+        newValue === "Em análise" ||
+        newValue === "Pendente documentação" ||
+        newValue === "Recusado interno"
+      ) {
+        updatePayload.public_status = "Em análise";
+      }
+
+      if (newValue === "Liberado") {
+        updatePayload.public_status = "Aprovado";
+      }
     }
 
-    if (newValue === "Liberado") {
-      updatePayload.public_status = "Aprovado";
+    const { error } = await supabase
+      .from("rental_registrations")
+      .update(updatePayload)
+      .eq("id", data.id);
+
+    if (!error) {
+      const { data: currentUserData } = await supabase.auth.getUser();
+      const actorEmail = currentUserData?.user?.email || userEmail || "admin";
+
+      const logsToInsert = [
+        {
+          registration_id: data.id,
+          field_name: field,
+          old_value: String(oldValue || ""),
+          new_value: String(newValue || ""),
+          changed_by: actorEmail,
+          change_reason: getDefaultChangeReason(field),
+        },
+      ];
+
+      if (
+        field === "internal_status" &&
+        updatePayload.public_status &&
+        updatePayload.public_status !== data.public_status
+      ) {
+        logsToInsert.push({
+          registration_id: data.id,
+          field_name: "public_status",
+          old_value: String(data.public_status || ""),
+          new_value: String(updatePayload.public_status || ""),
+          changed_by: actorEmail,
+          change_reason: "Sincronização automática com status interno",
+        });
+      }
+
+      const { error: logError } = await supabase
+        .from("registration_analysis_logs")
+        .insert(logsToInsert);
+
+      if (logError) {
+        alert(
+          `Alteração salva, mas houve erro ao registrar o log:\n\n${
+            logError.message || "Erro desconhecido"
+          }`
+        );
+      }
+
+      setData((prev: any) => ({ ...prev, ...updatePayload }));
+      await loadAnalysisLogs(data.id);
+    } else {
+      alert(`Erro ao salvar alteração:\n\n${error.message || "Erro desconhecido"}`);
     }
+
+    setSaving(false);
   }
-
-  const { error } = await supabase
-    .from("rental_registrations")
-    .update(updatePayload)
-    .eq("id", data.id);
-
-  if (!error) {
-    const { data: currentUserData } = await supabase.auth.getUser();
-    const actorEmail = currentUserData?.user?.email || userEmail || "admin";
-
-    const logsToInsert = [
-      {
-        registration_id: data.id,
-        field_name: field,
-        old_value: String(oldValue || ""),
-        new_value: String(newValue || ""),
-        changed_by: actorEmail,
-        change_reason: getDefaultChangeReason(field),
-      },
-    ];
-
-    if (
-      field === "internal_status" &&
-      updatePayload.public_status &&
-      updatePayload.public_status !== data.public_status
-    ) {
-      logsToInsert.push({
-        registration_id: data.id,
-        field_name: "public_status",
-        old_value: String(data.public_status || ""),
-        new_value: String(updatePayload.public_status || ""),
-        changed_by: actorEmail,
-        change_reason: "Sincronização automática com status interno",
-      });
-    }
-
-    const { error: logError } = await supabase
-      .from("registration_analysis_logs")
-      .insert(logsToInsert);
-
-    if (logError) {
-      alert(
-        `Alteração salva, mas houve erro ao registrar o log:\n\n${
-          logError.message || "Erro desconhecido"
-        }`
-      );
-    }
-
-    setData((prev: any) => ({
-      ...prev,
-      ...updatePayload,
-    }));
-
-    await loadAnalysisLogs(data.id);
-  } else {
-    alert(`Erro ao salvar alteração:\n\n${error.message || "Erro desconhecido"}`);
-  }
-
-  setSaving(false);
-}
 
   if (!data) {
     return (
@@ -243,18 +239,18 @@ export default function AdminCadastroFicha() {
                     ]}
                   />
 
-                  <SelectField
-                    label="Status público"
-                    value={data.public_status || ""}
-                    tone={getStatusTone(data.public_status)}
-                    onChange={(value) => updateField("public_status", value)}
-                    options={[
-                      "Recebido",
-                      "Em análise",
-                      "Liberado",
-                      "Pendente contato",
-                    ]}
-                  />
+                  <label>
+                    <span className="text-xs font-black uppercase text-gray-600">
+                      Status público
+                    </span>
+                    <div
+                      className={`w-full mt-1 rounded-md border px-3 py-2 text-xs font-bold ${getStatusTone(
+                        data.public_status
+                      )}`}
+                    >
+                      {data.public_status || "—"}
+                    </div>
+                  </label>
 
                   <SelectField
                     label="Risco"
@@ -343,7 +339,9 @@ export default function AdminCadastroFicha() {
                   </div>
 
                   <div className={`rounded-lg border p-4 text-sm font-semibold ${docStatus.tone}`}>
-                    Situação automática: {docStatus.label}
+                    Checagem automática: {docStatus.missing.length > 0
+                      ? "atenção — pode faltar documento"
+                      : "documentos enviados em quantidade suficiente"}
                   </div>
 
                   {docStatus.missing.length > 0 ? (
