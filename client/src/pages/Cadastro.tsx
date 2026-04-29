@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { supabase } from "@/lib/supabase";
 
@@ -122,6 +122,7 @@ export default function CadastroPage() {
   const [bairro, setBairro] = useState("");
   const [cidade, setCidade] = useState("");
   const [uf, setUf] = useState("");
+  const numeroInputRef = useRef<HTMLInputElement | null>(null);
 
   const progress = useMemo(() => {
     return Math.round((step / TOTAL_STEPS) * 100);
@@ -134,36 +135,37 @@ export default function CadastroPage() {
     }));
   }
 
-   async function buscarCep(value: string) {
-  const clean = value.replace(/\D/g, "");
-  if (clean.length !== 8) return;
+  async function buscarCep(value: string) {
+    const clean = value.replace(/\D/g, "");
+    if (clean.length !== 8) return;
 
-  try {
-    const response = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
-    const data = await response.json();
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+      const data = await response.json();
 
-    if (!data.erro) {
-      setEndereco(data.logradouro || "");
-      setBairro(data.bairro || "");
-      setCidade(data.localidade || "");
-      setUf(data.uf || "");
+      if (!data.erro) {
+        setEndereco(data.logradouro || "");
+        setBairro(data.bairro || "");
+        setCidade(data.localidade || "");
+        setUf(data.uf || "");
 
-      updateForm("endereco", data.logradouro || "");
-      updateForm("bairro", data.bairro || "");
-      updateForm("cidade", data.localidade || "");
-      updateForm("uf", data.uf || "");
+        updateForm("endereco", data.logradouro || "");
+        updateForm("bairro", data.bairro || "");
+        updateForm("cidade", data.localidade || "");
+        updateForm("uf", data.uf || "");
 
-      setTimeout(() => {
-        const inputNumero = document.querySelector<HTMLInputElement>(
-          'input[name="numero"]'
-        );
-        inputNumero?.focus();
-      }, 100);
+        window.setTimeout(() => {
+          numeroInputRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+          numeroInputRef.current?.focus();
+        }, 250);
+      }
+    } catch (err) {
+      console.error("Erro ao buscar CEP:", err);
     }
-  } catch (err) {
-    console.error("Erro ao buscar CEP:", err);
   }
-}
   
   function handleDocumentFileChange(
     key: DocumentKey,
@@ -610,7 +612,7 @@ if (success) {
 }
             }
           }}
-          className="space-y-8 pb-36 md:pb-0"
+          className="space-y-8 pb-28 md:pb-0"
         >
           <input type="hidden" name="tipoCadastro" value={tipo} readOnly />
 
@@ -804,6 +806,7 @@ if (success) {
                 <div>
                   <label className={labelClass}>Número</label>
                   <input
+                    ref={numeroInputRef}
                     name="numero"
                     required
                     value={formState.numero || ""}
@@ -1262,12 +1265,12 @@ if (success) {
             </div>
           )}
 
-          <div className="fixed bottom-0 left-0 right-0 z-50 flex flex-col gap-3 border-t border-zinc-300 bg-[#d6d7da] px-4 py-4 md:static md:flex-row md:items-center md:justify-between md:bg-transparent md:px-0 md:pt-6">
+          <div className="fixed bottom-0 left-0 right-0 z-50 grid grid-cols-2 gap-3 border-t border-zinc-300 bg-[#d6d7da] px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:static md:flex md:flex-row md:items-center md:justify-between md:bg-transparent md:px-0 md:pt-6 md:pb-0">
             <button
               type="button"
               onClick={prevStep}
               disabled={step === 1 || loading}
-              className="rounded-xl border border-zinc-300 px-6 py-3 font-semibold text-zinc-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+              className="w-full rounded-xl border border-zinc-300 px-6 py-3 text-center font-semibold text-zinc-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40 md:w-auto"
             >
               Voltar
             </button>
@@ -1281,7 +1284,7 @@ if (success) {
   nextStep();
 }}
                 disabled={loading}
-                className="rounded-xl bg-zinc-950 px-6 py-3 font-bold text-white transition hover:bg-black disabled:opacity-50"
+                className="w-full rounded-xl bg-zinc-950 px-6 py-3 text-center font-bold text-white transition hover:bg-black disabled:opacity-50 md:w-auto"
               >
                 Próximo
               </button>
@@ -1289,7 +1292,7 @@ if (success) {
               <button
                 type="submit"
                 disabled={loading || Boolean(getRequiredDocumentError())}
-                className="rounded-xl bg-zinc-950 px-6 py-3 font-bold text-white transition hover:bg-black disabled:opacity-50"
+                className="w-full rounded-xl bg-zinc-950 px-6 py-3 text-center font-bold text-white transition hover:bg-black disabled:opacity-50 md:w-auto"
               >
                 {loading ? "Enviando..." : "Enviar cadastro"}
               </button>
