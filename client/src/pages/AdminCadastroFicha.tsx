@@ -99,6 +99,16 @@ export default function AdminCadastroFicha() {
 
     if (String(oldValue) === String(newValue)) return;
 
+    // REGRA OPERACIONAL:
+    // A documentação manda na liberação do cadastro.
+    // Se a documentação não estiver aprovada, o cadastro não pode ser liberado.
+    if (field === "internal_status" && newValue === "Liberado") {
+      if (data.document_status !== "aprovado") {
+        alert("Não é possível liberar este cadastro. A documentação ainda não está aprovada.");
+        return;
+      }
+    }
+
     setSaving(true);
 
     const updatePayload: Record<string, string> = {
@@ -120,6 +130,14 @@ export default function AdminCadastroFicha() {
       }
     }
 
+    // Se a documentação sair de aprovado, o cadastro não pode continuar liberado.
+    if (field === "document_status" && newValue !== "aprovado") {
+      if (data.internal_status === "Liberado") {
+        updatePayload.internal_status = "Em análise";
+        updatePayload.public_status = "Em análise";
+      }
+    }
+
     const { error } = await supabase
       .from("rental_registrations")
       .update(updatePayload)
@@ -129,42 +147,31 @@ export default function AdminCadastroFicha() {
       const { data: currentUserData } = await supabase.auth.getUser();
       const actorEmail = currentUserData?.user?.email || userEmail || "admin";
 
-      const logsToInsert = [
-        {
+      const logsToInsert = Object.entries(updatePayload)
+        .filter(([changedField, changedValue]) => {
+          return String(data[changedField] || "") !== String(changedValue || "");
+        })
+        .map(([changedField, changedValue]) => ({
           registration_id: data.id,
-          field_name: field,
-          old_value: String(oldValue || ""),
-          new_value: String(newValue || ""),
+          field_name: changedField,
+          old_value: String(data[changedField] || ""),
+          new_value: String(changedValue || ""),
           changed_by: actorEmail,
-          change_reason: getDefaultChangeReason(field),
-        },
-      ];
+          change_reason: getDefaultChangeReason(changedField),
+        }));
 
-      if (
-        field === "internal_status" &&
-        updatePayload.public_status &&
-        updatePayload.public_status !== data.public_status
-      ) {
-        logsToInsert.push({
-          registration_id: data.id,
-          field_name: "public_status",
-          old_value: String(data.public_status || ""),
-          new_value: String(updatePayload.public_status || ""),
-          changed_by: actorEmail,
-          change_reason: "Sincronização automática com status interno",
-        });
-      }
+      if (logsToInsert.length > 0) {
+        const { error: logError } = await supabase
+          .from("registration_analysis_logs")
+          .insert(logsToInsert);
 
-      const { error: logError } = await supabase
-        .from("registration_analysis_logs")
-        .insert(logsToInsert);
-
-      if (logError) {
-        alert(
-          `Alteração salva, mas houve erro ao registrar o log:\n\n${
-            logError.message || "Erro desconhecido"
-          }`
-        );
+        if (logError) {
+          alert(
+            `Alteração salva, mas houve erro ao registrar o log:\n\n${
+              logError.message || "Erro desconhecido"
+            }`
+          );
+        }
       }
 
       setData((prev: any) => ({ ...prev, ...updatePayload }));
