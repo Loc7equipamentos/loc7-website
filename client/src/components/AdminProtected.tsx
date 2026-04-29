@@ -12,6 +12,8 @@ export default function AdminProtected({ children }: Props) {
 
   useEffect(() => {
     async function check() {
+      setChecking(true);
+
       const { data } = await supabase.auth.getSession();
 
       if (!data.session) {
@@ -40,37 +42,35 @@ export default function AdminProtected({ children }: Props) {
         return;
       }
 
-      const role = adminUser.role;
+      const role = String(adminUser.role || "").trim();
+      const path = location;
 
-      const path = window.location.pathname;
+      const isAdmin = role === "Administrador";
+      const isOperador = role === "Operador";
 
-      // 🔒 CONTROLE DE PERMISSÃO
-
-      // Usuários → só Administrador
-      if (path.includes("/admin-panel/usuarios")) {
-        if (role !== "Administrador") {
-          alert("Sem permissão para acessar usuários.");
-          window.location.href = "/admin-panel";
-          return;
-        }
+      if (path.startsWith("/admin-panel/usuarios") && !isAdmin) {
+        alert("Sem permissão para acessar usuários.");
+        setLocation("/admin-panel");
+        return;
       }
 
-      // Produtos → só Administrador
-      if (path.includes("/admin-panel/produtos")) {
-        if (role !== "Administrador") {
-          alert("Sem permissão para acessar produtos.");
-          window.location.href = "/admin-panel";
-          return;
-        }
+      if (path.startsWith("/admin-panel/produtos") && !isAdmin) {
+        alert("Sem permissão para acessar produtos.");
+        setLocation("/admin-panel");
+        return;
       }
 
-      // Cadastros → Admin + Operador (liberado)
+      if (path.startsWith("/admin-panel/cadastros") && !isAdmin && !isOperador) {
+        alert("Sem permissão para acessar cadastros.");
+        setLocation("/admin-panel");
+        return;
+      }
 
       setChecking(false);
     }
 
     check();
-  }, []);
+  }, [location, setLocation]);
 
   if (checking) {
     return (
