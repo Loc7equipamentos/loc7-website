@@ -16,6 +16,8 @@ import AdminCadastros from "./pages/AdminCadastros";
 import AdminCadastroFicha from "./pages/AdminCadastroFicha";
 import AdminUsuarios from "./pages/AdminUsuarios";
 import AdminLogin from "./pages/AdminLogin";
+import AdminHub from "./pages/AdminHub";
+
 import AdminProtected from "./components/AdminProtected";
 
 function AdminPanelRedirect() {
@@ -84,12 +86,11 @@ export default function App() {
             <AdminCadastroFicha />
           </AdminProtected>
         </Route>
-
-        <Route path="/admin-panel">
-          <AdminProtected>
-            <AdminPanelRedirect />
-          </AdminProtected>
-        </Route>
+<Route path="/admin-panel">
+  <AdminProtected>
+    <AdminHub />
+  </AdminProtected>
+</Route>
       </Switch>
 
       {!isAdminRoute && !isCleanRoute && <WhatsAppFloat />}
