@@ -1287,6 +1287,16 @@ if (success) {
               </button>
             )}
           </div>
+          {/* BOTÃO FIXO MOBILE */}
+<div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 p-4 md:hidden">
+  <button
+    type="submit"
+    disabled={loading || Boolean(getRequiredDocumentError())}
+    className="w-full rounded-md bg-black px-6 py-4 text-sm font-semibold text-white disabled:opacity-50"
+  >
+    {loading ? "Enviando..." : "Seguir"}
+  </button>
+</div>
         </form>
       </div>
     </main>
