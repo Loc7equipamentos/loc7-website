@@ -61,7 +61,8 @@ export default function AdminCadastroFicha() {
       .from("registration_analysis_logs")
       .select("*")
       .eq("registration_id", registrationId)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(1);
 
     if (!error && data) {
       setAnalysisLogs(data as AnalysisLogItem[]);
@@ -327,46 +328,7 @@ export default function AdminCadastroFicha() {
               )}
             </div>
           </Section>
-
-          <Section title="Status documental">
-            {(() => {
-              const docStatus = getDocumentStatus(documents, isPF);
-
-              return (
-                <div className="space-y-3">
-                  <div className={`rounded-lg border p-4 text-sm font-semibold ${docStatus.tone}`}>
-                    Checagem automática: {docStatus.missing.length > 0
-                      ? "atenção — pode faltar documento"
-                      : "documentos enviados em quantidade suficiente"}
-                  </div>
-
-                  {docStatus.missing.length > 0 ? (
-                    <div className="rounded-lg border border-gray-200 bg-white p-4">
-                      <div className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500">
-                        Pendências identificadas
-                      </div>
-
-                      <ul className="list-disc space-y-1 pl-5 text-sm font-medium text-gray-800">
-                        {docStatus.missing.map((item, index) => (
-                          <li key={index}>{item}</li>
-                        ))}
-                      </ul>
-
-                      <div className="mt-3 text-xs font-medium text-gray-500">
-                        Análise automática baseada na quantidade de documentos enviados.
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-800">
-                      Todos os documentos necessários foram enviados.
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-          </Section>
-
-          <Section title="Documentos enviados">
+<Section title="Documentos enviados">
             {documents.length > 0 ? (
               <div className="space-y-3">
                 <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-800">
@@ -499,45 +461,40 @@ export default function AdminCadastroFicha() {
             </div>
           </Section>
 
-          <Section title="Histórico de análise">
-            {analysisLogs.length > 0 ? (
-              <div className="space-y-3">
-                {analysisLogs.map((log) => (
-                  <div
-                    key={log.id}
-                    className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-                  >
-                    <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                      <div>
-                        <div className="text-xs font-black uppercase tracking-wide text-[#b91c1c]">
-                          {getFieldLabel(log.field_name)}
-                        </div>
-
-                        <div className="mt-2 text-sm font-semibold text-gray-900">
-                          {formatLogValue(log.old_value)} → {formatLogValue(log.new_value)}
-                        </div>
-
-                        {log.change_reason && (
-                          <div className="mt-1 text-xs font-medium text-gray-500">
-                            Motivo: {log.change_reason}
-                          </div>
-                        )}
+          <div className="no-print">
+            <Section title="Última alteração">
+              {analysisLogs.length > 0 ? (
+                <div className="max-w-3xl rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                  <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <div className="text-xs font-black uppercase tracking-wide text-[#b91c1c]">
+                        {getFieldLabel(analysisLogs[0].field_name)}
                       </div>
 
-                      <div className="text-left text-xs font-medium text-gray-500 md:text-right">
-                        <div>{formatDate(log.created_at)}</div>
-                        <div>Por: {log.changed_by || "admin"}</div>
+                      <div className="mt-2 text-sm font-semibold text-gray-900">
+                        {formatLogValue(analysisLogs[0].old_value)} → {formatLogValue(analysisLogs[0].new_value)}
                       </div>
+
+                      {analysisLogs[0].change_reason && (
+                        <div className="mt-1 text-xs font-medium text-gray-500">
+                          Motivo: {analysisLogs[0].change_reason}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-left text-xs font-medium text-gray-500 md:text-right">
+                      <div>{formatDate(analysisLogs[0].created_at)}</div>
+                      <div>Por: {analysisLogs[0].changed_by || "admin"}</div>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm font-semibold text-gray-700">
-                Nenhum registro de alteração ainda.
-              </div>
-            )}
-          </Section>
+                </div>
+              ) : (
+                <div className="max-w-3xl rounded-lg border border-gray-200 bg-white p-4 text-sm font-semibold text-gray-700">
+                  Nenhuma alteração registrada ainda.
+                </div>
+              )}
+            </Section>
+          </div>
 
           <footer className="mt-8 border-t border-gray-300 pt-4 text-xs font-medium text-gray-600">
             <div>ID do cadastro: {getDisplayId(data.id)}</div>
