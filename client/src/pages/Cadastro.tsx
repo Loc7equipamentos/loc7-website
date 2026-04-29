@@ -603,11 +603,15 @@ if (success) {
             const target = e.target as HTMLInputElement | HTMLSelectElement;
 
             if (target.name && target.type !== "file") {
-              if (target.name.toLowerCase().includes("telefone")) {
-  updateForm(target.name, formatPhone(target.value));
-} else {
-  updateForm(target.name, target.value);
-}
+              const fieldName = target.name.toLowerCase();
+
+              if (fieldName.includes("telefone")) {
+                updateForm(target.name, formatPhone(target.value));
+              } else if (fieldName.includes("data")) {
+                updateForm(target.name, formatDateBR(target.value));
+              } else {
+                updateForm(target.name, target.value);
+              }
             }
           }}
           className="space-y-8 pb-36 md:pb-0"
