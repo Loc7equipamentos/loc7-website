@@ -109,7 +109,7 @@ export default function AdminCadastroFicha() {
           field_name: field,
           old_value: String(oldValue || ""),
           new_value: String(newValue || ""),
-          changed_by: "admin",
+          changed_by: userEmail,
           change_reason: getDefaultChangeReason(field),
         });
 
