@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Route, Switch, useLocation } from "wouter";
 
 import Navbar from "./components/Navbar";
@@ -17,6 +18,20 @@ import AdminUsuarios from "./pages/AdminUsuarios";
 import AdminLogin from "./pages/AdminLogin";
 import AdminProtected from "./components/AdminProtected";
 
+function AdminPanelRedirect() {
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    setLocation("/admin-panel/cadastros");
+  }, [setLocation]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-800">
+      Redirecionando para o painel de cadastros...
+    </div>
+  );
+}
+
 export default function App() {
   const [location] = useLocation();
 
@@ -24,9 +39,9 @@ export default function App() {
     location === "/admin-login" ||
     location.startsWith("/admin-panel");
 
-const isCleanRoute =
-  location === "/cadastro-locacao" ||
-  location.startsWith("/status-cadastro");
+  const isCleanRoute =
+    location === "/cadastro-locacao" ||
+    location.startsWith("/status-cadastro");
 
   return (
     <>
@@ -52,6 +67,12 @@ const isCleanRoute =
           </AdminProtected>
         </Route>
 
+        <Route path="/admin-panel/produtos">
+          <AdminProtected>
+            <AdminDashboard />
+          </AdminProtected>
+        </Route>
+
         <Route path="/admin-panel/cadastros">
           <AdminProtected>
             <AdminCadastros />
@@ -66,7 +87,7 @@ const isCleanRoute =
 
         <Route path="/admin-panel">
           <AdminProtected>
-            <AdminDashboard />
+            <AdminPanelRedirect />
           </AdminProtected>
         </Route>
       </Switch>
