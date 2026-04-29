@@ -27,11 +27,15 @@ export default function AdminCadastroFicha() {
   const [analysisLogs, setAnalysisLogs] = useState<AnalysisLogItem[]>([]);
   const [internalNotesDraft, setInternalNotesDraft] = useState("");
   const [saving, setSaving] = useState(false);
-
+const [userEmail, setUserEmail] = useState<string | null>(null);
   useEffect(() => {
+   
     if (!id) return;
 
     const load = async () => {
+      // 🔐 PEGA USUÁRIO LOGADO
+const { data: userData } = await supabase.auth.getUser();
+setUserEmail(userData?.user?.email || null);
       const { data, error } = await supabase
         .from("rental_registrations")
         .select("*")
@@ -109,7 +113,7 @@ export default function AdminCadastroFicha() {
           field_name: field,
           old_value: String(oldValue || ""),
           new_value: String(newValue || ""),
-          changed_by: userEmail,
+          changed_by: userEmail || "admin",
           change_reason: getDefaultChangeReason(field),
         });
 
