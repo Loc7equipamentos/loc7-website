@@ -610,7 +610,7 @@ if (success) {
 }
             }
           }}
-          className="space-y-8"
+          className="space-y-8 pb-36 md:pb-0"
         >
           <input type="hidden" name="tipoCadastro" value={tipo} readOnly />
 
