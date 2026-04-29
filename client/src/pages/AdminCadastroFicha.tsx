@@ -27,15 +27,15 @@ export default function AdminCadastroFicha() {
   const [analysisLogs, setAnalysisLogs] = useState<AnalysisLogItem[]>([]);
   const [internalNotesDraft, setInternalNotesDraft] = useState("");
   const [saving, setSaving] = useState(false);
-const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
   useEffect(() => {
-   
     if (!id) return;
 
     const load = async () => {
-      // 🔐 PEGA USUÁRIO LOGADO
-const { data: userData } = await supabase.auth.getUser();
-setUserEmail(userData?.user?.email || null);
+      const { data: userData } = await supabase.auth.getUser();
+      setUserEmail(userData?.user?.email || null);
+
       const { data, error } = await supabase
         .from("rental_registrations")
         .select("*")
@@ -46,8 +46,8 @@ setUserEmail(userData?.user?.email || null);
         setData(data);
         setInternalNotesDraft(data.internal_notes || "");
         const docs = await resolveDocuments(
-  data.documents || data.form_data?.documents
-);
+          data.documents || data.form_data?.documents
+        );
         setDocuments(docs);
         await loadAnalysisLogs(data.id);
       }
@@ -219,45 +219,28 @@ setUserEmail(userData?.user?.email || null);
                     options={["Baixo", "Médio", "Alto", "Restrito"]}
                   />
                 </div>
-{/* STATUS DOCUMENTAL */}
-<div className="mt-6">
-  <label className="block text-sm font-medium text-gray-600 mb-1">
-    Status documental
-  </label>
 
-  <select
-    value={data.document_status || "Pendente"}
-    onChange={(e) =>
-      updateField("document_status", e.target.value)
-    }
-    className="w-full border rounded px-3 py-2"
-  >
-    <option value="Pendente">Pendente</option>
-    <option value="Em análise">Em análise</option>
-    <option value="Aprovado">Aprovado</option>
-    <option value="Reprovado">Reprovado</option>
-  </select>
-</div>
+                <div className="grid grid-cols-1 gap-3">
+                  <SelectField
+                    label="Status documental"
+                    value={data.document_status || ""}
+                    tone={getDocumentStatusTone(data.document_status)}
+                    onChange={(value) => updateField("document_status", value)}
+                    options={[
+                      "pendente",
+                      "incompleto",
+                      "em_analise",
+                      "aprovado",
+                      "reprovado",
+                    ]}
+                  />
+                </div>
 
-{/* OBSERVAÇÃO DA ANÁLISE */}
-<div className="mt-6">
-  <label className="block text-sm font-medium text-gray-600 mb-1">
-    Observação da análise
-  </label>
-
-  <textarea
-    value={data.analysis_note || ""}
-    onChange={(e) =>
-      updateField("analysis_note", e.target.value)
-    }
-    className="w-full border rounded px-3 py-2 min-h-[120px]"
-    placeholder="Ex: Cliente com documentação incompleta, solicitar comprovante atualizado..."
-  />
-</div>
                 <div className="flex flex-wrap justify-end gap-2">
                   <Pill label="Interno" value={data.internal_status} tone={getStatusTone(data.internal_status)} />
                   <Pill label="Público" value={data.public_status} tone={getStatusTone(data.public_status)} />
                   <Pill label="Risco" value={data.risk_level} tone={getRiskTone(data.risk_level)} />
+                  <Pill label="Doc." value={formatDocumentStatusLabel(data.document_status)} tone={getDocumentStatusTone(data.document_status)} />
                 </div>
 
                 {saving && (
@@ -271,6 +254,7 @@ setUserEmail(userData?.user?.email || null);
                 <div>Status interno: {data.internal_status || "—"}</div>
                 <div>Status público: {data.public_status || "—"}</div>
                 <div>Risco: {data.risk_level || "—"}</div>
+                <div>Status documental: {formatDocumentStatusLabel(data.document_status)}</div>
               </div>
             </div>
           </header>
@@ -304,8 +288,12 @@ setUserEmail(userData?.user?.email || null);
 
               return (
                 <div className="space-y-3">
+                  <div className={`rounded-lg border p-4 text-sm font-semibold ${getDocumentStatusTone(data.document_status)}`}>
+                    Status operacional: {formatDocumentStatusLabel(data.document_status)}
+                  </div>
+
                   <div className={`rounded-lg border p-4 text-sm font-semibold ${docStatus.tone}`}>
-                    Situação: {docStatus.label}
+                    Situação automática: {docStatus.label}
                   </div>
 
                   {docStatus.missing.length > 0 ? (
@@ -349,8 +337,8 @@ setUserEmail(userData?.user?.email || null);
                     >
                       <div className="min-w-0 flex-1">
                         <div className="text-xs font-semibold text-gray-500">
-  {"Documento " + (index + 1)}
-</div>
+                          {"Documento " + (index + 1)}
+                        </div>
                         <div className="mt-1 text-sm font-semibold text-gray-950 truncate">
                           {doc.name}
                         </div>
@@ -361,15 +349,15 @@ setUserEmail(userData?.user?.email || null);
 
                       {doc.url ? (
                         <div className="no-print flex flex-col md:flex-row md:items-center gap-2">
-                         <button
-  onClick={() => {
-    if (!doc.url) return;
-    window.open(doc.url, "_blank", "noopener,noreferrer");
-  }}
-  className="inline-flex min-w-[150px] items-center justify-center whitespace-nowrap rounded-md border border-gray-900 bg-gray-900 px-4 py-2 text-sm font-bold text-white"
->
-  Abrir documento
-</button>
+                          <button
+                            onClick={() => {
+                              if (!doc.url) return;
+                              window.open(doc.url, "_blank", "noopener,noreferrer");
+                            }}
+                            className="inline-flex min-w-[150px] items-center justify-center whitespace-nowrap rounded-md border border-gray-900 bg-gray-900 px-4 py-2 text-sm font-bold text-white"
+                          >
+                            Abrir documento
+                          </button>
 
                           <button
                             type="button"
@@ -391,7 +379,7 @@ setUserEmail(userData?.user?.email || null);
                               a.remove();
                               window.URL.revokeObjectURL(url);
                             }}
-                         className="inline-flex min-w-[86px] items-center justify-center whitespace-nowrap rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50"
+                            className="inline-flex min-w-[86px] items-center justify-center whitespace-nowrap rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50"
                           >
                             Baixar
                           </button>
@@ -550,6 +538,7 @@ function normalizeDocuments(rawDocuments: unknown): string[] {
 
 function getDefaultChangeReason(field: string) {
   if (field === "internal_notes") return "Atualização de observação interna";
+  if (field === "document_status") return "Alteração de status documental";
   return "Alteração de campo operacional";
 }
 
@@ -558,6 +547,7 @@ function getFieldLabel(field: string) {
   if (field === "public_status") return "Status público";
   if (field === "risk_level") return "Risco";
   if (field === "internal_notes") return "Observações internas";
+  if (field === "document_status") return "Status documental";
 
   return field;
 }
@@ -617,6 +607,30 @@ function getDocumentStatus(documents: DocumentItem[], isPF: boolean) {
   };
 }
 
+function formatDocumentStatusLabel(value?: string) {
+  const v = normalize(value);
+
+  if (v === "pendente") return "Pendente";
+  if (v === "incompleto") return "Incompleto";
+  if (v === "em_analise") return "Em análise";
+  if (v === "aprovado") return "Aprovado";
+  if (v === "reprovado") return "Reprovado";
+
+  return value || "—";
+}
+
+function getDocumentStatusTone(value?: string) {
+  const v = normalize(value);
+
+  if (v === "aprovado") return "border-green-300 bg-green-50 text-green-800";
+  if (v === "em_analise") return "border-yellow-300 bg-yellow-50 text-yellow-800";
+  if (v === "incompleto") return "border-orange-300 bg-orange-50 text-orange-800";
+  if (v === "reprovado") return "border-red-300 bg-red-50 text-red-800";
+  if (v === "pendente") return "border-gray-300 bg-gray-50 text-gray-800";
+
+  return "border-gray-300 bg-white text-gray-900";
+}
+
 function getDocumentName(path: string) {
   const parts = path.split("/");
   return parts[parts.length - 1] || path;
@@ -624,7 +638,7 @@ function getDocumentName(path: string) {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-   <section className="mb-4 rounded-lg border border-gray-200 bg-[#fafafa] p-4">
+    <section className="mb-4 rounded-lg border border-gray-200 bg-[#fafafa] p-4">
       <h2 className="mb-4 border-l-4 border-[#b91c1c] pl-3 text-lg font-black uppercase text-gray-950">
         {title}
       </h2>
@@ -636,9 +650,9 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 function Field({ label, value, className = "" }: any) {
   return (
     <div className={`rounded-md border border-gray-200 bg-white px-3 py-2 ${className}`}>
-  <div className="text-[10px] font-bold uppercase text-gray-500 tracking-wide">{label}</div>
-  <div className="text-sm font-semibold text-gray-950 leading-tight">{value || "—"}</div>
-</div>
+      <div className="text-[10px] font-bold uppercase text-gray-500 tracking-wide">{label}</div>
+      <div className="text-sm font-semibold text-gray-950 leading-tight">{value || "—"}</div>
+    </div>
   );
 }
 
@@ -653,7 +667,9 @@ function SelectField({ label, value, options, onChange, tone }: any) {
       >
         <option value="">—</option>
         {options.map((o: string) => (
-          <option key={o}>{o}</option>
+          <option key={o} value={o}>
+            {formatSelectOptionLabel(o)}
+          </option>
         ))}
       </select>
     </label>
@@ -666,6 +682,11 @@ function Pill({ label, value, tone }: any) {
       {label}: {value || "—"}
     </div>
   );
+}
+
+function formatSelectOptionLabel(value: string) {
+  if (value === "em_analise") return "Em análise";
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function getStatusTone(value?: string) {
@@ -702,12 +723,14 @@ function formatDate(date?: string) {
   if (!date) return "—";
   return new Date(date).toLocaleString("pt-BR");
 }
+
 function getDisplayId(id?: string) {
   if (!id) return "—";
 
   const short = id.replace(/-/g, "").slice(0, 6).toUpperCase();
   return `LOC7-${short}`;
 }
+
 function getFileExtension(filename: string) {
   const parts = filename.split(".");
   return parts.length > 1 ? parts.pop() : "file";
