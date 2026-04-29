@@ -106,6 +106,9 @@ export default function AdminCadastroFicha() {
       .eq("id", data.id);
 
     if (!error) {
+      const { data: currentUserData } = await supabase.auth.getUser();
+      const actorEmail = currentUserData?.user?.email || userEmail || "admin";
+
       const { error: logError } = await supabase
         .from("registration_analysis_logs")
         .insert({
@@ -113,7 +116,7 @@ export default function AdminCadastroFicha() {
           field_name: field,
           old_value: String(oldValue || ""),
           new_value: String(newValue || ""),
-          changed_by: userEmail || "admin",
+          changed_by: actorEmail,
           change_reason: getDefaultChangeReason(field),
         });
 
@@ -221,19 +224,24 @@ export default function AdminCadastroFicha() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-3">
-                  <SelectField
-                    label="Status documental"
-                    value={data.document_status || ""}
-                    tone={getDocumentStatusTone(data.document_status)}
-                    onChange={(value) => updateField("document_status", value)}
-                    options={[
-                      "pendente",
-                      "incompleto",
-                      "em_analise",
-                      "aprovado",
-                      "reprovado",
-                    ]}
-                  />
+                  <label>
+                    <span className="text-xs font-black uppercase text-gray-600">
+                      Status documental
+                    </span>
+                    <select
+                      value={data.document_status || "pendente"}
+                      onChange={(e) => updateField("document_status", e.target.value)}
+                      className={`w-full mt-1 rounded-md border px-3 py-2 text-xs font-bold ${getDocumentStatusTone(
+                        data.document_status
+                      )}`}
+                    >
+                      <option value="pendente">Pendente</option>
+                      <option value="incompleto">Incompleto</option>
+                      <option value="em_analise">Em análise</option>
+                      <option value="aprovado">Aprovado</option>
+                      <option value="reprovado">Reprovado</option>
+                    </select>
+                  </label>
                 </div>
 
                 <div className="flex flex-wrap justify-end gap-2">
