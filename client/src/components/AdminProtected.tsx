@@ -73,11 +73,7 @@ export default function AdminProtected({ children }: Props) {
   }, [location, setLocation]);
 
   if (checking) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        Carregando...
-      </div>
-    );
+    return null;
   }
 
   return <>{children}</>;
