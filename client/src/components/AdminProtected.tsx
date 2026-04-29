@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function AdminProtected({ children }: Props) {
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -20,6 +20,30 @@ export default function AdminProtected({ children }: Props) {
         return;
       }
 
+      const userEmail = data.session.user.email;
+
+      // 🔍 Verifica na tabela admin_users
+      const { data: adminUser, error } = await supabase
+        .from("admin_users")
+        .select("*")
+        .eq("email", userEmail)
+        .single();
+
+      if (error || !adminUser) {
+        // ❌ Usuário não autorizado
+        alert("Acesso não autorizado.");
+        window.location.href = "/";
+        return;
+      }
+
+      if (!adminUser.active) {
+        // ❌ Usuário desativado
+        alert("Usuário inativo.");
+        window.location.href = "/";
+        return;
+      }
+
+      // ✅ Tudo ok
       setChecking(false);
     }
 
