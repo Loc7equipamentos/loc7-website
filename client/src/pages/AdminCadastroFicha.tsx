@@ -8,11 +8,24 @@ type DocumentItem = {
   name: string;
 };
 
+type AnalysisLogItem = {
+  id: string;
+  registration_id: string;
+  field_name: string;
+  old_value: string | null;
+  new_value: string | null;
+  changed_by: string | null;
+  change_reason: string | null;
+  created_at: string;
+};
+
 export default function AdminCadastroFicha() {
   const [location] = useLocation();
   const id = location.split("/admin-panel/cadastro/")[1];
   const [data, setData] = useState<any>(null);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
+  const [analysisLogs, setAnalysisLogs] = useState<AnalysisLogItem[]>([]);
+  const [internalNotesDraft, setInternalNotesDraft] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -27,15 +40,29 @@ export default function AdminCadastroFicha() {
 
       if (!error && data) {
         setData(data);
+        setInternalNotesDraft(data.internal_notes || "");
         const docs = await resolveDocuments(
   data.documents || data.form_data?.documents
 );
         setDocuments(docs);
+        await loadAnalysisLogs(data.id);
       }
     };
 
     load();
   }, [id]);
+
+  async function loadAnalysisLogs(registrationId: string) {
+    const { data, error } = await supabase
+      .from("registration_analysis_logs")
+      .select("*")
+      .eq("registration_id", registrationId)
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      setAnalysisLogs(data as AnalysisLogItem[]);
+    }
+  }
 
   async function resolveDocuments(rawDocuments: unknown): Promise<DocumentItem[]> {
     const paths = normalizeDocuments(rawDocuments);
@@ -62,15 +89,40 @@ export default function AdminCadastroFicha() {
   async function updateField(field: string, value: string) {
     if (!data?.id) return;
 
+    const oldValue = data[field] || "";
+    const newValue = value || "";
+
+    if (String(oldValue) === String(newValue)) return;
+
     setSaving(true);
 
     const { error } = await supabase
       .from("rental_registrations")
-      .update({ [field]: value })
+      .update({ [field]: newValue })
       .eq("id", data.id);
 
     if (!error) {
-      setData((prev: any) => ({ ...prev, [field]: value }));
+      const { error: logError } = await supabase
+        .from("registration_analysis_logs")
+        .insert({
+          registration_id: data.id,
+          field_name: field,
+          old_value: String(oldValue || ""),
+          new_value: String(newValue || ""),
+          changed_by: "admin",
+          change_reason: getDefaultChangeReason(field),
+        });
+
+      if (logError) {
+        alert(
+          `Alteração salva, mas houve erro ao registrar o log:\n\n${
+            logError.message || "Erro desconhecido"
+          }`
+        );
+      }
+
+      setData((prev: any) => ({ ...prev, [field]: newValue }));
+      await loadAnalysisLogs(data.id);
     } else {
       alert(`Erro ao salvar alteração:\n\n${error.message || "Erro desconhecido"}`);
     }
@@ -366,13 +418,8 @@ export default function AdminCadastroFicha() {
           <Section title="Observações internas">
             <textarea
               className="no-print min-h-[120px] w-full rounded-lg border border-gray-300 bg-white p-4 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-              value={data.internal_notes || ""}
-              onChange={(e) =>
-                setData((prev: any) => ({
-                  ...prev,
-                  internal_notes: e.target.value,
-                }))
-              }
+              value={internalNotesDraft}
+              onChange={(e) => setInternalNotesDraft(e.target.value)}
               onBlur={(e) => updateField("internal_notes", e.target.value)}
               placeholder="Adicione observações internas..."
             />
@@ -380,6 +427,46 @@ export default function AdminCadastroFicha() {
             <div className="hidden print:block rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-900">
               {data.internal_notes || "Sem observações internas registradas"}
             </div>
+          </Section>
+
+          <Section title="Histórico de análise">
+            {analysisLogs.length > 0 ? (
+              <div className="space-y-3">
+                {analysisLogs.map((log) => (
+                  <div
+                    key={log.id}
+                    className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                  >
+                    <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <div className="text-xs font-black uppercase tracking-wide text-[#b91c1c]">
+                          {getFieldLabel(log.field_name)}
+                        </div>
+
+                        <div className="mt-2 text-sm font-semibold text-gray-900">
+                          {formatLogValue(log.old_value)} → {formatLogValue(log.new_value)}
+                        </div>
+
+                        {log.change_reason && (
+                          <div className="mt-1 text-xs font-medium text-gray-500">
+                            Motivo: {log.change_reason}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="text-left text-xs font-medium text-gray-500 md:text-right">
+                        <div>{formatDate(log.created_at)}</div>
+                        <div>Por: {log.changed_by || "admin"}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm font-semibold text-gray-700">
+                Nenhum registro de alteração ainda.
+              </div>
+            )}
           </Section>
 
           <footer className="mt-8 border-t border-gray-300 pt-4 text-xs font-medium text-gray-600">
@@ -421,6 +508,25 @@ function normalizeDocuments(rawDocuments: unknown): string[] {
   }
 
   return [];
+}
+
+function getDefaultChangeReason(field: string) {
+  if (field === "internal_notes") return "Atualização de observação interna";
+  return "Alteração de campo operacional";
+}
+
+function getFieldLabel(field: string) {
+  if (field === "internal_status") return "Status interno";
+  if (field === "public_status") return "Status público";
+  if (field === "risk_level") return "Risco";
+  if (field === "internal_notes") return "Observações internas";
+
+  return field;
+}
+
+function formatLogValue(value?: string | null) {
+  const cleanValue = String(value || "").trim();
+  return cleanValue || "—";
 }
 
 function getDocumentStatus(documents: DocumentItem[], isPF: boolean) {
