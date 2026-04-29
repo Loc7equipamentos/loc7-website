@@ -134,29 +134,37 @@ export default function CadastroPage() {
     }));
   }
 
-  async function buscarCep(value: string) {
-    const clean = value.replace(/\D/g, "");
-    if (clean.length !== 8) return;
+   async function buscarCep(value: string) {
+  const clean = value.replace(/\D/g, "");
+  if (clean.length !== 8) return;
 
-    try {
-      const response = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
-      const data = await response.json();
+  try {
+    const response = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+    const data = await response.json();
 
-      if (!data.erro) {
-        setEndereco(data.logradouro || "");
-        setBairro(data.bairro || "");
-        setCidade(data.localidade || "");
-        setUf(data.uf || "");
+    if (!data.erro) {
+      setEndereco(data.logradouro || "");
+      setBairro(data.bairro || "");
+      setCidade(data.localidade || "");
+      setUf(data.uf || "");
 
-        updateForm("endereco", data.logradouro || "");
-        updateForm("bairro", data.bairro || "");
-        updateForm("cidade", data.localidade || "");
-        updateForm("uf", data.uf || "");
-      }
-    } catch (err) {
-      console.error("Erro ao buscar CEP:", err);
+      updateForm("endereco", data.logradouro || "");
+      updateForm("bairro", data.bairro || "");
+      updateForm("cidade", data.localidade || "");
+      updateForm("uf", data.uf || "");
+
+      setTimeout(() => {
+        const inputNumero = document.querySelector<HTMLInputElement>(
+          'input[name="numero"]'
+        );
+        inputNumero?.focus();
+      }, 100);
     }
+  } catch (err) {
+    console.error("Erro ao buscar CEP:", err);
   }
+}
+  
   function handleDocumentFileChange(
     key: DocumentKey,
     e: React.ChangeEvent<HTMLInputElement>
