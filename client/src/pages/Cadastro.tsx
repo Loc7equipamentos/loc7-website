@@ -1254,7 +1254,7 @@ if (success) {
             </div>
           )}
 
-          <div className="flex flex-col gap-3 border-t border-zinc-300 pt-6 md:flex-row md:items-center md:justify-between">
+          <div className="fixed bottom-0 left-0 right-0 z-50 flex flex-col gap-3 border-t border-zinc-300 bg-[#d6d7da] px-4 py-4 md:static md:flex-row md:items-center md:justify-between md:bg-transparent md:px-0 md:pt-6">
             <button
               type="button"
               onClick={prevStep}
@@ -1287,16 +1287,7 @@ if (success) {
               </button>
             )}
           </div>
-          {/* BOTÃO FIXO MOBILE */}
-<div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 p-4 md:hidden">
-  <button
-    type="submit"
-    disabled={loading || Boolean(getRequiredDocumentError())}
-    className="w-full rounded-md bg-black px-6 py-4 text-sm font-semibold text-white disabled:opacity-50"
-  >
-    {loading ? "Enviando..." : "Seguir"}
-  </button>
-</div>
+         
         </form>
       </div>
     </main>
