@@ -208,6 +208,42 @@ export default function AdminCadastroFicha() {
             </div>
           </Section>
 
+          <Section title="Status documental">
+            {(() => {
+              const docStatus = getDocumentStatus(documents, isPF);
+
+              return (
+                <div className="space-y-3">
+                  <div className={`rounded-lg border p-4 text-sm font-semibold ${docStatus.tone}`}>
+                    Situação: {docStatus.label}
+                  </div>
+
+                  {docStatus.missing.length > 0 ? (
+                    <div className="rounded-lg border border-gray-200 bg-white p-4">
+                      <div className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500">
+                        Pendências identificadas
+                      </div>
+
+                      <ul className="list-disc space-y-1 pl-5 text-sm font-medium text-gray-800">
+                        {docStatus.missing.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
+
+                      <div className="mt-3 text-xs font-medium text-gray-500">
+                        Análise automática baseada na quantidade de documentos enviados.
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-800">
+                      Todos os documentos necessários foram enviados.
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </Section>
+
           <Section title="Documentos enviados">
             {documents.length > 0 ? (
               <div className="space-y-3">
@@ -385,6 +421,56 @@ function normalizeDocuments(rawDocuments: unknown): string[] {
   }
 
   return [];
+}
+
+function getDocumentStatus(documents: DocumentItem[], isPF: boolean) {
+  const count = documents.length;
+
+  if (isPF) {
+    if (count === 0) {
+      return {
+        label: "Incompleto",
+        tone: "border-red-300 bg-red-50 text-red-800",
+        missing: ["Documento de identificação (RG ou CNH)"],
+      };
+    }
+
+    if (count === 1) {
+      return {
+        label: "Pendente documentação",
+        tone: "border-orange-300 bg-orange-50 text-orange-800",
+        missing: ["Comprovante de residência"],
+      };
+    }
+
+    return {
+      label: "Completo",
+      tone: "border-green-300 bg-green-50 text-green-800",
+      missing: [],
+    };
+  }
+
+  if (count <= 1) {
+    return {
+      label: "Incompleto",
+      tone: "border-red-300 bg-red-50 text-red-800",
+      missing: ["Cartão CNPJ", "Documento do responsável"],
+    };
+  }
+
+  if (count === 2) {
+    return {
+      label: "Pendente documentação",
+      tone: "border-orange-300 bg-orange-50 text-orange-800",
+      missing: ["Contrato social"],
+    };
+  }
+
+  return {
+    label: "Completo",
+    tone: "border-green-300 bg-green-50 text-green-800",
+    missing: [],
+  };
 }
 
 function getDocumentName(path: string) {
