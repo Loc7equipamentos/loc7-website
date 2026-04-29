@@ -219,7 +219,41 @@ setUserEmail(userData?.user?.email || null);
                     options={["Baixo", "Médio", "Alto", "Restrito"]}
                   />
                 </div>
+{/* STATUS DOCUMENTAL */}
+<div className="mt-6">
+  <label className="block text-sm font-medium text-gray-600 mb-1">
+    Status documental
+  </label>
 
+  <select
+    value={data.document_status || "Pendente"}
+    onChange={(e) =>
+      updateField("document_status", e.target.value)
+    }
+    className="w-full border rounded px-3 py-2"
+  >
+    <option value="Pendente">Pendente</option>
+    <option value="Em análise">Em análise</option>
+    <option value="Aprovado">Aprovado</option>
+    <option value="Reprovado">Reprovado</option>
+  </select>
+</div>
+
+{/* OBSERVAÇÃO DA ANÁLISE */}
+<div className="mt-6">
+  <label className="block text-sm font-medium text-gray-600 mb-1">
+    Observação da análise
+  </label>
+
+  <textarea
+    value={data.analysis_note || ""}
+    onChange={(e) =>
+      updateField("analysis_note", e.target.value)
+    }
+    className="w-full border rounded px-3 py-2 min-h-[120px]"
+    placeholder="Ex: Cliente com documentação incompleta, solicitar comprovante atualizado..."
+  />
+</div>
                 <div className="flex flex-wrap justify-end gap-2">
                   <Pill label="Interno" value={data.internal_status} tone={getStatusTone(data.internal_status)} />
                   <Pill label="Público" value={data.public_status} tone={getStatusTone(data.public_status)} />
