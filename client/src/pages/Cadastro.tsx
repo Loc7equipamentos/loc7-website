@@ -902,13 +902,15 @@ if (success) {
                   <input
                     name="dataNascimento"
                     required
+                    inputMode="numeric"
+                    maxLength={10}
                     value={formState.dataNascimento || ""}
                     onChange={(e) => {
                       const formatted = formatDateBR(e.target.value);
                       updateForm("dataNascimento", formatted);
                     }}
                     className={inputClass}
-                    placeholder="DD/MM/AAAA"
+                    placeholder="00/00/0000"
                   />
                 </div>
 
@@ -994,13 +996,16 @@ if (success) {
                 <div>
                   <label className={labelClass}>Data de fundação</label>
                   <input
-                    type="date"
                     name="dataFundacao"
+                    inputMode="numeric"
+                    maxLength={10}
                     value={formState.dataFundacao || ""}
-                    onChange={(e) =>
-                      updateForm("dataFundacao", e.target.value)
-                    }
+                    onChange={(e) => {
+                      const formatted = formatDateBR(e.target.value);
+                      updateForm("dataFundacao", formatted);
+                    }}
                     className={inputClass}
+                    placeholder="00/00/0000"
                   />
                 </div>
 
