@@ -177,7 +177,7 @@ export default function Navbar() {
                     )}
 
                     {link.hasDropdown && isCatalogOpen && (
-                      <div className="absolute left-1/2 top-full -translate-x-1/2 mt-2 min-w-[260px] rounded-xl border border-gray-800 bg-black/95 backdrop-blur-md shadow-2xl z-[9999] py-2">
+                      <div className="absolute left-1/2 top-full -translate-x-1/2 mt-0 min-w-[260px] rounded-xl border border-gray-800 bg-black/95 backdrop-blur-md shadow-2xl z-[9999] py-2">
                         {loadingCategories ? (
                           <div className="px-4 py-3 text-white text-sm text-center">
                             Carregando...
