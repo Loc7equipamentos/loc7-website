@@ -536,9 +536,9 @@ if (success) {
 }
 
   return (
-    <main className="min-h-screen bg-[#d6d7da] px-4 py-10 text-zinc-900">
-      <div className="mx-auto max-w-5xl">
-        <header className="mb-8 text-center">
+    <main className="min-h-screen bg-[#d6d7da] px-4 py-6 md:py-8 text-zinc-900">
+      <div className="mx-auto max-w-4xl">
+        <header className="mb-6 md:mb-8 text-center">
           <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-zinc-600">
             Loc7 Equipamentos
           </p>
