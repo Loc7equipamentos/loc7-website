@@ -138,12 +138,13 @@ export default function Navbar() {
       <div className="container">
         <div className="flex items-stretch justify-between">
           {/* Logo */}
-          <Link href="/" className="group flex shrink-0 items-center py-1 pr-8"
-           <img
-  src="/loc7-logo-header.png"
-  alt="Loc7 Câmeras & Acessórios"
-  className="h-[90px] w-auto object-contain"
-/>
+         <Link href="/" className="group flex shrink-0 items-center py-1 pr-8">
+  <img
+    src="/loc7-logo-header.png"
+    alt="Loc7 Cameras e Acessorios"
+    className="h-[90px] w-auto object-contain"
+  />
+</Link>
           </Link>
 
           {/* Navegação desktop / mobile trigger */}
