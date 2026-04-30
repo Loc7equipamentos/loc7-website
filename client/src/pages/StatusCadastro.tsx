@@ -4,12 +4,16 @@ import { supabase } from "@/lib/supabase";
 
 type StatusType = "received" | "processing" | "approved" | "rejected";
 
+const WHATSAPP_NUMBER = "5511919671611";
+
 export default function StatusCadastro() {
   const [, params] = useRoute("/status-cadastro/:id");
 
   const [status, setStatus] = useState<StatusType>("received");
   const [createdAt, setCreatedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const cadastroId = params?.id || "";
 
   useEffect(() => {
     if (!params?.id) return;
@@ -49,6 +53,13 @@ export default function StatusCadastro() {
 
   const statusInfo = getStatusInfo(status);
 
+  const whatsappMessage =
+    status === "approved"
+      ? `Olá, meu cadastro na Loc7 foi aprovado.%0A%0AID: ${cadastroId}%0A%0AGostaria de dar continuidade na minha reserva.`
+      : `Olá, finalizei meu cadastro na Loc7.%0A%0AID: ${cadastroId}%0A%0AGostaria de tirar uma dúvida ou acompanhar o processo.`;
+
+  const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`;
+
   function formatDate(date?: string | null) {
     if (!date) return "";
 
@@ -63,7 +74,7 @@ export default function StatusCadastro() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f3f4f6]">
+      <div className="flex min-h-screen items-center justify-center bg-[#f3f4f6]">
         <p className="text-sm text-gray-500">Carregando status...</p>
       </div>
     );
@@ -72,35 +83,31 @@ export default function StatusCadastro() {
   return (
     <main className="min-h-screen bg-[#f3f4f6] px-4 py-12 text-zinc-900">
       <div className="mx-auto max-w-2xl">
-
         <div className="mb-8 text-center">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 mb-2">
+          <p className="mb-2 text-xs uppercase tracking-[0.2em] text-zinc-500">
             Loc7 Equipamentos
           </p>
-          <h1 className="text-3xl font-semibold">
-            Status do seu cadastro
-          </h1>
+          <h1 className="text-3xl font-semibold">Status do seu cadastro</h1>
         </div>
 
-        <div className="bg-white border border-black/10 rounded-2xl p-8 shadow-sm">
-
+        <div className="rounded-2xl border border-black/10 bg-white p-8 shadow-sm">
           <div className="mb-6 text-center">
             <p className={`text-lg font-semibold ${statusInfo.color}`}>
               {statusInfo.label}
             </p>
-            <p className="text-sm text-zinc-600 mt-2">
+            <p className="mt-2 text-sm text-zinc-600">
               {statusInfo.message}
             </p>
           </div>
 
           <div className="mb-8">
-            <div className="flex justify-between text-xs text-zinc-500 mb-2">
+            <div className="mb-2 flex justify-between text-xs text-zinc-500">
               <span>Recebido</span>
               <span>Em análise</span>
               <span>Conclusão</span>
             </div>
 
-            <div className="h-2 bg-zinc-200 rounded-full overflow-hidden">
+            <div className="h-2 overflow-hidden rounded-full bg-zinc-200">
               <div
                 className="h-full bg-emerald-600 transition-all duration-500"
                 style={{ width: `${progress}%` }}
@@ -119,6 +126,47 @@ export default function StatusCadastro() {
             )}
           </div>
 
+          <div className="mt-8 border-t border-zinc-200 pt-6 text-center">
+            {status === "approved" ? (
+              <>
+                <p className="mb-4 text-sm text-zinc-600">
+                  Seu cadastro foi aprovado. Agora você já pode falar com nosso
+                  time para dar continuidade à sua reserva.
+                </p>
+
+                <a
+                  href={whatsappLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center rounded-xl bg-zinc-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-black md:w-auto"
+                >
+                  Falar com nosso time sobre sua reserva
+                </a>
+              </>
+            ) : status === "rejected" ? (
+              <p className="text-sm text-zinc-500">
+                Caso precise de orientação, entre em contato com a equipe Loc7
+                pelo canal em que iniciou o atendimento.
+              </p>
+            ) : (
+              <>
+                <p className="mb-4 text-sm text-zinc-600">
+                  Aguarde a validação do seu cadastro por aqui. Se precisar de
+                  ajuda ou tiver alguma dúvida, você também pode falar com nosso
+                  time.
+                </p>
+
+                <a
+                  href={whatsappLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50 md:w-auto"
+                >
+                  Falar com nosso time
+                </a>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </main>
