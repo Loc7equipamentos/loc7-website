@@ -140,7 +140,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="group flex shrink-0 items-center py-3 pr-8">
             <img
-              src="/loc7-logo-header.jpeg"
+              src="/loc7-logo-header.png"
               alt="Loc7 Câmeras & Acessórios"
               className="h-[64px] w-auto object-contain opacity-95 transition-opacity duration-200 group-hover:opacity-100 md:h-[82px]"
             />
