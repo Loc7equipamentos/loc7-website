@@ -142,7 +142,7 @@ export default function Navbar() {
             <img
               src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/loc7-logo-final_576bd0cc.jpg"
               alt="Loc 7 Equipamentos"
-              className="h-11 md:h-12 w-auto transition-transform duration-300 group-hover:scale-[1.03]"
+              className="h-11 md:h-12 w-auto scale-125 transition-transform duration-300 group-hover:scale-[1.03]"
             />
           </Link>
 
