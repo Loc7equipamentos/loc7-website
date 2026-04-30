@@ -1,6 +1,6 @@
 /*
  * LOC 7 — Navbar Component
- * Header premium com logo maior, sem linhas visuais
+ * Versão compactada para melhor densidade visual em telas menores
  * Mantém estrutura atual: logo + menu principal + submenu categorias + mobile
  */
 
@@ -131,35 +131,35 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`sticky top-0 z-50 bg-black transition-all duration-300 ${
-        isScrolled ? "shadow-lg shadow-black/30" : ""
+      className={`sticky top-0 z-50 transition-all duration-300 border-b border-gray-800 ${
+        isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
       }`}
     >
       <div className="container">
         <div className="flex items-stretch justify-between">
           {/* Logo */}
-          <Link href="/" className="group flex shrink-0 items-center py-3 pr-8">
+          <Link href="/" className="flex items-center py-2 group shrink-0">
             <img
-              src="/loc7-logo-header.jpeg"
-              alt="Loc7 Câmeras & Acessórios"
-              className="h-[64px] w-auto object-contain opacity-95 transition-opacity duration-200 group-hover:opacity-100 md:h-[82px]"
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/loc7-logo-final_576bd0cc.jpg"
+              alt="Loc 7 Equipamentos"
+              className="h-11 md:h-12 w-auto transition-transform duration-300 group-hover:scale-[1.03]"
             />
           </Link>
 
           {/* Navegação desktop / mobile trigger */}
-          <div className="relative flex flex-1 flex-col">
-            <div className="flex h-[54px] flex-1 items-center justify-center md:h-[58px]">
-              <div className="relative hidden flex-1 items-center justify-center gap-10 overflow-visible md:flex lg:gap-12">
+          <div className="flex flex-col flex-1 relative">
+            <div className="flex items-center justify-center h-16 md:h-[68px] flex-1">
+              <div className="hidden md:flex items-center gap-10 lg:gap-12 justify-center flex-1 relative overflow-visible">
                 {navLinks.map((link) => (
                   <div
                     key={link.name}
-                    className="group pointer-events-auto relative overflow-visible whitespace-nowrap"
+                    className="relative group whitespace-nowrap overflow-visible pointer-events-auto"
                     onMouseEnter={() => link.hasDropdown && setIsCatalogOpen(true)}
                     onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
                   >
                     {link.hasDropdown ? (
                       <button
-                        className={`flex items-center gap-1 text-sm font-medium text-white transition hover:text-gray-300 ${
+                        className={`flex items-center gap-1 text-sm font-medium text-white hover:text-gray-300 transition ${
                           location.startsWith("/catalogo") ? "text-gray-300" : ""
                         }`}
                       >
@@ -168,7 +168,7 @@ export default function Navbar() {
                     ) : (
                       <Link
                         href={link.href}
-                        className={`text-sm font-medium text-white transition hover:text-gray-300 ${
+                        className={`text-sm font-medium text-white hover:text-gray-300 transition ${
                           location === link.href ? "text-gray-300" : ""
                         }`}
                       >
@@ -177,9 +177,9 @@ export default function Navbar() {
                     )}
 
                     {link.hasDropdown && isCatalogOpen && (
-                      <div className="absolute left-1/2 top-full z-[9999] mt-3 min-w-[260px] -translate-x-1/2 rounded-xl bg-black/95 py-2 shadow-2xl backdrop-blur-md">
+                      <div className="absolute left-1/2 top-full -translate-x-1/2 mt-2 min-w-[260px] rounded-xl border border-gray-800 bg-black/95 backdrop-blur-md shadow-2xl z-[9999] py-2">
                         {loadingCategories ? (
-                          <div className="px-4 py-3 text-center text-sm text-white">
+                          <div className="px-4 py-3 text-white text-sm text-center">
                             Carregando...
                           </div>
                         ) : (
@@ -187,7 +187,7 @@ export default function Navbar() {
                             <Link
                               key={cat.name}
                               href={cat.href}
-                              className="block px-4 py-2 text-xs font-medium tracking-wide text-white transition hover:bg-gray-900"
+                              className="block px-4 py-2 text-xs font-medium tracking-wide text-white hover:bg-gray-900 transition"
                             >
                               {cat.name}
                             </Link>
@@ -201,39 +201,39 @@ export default function Navbar() {
 
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="ml-auto p-2 text-white md:hidden"
+                className="md:hidden p-2 text-white"
                 aria-label="Abrir menu"
               >
                 {isMobileOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
+          </div>
+        </div>
 
-            {/* Submenu horizontal com ícones */}
-            <div className="hidden bg-black md:block">
-              <div className="flex items-center justify-center gap-1 py-2 lg:gap-2">
-                {submenuCategories.map((cat) => {
-                  const Icon = cat.icon;
-                  return (
-                    <Link
-                      key={cat.name}
-                      href={cat.href}
-                      className="flex items-center gap-1.5 whitespace-nowrap rounded px-2.5 py-1.5 text-[11px] text-white transition-all hover:bg-gray-900 hover:text-gray-300 lg:px-3"
-                    >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      <span className="font-medium uppercase tracking-[0.12em]">
-                        {cat.name}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
+        {/* Submenu horizontal com ícones */}
+        <div className="hidden md:block border-t border-gray-800 bg-black">
+          <div className="flex items-center justify-center gap-1 lg:gap-2 py-2">
+            {submenuCategories.map((cat) => {
+              const Icon = cat.icon;
+              return (
+                <Link
+                  key={cat.name}
+                  href={cat.href}
+                  className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 text-white hover:text-gray-300 hover:bg-gray-900 transition-all whitespace-nowrap text-[11px] rounded"
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span className="font-medium uppercase tracking-[0.12em]">
+                    {cat.name}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
         {/* Mobile menu */}
         {isMobileOpen && (
-          <div className="bg-gray-950 md:hidden">
+          <div className="md:hidden bg-gray-950 border-t border-gray-800">
             <div className="flex flex-col">
               {navLinks.map((link) => (
                 <div key={link.name}>
@@ -241,7 +241,7 @@ export default function Navbar() {
                     <>
                       <button
                         onClick={() => setIsCatalogOpen(!isCatalogOpen)}
-                        className="w-full px-4 py-3 text-left text-sm font-medium text-white transition hover:bg-gray-900"
+                        className="w-full text-left px-4 py-3 text-white hover:bg-gray-900 transition text-sm font-medium"
                       >
                         {link.name}
                       </button>
@@ -251,7 +251,7 @@ export default function Navbar() {
                             <Link
                               key={cat.name}
                               href={cat.href}
-                              className="block px-4 py-2 text-xs text-white transition hover:bg-gray-900"
+                              className="block px-4 py-2 text-white text-xs hover:bg-gray-900 transition"
                             >
                               {cat.name}
                             </Link>
@@ -262,7 +262,7 @@ export default function Navbar() {
                   ) : (
                     <Link
                       href={link.href}
-                      className="block px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-900"
+                      className="block px-4 py-3 text-white hover:bg-gray-900 transition text-sm font-medium"
                     >
                       {link.name}
                     </Link>
