@@ -1,6 +1,6 @@
 /*
  * LOC 7 — Navbar Component
- * Versão compactada para melhor densidade visual em telas menores
+ * Header premium com logo maior, sem linhas visuais
  * Mantém estrutura atual: logo + menu principal + submenu categorias + mobile
  */
 
@@ -131,24 +131,24 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`sticky top-0 z-50 border-b border-gray-800 transition-all duration-300 ${
-        isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
+      className={`sticky top-0 z-50 bg-black transition-all duration-300 ${
+        isScrolled ? "shadow-lg shadow-black/30" : ""
       }`}
     >
       <div className="container">
         <div className="flex items-stretch justify-between">
           {/* Logo */}
-          <Link href="/" className="group flex shrink-0 items-center py-2">
+          <Link href="/" className="group flex shrink-0 items-center py-3 pr-8">
             <img
               src="/loc7-logo-header.jpeg"
               alt="Loc7 Câmeras & Acessórios"
-              className="h-11 w-auto object-contain opacity-95 transition-opacity duration-200 group-hover:opacity-100 md:h-[52px]"
+              className="h-[64px] w-auto object-contain opacity-95 transition-opacity duration-200 group-hover:opacity-100 md:h-[82px]"
             />
           </Link>
 
           {/* Navegação desktop / mobile trigger */}
           <div className="relative flex flex-1 flex-col">
-            <div className="flex h-16 flex-1 items-center justify-center md:h-[68px]">
+            <div className="flex h-[54px] flex-1 items-center justify-center md:h-[58px]">
               <div className="relative hidden flex-1 items-center justify-center gap-10 overflow-visible md:flex lg:gap-12">
                 {navLinks.map((link) => (
                   <div
@@ -177,7 +177,7 @@ export default function Navbar() {
                     )}
 
                     {link.hasDropdown && isCatalogOpen && (
-                      <div className="absolute left-1/2 top-full z-[9999] mt-2 min-w-[260px] -translate-x-1/2 rounded-xl border border-gray-800 bg-black/95 py-2 shadow-2xl backdrop-blur-md">
+                      <div className="absolute left-1/2 top-full z-[9999] mt-3 min-w-[260px] -translate-x-1/2 rounded-xl bg-black/95 py-2 shadow-2xl backdrop-blur-md">
                         {loadingCategories ? (
                           <div className="px-4 py-3 text-center text-sm text-white">
                             Carregando...
@@ -201,39 +201,39 @@ export default function Navbar() {
 
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="p-2 text-white md:hidden"
+                className="ml-auto p-2 text-white md:hidden"
                 aria-label="Abrir menu"
               >
                 {isMobileOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
-          </div>
-        </div>
 
-        {/* Submenu horizontal com ícones */}
-        <div className="hidden border-t border-gray-800 bg-black md:block">
-          <div className="flex items-center justify-center gap-1 py-2 lg:gap-2">
-            {submenuCategories.map((cat) => {
-              const Icon = cat.icon;
-              return (
-                <Link
-                  key={cat.name}
-                  href={cat.href}
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded px-2.5 py-1.5 text-[11px] text-white transition-all hover:bg-gray-900 hover:text-gray-300 lg:px-3"
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  <span className="font-medium uppercase tracking-[0.12em]">
-                    {cat.name}
-                  </span>
-                </Link>
-              );
-            })}
+            {/* Submenu horizontal com ícones */}
+            <div className="hidden bg-black md:block">
+              <div className="flex items-center justify-center gap-1 py-2 lg:gap-2">
+                {submenuCategories.map((cat) => {
+                  const Icon = cat.icon;
+                  return (
+                    <Link
+                      key={cat.name}
+                      href={cat.href}
+                      className="flex items-center gap-1.5 whitespace-nowrap rounded px-2.5 py-1.5 text-[11px] text-white transition-all hover:bg-gray-900 hover:text-gray-300 lg:px-3"
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                      <span className="font-medium uppercase tracking-[0.12em]">
+                        {cat.name}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Mobile menu */}
         {isMobileOpen && (
-          <div className="border-t border-gray-800 bg-gray-950 md:hidden">
+          <div className="bg-gray-950 md:hidden">
             <div className="flex flex-col">
               {navLinks.map((link) => (
                 <div key={link.name}>
