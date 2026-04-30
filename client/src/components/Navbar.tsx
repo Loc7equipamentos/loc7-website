@@ -131,7 +131,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`sticky top-0 z-50 transition-all duration-300 border-b border-gray-800 ${
+      className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
       }`}
     >
@@ -140,7 +140,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center py-2 group shrink-0">
             <img
-              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/loc7-logo-final_576bd0cc.jpg"
+              src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
               className="h-11 md:h-12 w-auto scale-125 transition-transform duration-300 group-hover:scale-[1.03]"
             />
@@ -211,7 +211,7 @@ export default function Navbar() {
         </div>
 
         {/* Submenu horizontal com ícones */}
-        <div className="hidden md:block border-t border-gray-800 bg-black">
+        <div className="hidden md:block bg-black">
           <div className="flex items-center justify-center gap-1 lg:gap-2 py-2">
             {submenuCategories.map((cat) => {
               const Icon = cat.icon;
