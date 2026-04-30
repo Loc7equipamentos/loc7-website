@@ -17,6 +17,7 @@ import {
   Move,
   Radio,
   Clapperboard,
+    User,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -174,7 +175,14 @@ export default function Navbar() {
                       >
                         {link.name}
                       </Link>
-                    )}
+                      ))}
+
+      {/* Acesso sistema */}
+      <Link href="/admin-panel">
+        <div className="ml-4 flex items-center justify-center w-9 h-9 rounded-full border border-white/10 hover:border-white/30 hover:bg-white/5 transition cursor-pointer">
+          <User className="w-5 h-5 text-white" />
+        </div>
+      </Link>
 
                     {link.hasDropdown && isCatalogOpen && (
                       <div className="absolute left-1/2 top-full -translate-x-1/2 mt-0 min-w-[260px] rounded-xl border border-gray-800 bg-black/95 backdrop-blur-md shadow-2xl z-[9999] py-2">
