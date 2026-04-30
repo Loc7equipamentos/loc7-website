@@ -1271,7 +1271,7 @@ if (success) {
             </div>
           )}
 
-          <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-300 bg-[#d6d7da]/90 px-4 py-3 backdrop-blur-sm md:static md:border-0 md:bg-transparent md:px-0 md:pt-6 md:backdrop-blur-0">
+          <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-300 bg-[#d6d7da]/90 px-4 py-3 backdrop-blur-sm md:static md:border-0 md:bg-transparent md:px-0 md:mt-6 md:backdrop-blur-0">
             <div className="grid grid-cols-2 gap-3 md:flex md:flex-row md:items-center md:justify-between">
               <button
                 type="button"
