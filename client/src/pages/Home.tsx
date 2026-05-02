@@ -451,28 +451,27 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[oklch(0.08_0_0)]">
-             {/* ===== HERO SECTION ===== */}
+            {/* ===== HERO SECTION ===== */}
 <section className="relative h-[72vh] min-h-[520px] overflow-hidden bg-black">
   <div className="absolute inset-0">
     <img
       src="/hero-loc7.png"
       alt="Loc7 Equipamentos Audiovisuais"
-      className="absolute inset-0 h-full w-full object-cover object-[95%_center]"
+      className="absolute inset-y-0 right-0 h-full w-[72%] object-contain object-right"
     />
 
-    {/* Gradiente somente na área do texto */}
-    <div className="absolute inset-y-0 left-0 w-[42%] bg-gradient-to-r from-black via-black/65 to-transparent" />
+    {/* Gradiente apenas para leitura do texto */}
+    <div className="absolute inset-y-0 left-0 w-[52%] bg-gradient-to-r from-black via-black/80 to-transparent" />
   </div>
 
   <div className="relative z-10 container flex h-full items-center">
-    <div className="max-w-[520px]">
+    <div className="max-w-[560px]">
       <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
       </p>
 
-      <h1 className="font-display text-[40px] font-semibold leading-[1.1] tracking-[0.02em] text-white md:text-[44px] lg:text-[48px]">
-        CINE <span className="text-white/45">•</span> FOTO{" "}
-        <span className="text-white/45">•</span> BROADCAST
+      <h1 className="font-display whitespace-nowrap text-[34px] font-semibold leading-none tracking-[0.04em] text-white md:text-[40px] lg:text-[46px]">
+        CINE · FOTO · BROADCAST
       </h1>
 
       <div className="mt-8">
