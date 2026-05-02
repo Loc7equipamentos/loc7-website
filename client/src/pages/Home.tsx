@@ -451,41 +451,41 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[oklch(0.08_0_0)]">
-               {/* ===== HERO SECTION ===== */}
-      <section className="relative h-[72vh] min-h-[520px] overflow-hidden bg-black">
-        <div className="absolute inset-0">
-          <img
-            src="/hero-loc7.png"
-            alt="Loc7 Equipamentos Audiovisuais"
-            className="absolute inset-0 h-full w-full object-cover object-[78%_center]"
-          />
+              {/* ===== HERO SECTION ===== */}
+<section className="relative h-[72vh] min-h-[520px] overflow-hidden bg-black">
+  <div className="absolute inset-0">
+    <img
+      src="/hero-loc7.png"
+      alt="Loc7 Equipamentos Audiovisuais"
+      className="absolute inset-0 h-full w-full object-cover object-[88%_center]"
+    />
 
-          {/* Gradiente somente na área do texto */}
-          <div className="absolute inset-y-0 left-0 w-[62%] bg-gradient-to-r from-black via-black/75 to-transparent" />
-        </div>
+    {/* Gradiente MAIS CONTIDO (não invade a imagem) */}
+    <div className="absolute inset-y-0 left-0 w-[45%] bg-gradient-to-r from-black via-black/60 to-transparent" />
+  </div>
 
-        <div className="relative z-10 container flex h-full items-center">
-          <div className="max-w-[560px]">
-            <p className="mb-5 text-sm font-medium tracking-[0.22em] text-white/65">
-              Locadora de equipamentos audiovisuais
-            </p>
+  <div className="relative z-10 container flex h-full items-center">
+    <div className="max-w-[560px]">
+      <p className="mb-5 text-sm font-medium tracking-[0.22em] text-white/65">
+        Locadora de equipamentos audiovisuais
+      </p>
 
-            <h1 className="font-display text-5xl font-bold leading-[0.92] tracking-[-0.02em] text-white sm:text-6xl lg:text-7xl">
-              CINE <span className="text-white/45">•</span> FOTO{" "}
-              <span className="text-white/45">•</span> BROADCAST
-            </h1>
+      <h1 className="font-display text-5xl font-bold leading-[0.92] tracking-[-0.02em] text-white sm:text-6xl lg:text-7xl">
+        CINE <span className="text-white/45">•</span> FOTO{" "}
+        <span className="text-white/45">•</span> BROADCAST
+      </h1>
 
-            <div className="mt-8">
-              <Link
-                href="/catalogo"
-                className="inline-flex min-w-[220px] items-center justify-center border border-white bg-white px-8 py-3.5 text-sm font-bold uppercase tracking-[0.16em] text-black transition hover:bg-transparent hover:text-white"
-              >
-                Catálogo
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div className="mt-8">
+        <Link
+          href="/catalogo"
+          className="inline-flex min-w-[220px] items-center justify-center border border-white bg-white px-8 py-3.5 text-sm font-bold uppercase tracking-[0.16em] text-black transition hover:bg-transparent hover:text-white"
+        >
+          Catálogo
+        </Link>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* ===== FEATURED PRODUCTS FROM SUPABASE ===== */}
       <section className="py-12 sm:py-14 lg:py-16 bg-[oklch(0.95_0_0)]">
