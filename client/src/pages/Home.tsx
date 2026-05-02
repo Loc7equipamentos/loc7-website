@@ -461,7 +461,7 @@ export default function Home() {
     />
 
     {/* Gradiente apenas para leitura do texto */}
-    <div className="absolute inset-y-0 left-0 w-[52%] bg-gradient-to-r from-black via-black/80 to-transparent" />
+    <div className="absolute inset-y-0 left-0 w-[52%] bg-gradient-to-r from-black/95 via-black/70 to-transparent" />
   </div>
 
   <div className="relative z-10 container flex h-full items-center">
@@ -470,14 +470,14 @@ export default function Home() {
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
       </p>
 
-    <h1 className="mt-2 font-display text-[26px] font-medium leading-none tracking-[0.1em] text-white md:text-[28px] lg:text-[30px]">
+    <h1 className="mt-2 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
   CINE · FOTO · BROADCAST
 </h1>
 
       <div className="mt-10">
         <Link
           href="/catalogo"
-          className="inline-flex min-w-[240px] items-center justify-center border border-white/40 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:bg-white hover:text-black"
+         className="inline-flex min-w-[240px] items-center justify-center border border-white/50 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:bg-white hover:text-black hover:border-white"
         >
           Catálogo
         </Link>
