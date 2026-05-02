@@ -451,26 +451,26 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[oklch(0.08_0_0)]">
-           {/* ===== HERO SECTION ===== */}
+               {/* ===== HERO SECTION ===== */}
       <section className="relative h-[72vh] min-h-[520px] overflow-hidden bg-black">
         <div className="absolute inset-0">
           <img
             src="/hero-loc7.png"
             alt="Loc7 Equipamentos Audiovisuais"
-            className="absolute inset-0 h-full w-full object-cover object-right"
+            className="absolute inset-0 h-full w-full object-cover object-[78%_center]"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-transparent" />
-          <div className="absolute inset-0 bg-black/25" />
+          {/* Gradiente somente na área do texto */}
+          <div className="absolute inset-y-0 left-0 w-[62%] bg-gradient-to-r from-black via-black/75 to-transparent" />
         </div>
 
         <div className="relative z-10 container flex h-full items-center">
-          <div className="max-w-xl">
-            <p className="mb-5 text-sm font-medium tracking-[0.18em] text-white/70">
+          <div className="max-w-[560px]">
+            <p className="mb-5 text-sm font-medium tracking-[0.22em] text-white/65">
               Locadora de equipamentos audiovisuais
             </p>
 
-            <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 className="font-display text-5xl font-bold leading-[0.92] tracking-[-0.02em] text-white sm:text-6xl lg:text-7xl">
               CINE <span className="text-white/45">•</span> FOTO{" "}
               <span className="text-white/45">•</span> BROADCAST
             </h1>
@@ -483,49 +483,6 @@ export default function Home() {
                 Catálogo
               </Link>
             </div>
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-b from-transparent to-[oklch(0.95_0_0)]" />
-      </section>
-      {/* ===== FEATURES BAR ===== */}
-      <section className="bg-[oklch(0.06_0_0)] border-y border-[oklch(0.15_0_0)]">
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[oklch(0.15_0_0)]">
-            {[
-              {
-                icon: MapPin,
-                title: "São Paulo, SP",
-                desc: "Estrategicamente no polo audiovisual de SP",
-              },
-              {
-                icon: Zap,
-                title: "RESERVE ONLINE",
-                desc: "Faça sua reserva em poucos cliques, sem burocracia",
-              },
-              {
-                icon: Star,
-                title: "Equipamentos Premium",
-                desc: "Os principais lançamentos do mercado audiovisual",
-              },
-            ].map((feat, i) => {
-              const Icon = feat.icon;
-              return (
-                <div key={i} className="flex items-center gap-4 px-6 py-5">
-                  <div className="w-10 h-10 border border-[oklch(0.45_0.25_25)] flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-[oklch(0.45_0.25_25)]" />
-                  </div>
-                  <div>
-                    <p className="font-display font-semibold text-white uppercase tracking-wide text-sm">
-                      {feat.title}
-                    </p>
-                    <p className="text-[oklch(0.5_0_0)] text-xs mt-0.5">
-                      {feat.desc}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
           </div>
         </div>
       </section>
