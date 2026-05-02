@@ -470,9 +470,9 @@ export default function Home() {
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
       </p>
 
-      <h1 className="font-display whitespace-nowrap text-[34px] font-semibold leading-none tracking-[0.04em] text-white md:text-[40px] lg:text-[46px]">
-        CINE · FOTO · BROADCAST
-      </h1>
+     <h1 className="font-display whitespace-nowrap text-[28px] font-semibold leading-none tracking-[0.08em] text-white md:text-[32px] lg:text-[36px]">
+  CINE · FOTO · BROADCAST
+</h1>
 
       <div className="mt-8">
         <Link
