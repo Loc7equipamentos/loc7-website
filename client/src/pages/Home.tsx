@@ -534,7 +534,115 @@ export default function Home() {
       </section>
 
       
+{/* ===== TRABALHOS REALIZADOS ===== */}
+<section className="py-16 bg-white">
+  <div className="container">
 
+    {/* Título */}
+    <div className="mb-8">
+      <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
+        Alguns trabalhos realizados por nós
+      </h2>
+    </div>
+
+    {/* MOBILE — scroll horizontal */}
+    <div className="flex gap-4 overflow-x-auto pb-2 md:hidden">
+      {[
+        {
+          img: "/images/trabalhos/the-voice-globo.jpg",
+          title: "The Voice Brasil — TV Globo",
+        },
+        {
+          img: "/images/trabalhos/esquadrao-moda-sbt.jpg",
+          title: "Esquadrão da Moda — SBT",
+        },
+        {
+          img: "/images/trabalhos/pesadelo-cozinha-band.jpg",
+          title: "Pesadelo na Cozinha — Band",
+        },
+        {
+          img: "/images/trabalhos/bbb-globo.jpg",
+          title: "Big Brother Brasil — TV Globo",
+        },
+        {
+          img: "/images/trabalhos/evento-corporativo-xp.jpg",
+          title: "Evento XP Investimentos",
+        },
+        {
+          img: "/images/trabalhos/show-ao-vivo.jpg",
+          title: "Show ao vivo — Produção técnica",
+        },
+      ].map((item, i) => (
+        <div
+          key={i}
+          className="min-w-[85%] relative rounded-xl overflow-hidden"
+        >
+          <img
+            src={item.img}
+            className="w-full h-[240px] object-cover"
+            alt={item.title}
+          />
+
+          {/* Overlay legenda */}
+          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+            <span className="text-white text-sm font-medium">
+              {item.title}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* DESKTOP — grid 3 colunas */}
+    <div className="hidden md:grid md:grid-cols-3 gap-5">
+      {[
+        {
+          img: "/images/trabalhos/the-voice-globo.jpg",
+          title: "The Voice Brasil — TV Globo",
+        },
+        {
+          img: "/images/trabalhos/esquadrao-moda-sbt.jpg",
+          title: "Esquadrão da Moda — SBT",
+        },
+        {
+          img: "/images/trabalhos/pesadelo-cozinha-band.jpg",
+          title: "Pesadelo na Cozinha — Band",
+        },
+        {
+          img: "/images/trabalhos/bbb-globo.jpg",
+          title: "Big Brother Brasil — TV Globo",
+        },
+        {
+          img: "/images/trabalhos/evento-corporativo-xp.jpg",
+          title: "Evento XP Investimentos",
+        },
+        {
+          img: "/images/trabalhos/show-ao-vivo.jpg",
+          title: "Show ao vivo — Produção técnica",
+        },
+      ].map((item, i) => (
+        <div
+          key={i}
+          className="relative rounded-xl overflow-hidden group"
+        >
+          <img
+            src={item.img}
+            className="w-full h-[260px] object-cover"
+            alt={item.title}
+          />
+
+          {/* Overlay legenda */}
+          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+            <span className="text-white text-sm font-medium">
+              {item.title}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
     
 
          </div>
