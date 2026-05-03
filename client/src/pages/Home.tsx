@@ -537,17 +537,14 @@ export default function Home() {
 {/* ===== TRABALHOS REALIZADOS ===== */}
 <section className="bg-black py-16">
   <div className="container">
-
-    {/* Título */}
-    <div className="mb-10">
-      <h2 className="text-2xl font-semibold text-white md:text-3xl">
-        Alguns trabalhos realizados por nós
-      </h2>
+    <div className="mb-8">
+      <span className="loc7-section-title text-lg text-white">
+        ALGUNS TRABALHOS REALIZADOS POR NÓS
+      </span>
+      <div className="loc7-red-line" />
     </div>
 
-    {/* Scroll horizontal (mobile + desktop) */}
-    <div className="flex gap-5 overflow-x-auto pb-3">
-
+    <div className="flex gap-5 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {[
         {
           img: "/images/trabalhos/the-voice-globo.jpg",
@@ -570,26 +567,20 @@ export default function Home() {
           key={index}
           className="relative min-w-[85%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-[31.5%]"
         >
-
-          {/* Imagem */}
           <img
             src={item.img}
             alt={item.title}
             className="h-[360px] w-full object-cover md:h-[300px]"
           />
 
-          {/* Overlay legenda */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4">
             <span className="text-sm font-medium text-white">
               {item.title}
             </span>
           </div>
-
         </div>
       ))}
-
     </div>
-
   </div>
 </section>
     
