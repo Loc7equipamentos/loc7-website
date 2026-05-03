@@ -456,7 +456,7 @@ export default function Home() {
         <img
           src={HERO_IMAGE}
           alt="Loc7 Equipamentos Audiovisuais"
-          className="absolute inset-y-0 right-0 h-full w-[72%] object-cover object-right"
+         className="absolute inset-y-0 right-0 h-full w-[72%] object-cover object-[72%_center]"
         />
 
         <div className="absolute inset-y-0 left-0 w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent" />
