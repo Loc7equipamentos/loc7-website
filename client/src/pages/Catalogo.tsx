@@ -8,6 +8,7 @@ const normalize = (text: string): string => text?.toLowerCase().trim() || "";
 
 export default function Catalogo() {
   const params = useParams<{ category?: string }>();
+  const isCategoryPage = !!params.category;
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -41,9 +42,11 @@ export default function Catalogo() {
 
       setSelectedCategory(categoryName);
       setSelectedSubcategory("Todas");
+      setSelectedBrand("Todas");
     } else {
       setSelectedCategory("Todos");
       setSelectedSubcategory("Todas");
+      setSelectedBrand("Todas");
     }
   }, [params.category]);
 
@@ -82,12 +85,13 @@ export default function Catalogo() {
     loadData();
   }, []);
 
-  const availableSubcategories = products
-    .filter((p) =>
-      selectedCategory === "Todos"
-        ? true
-        : normalize(p.category || "") === normalize(selectedCategory)
-    )
+  const categoryScopedProducts = products.filter((p) =>
+    selectedCategory === "Todos"
+      ? true
+      : normalize(p.category || "") === normalize(selectedCategory)
+  );
+
+  const availableSubcategories = categoryScopedProducts
     .map((p) => p.subcategory)
     .filter(Boolean) as string[];
 
@@ -98,56 +102,57 @@ export default function Catalogo() {
     )
     .filter(Boolean);
 
+  const subcategoryScopedProducts = categoryScopedProducts.filter((p) =>
+    selectedSubcategory === "Todas"
+      ? true
+      : normalize(p.subcategory || "") === normalize(selectedSubcategory)
+  );
+
   const uniqueBrands = Array.from(
     new Set(
-      products
+      subcategoryScopedProducts
         .map((p) => (p.name ? p.name.split(" ")[0] : ""))
         .filter(Boolean)
     )
   );
 
-  const filteredProducts = products.filter((p) => {
-    const matchCategory =
-      selectedCategory === "Todos" ||
-      normalize(p.category || "") === normalize(selectedCategory);
-
-    const matchSubcategory =
-      selectedSubcategory === "Todas" ||
-      normalize(p.subcategory || "") === normalize(selectedSubcategory);
-
+  const filteredProducts = subcategoryScopedProducts.filter((p) => {
     const matchBrand =
       selectedBrand === "Todas" ||
       p.name?.toLowerCase().includes(selectedBrand.toLowerCase());
 
-    return matchCategory && matchSubcategory && matchBrand;
+    return matchBrand;
   });
 
   const SidebarFilters = () => (
     <div className="space-y-8">
-      <div>
-        <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-          Categorias
-        </h3>
-        <div className="space-y-2">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => {
-                setSelectedCategory(cat);
-                setSelectedSubcategory("Todas");
-              }}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                selectedCategory === cat
-                  ? "bg-neutral-900 text-white"
-                  : "text-neutral-700 hover:bg-neutral-100"
-              }`}
-            >
-              <span>{cat}</span>
-              <ChevronDown className="h-4 w-4 opacity-60" />
-            </button>
-          ))}
+      {!isCategoryPage && (
+        <div>
+          <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+            Categorias
+          </h3>
+          <div className="space-y-2">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  setSelectedSubcategory("Todas");
+                  setSelectedBrand("Todas");
+                }}
+                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                  selectedCategory === cat
+                    ? "bg-neutral-900 text-white"
+                    : "text-neutral-700 hover:bg-neutral-100"
+                }`}
+              >
+                <span>{cat}</span>
+                <ChevronDown className="h-4 w-4 opacity-60" />
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {uniqueSubcategories.length > 0 && (
         <div>
@@ -156,7 +161,10 @@ export default function Catalogo() {
           </h3>
           <div className="space-y-2">
             <button
-              onClick={() => setSelectedSubcategory("Todas")}
+              onClick={() => {
+                setSelectedSubcategory("Todas");
+                setSelectedBrand("Todas");
+              }}
               className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 selectedSubcategory === "Todas"
                   ? "bg-neutral-900 text-white"
@@ -170,7 +178,10 @@ export default function Catalogo() {
             {uniqueSubcategories.map((subcat) => (
               <button
                 key={subcat}
-                onClick={() => setSelectedSubcategory(subcat)}
+                onClick={() => {
+                  setSelectedSubcategory(subcat);
+                  setSelectedBrand("Todas");
+                }}
                 className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                   selectedSubcategory === subcat
                     ? "bg-neutral-900 text-white"
@@ -245,37 +256,51 @@ export default function Catalogo() {
                 : `${filteredProducts.length} equipamentos disponíveis`}
             </p>
 
-            {/* CATEGORIAS VISÍVEIS NO MOBILE */}
-            <div className="lg:hidden">
-              <div className="-mx-4 mt-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6">
-                <div className="flex min-w-max gap-2 pb-1">
-                  {categories.map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => {
-                        setSelectedCategory(cat);
-                        setSelectedSubcategory("Todas");
-                      }}
-                      className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition-colors ${
-                        selectedCategory === cat
-                          ? "border-neutral-900 bg-neutral-900 text-white"
-                          : "border-neutral-300 bg-white text-neutral-700"
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
+            {!isCategoryPage && (
+              <div className="lg:hidden">
+                <div className="-mx-4 mt-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6">
+                  <div className="flex min-w-max gap-2 pb-1">
+                    {categories.map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => {
+                          setSelectedCategory(cat);
+                          setSelectedSubcategory("Todas");
+                          setSelectedBrand("Todas");
+                        }}
+                        className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition-colors ${
+                          selectedCategory === cat
+                            ? "border-neutral-900 bg-neutral-900 text-white"
+                            : "border-neutral-300 bg-white text-neutral-700"
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
 
-                  <button
-                    onClick={() => setShowMobileFilters(true)}
-                    className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700"
-                  >
-                    <SlidersHorizontal className="h-4 w-4" />
-                    Filtros
-                  </button>
+                    <button
+                      onClick={() => setShowMobileFilters(true)}
+                      className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700"
+                    >
+                      <SlidersHorizontal className="h-4 w-4" />
+                      Filtros
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {isCategoryPage && (
+              <div className="lg:hidden">
+                <button
+                  onClick={() => setShowMobileFilters(true)}
+                  className="mt-2 inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700"
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                  Filtros
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>
