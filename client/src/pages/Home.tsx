@@ -451,33 +451,29 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
-            {/* ===== HERO SECTION ===== */}
-<section className="relative h-[72vh] min-h-[520px] overflow-hidden bg-black flex items-end">
-  <div className="absolute inset-0">
-    <img
-      src="/hero-loc7.png"
-      alt="Loc7 Equipamentos Audiovisuais"
-     className="absolute bottom-0 right-0 h-[85%] max-w-[72%] object-cover object-right"
-    />
+           {/* ===== HERO SECTION ===== */}
+<section className="relative min-h-[520px] overflow-hidden bg-black">
+  <div
+    className="absolute inset-0 bg-cover bg-right bg-no-repeat"
+    style={{ backgroundImage: "url('/hero-loc7.png')" }}
+  />
 
-    {/* Gradiente apenas para leitura do texto */}
-    <div className="absolute inset-y-0 left-0 w-[52%] bg-gradient-to-r from-black/95 via-black/70 to-transparent" />
-  </div>
+  <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-transparent" />
 
-  <div className="relative z-10 container flex h-full items-center">
+  <div className="relative z-10 container flex min-h-[520px] items-center">
     <div className="max-w-[560px]">
       <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
       </p>
 
-    <h1 className="mt-2 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
-  CINE · FOTO · BROADCAST
-</h1>
+      <h1 className="mt-2 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
+        CINE · FOTO · BROADCAST
+      </h1>
 
       <div className="mt-10">
         <Link
           href="/catalogo"
-         className="inline-flex min-w-[240px] items-center justify-center border border-white/50 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:bg-white hover:text-black hover:border-white"
+          className="inline-flex min-w-[240px] items-center justify-center border border-white/50 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
         >
           Catálogo
         </Link>
