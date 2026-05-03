@@ -451,16 +451,19 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
-           {/* ===== HERO SECTION ===== */}
-<section className="relative min-h-[520px] overflow-hidden bg-black">
-  <div
-    className="absolute inset-0 bg-cover bg-right bg-no-repeat"
-    style={{ backgroundImage: "url('/hero-loc7.png')" }}
-  />
+         {/* ===== HERO SECTION ===== */}
+<section className="relative h-[500px] overflow-hidden bg-black">
+  <div className="absolute inset-0 bg-black">
+    <img
+      src={HERO_IMAGE}
+      alt="Loc7 Equipamentos Audiovisuais"
+      className="absolute bottom-0 right-0 h-full w-[70%] object-contain object-right-bottom"
+    />
 
-  <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-transparent" />
+    <div className="absolute inset-y-0 left-0 w-[55%] bg-gradient-to-r from-black via-black/85 to-transparent" />
+  </div>
 
-  <div className="relative z-10 container flex min-h-[520px] items-center">
+  <div className="relative z-10 container flex h-full items-center">
     <div className="max-w-[560px]">
       <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
