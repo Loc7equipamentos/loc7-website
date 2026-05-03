@@ -504,8 +504,8 @@ export default function Home() {
           ) : (
             <>
               <div className="mb-4 sm:hidden">
-                <div className="-mx-4 overflow-x-auto px-4">
-                  <div className="flex min-w-max gap-2 pb-1">
+                <div className="overflow-x-auto">
+                 <div className="flex min-w-max gap-2 pb-1 px-4">
                     {featuredCategoryOptions.map((category) => (
                       <button
                         key={category.value}
