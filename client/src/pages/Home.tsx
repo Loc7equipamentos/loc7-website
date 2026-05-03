@@ -544,7 +544,7 @@ export default function Home() {
       <div className="loc7-red-line" />
     </div>
 
-    <div className="flex gap-5 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    className="flex gap-5 overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       {[
         {
           img: "/images/trabalhos/the-voice-globo.jpg",
@@ -565,7 +565,7 @@ export default function Home() {
       ].map((item, index) => (
         <div
           key={index}
-          className="relative min-w-[85%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-[31.5%]"
+         className="relative min-w-[85%] overflow-hidden rounded-xl bg-neutral-900 snap-start md:min-w-[24%]"
         >
           <img
             src={item.img}
