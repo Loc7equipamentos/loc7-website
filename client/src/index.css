@@ -571,3 +571,14 @@ body,
 * {
   box-sizing: border-box;
 }
+html {
+  scrollbar-width: none;
+}
+
+body {
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
