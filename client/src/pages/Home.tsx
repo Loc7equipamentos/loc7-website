@@ -590,7 +590,33 @@ export default function Home() {
 
   </div>
 </section>
-    
+
+   {/* ===== MAPA ===== */}
+<section className="bg-[oklch(0.95_0_0)] py-14 md:py-16">
+  <div className="container">
+
+    {/* Título padrão */}
+    <div className="mb-8">
+      <span className="loc7-section-title text-lg text-[oklch(0.08_0_0)]">
+        LOCALIZAÇÃO
+      </span>
+      <div className="loc7-red-line" />
+    </div>
+
+    {/* Mapa */}
+    <div className="overflow-hidden rounded-xl border border-black/5">
+      <iframe
+        src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
+        width="100%"
+        height="380"
+        style={{ border: 0 }}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+      />
+    </div>
+
+  </div>
+</section>   
 
 </div>   
   );
