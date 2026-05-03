@@ -38,62 +38,66 @@ export default function App() {
   const [location] = useLocation();
 
   const isAdminRoute =
-    location === "/admin-login" ||
-    location.startsWith("/admin-panel");
+    location === "/admin-login" || location.startsWith("/admin-panel");
 
   const isCleanRoute =
     location === "/cadastro-locacao" ||
     location.startsWith("/status-cadastro");
 
+  const hasPublicNavbar = !isAdminRoute && !isCleanRoute;
+
   return (
     <>
-      {!isAdminRoute && !isCleanRoute && <Navbar />}
+      {hasPublicNavbar && <Navbar />}
 
-      <Switch>
-        {/* SITE */}
-        <Route path="/" component={Home} />
-        <Route path="/catalogo" component={Catalogo} />
-        <Route path="/catalogo/:category" component={Catalogo} />
-        <Route path="/equipamentos/:slug" component={Produto} />
-        <Route path="/orcamento" component={Orcamento} />
-        <Route path="/cadastro-locacao" component={CadastroPage} />
-        <Route path="/status-cadastro/:id" component={StatusCadastro} />
+      <div className={hasPublicNavbar ? "lg:pt-[150px]" : ""}>
+        <Switch>
+          {/* SITE */}
+          <Route path="/" component={Home} />
+          <Route path="/catalogo" component={Catalogo} />
+          <Route path="/catalogo/:category" component={Catalogo} />
+          <Route path="/equipamentos/:slug" component={Produto} />
+          <Route path="/orcamento" component={Orcamento} />
+          <Route path="/cadastro-locacao" component={CadastroPage} />
+          <Route path="/status-cadastro/:id" component={StatusCadastro} />
 
-        {/* LOGIN */}
-        <Route path="/admin-login" component={AdminLogin} />
+          {/* LOGIN */}
+          <Route path="/admin-login" component={AdminLogin} />
 
-        {/* ADMIN */}
-        <Route path="/admin-panel/usuarios">
-          <AdminProtected>
-            <AdminUsuarios />
-          </AdminProtected>
-        </Route>
+          {/* ADMIN */}
+          <Route path="/admin-panel/usuarios">
+            <AdminProtected>
+              <AdminUsuarios />
+            </AdminProtected>
+          </Route>
 
-        <Route path="/admin-panel/produtos">
-          <AdminProtected>
-            <AdminDashboard />
-          </AdminProtected>
-        </Route>
+          <Route path="/admin-panel/produtos">
+            <AdminProtected>
+              <AdminDashboard />
+            </AdminProtected>
+          </Route>
 
-        <Route path="/admin-panel/cadastros">
-          <AdminProtected>
-            <AdminCadastros />
-          </AdminProtected>
-        </Route>
+          <Route path="/admin-panel/cadastros">
+            <AdminProtected>
+              <AdminCadastros />
+            </AdminProtected>
+          </Route>
 
-        <Route path="/admin-panel/cadastro/:id">
-          <AdminProtected>
-            <AdminCadastroFicha />
-          </AdminProtected>
-        </Route>
-<Route path="/admin-panel">
-  <AdminProtected>
-    <AdminHub />
-  </AdminProtected>
-</Route>
-      </Switch>
+          <Route path="/admin-panel/cadastro/:id">
+            <AdminProtected>
+              <AdminCadastroFicha />
+            </AdminProtected>
+          </Route>
 
-      {!isAdminRoute && !isCleanRoute && <WhatsAppFloat />}
+          <Route path="/admin-panel">
+            <AdminProtected>
+              <AdminHub />
+            </AdminProtected>
+          </Route>
+        </Switch>
+      </div>
+
+      {hasPublicNavbar && <WhatsAppFloat />}
     </>
   );
 }
