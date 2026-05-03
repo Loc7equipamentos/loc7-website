@@ -651,7 +651,7 @@ export default function Home() {
 
       {/* ===== BRANDS ===== */}
       <section className="py-10 border-y border-[oklch(0.15_0_0)] overflow-hidden bg-gradient-to-b from-[oklch(0.22_0_0)] to-[oklch(0.25_0_0)] cement-texture">
-        <div className="flex gap-16 animate-marquee whitespace-nowrap">
+       <div className="flex max-w-full gap-16 overflow-hidden whitespace-nowrap">
           {[...brands, ...brands].map((brand, i) => (
             <span
               key={i}
