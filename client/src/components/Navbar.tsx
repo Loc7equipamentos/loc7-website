@@ -132,7 +132,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+     className={`md:sticky md:top-0 z-50 transition-all duration-300 ${
         isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
       }`}
     >
@@ -143,13 +143,13 @@ export default function Navbar() {
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-              className="h-11 md:h-12 w-auto scale-125 transition-transform duration-300 group-hover:scale-[1.03]"
+              className="h-14 md:h-16 w-auto scale-125 transition-transform duration-300 group-hover:scale-[1.03]"
             />
           </Link>
 
           {/* Navegação desktop / mobile trigger */}
           <div className="flex flex-col flex-1 relative">
-            <div className="flex items-center justify-center h-16 md:h-[68px] flex-1">
+            <div className="flex items-center justify-end h-16 md:h-[68px] flex-1">
               <div className="hidden md:flex items-center gap-10 lg:gap-12 justify-center flex-1 relative overflow-visible">
                 {navLinks.map((link) => (
                   <div
@@ -209,10 +209,10 @@ export default function Navbar() {
 
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="md:hidden p-2 text-white"
+                className="md:hidden p-3 text-white"
                 aria-label="Abrir menu"
               >
-                {isMobileOpen ? <X size={22} /> : <Menu size={22} />}
+               {isMobileOpen ? <X size={28} /> : <Menu size={28} />}
               </button>
             </div>
           </div>
