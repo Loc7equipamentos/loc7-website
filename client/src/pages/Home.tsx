@@ -267,7 +267,7 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
       >
         <div className="relative bg-white px-3 pt-3 sm:px-4 sm:pt-4">
           {product.badge && (
-            <div className="absolute left-2 top-2 z-10 sm:left-3 sm:top-3">
+            <div className="absolute inset-y-0left-2 top-2 z-10 sm:left-3 sm:top-3">
               <span className="rounded bg-[#FF0000] px-2 py-1 text-[9px] font-bold text-white sm:text-[10px]">
                 {product.badge}
               </span>
@@ -457,7 +457,7 @@ export default function Home() {
     <img
       src="/hero-loc7.png"
       alt="Loc7 Equipamentos Audiovisuais"
-     className="absolute bottom-0 right-0 h-[85%] max-w-[72%] object-contain object-right"
+     className="absolute bottom-0 right-0 h-[85%] max-w-[72%] object-cover object-right"
     />
 
     {/* Gradiente apenas para leitura do texto */}
