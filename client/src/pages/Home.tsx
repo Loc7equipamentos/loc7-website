@@ -450,14 +450,14 @@ export default function Home() {
   }, [featuredProducts, selectedFeaturedCategory]);
 
   return (
-    <div className="min-h-screen bg-[oklch(0.08_0_0)]">
+    <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
             {/* ===== HERO SECTION ===== */}
 <section className="relative h-[72vh] min-h-[520px] overflow-hidden bg-black flex items-end">
   <div className="absolute inset-0">
     <img
       src="/hero-loc7.png"
       alt="Loc7 Equipamentos Audiovisuais"
-      className="absolute bottom-0 right-0 h-[85%] w-[72%] object-contain object-[100%_100%]"
+     className="absolute bottom-0 right-0 h-[85%] max-w-[72%] object-contain object-right"
     />
 
     {/* Gradiente apenas para leitura do texto */}
