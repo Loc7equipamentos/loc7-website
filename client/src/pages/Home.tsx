@@ -451,45 +451,37 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
-       {/* ===== HERO SECTION ===== */}
-<section className="relative overflow-hidden bg-black">
-  <div className="grid min-h-[500px] grid-cols-1 lg:grid-cols-[42%_58%]">
-    {/* Texto */}
-    <div className="relative z-10 flex items-center bg-black">
-      <div className="container lg:pr-0">
-        <div className="max-w-[520px]">
-          <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
-            LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
-          </p>
+           {/* ===== HERO SECTION ===== */}
+      <section className="relative h-[500px] overflow-hidden bg-black">
+        <img
+          src={HERO_IMAGE}
+          alt="Loc7 Equipamentos Audiovisuais"
+          className="absolute inset-y-0 right-0 h-full w-[72%] object-cover object-right"
+        />
 
-          <h1 className="mt-2 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
-            CINE · FOTO · BROADCAST
-          </h1>
+        <div className="absolute inset-y-0 left-0 w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent" />
 
-          <div className="mt-10">
-            <Link
-              href="/catalogo"
-              className="inline-flex min-w-[240px] items-center justify-center border border-white/50 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
-            >
-              Catálogo
-            </Link>
+        <div className="relative z-10 container flex h-full items-center">
+          <div className="max-w-[560px]">
+            <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
+              LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
+            </p>
+
+            <h1 className="mt-2 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
+              CINE · FOTO · BROADCAST
+            </h1>
+
+            <div className="mt-10">
+              <Link
+                href="/catalogo"
+                className="inline-flex min-w-[240px] items-center justify-center border border-white/50 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
+              >
+                Catálogo
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    {/* Imagem */}
-    <div className="relative min-h-[360px] bg-black lg:min-h-[500px]">
-      <img
-        src={HERO_IMAGE}
-        alt="Loc7 Equipamentos Audiovisuais"
-        className="absolute inset-0 h-full w-full object-cover object-center"
-      />
-
-      <div className="absolute inset-y-0 left-0 w-[22%] bg-gradient-to-r from-black to-transparent" />
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* ===== FEATURED PRODUCTS FROM SUPABASE ===== */}
       <section className="py-12 sm:py-14 lg:py-16 bg-[oklch(0.95_0_0)]">
