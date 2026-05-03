@@ -55,6 +55,7 @@ export default function Produto() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [previewImage, setPreviewImage] = useState<number | null>(null);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -84,6 +85,7 @@ export default function Produto() {
 
         setProduct(data);
         setSelectedImage(0);
+        setPreviewImage(null);
       } catch (err) {
         console.error("Erro ao carregar produto:", err);
         setError("Erro ao carregar produto.");
@@ -109,7 +111,8 @@ export default function Produto() {
 
   const includes = useMemo(() => (product ? parseIncludes(product.includes) : []), [product]);
 
-  const currentImage = gallery[selectedImage] || product?.image_url || "";
+  const currentImage =
+    gallery[previewImage ?? selectedImage] || product?.image_url || "";
 
   const reserveLink = product
     ? getWhatsAppLink({
@@ -172,9 +175,9 @@ export default function Produto() {
     <main className="min-h-screen bg-[#f3f3f1] pt-24 text-neutral-900">
       <div className="mx-auto max-w-[1240px] px-4 pb-10 sm:px-6 lg:px-8">
         <div className="mb-3 flex items-center gap-2 text-xs text-neutral-500">
-        <Link href="/catalogo" className="hover:text-neutral-900">
-  Catálogo
-</Link>
+          <Link href="/catalogo" className="hover:text-neutral-900">
+            Catálogo
+          </Link>
           <span>›</span>
           {product.category ? (
             <>
@@ -199,7 +202,12 @@ export default function Produto() {
             {gallery.map((image, index) => (
               <button
                 key={image + index}
-                onClick={() => setSelectedImage(index)}
+                onClick={() => {
+                  setSelectedImage(index);
+                  setPreviewImage(null);
+                }}
+                onMouseEnter={() => setPreviewImage(index)}
+                onMouseLeave={() => setPreviewImage(null)}
                 className={`overflow-hidden rounded-xl border bg-white transition-all ${
                   selectedImage === index
                     ? "border-neutral-900 shadow-sm"
@@ -239,7 +247,10 @@ export default function Produto() {
                 {gallery.map((image, index) => (
                   <button
                     key={image + index}
-                    onClick={() => setSelectedImage(index)}
+                    onClick={() => {
+                      setSelectedImage(index);
+                      setPreviewImage(null);
+                    }}
                     className={`overflow-hidden rounded-xl border bg-white transition-all ${
                       selectedImage === index
                         ? "border-neutral-900 shadow-sm"
