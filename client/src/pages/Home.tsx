@@ -457,7 +457,7 @@ export default function Home() {
     <img
       src="/hero-loc7.png"
       alt="Loc7 Equipamentos Audiovisuais"
-      className="absolute inset-y-0 right-0 h-full w-[72%] object-contain object-right"
+      className="absolute bottom-0 right-0 h-[92%] w-[72%] object-contain object-[100%_100%]"
     />
 
     {/* Gradiente apenas para leitura do texto */}
