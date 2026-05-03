@@ -143,13 +143,13 @@ export default function Navbar() {
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-             className="h-20 md:h-24 w-auto scale-125 transition-transform duration-300 group-hover:scale-[1.03]"
+             className="h-20 md:h-20 w-auto scale-125 transition-transform duration-300 group-hover:scale-[1.03]"
             />
           </Link>
 
           {/* Navegação desktop / mobile trigger */}
           <div className="flex flex-col flex-1 relative">
-            <div className="flex items-center justify-end h-20 md:h-[88px] flex-1">
+            <div className="flex items-center justify-end h-20 md:h-[72px] flex-1">
               <div className="hidden md:flex items-center gap-10 lg:gap-12 justify-center flex-1 relative overflow-visible">
                 {navLinks.map((link) => (
                   <div
