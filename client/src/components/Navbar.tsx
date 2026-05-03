@@ -132,10 +132,10 @@ export default function Navbar() {
 
   return (
     <nav
-     className={`md:sticky md:top-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
-      }`}
-    >
+  className={`lg:fixed lg:top-0 lg:left-0 lg:right-0 z-50 transition-all duration-300 ${
+    isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
+  }`}
+>
       <div className="container">
         <div className="flex items-stretch justify-between">
           {/* Logo */}
