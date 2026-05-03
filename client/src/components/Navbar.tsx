@@ -227,7 +227,7 @@ export default function Navbar() {
                 <Link
                   key={cat.name}
                   href={cat.href}
-                  className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 text-white hover:text-gray-300 hover:bg-gray-900 transition-all whitespace-nowrap text-[11px] rounded"
+                className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 text-white/80 hover:text-white transition-all duration-200 hover:scale-[1.05] whitespace-nowrap text-[11px]"
                 >
                   <Icon className="w-4 h-4 shrink-0" />
                   <span className="font-medium uppercase tracking-[0.12em]">
@@ -259,7 +259,7 @@ export default function Navbar() {
                             <Link
                               key={cat.name}
                               href={cat.href}
-                              className="block px-4 py-2 text-white text-xs hover:bg-gray-900 transition"
+                             className="block px-4 py-2 text-xs font-medium tracking-wide text-white/80 hover:text-white transition-all duration-200 hover:scale-[1.03]"
                             >
                               {cat.name}
                             </Link>
