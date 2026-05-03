@@ -459,7 +459,7 @@ export default function Home() {
          className="absolute inset-y-0 right-0 h-full w-[72%] object-cover object-[55%_center] md:object-[80%_center]"
         />
 
-        <div className="absolute inset-y-0 left-0 w-[72%] bg-gradient-to-r from-black via-black/70 to-transparent md:w-[58%] md:via-black/85" />
+        <div className="absolute inset-y-0 left-0 w-[72%] bg-gradient-to-r from-black via-black/80 to-transparent md:w-[85%] md:via-black/85" />
 
         <div className="relative z-10 container flex h-full items-center">
           <div className="max-w-[560px]">
