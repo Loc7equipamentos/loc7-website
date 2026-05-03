@@ -127,12 +127,7 @@ export default function Catalogo() {
 
   return matchSubcategory && matchBrand;
 });
-    const matchBrand =
-      selectedBrand === "Todas" ||
-      p.name?.toLowerCase().includes(selectedBrand.toLowerCase());
-
-    return matchBrand;
-  });
+    
 
   const SidebarFilters = () => (
     <div className="space-y-8">
