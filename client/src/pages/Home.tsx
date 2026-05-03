@@ -535,8 +535,10 @@ export default function Home() {
 
       
 {/* ===== TRABALHOS REALIZADOS ===== */}
-<section className="bg-black py-16">
+<section className="bg-black py-14 md:py-16">
   <div className="container">
+
+    {/* Título padrão Loc7 */}
     <div className="mb-8">
       <span className="loc7-section-title text-lg text-white">
         ALGUNS TRABALHOS REALIZADOS POR NÓS
@@ -544,7 +546,9 @@ export default function Home() {
       <div className="loc7-red-line" />
     </div>
 
-    className="flex gap-5 overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    {/* Scroll horizontal estilo Netflix */}
+    <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
       {[
         {
           img: "/images/trabalhos/the-voice-globo.jpg",
@@ -565,14 +569,15 @@ export default function Home() {
       ].map((item, index) => (
         <div
           key={index}
-         className="relative min-w-[85%] overflow-hidden rounded-xl bg-neutral-900 snap-start md:min-w-[24%]"
+          className="snap-start relative min-w-[85%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-[32%] lg:min-w-[24%]"
         >
           <img
             src={item.img}
             alt={item.title}
-            className="h-[360px] w-full object-cover md:h-[300px]"
+            className="h-[380px] w-full object-cover md:h-[280px]"
           />
 
+          {/* Overlay legenda */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4">
             <span className="text-sm font-medium text-white">
               {item.title}
@@ -580,7 +585,9 @@ export default function Home() {
           </div>
         </div>
       ))}
+
     </div>
+
   </div>
 </section>
     
