@@ -108,15 +108,25 @@ export default function Catalogo() {
       : normalize(p.subcategory || "") === normalize(selectedSubcategory)
   );
 
-  const uniqueBrands = Array.from(
-    new Set(
-      subcategoryScopedProducts
-        .map((p) => (p.name ? p.name.split(" ")[0] : ""))
-        .filter(Boolean)
-    )
-  );
+ const uniqueBrands = Array.from(
+  new Set(
+    categoryScopedProducts
+      .map((p) => (p.name ? p.name.split(" ")[0] : ""))
+      .filter(Boolean)
+  )
+);
 
-  const filteredProducts = subcategoryScopedProducts.filter((p) => {
+ const filteredProducts = categoryScopedProducts.filter((p) => {
+  const matchSubcategory =
+    selectedSubcategory === "Todas" ||
+    normalize(p.subcategory || "") === normalize(selectedSubcategory);
+
+  const matchBrand =
+    selectedBrand === "Todas" ||
+    p.name?.toLowerCase().includes(selectedBrand.toLowerCase());
+
+  return matchSubcategory && matchBrand;
+});
     const matchBrand =
       selectedBrand === "Todas" ||
       p.name?.toLowerCase().includes(selectedBrand.toLowerCase());
