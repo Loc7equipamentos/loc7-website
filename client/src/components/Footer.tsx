@@ -43,7 +43,7 @@ export default function Footer() {
             target="_blank"
             className="opacity-60 hover:opacity-100 transition"
           >
-            <Linkedin size={18} />
+            <Linkedin size={18} className="opacity-40" />
           </a>
         </div>
       </div>
