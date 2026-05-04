@@ -506,11 +506,11 @@ export default function Home() {
                       <button
                         key={category.value}
                         onClick={() => setSelectedFeaturedCategory(category.value)}
-                        className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition-colors ${
-                          selectedFeaturedCategory === category.value
-                            ? "border-neutral-900 bg-neutral-900 text-white"
-                            : "border-neutral-300 bg-white text-neutral-700"
-                        }`}
+                        className={`whitespace-nowrap rounded-full border px-4 py-2 text-[13px] font-semibold tracking-[0.015em] transition-colors ${
+  selectedFeaturedCategory === category.value
+    ? "border-neutral-950 bg-neutral-950 text-white"
+    : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
+}`}
                       >
                         {category.label}
                       </button>
