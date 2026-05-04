@@ -3,6 +3,7 @@ import { Route, Switch, useLocation } from "wouter";
 
 import Navbar from "./components/Navbar";
 import WhatsAppFloat from "./components/WhatsAppFloat";
+import Footer from "./components/Footer"; // ← ADICIONADO
 
 import Home from "./pages/Home";
 import Catalogo from "./pages/Catalogo";
@@ -96,6 +97,9 @@ export default function App() {
           </Route>
         </Switch>
       </div>
+
+      {/* FOOTER ADICIONADO */}
+      {hasPublicNavbar && <Footer />}
 
       {hasPublicNavbar && <WhatsAppFloat />}
     </>
