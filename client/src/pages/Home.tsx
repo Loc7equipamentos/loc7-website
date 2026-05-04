@@ -535,11 +535,11 @@ export default function Home() {
 
       
 {/* ===== TRABALHOS REALIZADOS ===== */}
-<section className="bg-black pt-14 pb-8 md:pt-16 md:pb-10">
+<section className="bg-black py-10 md:py-12">
   <div className="container">
 
     {/* Título padrão Loc7 */}
-    <div className="mb-8">
+    <div className="mb-6">
       <span className="loc7-section-title text-lg text-white">
         ALGUNS TRABALHOS REALIZADOS POR NÓS
       </span>
@@ -574,7 +574,7 @@ export default function Home() {
           <img
             src={item.img}
             alt={item.title}
-            className="h-[360px] w-full object-cover md:h-[220px]"
+            className="h-[380px] w-full object-cover md:h-[300px]"
           />
 
           {/* Overlay legenda */}
