@@ -132,7 +132,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`lg:fixed lg:top-0 lg:left-0 lg:right-0 z-50 overflow-visible transition-all duration-300 ${
+      className={`relative lg:fixed lg:top-0 lg:left-0 lg:right-0 z-50 overflow-visible transition-all duration-300 ${
         isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
       }`}
     >
@@ -141,12 +141,12 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="relative flex items-center py-2 group shrink-0 w-[132px] md:w-[158px] overflow-visible"
+            className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-20 md:h-[72px] overflow-visible"
           >
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-              className="absolute left-0 top-1/2 h-24 md:h-28 w-auto -translate-y-1/2 transition-transform duration-300 group-hover:scale-[1.04]"
+              className="absolute left-0 top-1/2 h-28 md:h-32 w-auto -translate-y-1/2 transition-transform duration-300 group-hover:scale-[1.03]"
             />
           </Link>
 
