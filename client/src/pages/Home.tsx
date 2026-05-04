@@ -535,7 +535,7 @@ export default function Home() {
 
       
 {/* ===== TRABALHOS REALIZADOS ===== */}
-<section className="bg-black py-14 md:py-16">
+<section className="bg-black pt-14 pb-8 md:pt-16 md:pb-10">
   <div className="container">
 
     {/* Título padrão Loc7 */}
