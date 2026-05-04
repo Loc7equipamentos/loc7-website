@@ -146,7 +146,7 @@ export default function Navbar() {
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-              className="absolute left-[-6px] md:left-[-12px] bottom-[6px] md:bottom-[8px] h-[34px] md:h-[44px] w-auto transition-transform duration-300 group-hover:scale-[1.03]"
+              className="absolute left-[-6px] md:left-[-12px] top-1/2 md:top-auto bottom-auto md:bottom-[-38px] w-[120px] h-auto -translate-y-1/2 md:translate-y-0 transition-transform duration-300 group-hover:scale-[1.03]"
             />
           </Link>
 
@@ -221,26 +221,26 @@ export default function Navbar() {
           </div>
         </div>
 
-       {/* Submenu horizontal com ícones */}
-<div className="hidden md:block bg-black">
-  <div className="flex items-center justify-center gap-4 lg:gap-6 py-2">
-    {submenuCategories.map((cat) => {
-      const Icon = cat.icon;
-      return (
-        <Link
-          key={cat.name}
-          href={cat.href}
-          className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-white/70 hover:text-white transition-all duration-200 hover:scale-[1.05]"
-        >
-          <Icon className="w-5 h-5 mb-1" />
-          <span className="text-[10px] font-medium uppercase tracking-[0.14em]">
-            {cat.name}
-          </span>
-        </Link>
-      );
-    })}
-  </div>
-</div>
+        {/* Submenu horizontal com ícones */}
+        <div className="hidden md:block bg-black">
+          <div className="flex items-center justify-center gap-4 lg:gap-6 py-2">
+            {submenuCategories.map((cat) => {
+              const Icon = cat.icon;
+              return (
+                <Link
+                  key={cat.name}
+                  href={cat.href}
+                  className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-white/70 hover:text-white transition-all duration-200 hover:scale-[1.05]"
+                >
+                  <Icon className="w-5 h-5 mb-1" />
+                  <span className="text-[10px] font-medium uppercase tracking-[0.14em]">
+                    {cat.name}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Mobile menu */}
         {isMobileOpen && (
