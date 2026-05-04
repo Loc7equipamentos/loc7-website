@@ -140,14 +140,14 @@ export default function Navbar() {
         <div className="flex items-stretch justify-between overflow-visible">
           {/* Logo */}
           <Link
-  href="/"
-  className="absolute left-0 top-0 h-20 md:h-[72px] flex items-center group z-50"
->
+            href="/"
+            className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-20 md:h-[72px] overflow-visible"
+          >
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-              className="absolute left-[12px] bottom-[-28px] md:bottom-[-34px] w-[180px] md:w-[200px] h-auto transition-transform duration-300 group-hover:scale-[1.03]"
-              />
+              className="absolute left-[-6px] md:left-[-12px] top-[58%] -translate-y-1/2 transition-transform duration-300 group-hover:scale-[1.03]"
+            />
           </Link>
 
           {/* Navegação desktop / mobile trigger */}
@@ -221,26 +221,26 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Submenu horizontal com ícones */}
-        <div className="hidden md:block bg-black">
-          <div className="flex items-center justify-center gap-4 lg:gap-6 py-2">
-            {submenuCategories.map((cat) => {
-              const Icon = cat.icon;
-              return (
-                <Link
-                  key={cat.name}
-                  href={cat.href}
-                  className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-white/70 hover:text-white transition-all duration-200 hover:scale-[1.05]"
-                >
-                  <Icon className="w-5 h-5 mb-1" />
-                  <span className="text-[10px] font-medium uppercase tracking-[0.14em]">
-                    {cat.name}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
+       {/* Submenu horizontal com ícones */}
+<div className="hidden md:block bg-black">
+  <div className="flex items-center justify-center gap-4 lg:gap-6 py-2">
+    {submenuCategories.map((cat) => {
+      const Icon = cat.icon;
+      return (
+        <Link
+          key={cat.name}
+          href={cat.href}
+          className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-white/70 hover:text-white transition-all duration-200 hover:scale-[1.05]"
+        >
+          <Icon className="w-5 h-5 mb-1" />
+          <span className="text-[10px] font-medium uppercase tracking-[0.14em]">
+            {cat.name}
+          </span>
+        </Link>
+      );
+    })}
+  </div>
+</div>
 
         {/* Mobile menu */}
         {isMobileOpen && (
