@@ -479,55 +479,58 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== FEATURED PRODUCTS FROM SUPABASE ===== */}
-      <section className="py-12 sm:py-14 lg:py-16 bg-[oklch(0.95_0_0)]">
-        <div className="container">
-          <div className="mb-6 sm:mb-8">
-            <span className="loc7-section-title text-lg text-[oklch(0.08_0_0)]">
-              DESTAQUES
-            </span>
-            <div className="loc7-red-line" />
-          </div>
+      {/* ===== DESTAQUES ===== */}
+<section className="bg-[oklch(0.95_0_0)] py-10 md:py-12">
+  <div className="container">
 
-          {loadingProducts ? (
-            <div className="text-center py-12">
-              <p className="text-[oklch(0.5_0_0)]">Carregando produtos...</p>
-            </div>
-          ) : featuredProducts.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-[oklch(0.5_0_0)]">Nenhum produto disponível</p>
-            </div>
-          ) : (
-            <>
-              <div className="mb-4 sm:hidden">
-                <div className="overflow-x-auto">
-                 <div className="flex min-w-max gap-2 pb-1 px-4">
-                    {featuredCategoryOptions.map((category) => (
-                      <button
-                        key={category.value}
-                        onClick={() => setSelectedFeaturedCategory(category.value)}
-                        className={`whitespace-nowrap rounded-full border px-4 py-2 text-[13px] font-semibold tracking-[0.015em] transition-colors ${
-  selectedFeaturedCategory === category.value
-    ? "border-neutral-950 bg-neutral-950 text-white"
-    : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
-}`}
-                      >
-                        {category.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+    {/* Título */}
+    <div className="mb-6 md:mb-8">
+      <span className="loc7-section-title text-lg text-[oklch(0.08_0_0)]">
+        DESTAQUES
+      </span>
+      <div className="loc7-red-line" />
+    </div>
 
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
-                {filteredFeaturedProducts.map((product) => (
-                  <HomeFeaturedCard key={product.id} product={product} />
-                ))}
-              </div>
-            </>
-          )}
+    {/* Categorias */}
+    <div className="mb-6 sm:hidden">
+      <div className="overflow-x-auto">
+        <div className="flex gap-2 pb-1">
+          {featuredCategoryOptions.map((category) => (
+            <button
+              key={category.value}
+              onClick={() => setSelectedFeaturedCategory(category.value)}
+              className={`whitespace-nowrap rounded-full border px-4 py-2 text-[12px] font-medium transition-colors ${
+                selectedFeaturedCategory === category.value
+                  ? "bg-black text-white border-black"
+                  : "bg-white text-neutral-700 border-neutral-300"
+              }`}
+            >
+              {category.label}
+            </button>
+          ))}
         </div>
-      </section>
+      </div>
+    </div>
+
+    {/* GRID */}
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-6">
+      {filteredFeaturedProducts.map((product) => (
+        <HomeFeaturedCard key={product.id} product={product} />
+      ))}
+    </div>
+
+    {/* CTA */}
+    <div className="mt-10 flex justify-center">
+      <Link
+        href="/catalogo"
+        className="inline-flex items-center justify-center border border-black px-6 py-3 text-[12px] font-medium uppercase tracking-[0.18em] text-black transition-all duration-300 hover:bg-black hover:text-white"
+      >
+        Ver catálogo completo
+      </Link>
+    </div>
+
+  </div>
+</section>
 
       
 {/* ===== TRABALHOS REALIZADOS ===== */}
