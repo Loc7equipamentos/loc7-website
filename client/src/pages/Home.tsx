@@ -448,7 +448,7 @@ export default function Home() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
            {/* ===== HERO SECTION ===== */}
-     <section className="relative h-[620px] overflow-hidden bg-black md:h-[680px] lg:h-[720px]">
+    <section className="relative h-[540px] overflow-hidden bg-black md:h-[680px] lg:h-[720px]">
         <img
           src={HERO_IMAGE}
           alt="Loc7 Equipamentos Audiovisuais"
