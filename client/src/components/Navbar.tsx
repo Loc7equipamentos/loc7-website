@@ -132,18 +132,21 @@ export default function Navbar() {
 
   return (
     <nav
-  className={`lg:fixed lg:top-0 lg:left-0 lg:right-0 z-50 transition-all duration-300 ${
-    isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
-  }`}
->
+      className={`lg:fixed lg:top-0 lg:left-0 lg:right-0 z-50 overflow-visible transition-all duration-300 ${
+        isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
+      }`}
+    >
       <div className="container">
-        <div className="flex items-stretch justify-between">
+        <div className="flex items-stretch justify-between overflow-visible">
           {/* Logo */}
-          <Link href="/" className="flex items-center py-2 group shrink-0">
+          <Link
+            href="/"
+            className="relative flex items-center py-2 group shrink-0 w-[132px] md:w-[158px] overflow-visible"
+          >
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-            className="h-20 md:h-20 w-auto scale-125 transition-transform duration-300 group-hover:scale-[1.28]"
+              className="absolute left-0 top-1/2 h-24 md:h-28 w-auto -translate-y-1/2 transition-transform duration-300 group-hover:scale-[1.04]"
             />
           </Link>
 
@@ -212,7 +215,7 @@ export default function Navbar() {
                 className="md:hidden p-3 text-white"
                 aria-label="Abrir menu"
               >
-               {isMobileOpen ? <X size={28} /> : <Menu size={28} />}
+                {isMobileOpen ? <X size={28} /> : <Menu size={28} />}
               </button>
             </div>
           </div>
@@ -227,7 +230,7 @@ export default function Navbar() {
                 <Link
                   key={cat.name}
                   href={cat.href}
-                className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 text-white/80 hover:text-white transition-all duration-200 hover:scale-[1.05] whitespace-nowrap text-[11px]"
+                  className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 text-white/80 hover:text-white transition-all duration-200 hover:scale-[1.05] whitespace-nowrap text-[11px]"
                 >
                   <Icon className="w-4 h-4 shrink-0" />
                   <span className="font-medium uppercase tracking-[0.12em]">
@@ -259,7 +262,7 @@ export default function Navbar() {
                             <Link
                               key={cat.name}
                               href={cat.href}
-                             className="block px-4 py-2 text-xs font-medium tracking-wide text-white/80 hover:text-white transition-all duration-200 hover:scale-[1.03]"
+                              className="block px-4 py-2 text-xs font-medium tracking-wide text-white/80 hover:text-white transition-all duration-200 hover:scale-[1.03]"
                             >
                               {cat.name}
                             </Link>
