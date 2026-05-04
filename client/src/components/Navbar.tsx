@@ -152,7 +152,7 @@ export default function Navbar() {
 
           {/* Navegação desktop / mobile trigger */}
           <div className="flex flex-col flex-1 relative">
-            <div className="flex items-center justify-end h-20 md:h-[72px] flex-1">
+           <div className="flex items-center justify-center h-20 md:h-[72px] flex-1">
               <div className="hidden md:flex items-center gap-10 lg:gap-12 justify-center flex-1 relative overflow-visible">
                 {navLinks.map((link) => (
                   <div
