@@ -140,14 +140,14 @@ export default function Navbar() {
         <div className="flex items-stretch justify-between overflow-visible">
           {/* Logo */}
           <Link
-            href="/"
-            className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-20 md:h-[72px] overflow-visible"
-          >
+  href="/"
+  className="absolute left-0 top-0 h-20 md:h-[72px] flex items-center group z-50"
+>
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-              className="absolute left-[-6px] md:left-[-12px] top-1/2 md:top-auto bottom-auto md:bottom-[-34px] w-[160px] md:w-[170px] h-auto -translate-y-1/2 md:translate-y-0 transition-transform duration-300 group-hover:scale-[1.03]"
-            />
+              className="absolute left-[12px] bottom-[-28px] md:bottom-[-34px] w-[180px] md:w-[200px] h-auto transition-transform duration-300 group-hover:scale-[1.03]"
+              />
           </Link>
 
           {/* Navegação desktop / mobile trigger */}
