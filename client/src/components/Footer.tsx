@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="flex flex-col gap-2 text-sm text-white/80">
           <p className="text-white font-medium">Contato</p>
           <p>loc7@loc7equipamentos.com.br</p>
-          <p>11 99723-7850 / WhatsApp</p>
+          <p>11 91967-1611 / WhatsApp</p>
         </div>
 
         {/* HORÁRIO */}
