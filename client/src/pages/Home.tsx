@@ -257,12 +257,12 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
     isHovered && secondaryImage ? secondaryImage : primaryImage;
 
   return (
-    <Link
-      href={`/equipamentos/${product.slug || product.id}`}
-      className="block"
-    >
+   <Link
+  href={`/equipamentos/${product.slug || product.id}`}
+  className="group block"
+>
       <div
-        className="h-full overflow-hidden rounded-xl border border-black/5 bg-white shadow-[0_12px_34px_rgba(0,0,0,0.08)] backdrop-blur-sm transition-shadow duration-200 hover:shadow-[0_18px_42px_rgba(0,0,0,0.12)]"
+        className="h-full overflow-hidden rounded-xl border border-black/5 bg-white backdrop-blur-sm shadow-[0_12px_34px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out hover:-translate-y-[2px] hover:shadow-[0_18px_42px_rgba(0,0,0,0.12)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -281,7 +281,7 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
               <img
                 src={currentImage}
                 alt={product.name}
-                className="max-h-full max-w-full object-contain"
+                className="max-h-full max-w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
               />
             ) : (
               <span className="text-xs text-neutral-400">Sem imagem</span>
