@@ -592,11 +592,11 @@ export default function Home() {
 </section>
 
   {/* ===== MAPA ===== */}
-<section className="bg-[oklch(0.95_0_0)] py-8 md:py-10">
+<section className="bg-[oklch(0.95_0_0)] py-6 md:py-7">
   <div className="container">
 
     {/* Título padrão */}
-    <div className="mb-6">
+    <div className="mb-4">
       <span className="loc7-section-title text-lg text-[oklch(0.08_0_0)]">
         LOCALIZAÇÃO
       </span>
