@@ -253,28 +253,30 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
   const productImages = useMemo(() => getProductImages(product), [product]);
   const primaryImage = productImages[0] || product.image_url || "";
   const secondaryImage = productImages[1] || primaryImage;
-  const currentImage = isHovered && secondaryImage ? secondaryImage : primaryImage;
+  const currentImage =
+    isHovered && secondaryImage ? secondaryImage : primaryImage;
 
   return (
     <Link
       href={`/equipamentos/${product.slug || product.id}`}
-      className="group block"
+      className="block"
     >
       <div
-        className="h-full overflow-hidden rounded-xl bg-white shadow-[0_6px_18px_rgba(0,0,0,0.06)] transition-shadow duration-300 hover:shadow-[0_10px_24px_rgba(0,0,0,0.09)]"
+        className="h-full overflow-hidden rounded-xl bg-white border border-black/5 transition-all duration-200 hover:shadow-[0_10px_26px_rgba(0,0,0,0.08)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative bg-white px-3 pt-3 sm:px-4 sm:pt-4">
+        {/* IMAGEM */}
+        <div className="relative px-4 pt-4">
           {product.badge && (
-            <div className="absolute inset-y-0left-2 top-2 z-10 sm:left-3 sm:top-3">
-              <span className="rounded bg-[#FF0000] px-2 py-1 text-[9px] font-bold text-white sm:text-[10px]">
+            <div className="absolute left-3 top-3 z-10">
+              <span className="rounded bg-black px-2 py-1 text-[10px] font-semibold text-white">
                 {product.badge}
               </span>
             </div>
           )}
 
-          <div className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-white">
+          <div className="flex h-[150px] items-center justify-center sm:h-[170px] md:h-[180px]">
             {currentImage ? (
               <img
                 src={currentImage}
@@ -282,35 +284,30 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
                 className="max-h-full max-w-full object-contain"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-white">
-                <span className="text-xs text-[oklch(0.7_0_0)] sm:text-sm">
-                  Sem imagem
-                </span>
-              </div>
+              <span className="text-xs text-neutral-400">Sem imagem</span>
             )}
           </div>
         </div>
 
-        <div className="flex min-h-[106px] flex-col justify-between bg-white px-3 pb-3 pt-2.5 sm:min-h-[114px] sm:px-4 sm:pb-4 sm:pt-3">
+        {/* CONTEÚDO */}
+        <div className="flex flex-col gap-2 px-4 pb-4 pt-3">
           <div>
-            <p className="mb-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-[oklch(0.45_0.25_25)] sm:text-[10px]">
+            <p className="mb-1 text-[10px] uppercase tracking-[0.18em] text-neutral-400">
               {product.category}
             </p>
 
-            <h3 className="line-clamp-2 min-h-[2rem] text-[12px] font-semibold leading-snug text-[oklch(0.08_0_0)] sm:min-h-[2.2rem] sm:text-[13px]">
+            <h3 className="text-[13px] sm:text-[14px] font-medium leading-snug text-neutral-900 line-clamp-2 min-h-[36px]">
               {product.name}
             </h3>
           </div>
 
-          <div className="mt-2 flex items-end justify-between gap-2">
-            <p className="text-[14px] font-bold leading-none text-[#FF0000] sm:text-[15px]">
+          <div className="mt-2 flex items-end justify-between">
+            <span className="text-[13px] font-medium text-neutral-900">
               R$ {formatProductPrice(product.price)}
-              <span className="ml-1 text-[9px] font-normal text-[oklch(0.5_0_0)] sm:text-[10px]">
-                /dia
-              </span>
-            </p>
+              <span className="ml-1 text-[10px] text-neutral-500">/dia</span>
+            </span>
 
-            <span className="text-[10px] font-semibold text-[oklch(0.35_0_0)] transition-colors duration-300 group-hover:text-[oklch(0.08_0_0)] sm:text-[11px]">
+            <span className="text-[11px] text-neutral-400">
               Ver item
             </span>
           </div>
@@ -319,7 +316,6 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
     </Link>
   );
 }
-
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [carouselIndex, setCarouselIndex] = useState(0);
