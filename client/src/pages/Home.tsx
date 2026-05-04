@@ -447,37 +447,37 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
-           {/* ===== HERO SECTION ===== */}
-    <section className="relative h-[460px] overflow-hidden bg-black md:h-[680px] lg:h-[720px]">
-        <img
-          src={HERO_IMAGE}
-          alt="Loc7 Equipamentos Audiovisuais"
-         className="absolute inset-y-0 right-0 h-full w-[72%] object-cover object-[55%_center] md:object-[80%_center]"
-        />
+          {/* ===== HERO SECTION ===== */}
+<section className="relative h-[430px] overflow-hidden bg-black md:h-[560px] lg:h-[600px]">
+  <img
+    src={HERO_IMAGE}
+    alt="Loc7 Equipamentos Audiovisuais"
+    className="absolute inset-y-0 right-0 h-full w-[72%] object-cover object-[55%_top] md:object-[80%_top]"
+  />
 
-        <div className="absolute inset-y-0 left-0 w-[92%] bg-gradient-to-r from-black via-black/85 to-transparent md:w-[58%] md:via-black/85" />
+  <div className="absolute inset-y-0 left-0 w-[92%] bg-gradient-to-r from-black via-black/85 to-transparent md:w-[58%] md:via-black/85" />
 
-        <div className="relative z-10 container flex h-full items-center">
-          <div className="max-w-[560px]">
-            <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
-              LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
-            </p>
+  <div className="relative z-10 container flex h-full items-center">
+    <div className="max-w-[560px]">
+      <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
+        LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
+      </p>
 
-            <h1 className="mt-2 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
-              CINE · FOTO · BROADCAST
-            </h1>
+      <h1 className="mt-2 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
+        CINE · FOTO · BROADCAST
+      </h1>
 
-            <div className="mt-10">
-              <Link
-                href="/catalogo"
-                className="inline-flex min-w-[240px] items-center justify-center border border-white/50 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
-              >
-                Catálogo
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div className="mt-10">
+        <Link
+          href="/catalogo"
+          className="inline-flex min-w-[240px] items-center justify-center border border-white/50 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
+        >
+          Catálogo
+        </Link>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* ===== DESTAQUES ===== */}
 <section className="bg-[oklch(0.95_0_0)] py-10 md:py-12">
