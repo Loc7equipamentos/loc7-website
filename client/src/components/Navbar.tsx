@@ -152,7 +152,7 @@ export default function Navbar() {
 
           {/* Navegação desktop / mobile trigger */}
           <div className="flex flex-col flex-1 relative">
-           <div className="flex items-center justify-center h-20 md:h-[72px] flex-1">
+            <div className="flex items-center justify-center h-20 md:h-[72px] flex-1">
               <div className="hidden md:flex items-center gap-10 lg:gap-12 justify-center flex-1 relative overflow-visible">
                 {navLinks.map((link) => (
                   <div
@@ -221,26 +221,26 @@ export default function Navbar() {
           </div>
         </div>
 
-       {/* Submenu horizontal com ícones */}
-<div className="hidden md:block bg-black">
-  <div className="flex items-center justify-center gap-4 lg:gap-6 py-2">
-    {submenuCategories.map((cat) => {
-      const Icon = cat.icon;
-      return (
-        <Link
-          key={cat.name}
-          href={cat.href}
-          className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-white/70 hover:text-white transition-all duration-200 hover:scale-[1.05]"
-        >
-          <Icon className="w-5 h-5 mb-1" />
-          <span className="text-[10px] font-medium uppercase tracking-[0.14em]">
-            {cat.name}
-          </span>
-        </Link>
-      );
-    })}
-  </div>
-</div>
+        {/* Submenu horizontal com ícones */}
+        <div className="hidden md:block bg-black">
+          <div className="flex items-center justify-center gap-4 lg:gap-6 py-2 md:pl-[180px]">
+            {submenuCategories.map((cat) => {
+              const Icon = cat.icon;
+              return (
+                <Link
+                  key={cat.name}
+                  href={cat.href}
+                  className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-white/70 hover:text-white transition-all duration-200 hover:scale-[1.05]"
+                >
+                  <Icon className="w-5 h-5 mb-1" />
+                  <span className="text-[10px] font-medium uppercase tracking-[0.14em]">
+                    {cat.name}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Mobile menu */}
         {isMobileOpen && (
