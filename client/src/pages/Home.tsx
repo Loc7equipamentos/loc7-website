@@ -457,7 +457,7 @@ export default function Home() {
 
   <div className="absolute inset-y-0 left-0 w-[92%] bg-gradient-to-r from-black via-black/85 to-transparent md:w-[58%] md:via-black/85" />
 
-  <div className="relative z-10 container flex h-full items-center">
+ <div className="relative z-10 container flex h-full items-start pt-24 md:pt-32 lg:pt-36">
     <div className="max-w-[560px]">
       <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
