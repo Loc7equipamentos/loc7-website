@@ -447,18 +447,26 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
-          {/* ===== HERO SECTION ===== */}
-<section className="relative h-[430px] overflow-hidden bg-black md:h-[560px] lg:h-[600px]">
+        {/* ===== HERO SECTION ===== */}
+<section className="relative overflow-hidden bg-black h-[430px] md:h-[560px] lg:h-[600px]">
+
+  {/* DESKTOP IMAGE */}
   <img
     src={HERO_IMAGE}
     alt="Loc7 Equipamentos Audiovisuais"
-    className="absolute inset-y-0 right-0 h-full w-[72%] object-cover object-[55%_top] md:object-[80%_top]"
+    className="hidden md:block absolute inset-y-0 right-0 h-full w-[72%] object-cover object-[80%_top]"
   />
 
-  <div className="absolute inset-y-0 left-0 w-[92%] bg-gradient-to-r from-black via-black/85 to-transparent md:w-[58%] md:via-black/85" />
+  {/* MOBILE CLEAN (SEM IMAGEM) */}
+  <div className="block md:hidden absolute inset-0 bg-black" />
 
-<div className="relative z-10 container flex h-full items-start pt-[170px] md:pt-32 lg:pt-36">
+  {/* GRADIENT DESKTOP */}
+  <div className="hidden md:block absolute inset-y-0 left-0 w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent" />
+
+  {/* CONTENT */}
+  <div className="relative z-10 container flex h-full items-start pt-[140px] md:pt-32 lg:pt-36">
     <div className="max-w-[560px]">
+
       <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
       </p>
@@ -475,8 +483,10 @@ export default function Home() {
           Catálogo
         </Link>
       </div>
+
     </div>
   </div>
+
 </section>
 
       {/* ===== DESTAQUES ===== */}
