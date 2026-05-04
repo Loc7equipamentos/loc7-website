@@ -523,7 +523,7 @@ export default function Home() {
     <div className="mt-10 flex justify-center">
       <Link
         href="/catalogo"
-        className="inline-flex items-center justify-center border border-black px-6 py-3 text-[12px] font-medium uppercase tracking-[0.18em] text-black transition-all duration-300 hover:bg-black hover:text-white"
+        className="inline-flex items-center justify-center border border-black/70 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
       >
         Ver catálogo completo
       </Link>
