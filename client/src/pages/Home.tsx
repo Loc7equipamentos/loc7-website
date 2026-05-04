@@ -262,7 +262,7 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
       className="block"
     >
       <div
-        className="h-full overflow-hidden rounded-xl bg-white border border-black/5 transition-all duration-200 hover:shadow-[0_10px_26px_rgba(0,0,0,0.08)]"
+        className="h-full overflow-hidden rounded-xl border border-black/5 bg-white shadow-[0_12px_34px_rgba(0,0,0,0.08)] backdrop-blur-sm transition-shadow duration-200 hover:shadow-[0_18px_42px_rgba(0,0,0,0.12)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -296,9 +296,9 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
               {product.category}
             </p>
 
-            <h3 className="text-[13px] sm:text-[14px] font-medium leading-snug text-neutral-900 line-clamp-2 min-h-[36px]">
-              {product.name}
-            </h3>
+            <h3 className="line-clamp-2 min-h-[38px] text-[13.5px] sm:text-[14.5px] font-semibold leading-[1.18] tracking-[-0.01em] text-neutral-950">
+  {product.name}
+</h3>
           </div>
 
           <div className="mt-2 flex items-end justify-between">
