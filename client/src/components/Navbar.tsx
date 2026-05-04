@@ -138,16 +138,17 @@ export default function Navbar() {
     >
       <div className="container">
         <div className="flex items-stretch justify-between overflow-visible">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-20 md:h-[72px] overflow-visible"
-          >
-            <img
-              src="/loc7-logo-header.png"
-              alt="Loc 7 Equipamentos"
-             className="absolute left-[-6px] md:left-[-12px] top-[62%] -translate-y-1/2 w-[200px] md:w-[350px] h-auto transition-transform duration-300 group-hover:scale-[1.03]"
-              </Link>
+         {/* Logo */}
+<Link
+  href="/"
+  className="relative flex items-center group shrink-0 w-[150px] md:w-[360px] h-20 md:h-[72px] overflow-visible"
+>
+  <img
+    src="/loc7-logo-header.png"
+    alt="Loc 7 Equipamentos"
+    className="absolute left-[-6px] md:left-[-12px] top-[68%] -translate-y-1/2 w-[200px] md:w-[350px] h-auto transition-transform duration-300 group-hover:scale-[1.03]"
+  />
+</Link>
 
           {/* Navegação desktop / mobile trigger */}
           <div className="flex flex-col flex-1 relative">
