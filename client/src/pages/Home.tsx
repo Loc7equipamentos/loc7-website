@@ -561,10 +561,10 @@ export default function Home() {
 
     {/* Título padrão Loc7 */}
     <div className="mb-4">
-      <span className="loc7-section-title text-lg text-white">
-        ALGUNS TRABALHOS REALIZADOS POR NÓS
-      </span>
-      <div className="loc7-red-line" />
+     <span className="text-sm tracking-widest text-white/60 uppercase">
+  TRABALHOS REALIZADOS
+</span>
+      
     </div>
 
     {/* Scroll horizontal estilo Netflix */}
