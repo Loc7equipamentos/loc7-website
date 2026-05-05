@@ -212,7 +212,7 @@ export default function Navbar() {
 
              <button
   onClick={() => setIsMobileOpen(!isMobileOpen)}
-  className="md:hidden p-2 text-white translate-x-4 translate-y-[10px]"
+  className="md:hidden p-2 text-white translate-x-6 translate-y-[10px]"
   aria-label="Abrir menu"
 >
   {isMobileOpen ? <X size={34} /> : <Menu size={34} />}
