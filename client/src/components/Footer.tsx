@@ -41,7 +41,7 @@ export default function Footer() {
           </div>
 
           {/* HORÁRIO / REDES */}
-          <div className="space-y-4 text-sm text-white/65 text-left">
+          <div className="space-y-4 text-sm text-white/65 text-left md:ml-auto md:w-fit md:text-left">
             <div>
               <p className="text-[12px] uppercase tracking-[0.2em] text-white/85">
                 Atendimento
