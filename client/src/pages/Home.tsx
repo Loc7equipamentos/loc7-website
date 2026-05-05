@@ -595,7 +595,7 @@ export default function Home() {
           <img
             src={item.img}
             alt={item.title}
-            className="h-[420px] w-full object-cover md:h-[360px] lg:h-[390px]"
+            className="h-[460px] w-full object-contain bg-black"
           />
 
           {/* Overlay legenda */}
