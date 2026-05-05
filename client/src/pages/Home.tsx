@@ -35,7 +35,7 @@ const heroSlides = [
   },
 ];
 
-const HERO_IMAGE = "/hero-loc7.png";
+const HERO_IMAGE = "/hero-loc7.jpg";
 const CAMERAS_IMG =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663498586106/dhUfJ7vWmzfPeKJDMH9fdB/cameras-category-CAmby3gUvFFiGLofYZBGb5.webp";
 const LENSES_IMG =
