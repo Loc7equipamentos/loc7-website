@@ -556,7 +556,7 @@ export default function Home() {
 
       
 {/* ===== TRABALHOS REALIZADOS ===== */}
-<div className="mb-4">
+<section className="bg-black py-6 md:py-8">
   <div className="container">
 
     {/* Título padrão Loc7 */}
