@@ -276,17 +276,17 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
             </div>
           )}
 
-          <div className="flex h-[150px] items-center justify-center sm:h-[170px] md:h-[180px]">
-            {currentImage ? (
-              <img
-                src={currentImage}
-                alt={product.name}
-                className="max-h-full max-w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-              />
-            ) : (
-              <span className="text-xs text-neutral-400">Sem imagem</span>
-            )}
-          </div>
+         <div className="flex h-[150px] items-center justify-center sm:h-[170px] md:h-[180px]">
+  {currentImage ? (
+    <img
+      src={currentImage}
+      alt={product.name}
+      className="max-h-full max-w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+    />
+  ) : (
+    <span className="text-xs text-neutral-400">Sem imagem</span>
+  )}
+</div>
         </div>
 
         {/* CONTEÚDO */}
