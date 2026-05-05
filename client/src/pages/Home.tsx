@@ -400,7 +400,7 @@ export default function Home() {
     .select("*")
     .eq("is_featured", true)
     .order("featured_order", { ascending: true })
-    .limit(6),
+    .limit(8),
 
   supabase.from("categories").select("name").order("name"),
 ]);
