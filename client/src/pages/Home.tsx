@@ -590,12 +590,12 @@ export default function Home() {
       ].map((item, index) => (
         <div
           key={index}
-          className="snap-start relative min-w-[85%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-[32%] lg:min-w-[24%]"
+         className="snap-start relative min-w-[88%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-[46%] lg:min-w-[31.5%]"
         >
           <img
             src={item.img}
             alt={item.title}
-            className="h-[380px] w-full object-cover md:h-[300px]"
+            className="h-[420px] w-full object-cover md:h-[360px] lg:h-[390px]"
           />
 
           {/* Overlay legenda */}
