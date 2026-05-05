@@ -499,16 +499,16 @@ export default function Home() {
   <div className="container">
 
     {/* Título */}
-<div className="mb-4">
+<div className="mb-5">
   <div className="flex items-center gap-3">
-    <span className="text-[11px] uppercase tracking-[0.24em] text-black/60">
+    <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
       DESTAQUES
     </span>
 
-    <div className="h-[1px] flex-1 bg-black/10" />
+    <div className="h-[1px] flex-1 bg-black/15" />
   </div>
 
-  <div className="mt-1 h-[2px] w-8 bg-red-700" />
+  <div className="mt-2 h-[2px] w-10 bg-red-700" />
 </div>
 
     {/* Categorias */}
@@ -565,16 +565,16 @@ export default function Home() {
   <div className="container">
 
     <div className="mb-6">
-      <div className="flex items-center gap-4">
-        <span className="text-[12px] uppercase tracking-[0.28em] text-white/70">
-          ALGUNS TRABALHOS REALIZADOS
-        </span>
+  <div className="flex items-center gap-3">
+    <span className="text-[13px] uppercase tracking-[0.2em] text-white/80">
+      ALGUNS TRABALHOS REALIZADOS
+    </span>
 
-        <div className="h-[1px] flex-1 bg-white/10" />
-      </div>
+    <div className="h-[1px] flex-1 bg-white/15" />
+  </div>
 
-      <div className="mt-2 h-[2px] w-10 bg-red-700" />
-    </div>
+  <div className="mt-2 h-[2px] w-10 bg-red-700" />
+</div>
 
     <div className="flex gap-4 overflow-x-auto pb-1 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible">
       {[
@@ -622,16 +622,16 @@ export default function Home() {
   <div className="container">
 
     {/* Título padrão */}
-<div className="mb-4">
+<div className="mb-5">
   <div className="flex items-center gap-3">
-    <span className="text-[11px] uppercase tracking-[0.24em] text-black/60">
+    <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
       LOCALIZAÇÃO
     </span>
 
-    <div className="h-[1px] flex-1 bg-black/10" />
+    <div className="h-[1px] flex-1 bg-black/15" />
   </div>
 
-  <div className="mt-1 h-[2px] w-8 bg-red-700" />
+  <div className="mt-2 h-[2px] w-10 bg-red-700" />
 </div>
 
     {/* Mapa */}
