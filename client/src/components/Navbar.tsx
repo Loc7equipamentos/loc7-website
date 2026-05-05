@@ -141,13 +141,13 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-20 md:h-[72px] overflow-visible"
+            className="flex items-center group shrink-0 w-[150px] md:w-[180px] h-20 md:h-[72px]"
           >
             <img
-              src="/loc7-logo-header.png"
-              alt="Loc 7 Equipamentos"
-             className="absolute left-[-6px] md:left-[-12px] top-[68%] -translate-y-1/2 scale-[1.08] transition-transform duration-300 group-hover:scale-[1.1]"
-            />
+  src="/loc7-logo-header.png"
+  alt="Loc 7 Equipamentos"
+  className="h-[42px] md:h-[48px] object-contain transition-transform duration-300 group-hover:scale-[1.04]"
+/>
           </Link>
 
           {/* Navegação desktop / mobile trigger */}
