@@ -16,7 +16,7 @@ import {
   Monitor,
   Move,
   Radio,
-  Clapperboard,
+  Tripod,
   User,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -29,7 +29,7 @@ const submenuCategories = [
   { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
   { name: "Movimento", icon: Move, href: "/catalogo/movimento" },
   { name: "Transmissores", icon: Radio, href: "/catalogo/transmissores" },
-  { name: "Maquinária", icon: Clapperboard, href: "/catalogo/maquinaria" },
+  { name: "Maquinária", icon: Tripod, href: "/catalogo/maquinaria" },
 ];
 
 const fallbackCategories = [
