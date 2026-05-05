@@ -473,15 +473,15 @@ export default function Home() {
   <div className="relative z-10 container flex h-full items-start pt-[52px] md:pt-32 lg:pt-36">
     <div className="max-w-[560px]">
 
-      <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
+      <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
       </p>
 
-     <h1 className="mt-2 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
+     <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
   CINE · FOTO · BROADCAST
 </h1>
 
-      <div className="mt-5">
+      <div className="mt-7">
         <Link
           href="/catalogo"
           className="inline-flex min-w-[240px] items-center justify-center border border-white/50 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
