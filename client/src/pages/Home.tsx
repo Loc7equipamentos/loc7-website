@@ -562,7 +562,7 @@ export default function Home() {
     <div className="mb-6">
       <div className="flex items-center gap-4">
         <span className="text-[12px] uppercase tracking-[0.28em] text-white/70">
-          TRABALHOS REALIZADOS
+          ALGUNS TRABALHOS REALIZADOS
         </span>
 
         <div className="h-[1px] flex-1 bg-white/10" />
@@ -571,7 +571,7 @@ export default function Home() {
       <div className="mt-2 h-[2px] w-10 bg-red-700" />
     </div>
 
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+    <div className="flex gap-4 overflow-x-auto pb-1 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible">
       {[
         {
           img: "/images/trabalhos/the-voice-globo.jpg",
@@ -592,7 +592,7 @@ export default function Home() {
       ].map((item, index) => (
         <div
           key={index}
-          className="relative overflow-hidden rounded-xl bg-neutral-900"
+          className="snap-start relative min-w-[88%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-0"
         >
           <img
             src={item.img}
