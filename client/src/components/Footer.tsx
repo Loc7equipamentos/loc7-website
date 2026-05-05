@@ -57,7 +57,7 @@ export default function Footer() {
                 href="https://www.instagram.com/loc7equipamentos"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/45 transition hover:text-white"
+                className="text-white/65 transition-all duration-200 hover:text-white hover:scale-110"
                 aria-label="Instagram Loc7"
               >
                 <Instagram size={18} />
@@ -67,7 +67,7 @@ export default function Footer() {
                 href="https://www.youtube.com/@loc7equipamentos"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/45 transition hover:text-white"
+                className="text-white/65 transition-all duration-200 hover:text-white hover:scale-110"
                 aria-label="YouTube Loc7"
               >
                 <Youtube size={18} />
@@ -77,7 +77,7 @@ export default function Footer() {
                 href="https://www.linkedin.com/company/loc7equipamentos"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/45 transition hover:text-white"
+                className="text-white/65 transition-all duration-200 hover:text-white hover:scale-110"
                 aria-label="LinkedIn Loc7"
               >
                 <Linkedin size={18} />
