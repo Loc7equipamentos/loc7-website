@@ -556,11 +556,11 @@ export default function Home() {
 
       
 {/* ===== TRABALHOS REALIZADOS ===== */}
-<section className="bg-black py-10 md:py-12">
+<section className="bg-black py-8 md:py-10">
   <div className="container">
 
     {/* Título padrão Loc7 */}
-    <div className="mb-6">
+    <div className="mb-4">
       <span className="loc7-section-title text-lg text-white">
         ALGUNS TRABALHOS REALIZADOS POR NÓS
       </span>
@@ -568,7 +568,7 @@ export default function Home() {
     </div>
 
     {/* Scroll horizontal estilo Netflix */}
-    <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="flex gap-4 overflow-x-auto pb-1 snap-x snap-mandatory ...">
 
       {[
         {
