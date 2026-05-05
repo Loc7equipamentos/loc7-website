@@ -210,13 +210,13 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <button
-                onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="md:hidden p-3 text-white"
-                aria-label="Abrir menu"
-              >
-                {isMobileOpen ? <X size={28} /> : <Menu size={28} />}
-              </button>
+             <button
+  onClick={() => setIsMobileOpen(!isMobileOpen)}
+  className="md:hidden p-2 text-white -translate-x-8 translate-y-[10px]"
+  aria-label="Abrir menu"
+>
+  {isMobileOpen ? <X size={34} /> : <Menu size={34} />}
+</button>
             </div>
           </div>
         </div>
