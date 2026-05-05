@@ -394,10 +394,16 @@ export default function Home() {
     const fetchHomeData = async () => {
       try {
         const [{ data: productsData, error: productsError }, { data: categoriesData, error: categoriesError }] =
-          await Promise.all([
-            supabase.from("products").select("*").limit(6),
-            supabase.from("categories").select("name").order("name"),
-          ]);
+         await Promise.all([
+  supabase
+    .from("products")
+    .select("*")
+    .eq("is_featured", true)
+    .order("featured_order", { ascending: true })
+    .limit(6),
+
+  supabase.from("categories").select("name").order("name"),
+]);
 
         if (productsError) throw productsError;
         if (categoriesError) throw categoriesError;
