@@ -464,10 +464,10 @@ export default function Home() {
   <div className="hidden md:block absolute inset-y-0 left-0 w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent" />
 
   {/* CONTENT */}
-  <div className="relative z-10 container flex h-full items-start pt-[96px] md:pt-32 lg:pt-36">
+  <div className="relative z-10 container flex h-full items-start pt-[80px] md:pt-32 lg:pt-36">
     <div className="max-w-[560px]">
 
-      <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
+      <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
       </p>
 
@@ -475,7 +475,7 @@ export default function Home() {
         CINE · FOTO · BROADCAST
       </h1>
 
-      <div className="mt-10">
+      <div className="mt-6">
         <Link
           href="/catalogo"
           className="inline-flex min-w-[240px] items-center justify-center border border-white/50 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
@@ -488,7 +488,6 @@ export default function Home() {
   </div>
 
 </section>
-
       {/* ===== DESTAQUES ===== */}
 <section className="bg-[oklch(0.95_0_0)] py-10 md:py-12">
   <div className="container">
