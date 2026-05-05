@@ -16,7 +16,7 @@ import {
   Monitor,
   Move,
   Radio,
-  Construction,
+  LampFloor,
   User,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -29,7 +29,7 @@ const submenuCategories = [
   { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
   { name: "Movimento", icon: Move, href: "/catalogo/movimento" },
   { name: "Transmissores", icon: Radio, href: "/catalogo/transmissores" },
-  { name: "Maquinária", icon: Construction, href: "/catalogo/maquinaria" },
+  { name: "Maquinária", icon: LampFloor, href: "/catalogo/maquinaria" },
 ];
 
 const fallbackCategories = [
