@@ -499,12 +499,17 @@ export default function Home() {
   <div className="container">
 
     {/* Título */}
-    <div className="mb-6 md:mb-8">
-      <span className="loc7-section-title text-lg text-[oklch(0.08_0_0)]">
-        DESTAQUES
-      </span>
-      <div className="loc7-red-line" />
-    </div>
+<div className="mb-4">
+  <div className="flex items-center gap-3">
+    <span className="text-[11px] uppercase tracking-[0.24em] text-black/60">
+      DESTAQUES
+    </span>
+
+    <div className="h-[1px] flex-1 bg-black/10" />
+  </div>
+
+  <div className="mt-1 h-[2px] w-8 bg-red-700" />
+</div>
 
     {/* Categorias */}
     <div className="mb-6 sm:hidden">
@@ -617,12 +622,17 @@ export default function Home() {
   <div className="container">
 
     {/* Título padrão */}
-    <div className="mb-4">
-      <span className="loc7-section-title text-lg text-[oklch(0.08_0_0)]">
-        LOCALIZAÇÃO
-      </span>
-      <div className="loc7-red-line" />
-    </div>
+<div className="mb-4">
+  <div className="flex items-center gap-3">
+    <span className="text-[11px] uppercase tracking-[0.24em] text-black/60">
+      LOCALIZAÇÃO
+    </span>
+
+    <div className="h-[1px] flex-1 bg-black/10" />
+  </div>
+
+  <div className="mt-1 h-[2px] w-8 bg-red-700" />
+</div>
 
     {/* Mapa */}
     <div className="overflow-hidden rounded-xl border border-black/5">
