@@ -16,7 +16,7 @@ import {
   Monitor,
   Move,
   Radio,
-  LampFloor,
+  Flag,
   User,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -29,7 +29,7 @@ const submenuCategories = [
   { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
   { name: "Movimento", icon: Move, href: "/catalogo/movimento" },
   { name: "Transmissores", icon: Radio, href: "/catalogo/transmissores" },
-  { name: "Maquinária", icon: LampFloor, href: "/catalogo/maquinaria" },
+  { name: "Maquinária", icon: Flag, href: "/catalogo/maquinaria" },
 ];
 
 const fallbackCategories = [
@@ -232,7 +232,11 @@ export default function Navbar() {
                   href={cat.href}
                   className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-white/70 hover:text-white transition-all duration-200 hover:scale-[1.05]"
                 >
-                  <Icon className="w-5 h-5 mb-1" />
+                  <Icon
+  className={`w-5 h-5 mb-1 ${
+    cat.name === "Maquinária" ? "rotate-[-10deg]" : ""
+  }`}
+/>
                   <span className="text-[10px] font-medium uppercase tracking-[0.14em]">
                     {cat.name}
                   </span>
