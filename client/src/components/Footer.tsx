@@ -19,7 +19,7 @@ export default function Footer() {
           </div>
 
           {/* CONTATO */}
-          <div className="space-y-3 text-sm text-white/65 text-center md:text-left md:mx-auto">
+          <div className="space-y-3 text-sm text-white/65 text-left md:mx-auto">
             <p className="text-[12px] uppercase tracking-[0.2em] text-white/85">
               Contato
             </p>
