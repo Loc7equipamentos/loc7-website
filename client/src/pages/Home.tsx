@@ -262,7 +262,7 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
   className="group block"
 >
       <div
-       className="h-full overflow-hidden rounded-xl border border-black/5 bg-white shadow-[0_16px_42px_rgba(0,0,0,0.11)] transition-all duration-300 ease-out hover:-translate-y-[2px] hover:shadow-[0_22px_54px_rgba(0,0,0,0.15)]"
+      className="h-full overflow-hidden rounded-xl border border-black/5 bg-white shadow-[0_16px_42px_rgba(0,0,0,0.11)] transition-all duration-300 ease-out hover:-translate-y-[2px] hover:shadow-[0_22px_54px_rgba(0,0,0,0.15)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
