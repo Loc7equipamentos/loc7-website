@@ -529,9 +529,16 @@ export default function Home() {
 
     {/* GRID */}
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-6">
-      {filteredFeaturedProducts.map((product) => (
-        <HomeFeaturedCard key={product.id} product={product} />
-      ))}
+      {filteredFeaturedProducts
+  .slice(0, 8) // segurança geral
+  .map((product, index) => (
+    <div
+      key={product.id}
+      className={index >= 6 ? "hidden md:block" : ""}
+    >
+      <HomeFeaturedCard product={product} />
+    </div>
+))}
     </div>
 
     {/* CTA */}
