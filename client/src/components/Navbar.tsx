@@ -146,7 +146,7 @@ export default function Navbar() {
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-              className="absolute left-[-6px] md:left-[-12px] top-[68%] -translate-y-1/2 transition-transform duration-300 group-hover:scale-[1.03]"
+             className="absolute left-[-6px] md:left-[-12px] top-[68%] -translate-y-1/2 scale-[1.08] transition-transform duration-300 group-hover:scale-[1.1]"
             />
           </Link>
 
@@ -204,9 +204,9 @@ export default function Navbar() {
 
                 {/* Acesso sistema */}
                 <Link href="/admin-panel">
-                  <div className="ml-4 flex items-center justify-center w-9 h-9 rounded-full border border-white/10 hover:border-white/30 hover:bg-white/5 transition cursor-pointer">
-                    <User className="w-5 h-5 text-white" />
-                  </div>
+                  <div className="ml-3 flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
+  <User className="w-4 h-4 text-white/60 hover:text-white/80" />
+</div>
                 </Link>
               </div>
 
