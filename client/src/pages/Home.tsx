@@ -454,7 +454,7 @@ export default function Home() {
   <img
     src={HERO_IMAGE}
     alt="Loc7 Equipamentos Audiovisuais"
-    className="hidden md:block absolute inset-y-0 right-0 h-full w-[72%] object-cover object-[80%_top]"
+    className="hidden md:block absolute inset-y-0 right-0 h-full w-[72%] object-cover object-[90%_center]"
   />
 
   {/* MOBILE CLEAN (SEM IMAGEM) */}
