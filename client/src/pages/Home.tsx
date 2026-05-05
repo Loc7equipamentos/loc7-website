@@ -556,19 +556,20 @@ export default function Home() {
 
       
 {/* ===== TRABALHOS REALIZADOS ===== */}
-<div className="mb-6">
-  <div className="flex items-center gap-4">
+<section className="bg-black py-8 md:py-10">
+  <div className="container">
 
-    <span className="text-[12px] uppercase tracking-[0.28em] text-white/70">
-      TRABALHOS REALIZADOS
-    </span>
+    <div className="mb-6">
+      <div className="flex items-center gap-4">
+        <span className="text-[12px] uppercase tracking-[0.28em] text-white/70">
+          TRABALHOS REALIZADOS
+        </span>
 
-    <div className="h-[1px] flex-1 bg-white/10" />
+        <div className="h-[1px] flex-1 bg-white/10" />
+      </div>
 
-  </div>
-
-  <div className="mt-2 h-[2px] w-10 bg-red-700" />
-</div>
+      <div className="mt-2 h-[2px] w-10 bg-red-700" />
+    </div>
 
     <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
       {[
