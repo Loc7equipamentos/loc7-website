@@ -477,9 +477,16 @@ export default function Home() {
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
       </p>
 
-      <h1 className="mt-2 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
-        CINE · FOTO · BROADCAST
-      </h1>
+     <h1 className="relative mt-2 inline-block overflow-hidden font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
+  <span className="relative z-10">
+    CINE · FOTO · BROADCAST
+  </span>
+
+  <span
+    aria-hidden="true"
+    className="pointer-events-none absolute inset-y-0 -left-1/2 z-20 w-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent blur-[1px] animate-[loc7-shine_1.25s_ease-out_0.35s_1_forwards]"
+  />
+</h1>
 
       <div className="mt-5">
         <Link
@@ -639,6 +646,22 @@ export default function Home() {
   </div>
 </section>
 
-</div>   
-  );
+<style>{`
+  @keyframes loc7-shine {
+    0% {
+      transform: translateX(0%);
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(320%);
+      opacity: 0;
+    }
+  }
+`}</style>
+
+</div>
+);
 }
