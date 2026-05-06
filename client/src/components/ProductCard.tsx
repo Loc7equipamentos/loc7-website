@@ -74,11 +74,11 @@ export default function ProductCard({ product }: Props) {
         </div>
 
         <div className="flex flex-1 flex-col px-3 pb-3 pt-2.5 sm:px-3.5 sm:pb-3.5">
-          <span className="mb-1 text-[8.5px] font-medium uppercase tracking-[0.18em] text-neutral-400">
+          <span className="mb-1 text-[9px] font-medium uppercase tracking-[0.18em] text-neutral-400">
             {product.category}
           </span>
 
-          <h3 className="min-h-[38px] text-[12px] font-semibold leading-snug text-neutral-900 sm:min-h-[42px] sm:text-[13px]">
+          <h3 className="min-h-[40px] text-[13px] font-semibold leading-snug text-neutral-900 sm:min-h-[44px] sm:text-[14px]">
             {product.name}
           </h3>
 
@@ -100,7 +100,7 @@ export default function ProductCard({ product }: Props) {
 
           {product.price && (
             <div className="mt-auto flex items-end gap-1 pt-2">
-              <span className="text-[12px] font-semibold text-neutral-900 sm:text-[13px]">
+              <span className="text-[13px] font-semibold text-neutral-900 sm:text-[14px]">
                 R$ {Number(product.price).toLocaleString("pt-BR")}
               </span>
               <span className="text-[9.5px] text-neutral-500">/ dia</span>
