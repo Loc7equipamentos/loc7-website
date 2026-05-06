@@ -18,7 +18,7 @@ export default function WhatsAppFloat() {
   return (
     <div
       className={`
-        fixed bottom-7 right-6 z-50 md:bottom-8 md:right-8
+        fixed bottom-8 right-6 z-50 md:bottom-10 md:right-8
         transition-all duration-700 ease-out
         ${visible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}
       `}
@@ -58,7 +58,7 @@ export default function WhatsAppFloat() {
             rounded-full
             bg-black
             border border-[#25D366]/45
-            shadow-[0_10px_30px_rgba(37,211,102,0.22),0_12px_30px_rgba(0,0,0,0.45)]
+            shadow-[0_6px_16px_rgba(0,0,0,0.26)]
             transition-all duration-300
           "
         >
