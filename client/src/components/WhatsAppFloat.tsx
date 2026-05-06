@@ -16,13 +16,13 @@ export default function WhatsAppFloat() {
   const whatsappLink = getWhatsAppLink({ context: "floating" });
 
   return (
-    <div
-      className={`
-        fixed bottom-[245px] right-3 z-50 md:bottom-14 md:right-8
-        transition-all duration-700 ease-out
-        ${visible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}
-      `}
-    >
+   <div
+  className={`
+    fixed bottom-[245px] right-3 z-50 md:bottom-10 md:right-8
+    transition-all duration-700 ease-out
+    ${visible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}
+  `}
+>
       <a
         href={whatsappLink}
         target="_blank"
