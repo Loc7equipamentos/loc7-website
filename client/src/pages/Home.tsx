@@ -454,7 +454,7 @@ export default function Home() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
         {/* ===== HERO SECTION ===== */}
-<section className="relative overflow-hidden bg-black h-[300px] md:h-[560px] lg:h-[600px]">
+<section className="relative overflow-hidden bg-black h-[260px] md:h-[560px] lg:h-[600px]">
 
   {/* DESKTOP IMAGE */}
   <img
