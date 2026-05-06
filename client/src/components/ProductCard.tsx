@@ -52,7 +52,7 @@ export default function ProductCard({ product }: Props) {
   return (
     <Link href={`/equipamentos/${product.slug}`}>
       <div
-        className="cursor-pointer overflow-hidden rounded-xl border border-neutral-200/80 bg-white shadow-[0_6px_18px_rgba(0,0,0,0.045)] transition-shadow duration-200"
+        className="cursor-pointer overflow-hidden rounded-xl border border-neutral-200/70 bg-white shadow-[0_12px_34px_rgba(0,0,0,0.09)] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_18px_48px_rgba(0,0,0,0.14)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
