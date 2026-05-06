@@ -261,7 +261,7 @@ export default function Catalogo() {
 
 <div className="flex flex-1 justify-start">
   <div className="max-w-[620px]">
-    <h1 className="text-[40px] font-light leading-[1.02] tracking-[-0.025em] text-neutral-950">
+    <h1 className="text-[36px] font-light leading-tight tracking-[-0.02em] text-neutral-950">
   Monte seu setup.
 </h1>
 
