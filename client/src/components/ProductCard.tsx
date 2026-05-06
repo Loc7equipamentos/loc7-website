@@ -99,11 +99,11 @@ export default function ProductCard({ product }: Props) {
 
           {product.price && (
             <div className="mt-1.5 flex items-baseline gap-1">
-              <span className="text-[12px] font-semibold text-neutral-800 sm:text-[12.5px]">
-                R$ {Number(product.price).toLocaleString("pt-BR")}
-              </span>
-              <span className="text-[8.5px] text-neutral-500">/ dia</span>
-            </div>
+  <span className="text-[13px] font-semibold text-neutral-850 sm:text-[13.5px]">
+    R$ {Number(product.price).toLocaleString("pt-BR")}
+  </span>
+  <span className="text-[10px] font-medium text-neutral-500">/ dia</span>
+</div>
           )}
         </div>
       </div>
