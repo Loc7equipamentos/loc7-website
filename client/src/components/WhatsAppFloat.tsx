@@ -16,50 +16,51 @@ export default function WhatsAppFloat() {
   const whatsappLink = getWhatsAppLink({ context: "floating" });
 
   return (
-   <div
-  className={`
-    fixed bottom-[245px] right-3 z-50 md:bottom-14 md:right-8
-    transition-all duration-700 ease-out
-    ${visible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}
-  `}
->
+    <div
+      className={`
+        fixed bottom-[92px] right-4 z-50 md:bottom-14 md:right-8
+        transition-all duration-700 ease-out
+        ${visible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}
+      `}
+    >
       <a
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
         title="Precisa de ajuda?"
+        aria-label="Precisa de ajuda? Fale com a Loc7 no WhatsApp"
         className="
-          relative flex items-center
-          bg-black/95
-          text-white
-          px-4 pr-[54px] py-2 md:px-5 md:pr-[58px] md:py-2.5
-          rounded-full
-          border border-white/10
-          shadow-[0_14px_42px_rgba(0,0,0,0.42)]
-          backdrop-blur-sm
+          relative flex h-[54px] w-[54px] items-center justify-center
+          rounded-full border border-[#25D366]/45 bg-black text-white
+          shadow-[0_6px_16px_rgba(0,0,0,0.26)]
           transition-all duration-300
           hover:-translate-y-[2px]
-          hover:border-white/20
-          hover:shadow-[0_18px_52px_rgba(0,0,0,0.5)]
+
+          md:h-auto md:w-auto md:justify-start
+          md:rounded-full md:border-white/10 md:bg-black/95
+          md:px-5 md:pr-[58px] md:py-2.5
+          md:shadow-[0_14px_42px_rgba(0,0,0,0.42)]
+          md:backdrop-blur-sm
+          md:hover:border-white/20
+          md:hover:shadow-[0_18px_52px_rgba(0,0,0,0.5)]
         "
       >
-        <span className="relative z-10 text-[13px] md:text-sm font-medium tracking-wide leading-none">
+        <span className="hidden md:block relative z-10 text-sm font-medium tracking-wide leading-none">
           Precisa de ajuda?
         </span>
 
-        <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
+        <span className="pointer-events-none absolute inset-0 hidden overflow-hidden rounded-full md:block">
           <span className="shine-bar" />
         </span>
 
         <div
           className="
-            absolute -right-4 z-20
-            flex h-[52px] w-[52px] md:h-[56px] md:w-[56px] items-center justify-center
-            rounded-full
-            bg-black
-            border border-[#25D366]/45
-            shadow-[0_6px_16px_rgba(0,0,0,0.26)]
-            transition-all duration-300
+            flex h-[52px] w-[52px] items-center justify-center rounded-full bg-black
+
+            md:absolute md:-right-4 md:z-20
+            md:h-[56px] md:w-[56px]
+            md:border md:border-[#25D366]/45
+            md:shadow-[0_6px_16px_rgba(0,0,0,0.26)]
           "
         >
           <svg
