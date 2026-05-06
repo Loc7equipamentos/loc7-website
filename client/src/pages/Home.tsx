@@ -548,12 +548,18 @@ export default function Home() {
 
     {/* CTA */}
     <div className="mt-10 flex justify-center">
-      <Link
-        href="/catalogo"
-        className="inline-flex items-center justify-center border border-black/70 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
-      >
-        Ver catálogo completo
-      </Link>
+     <Link
+  href="/catalogo"
+  onClick={() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "auto",
+    });
+  }}
+  className="inline-flex items-center justify-center border border-black/70 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+>
+  Ver catálogo completo
+</Link>
     </div>
 
   </div>
