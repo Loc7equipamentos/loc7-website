@@ -311,7 +311,7 @@ export default function Catalogo() {
       </section>
 
       <section className="mx-auto max-w-[1600px] px-4 py-5 sm:px-6 lg:px-10 lg:py-6">
-        <div className="grid gap-8 lg:grid-cols-[260px_1fr] xl:grid-cols-[280px_1fr]">
+        <div className="grid gap-8 lg:grid-cols-[220px_1fr] xl:grid-cols-[240px_1fr]">
           <aside className="hidden self-start rounded-2xl border border-neutral-200 bg-white p-6 lg:block">
             <div className="mb-6 flex items-center gap-2">
               <Menu className="h-4 w-4 text-neutral-500" />
@@ -324,7 +324,7 @@ export default function Catalogo() {
 
           <div>
             {loading ? (
-              <div className="grid grid-cols-2 gap-5 sm:gap-6 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-4">
+              className="grid grid-cols-2 gap-5 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4"
                 {Array.from({ length: 10 }).map((_, index) => (
                   <div
                     key={index}
