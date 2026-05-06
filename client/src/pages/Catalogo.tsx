@@ -254,14 +254,14 @@ export default function Catalogo() {
          <div className="flex flex-col gap-3">
 <div className="hidden items-start justify-between gap-16 border-b border-neutral-200 pb-6 lg:flex">
  <div className="w-[180px] shrink-0 pt-2">
- <span className="block text-[13px] font-semibold uppercase tracking-[0.14em] text-neutral-700">
+ <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
     01 / CATÁLOGO
   </span>
 </div>
 
 <div className="flex flex-1 justify-start">
   <div className="max-w-[620px]">
-    <h1 className="text-[34px] font-semibold leading-tight text-neutral-950">
+    <h1 className="text-[40px] font-light leading-[1.02] tracking-[-0.025em] text-neutral-950">
   Monte seu setup.
 </h1>
 
