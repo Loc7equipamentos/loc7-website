@@ -79,7 +79,7 @@ export default function ProductCard({ product }: Props) {
           />
         </div>
 
-        <div className="flex flex-1 flex-col px-3 pb-3 pt-2.5 sm:px-3.5 sm:pb-3.5">
+        <div className="flex flex-col px-3 pb-3 pt-2.5 sm:px-3.5 sm:pb-3.5">
           <div className="mb-1 flex items-center overflow-hidden text-[9px] font-bold uppercase tracking-[0.12em] text-neutral-500">
             <span className="truncate">{product.category}</span>
 
