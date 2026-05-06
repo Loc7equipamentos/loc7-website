@@ -56,7 +56,7 @@ export default function ProductCard({ product }: Props) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative flex h-[112px] w-full shrink-0 items-center justify-center overflow-hidden bg-white px-3 py-2 sm:h-[138px] lg:h-[168px]">
+        <div className="relative flex h-[112px] w-full shrink-0 items-center justify-center overflow-hidden bg-white px-3 py-2 sm:h-[150px] lg:h-[190px]">
           <img
             src={primaryImage}
             alt={product.name}
@@ -82,7 +82,7 @@ export default function ProductCard({ product }: Props) {
             {product.name}
           </h3>
 
-          <div className="mt-1 flex h-[17px] items-center">
+          <div className="mt-1 flex min-h-[12px] items-center">
             {product.is_featured_special && (
               <span className="truncate whitespace-nowrap text-[10px] font-medium text-red-700/70 underline decoration-red-700/20 underline-offset-4">
                 Condição especial
@@ -90,7 +90,7 @@ export default function ProductCard({ product }: Props) {
             )}
           </div>
 
-          <div className="min-h-[16px]">
+          <div className="min-h-[14px]">
             {product.subcategory && (
               <span className="line-clamp-1 text-[10.5px] text-neutral-500">
                 {product.subcategory}
