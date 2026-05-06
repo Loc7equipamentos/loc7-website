@@ -60,50 +60,53 @@ export default function ProductCard({ product }: Props) {
           <img
             src={primaryImage}
             alt={product.name}
-            className={`absolute h-[88%] w-[88%] object-contain transition-opacity duration-200 ${
+            className={`absolute h-[91%] w-[91%] object-contain transition-opacity duration-200 ${
               isHovered ? "opacity-0" : "opacity-100"
             }`}
           />
           <img
             src={hoverImage}
             alt={product.name}
-            className={`absolute h-[88%] w-[88%] object-contain transition-opacity duration-200 ${
+            className={`absolute h-[91%] w-[91%] object-contain transition-opacity duration-200 ${
               isHovered ? "opacity-100" : "opacity-0"
             }`}
           />
         </div>
 
-        <div className="flex flex-1 flex-col px-3 pb-3 pt-2.5 sm:px-3.5 sm:pb-3.5">
-          <span className="mb-1 text-[9px] font-medium uppercase tracking-[0.18em] text-neutral-400">
-            {product.category}
-          </span>
+        <div className="flex flex-1 flex-col px-3 pb-2.5 pt-2 sm:px-3.5 sm:pb-3">
+          <div className="mb-1 flex min-h-[15px] items-center gap-1.5 overflow-hidden">
+            <span className="truncate text-[8.5px] font-medium uppercase tracking-[0.17em] text-neutral-400">
+              {product.category}
+            </span>
 
-          <h3 className="min-h-[40px] text-[13px] font-semibold leading-snug text-neutral-900 sm:min-h-[44px] sm:text-[14px]">
+            {product.subcategory && (
+              <>
+                <span className="h-1 w-1 shrink-0 rounded-full bg-neutral-300" />
+                <span className="truncate text-[9.5px] font-medium text-neutral-500">
+                  {product.subcategory}
+                </span>
+              </>
+            )}
+          </div>
+
+          <h3 className="line-clamp-2 min-h-[38px] text-[13.5px] font-bold leading-[1.22] tracking-[-0.01em] text-neutral-950 sm:min-h-[40px] sm:text-[14.5px]">
             {product.name}
           </h3>
 
-          <div className="mt-1 flex min-h-[12px] items-center">
+          <div className="mt-1.5 min-h-[14px]">
             {product.is_featured_special && (
-              <span className="truncate whitespace-nowrap text-[10px] font-medium text-red-700/70 underline decoration-red-700/20 underline-offset-4">
+              <span className="inline-flex max-w-full items-center rounded-full bg-red-50 px-1.5 py-[1px] text-[9.5px] font-semibold uppercase tracking-[0.08em] text-red-700/80">
                 Condição especial
               </span>
             )}
           </div>
 
-          <div className="min-h-[14px]">
-            {product.subcategory && (
-              <span className="line-clamp-1 text-[10.5px] text-neutral-500">
-                {product.subcategory}
-              </span>
-            )}
-          </div>
-
           {product.price && (
-            <div className="mt-auto flex items-end gap-1 pt-2">
-              <span className="text-[13px] font-semibold text-neutral-900 sm:text-[14px]">
+            <div className="mt-1 flex items-baseline gap-1">
+              <span className="text-[12.5px] font-semibold text-neutral-800 sm:text-[13px]">
                 R$ {Number(product.price).toLocaleString("pt-BR")}
               </span>
-              <span className="text-[9.5px] text-neutral-500">/ dia</span>
+              <span className="text-[9px] text-neutral-500">/ dia</span>
             </div>
           )}
         </div>
