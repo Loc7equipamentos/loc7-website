@@ -56,9 +56,9 @@ export default function ProductCard({ product }: Props) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative flex h-[112px] w-full shrink-0 items-center justify-center overflow-hidden bg-white px-3 py-2 sm:h-[150px] lg:h-[190px]">
+        <div className="relative flex h-[112px] w-full shrink-0 items-center justify-center overflow-hidden bg-white px-3 py-2 sm:h-[145px] lg:h-[178px]">
           {product.is_featured_special && (
-            <span className="absolute left-3 top-3 z-10 bg-black/55 px-2 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-[2px]">
+            <span className="absolute left-3 top-3 z-10 bg-black/70 px-1.5 py-[2px] text-[7.5px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-[2px]">
               Condição especial
             </span>
           )}
@@ -66,21 +66,21 @@ export default function ProductCard({ product }: Props) {
           <img
             src={primaryImage}
             alt={product.name}
-            className={`absolute h-[91%] w-[91%] object-contain transition-opacity duration-200 ${
+            className={`absolute h-[88%] w-[88%] object-contain transition-opacity duration-200 ${
               isHovered ? "opacity-0" : "opacity-100"
             }`}
           />
           <img
             src={hoverImage}
             alt={product.name}
-            className={`absolute h-[91%] w-[91%] object-contain transition-opacity duration-200 ${
+            className={`absolute h-[88%] w-[88%] object-contain transition-opacity duration-200 ${
               isHovered ? "opacity-100" : "opacity-0"
             }`}
           />
         </div>
 
-        <div className="flex flex-1 flex-col px-3 pb-2.5 pt-2 sm:px-3.5 sm:pb-3">
-          <div className="mb-1 flex items-center overflow-hidden text-[9px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
+        <div className="flex flex-1 flex-col px-3 pb-3 pt-2.5 sm:px-3.5 sm:pb-3.5">
+          <div className="mb-1 flex items-center overflow-hidden text-[9px] font-bold uppercase tracking-[0.12em] text-neutral-500">
             <span className="truncate">{product.category}</span>
 
             {product.subcategory && (
@@ -93,12 +93,12 @@ export default function ProductCard({ product }: Props) {
             )}
           </div>
 
-          <h3 className="line-clamp-2 text-[13.5px] font-bold leading-[1.18] tracking-[-0.015em] text-neutral-950 sm:text-[14.5px]">
+          <h3 className="line-clamp-2 min-h-[38px] text-[13.5px] font-bold leading-[1.2] tracking-[-0.015em] text-neutral-950 sm:min-h-[42px] sm:text-[14.5px]">
             {product.name}
           </h3>
 
           {product.price && (
-            <div className="mt-1.5 flex items-baseline gap-1">
+            <div className="mt-2.5 flex items-baseline gap-1">
               <span className="text-[12px] font-semibold text-neutral-800 sm:text-[12.5px]">
                 R$ {Number(product.price).toLocaleString("pt-BR")}
               </span>
