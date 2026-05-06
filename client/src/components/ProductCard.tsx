@@ -50,13 +50,13 @@ export default function ProductCard({ product }: Props) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <Link href={`/equipamentos/${product.slug}`}>
+    <Link href={`/equipamentos/${product.slug}`} className="block h-full">
       <div
-        className="cursor-pointer overflow-hidden rounded-xl border border-neutral-200/70 bg-white shadow-[0_12px_34px_rgba(0,0,0,0.09)] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_18px_48px_rgba(0,0,0,0.14)]"
+        className="flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-neutral-200/70 bg-white shadow-[0_12px_34px_rgba(0,0,0,0.09)] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_18px_48px_rgba(0,0,0,0.14)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative flex h-[112px] w-full items-center justify-center overflow-hidden bg-white px-3 py-2 sm:h-[138px] lg:h-[168px]">
+        <div className="relative flex h-[112px] w-full shrink-0 items-center justify-center overflow-hidden bg-white px-3 py-2 sm:h-[138px] lg:h-[168px]">
           <img
             src={primaryImage}
             alt={product.name}
@@ -73,12 +73,12 @@ export default function ProductCard({ product }: Props) {
           />
         </div>
 
-        <div className="flex flex-col px-3 pb-3 pt-2.5 sm:px-3.5 sm:pb-3.5">
+        <div className="flex flex-1 flex-col px-3 pb-3 pt-2.5 sm:px-3.5 sm:pb-3.5">
           <span className="mb-1 text-[8.5px] font-medium uppercase tracking-[0.18em] text-neutral-400">
             {product.category}
           </span>
 
-          <h3 className="min-h-[34px] text-[12px] font-semibold leading-snug text-neutral-900 sm:min-h-[38px] sm:text-[13px]">
+          <h3 className="min-h-[38px] text-[12px] font-semibold leading-snug text-neutral-900 sm:min-h-[42px] sm:text-[13px]">
             {product.name}
           </h3>
 
@@ -90,14 +90,16 @@ export default function ProductCard({ product }: Props) {
             )}
           </div>
 
-          {product.subcategory && (
-            <span className="line-clamp-1 text-[10.5px] text-neutral-500">
-              {product.subcategory}
-            </span>
-          )}
+          <div className="min-h-[16px]">
+            {product.subcategory && (
+              <span className="line-clamp-1 text-[10.5px] text-neutral-500">
+                {product.subcategory}
+              </span>
+            )}
+          </div>
 
           {product.price && (
-            <div className="mt-2 flex items-end gap-1">
+            <div className="mt-auto flex items-end gap-1 pt-2">
               <span className="text-[12px] font-semibold text-neutral-900 sm:text-[13px]">
                 R$ {Number(product.price).toLocaleString("pt-BR")}
               </span>
