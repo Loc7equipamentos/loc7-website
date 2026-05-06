@@ -18,7 +18,7 @@ export default function WhatsAppFloat() {
   return (
     <div
       className={`
-        fixed bottom-[150px] right-5 z-50 md:bottom-10 md:right-8
+        fixed top-[690px] right-4 z-50 md:top-auto md:bottom-10 md:right-8
         transition-all duration-700 ease-out
         ${visible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}
       `}
