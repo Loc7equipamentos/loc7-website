@@ -602,7 +602,7 @@ export default function Home() {
           <img
             src={item.img}
             alt={item.title}
-            className="h-[420px] w-full object-cover object-top md:h-[360px]"
+            className="h-[420px] md:h-[480px] w-full object-cover object-top"
           />
 
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4">
