@@ -261,12 +261,13 @@ export default function Catalogo() {
 
   <div className="hidden flex-1 items-end justify-center lg:flex">
   <div className="max-w-[520px] border-l border-neutral-300 pl-6">
-    <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-neutral-900">
-      Monte seu setup.
-    </p>
-    <p className="mt-1 text-[13px] leading-relaxed text-neutral-500">
-      Explore câmeras, lentes, iluminação e movimento para sua próxima produção.
-    </p>
+    <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-neutral-950">
+  Monte seu setup.
+</p>
+
+<p className="mt-1.5 text-[14px] font-medium leading-relaxed text-neutral-700">
+  Busque o que precisar, quando precisar.
+</p>
   </div>
 </div>  
   </div>
