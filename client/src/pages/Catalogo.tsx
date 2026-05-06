@@ -250,9 +250,9 @@ export default function Catalogo() {
   return (
     <main className="min-h-screen bg-[#f3f3f1] text-neutral-900">
       <section className="border-b border-neutral-200 bg-[#f3f3f1]">
-        <div className="mx-auto max-w-[1600px] px-4 pb-4 pt-20 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1600px] px-4 pb-2 pt-12 sm:px-6 lg:px-10">
          <div className="flex flex-col gap-3">
- <div className="flex items-end justify-between gap-10">
+ <div className="flex w-full max-w-[760px] items-end justify-between border-t border-neutral-300 pt-3">
   <div className="shrink-0">
     <h1 className="text-[28px] font-bold tracking-tight text-neutral-950 sm:text-4xl">
       CATÁLOGO
