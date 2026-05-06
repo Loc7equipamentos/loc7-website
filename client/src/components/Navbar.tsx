@@ -141,12 +141,12 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center group shrink-0 w-[150px] md:w-[180px] h-20 md:h-[72px]"
+            className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-20 md:h-[72px] overflow-visible"
           >
             <img
   src="/loc7-logo-header.png"
   alt="Loc 7 Equipamentos"
-  className="h-[58px] md:h-[64px] scale-[1.55] origin-left object-contain transition-transform duration-300 group-hover:scale-[1.6]"
+  className="absolute left-[-6px] md:left-[-12px] top-[78%] -translate-y-1/2 scale-[1.25] md:scale-[1.35] origin-left transition-transform duration-300 group-hover:scale-[1.28] md:group-hover:scale-[1.38]"
 />
           </Link>
 
