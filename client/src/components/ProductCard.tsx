@@ -57,6 +57,12 @@ export default function ProductCard({ product }: Props) {
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className="relative flex h-[112px] w-full shrink-0 items-center justify-center overflow-hidden bg-white px-3 py-2 sm:h-[150px] lg:h-[190px]">
+          {product.is_featured_special && (
+            <span className="absolute left-3 top-3 z-10 bg-black/55 px-2 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-[2px]">
+              Condição especial
+            </span>
+          )}
+
           <img
             src={primaryImage}
             alt={product.name}
@@ -74,39 +80,29 @@ export default function ProductCard({ product }: Props) {
         </div>
 
         <div className="flex flex-1 flex-col px-3 pb-2.5 pt-2 sm:px-3.5 sm:pb-3">
-          <div className="mb-1 flex min-h-[15px] items-center gap-1.5 overflow-hidden">
-            <span className="truncate text-[8.5px] font-medium uppercase tracking-[0.17em] text-neutral-400">
-              {product.category}
-            </span>
+          <div className="mb-1 flex items-center overflow-hidden text-[9px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
+            <span className="truncate">{product.category}</span>
 
             {product.subcategory && (
               <>
-                <span className="h-1 w-1 shrink-0 rounded-full bg-neutral-300" />
-                <span className="truncate text-[9.5px] font-medium text-neutral-500">
+                <span className="mx-1.5 text-neutral-300">/</span>
+                <span className="truncate text-neutral-600">
                   {product.subcategory}
                 </span>
               </>
             )}
           </div>
 
-          <h3 className="line-clamp-2 min-h-[38px] text-[13.5px] font-bold leading-[1.22] tracking-[-0.01em] text-neutral-950 sm:min-h-[40px] sm:text-[14.5px]">
+          <h3 className="line-clamp-2 text-[13.5px] font-bold leading-[1.18] tracking-[-0.015em] text-neutral-950 sm:text-[14.5px]">
             {product.name}
           </h3>
 
-          <div className="mt-1.5 min-h-[14px]">
-            {product.is_featured_special && (
-              <span className="inline-flex max-w-full items-center rounded-full bg-red-50 px-1.5 py-[1px] text-[9.5px] font-semibold uppercase tracking-[0.08em] text-red-700/80">
-                Condição especial
-              </span>
-            )}
-          </div>
-
           {product.price && (
-            <div className="mt-1 flex items-baseline gap-1">
-              <span className="text-[12.5px] font-semibold text-neutral-800 sm:text-[13px]">
+            <div className="mt-1.5 flex items-baseline gap-1">
+              <span className="text-[12px] font-semibold text-neutral-800 sm:text-[12.5px]">
                 R$ {Number(product.price).toLocaleString("pt-BR")}
               </span>
-              <span className="text-[9px] text-neutral-500">/ dia</span>
+              <span className="text-[8.5px] text-neutral-500">/ dia</span>
             </div>
           )}
         </div>
