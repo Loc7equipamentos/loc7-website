@@ -251,15 +251,20 @@ export default function Catalogo() {
     <main className="min-h-screen bg-[#f3f3f1] text-neutral-900">
       <section className="border-b border-neutral-200 bg-[#f3f3f1]">
         <div className="mx-auto max-w-[1600px] px-4 pb-4 pt-20 sm:px-6 lg:px-10">
-          <div className="flex flex-col gap-3">
-            <h1 className="text-[28px] font-bold tracking-tight text-neutral-950 sm:text-4xl">
-              CATÁLOGO
-            </h1>
-            <p className="text-sm text-neutral-500">
-              {loading
-                ? "Carregando produtos..."
-                : `${filteredProducts.length} equipamentos disponíveis`}
-            </p>
+         <div className="flex flex-col gap-3">
+  <div className="flex items-end justify-between gap-6">
+    <div>
+      <h1 className="text-[28px] font-bold tracking-tight text-neutral-950 sm:text-4xl">
+        CATÁLOGO
+      </h1>
+    </div>
+
+    <div className="hidden flex-1 items-center justify-center lg:flex">
+      <span className="text-[15px] font-medium tracking-[-0.01em] text-neutral-600">
+        Monte seu setup.
+      </span>
+    </div>
+  </div>
 
             {!isCategoryPage && (
               <div className="lg:hidden">
