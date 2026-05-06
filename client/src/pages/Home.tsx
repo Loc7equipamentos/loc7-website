@@ -501,8 +501,8 @@ export default function Home() {
     {/* Título */}
 <div className="mb-5">
   <div className="flex items-center gap-3">
-    <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
-      DESTAQUES
+    <span className="text-[13px] uppercase tracking-[0.2em] text-black/80 font-medium">
+      EQUIPAMENTOS EM DESTAQUE
     </span>
 
     <div className="h-[1px] flex-1 bg-black/15" />
