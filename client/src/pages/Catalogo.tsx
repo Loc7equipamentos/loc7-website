@@ -252,25 +252,30 @@ export default function Catalogo() {
       <section className="border-b border-neutral-200 bg-[#f3f3f1]">
         <div className="mx-auto max-w-[1600px] px-4 pb-2 pt-12 sm:px-6 lg:px-10">
          <div className="flex flex-col gap-3">
- <div className="flex w-full max-w-[760px] items-end justify-between border-t border-neutral-300 pt-3">
-  <div className="shrink-0">
-    <h1 className="text-[28px] font-bold tracking-tight text-neutral-950 sm:text-4xl">
-      CATÁLOGO
-    </h1>
+<div className="hidden items-start justify-between gap-16 border-b border-neutral-200 pb-6 lg:flex">
+  <div className="w-[180px] shrink-0 pt-1">
+    <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-400">
+      01 / CATÁLOGO
+    </span>
   </div>
 
-  <div className="hidden flex-1 items-end lg:flex">
-    <div className="flex w-full max-w-[760px] items-end justify-between border-t border-neutral-300 pt-4">
-      <div>
-        <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-neutral-950">
-          Monte seu setup.
-        </p>
-        <p className="mt-1.5 text-[14px] font-medium leading-relaxed text-neutral-700">
-          Busque o que precisar, quando precisar.
-        </p>
-      </div>
+  <div className="flex flex-1 justify-start">
+    <div className="max-w-[620px]">
+      <h1 className="text-[42px] font-light leading-none tracking-[-0.04em] text-neutral-950">
+        MONTE SEU SETUP.
+      </h1>
+
+      <p className="mt-3 text-[16px] font-medium leading-relaxed text-neutral-600">
+        Busque o que precisar, quando precisar.
+      </p>
     </div>
   </div>
+</div>
+
+<div className="lg:hidden">
+  <h1 className="text-[28px] font-bold tracking-tight text-neutral-950">
+    CATÁLOGO
+  </h1>
 </div>
 
             {!isCategoryPage && (
