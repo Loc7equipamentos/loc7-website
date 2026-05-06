@@ -146,7 +146,7 @@ export default function Navbar() {
             <img
   src="/loc7-logo-header.png"
   alt="Loc 7 Equipamentos"
-  className="absolute left-[-6px] md:left-[-12px] top-[85%] -translate-y-1/2 scale-[1.25] md:scale-[1.35] origin-left transition-transform duration-300 group-hover:scale-[1.28] md:group-hover:scale-[1.38]"
+  className="absolute left-[-6px] md:left-[-12px] top-[104%] -translate-y-1/2 scale-[1.25] md:scale-[1.35] origin-left transition-transform duration-300 group-hover:scale-[1.28] md:group-hover:scale-[1.38]"
 />
           </Link>
 
