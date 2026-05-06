@@ -499,7 +499,7 @@ export default function Home() {
   <div className="container">
 
     {/* Título */}
-<div className="mb-5">
+<div className="mb-6 md:mb-8">
   <div className="flex items-center gap-3">
     <span className="text-[13px] uppercase tracking-[0.2em] text-black/80 font-medium">
       EQUIPAMENTOS EM DESTAQUE
