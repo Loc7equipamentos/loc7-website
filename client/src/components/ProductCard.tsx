@@ -79,7 +79,7 @@ export default function ProductCard({ product }: Props) {
           />
         </div>
 
-        <div className="flex flex-col px-3 pb-3 pt-2.5 sm:px-3.5 sm:pb-3.5">
+        <div className="flex flex-col px-3 pb-3 pt-3.5 sm:px-3.5 sm:pb-3.5 sm:pt-4">
           <div className="mb-1 flex items-center overflow-hidden text-[9px] font-bold uppercase tracking-[0.12em] text-neutral-500">
             <span className="truncate">{product.category}</span>
 
@@ -93,12 +93,12 @@ export default function ProductCard({ product }: Props) {
             )}
           </div>
 
-          <h3 className="line-clamp-2 min-h-[38px] text-[13.5px] font-bold leading-[1.2] tracking-[-0.015em] text-neutral-950 sm:min-h-[42px] sm:text-[14.5px]">
+          <h3 className="line-clamp-2 min-h-[30px] text-[13.5px] font-bold leading-[1.2] tracking-[-0.015em] text-neutral-950 sm:min-h-[34px] sm:text-[14.5px]">
             {product.name}
           </h3>
 
           {product.price && (
-            <div className="mt-2.5 flex items-baseline gap-1">
+            <div className="mt-1.5 flex items-baseline gap-1">
               <span className="text-[12px] font-semibold text-neutral-800 sm:text-[12.5px]">
                 R$ {Number(product.price).toLocaleString("pt-BR")}
               </span>
