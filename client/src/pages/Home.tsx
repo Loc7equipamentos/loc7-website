@@ -562,9 +562,11 @@ export default function Home() {
 <section
   id="trabalhos-realizados"
   ref={setSectionRef("trabalhos-realizados")}
-  className="bg-black py-8 md:py-10"
+  className="relative bg-black py-8 md:py-10"
 >
-  <div className="container">
+  <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[oklch(0.95_0_0)] via-black/20 to-transparent pointer-events-none" />
+
+<div className="container">
     <div className="mb-6">
       <div className="flex items-center gap-3">
         <span className="text-[13px] uppercase tracking-[0.2em] text-white/80">
