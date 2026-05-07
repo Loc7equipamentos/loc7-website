@@ -562,16 +562,16 @@ export default function Home() {
   <div className="container">
 
     <div className="mb-6">
-  <div className="flex items-center gap-3">
-    <span className="text-[13px] uppercase tracking-[0.2em] text-white/80">
-      ALGUNS TRABALHOS REALIZADOS
-    </span>
+      <div className="flex items-center gap-3">
+        <span className="text-[13px] uppercase tracking-[0.2em] text-white/80">
+          ALGUNS TRABALHOS REALIZADOS
+        </span>
 
-    <div className="h-[1px] flex-1 bg-white/15" />
-  </div>
+        <div className="h-[1px] flex-1 bg-white/15" />
+      </div>
 
-  <div className="mt-2 h-[2px] w-10 bg-red-700" />
-</div>
+      <div className="mt-2 h-[2px] w-10 bg-red-700" />
+    </div>
 
     <div className="flex gap-4 overflow-x-auto pb-1 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible">
       {[
@@ -594,15 +594,19 @@ export default function Home() {
       ].map((item, index) => (
         <div
           key={index}
-          className="snap-start relative min-w-[88%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-0"
+          className="snap-start relative min-w-[88%] overflow-hidden rounded-xl bg-neutral-900 opacity-0 translate-x-[-40px] md:min-w-0"
+          style={{
+            animation: `workReveal 0.7s ease-out forwards`,
+            animationDelay: `${index * 0.08}s`,
+          }}
         >
           <img
             src={item.img}
             alt={item.title}
-            className="h-[420px] md:h-[480px] w-full object-cover object-top"
+            className="h-[420px] md:h-[480px] w-full object-cover object-top transition-transform duration-700 ease-out hover:scale-[1.02]"
           />
 
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-4">
             <span className="text-sm font-medium text-white">
               {item.title}
             </span>
@@ -612,6 +616,20 @@ export default function Home() {
     </div>
 
   </div>
+
+  <style>{`
+    @keyframes workReveal {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  `}</style>
 </section>
 
   {/* ===== MAPA ===== */}
