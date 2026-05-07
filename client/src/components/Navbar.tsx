@@ -181,8 +181,8 @@ export default function Navbar() {
                     )}
 
                     {link.hasDropdown && isCatalogOpen && (
-                      <div className="absolute left-1/2 top-full -translate-x-1/2 mt-0 min-w-[260px] rounded-xl border border-gray-800 bg-black/95 backdrop-blur-md shadow-2xl z-[9999] py-2">
-                        {loadingCategories ? (
+                    <div className="absolute left-1/2 top-full -translate-x-1/2 mt-0 max-h-[58vh] min-w-[280px] overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-black/95 py-2 shadow-2xl backdrop-blur-md z-[9999] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_bottom,transparent_0%,black_8%,black_92%,transparent_100%)]">  
+                    {loadingCategories ? (
                           <div className="px-4 py-3 text-white text-sm text-center">
                             Carregando...
                           </div>
