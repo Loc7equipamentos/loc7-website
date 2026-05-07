@@ -18,6 +18,7 @@ import {
   Radio,
   Flag,
   User,
+ChevronDown,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -181,8 +182,13 @@ export default function Navbar() {
                     )}
 
                     {link.hasDropdown && isCatalogOpen && (
-                   <div className="absolute left-1/2 top-full -translate-x-1/2 mt-0 max-h-[58vh] w-[280px] overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-black/95 py-2 shadow-2xl backdrop-blur-md z-[9999] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">  
-                    {loadingCategories ? (
+                   <div className="absolute left-1/2 top-full -translate-x-1/2 mt-0 max-h-[58vh] w-[280px] overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-black/95 py-2 shadow-2xl backdrop-blur-md z-[9999] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+  <div className="flex items-center justify-center gap-1 py-1 text-white/35">
+    <ChevronDown className="w-3 h-3 animate-bounce" />
+  </div>
+
+  {loadingCategories ? (
                           <div className="px-4 py-3 text-white text-sm text-center">
                             Carregando...
                           </div>
