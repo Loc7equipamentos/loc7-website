@@ -525,7 +525,7 @@ export default function Home() {
     </div>
 
     {/* GRID */}
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-6">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-4 md:gap-5 lg:grid-cols-4 lg:gap-5">
      {filteredFeaturedProducts
   .slice(0, 4)
   .map((product) => (
