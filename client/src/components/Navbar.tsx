@@ -136,7 +136,7 @@ export default function Navbar() {
         isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
       }`}
     >
-      <div className="container">
+      <div className="container md:min-h-[120px]">
         <div className="flex items-stretch justify-between overflow-visible">
           {/* Logo */}
           <Link
