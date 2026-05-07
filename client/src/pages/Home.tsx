@@ -564,7 +564,7 @@ export default function Home() {
   ref={setSectionRef("trabalhos-realizados")}
   className="relative bg-black py-8 md:py-10"
 >
-  <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[oklch(0.95_0_0)] via-black/20 to-transparent pointer-events-none" />
+ <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[oklch(0.95_0_0)] via-black/6 to-transparent pointer-events-none" />
 
 <div className="container">
     <div className="mb-6">
