@@ -481,14 +481,6 @@ export default function Home() {
   CINE · FOTO · BROADCAST
 </h1>
 
-      <div className="mt-7">
-        <Link
-          href="/catalogo"
-          className="inline-flex min-w-[240px] items-center justify-center border border-white/50 px-10 py-4 text-[12px] font-medium uppercase tracking-[0.28em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
-        >
-          Catálogo
-        </Link>
-      </div>
 
     </div>
   </div>
