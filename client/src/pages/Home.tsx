@@ -400,7 +400,7 @@ export default function Home() {
     .select("*")
     .eq("is_featured", true)
     .order("featured_order", { ascending: true })
-    .limit(8),
+    .limit(4),
 
   supabase.from("categories").select("name").order("name"),
 ]);
@@ -526,15 +526,13 @@ export default function Home() {
 
     {/* GRID */}
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-6">
-      {filteredFeaturedProducts
-  .slice(0, 8) // segurança geral
-  .map((product, index) => (
-    <div
+     {filteredFeaturedProducts
+  .slice(0, 4)
+  .map((product) => (
+    <HomeFeaturedCard
       key={product.id}
-      className={index >= 6 ? "hidden md:block" : ""}
-    >
-      <HomeFeaturedCard product={product} />
-    </div>
+      product={product}
+    />
 ))}
     </div>
 
