@@ -276,7 +276,7 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
             </div>
           )}
 
-         <div className="flex h-[150px] items-center justify-center sm:h-[170px] md:h-[180px]">
+         <div className="flex h-[170px] items-center justify-center sm:h-[190px] md:h-[210px]">
   {currentImage ? (
     <img
       src={currentImage}
