@@ -197,7 +197,7 @@ export default function Navbar() {
                             <Link
                               key={cat.name}
                               href={cat.href}
-                             className="block px-4 py-2 text-center text-xs font-medium tracking-wide text-white/80 transition-all duration-200 hover:scale-[1.02] hover:bg-white/[0.04] hover:text-white"
+                             className="block px-4 py-2 text-center text-xs font-medium tracking-wide text-white/75 transition-all duration-150 hover:scale-[1.035] hover:bg-white/[0.06] hover:text-white"
                             >
                               {cat.name}
                             </Link>
