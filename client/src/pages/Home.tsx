@@ -558,9 +558,12 @@ export default function Home() {
 
       
 {/* ===== TRABALHOS REALIZADOS ===== */}
-<section className="bg-black py-8 md:py-10">
+<section
+  id="trabalhos-realizados"
+  ref={setSectionRef("trabalhos-realizados")}
+  className="bg-black py-8 md:py-10"
+>
   <div className="container">
-
     <div className="mb-6">
       <div className="flex items-center gap-3">
         <span className="text-[13px] uppercase tracking-[0.2em] text-white/80">
@@ -594,10 +597,13 @@ export default function Home() {
       ].map((item, index) => (
         <div
           key={index}
-          className="snap-start relative min-w-[88%] overflow-hidden rounded-xl bg-neutral-900 opacity-0 translate-x-[-40px] md:min-w-0"
+          className={`snap-start relative min-w-[88%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-0 transition-all duration-700 ease-out ${
+            isVisible["trabalhos-realizados"]
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 translate-x-[-40px]"
+          }`}
           style={{
-            animation: `workReveal 0.7s ease-out forwards`,
-            animationDelay: `${index * 0.08}s`,
+            transitionDelay: `${index * 0.08}s`,
           }}
         >
           <img
@@ -614,22 +620,7 @@ export default function Home() {
         </div>
       ))}
     </div>
-
   </div>
-
-  <style>{`
-    @keyframes workReveal {
-      from {
-        opacity: 0;
-        transform: translateX(-40px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-  `}</style>
 </section>
 
   {/* ===== MAPA ===== */}
