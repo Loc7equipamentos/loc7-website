@@ -268,7 +268,7 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* IMAGEM */}
-        <div className="relative bg-white px-4 pt-4">
+        <div className="relative bg-white px-3 pt-3">
           {product.badge && (
             <div className="absolute left-3 top-3 z-10">
               <span className="rounded bg-black px-2 py-1 text-[10px] font-semibold text-white">
@@ -277,7 +277,7 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
             </div>
           )}
 
-         <div className="flex h-[170px] items-center justify-center sm:h-[190px] md:h-[210px]">
+         <div className="flex h-[175px] items-center justify-center sm:h-[195px] md:h-[215px]">
   {currentImage ? (
     <img
       src={currentImage}
