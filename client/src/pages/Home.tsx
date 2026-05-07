@@ -372,24 +372,25 @@ export default function Home() {
     return () => clearInterval(carouselTimer);
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible((prev) => ({ ...prev, [entry.target.id]: true }));
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
+ useEffect(() => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        setIsVisible((prev) => ({
+          ...prev,
+          [entry.target.id]: entry.isIntersecting,
+        }));
+      });
+    },
+    { threshold: 0.15 }
+  );
 
-    Object.values(sectionRefs.current).forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
+  Object.values(sectionRefs.current).forEach((ref) => {
+    if (ref) observer.observe(ref);
+  });
 
-    return () => observer.disconnect();
-  }, []);
+  return () => observer.disconnect();
+}, []);
 
   useEffect(() => {
     const fetchHomeData = async () => {
