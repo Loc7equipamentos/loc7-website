@@ -18,6 +18,8 @@ import {
   Radio,
   Flag,
   User,
+User,
+Search,
 ChevronDown,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -208,8 +210,16 @@ export default function Navbar() {
                   </div>
                 ))}
 
-                {/* Acesso sistema */}
-                <Link href="/admin-panel">
+              {/* Busca */}
+<button
+  className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer"
+  aria-label="Buscar"
+>
+  <Search className="w-4 h-4 text-white/60 hover:text-white/80" />
+</button>
+
+{/* Acesso sistema */}
+<Link href="/admin-panel">
                   <div className="ml-3 flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
   <User className="w-4 h-4 text-white/60 hover:text-white/80" />
 </div>
