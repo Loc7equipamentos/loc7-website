@@ -210,18 +210,36 @@ export default function Navbar() {
                   </div>
                 ))}
 
-             {/* Busca */}
+           {/* Busca */}
 <div className="ml-6 hidden items-center md:flex">
-  <button
-    className="group flex items-center gap-2 text-sm font-medium text-white/70 transition-all duration-200 hover:text-white"
-    aria-label="Buscar"
-  >
-    <Search className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+  {isSearchOpen ? (
+    <div className="flex items-center border-b border-white/20 pb-1">
+      <Search className="h-4 w-4 text-white/60" />
 
-    <span className="tracking-[0.02em]">
-      Buscar
-    </span>
-  </button>
+      <input
+        type="text"
+        placeholder="Buscar"
+        autoFocus
+        className="ml-2 w-[180px] bg-transparent text-sm text-white placeholder:text-white/35 focus:outline-none"
+      />
+
+      <button
+        onClick={() => setIsSearchOpen(false)}
+        className="ml-3 text-white/40 transition hover:text-white/70"
+        aria-label="Fechar busca"
+      >
+        <X className="h-4 w-4" />
+      </button>
+    </div>
+  ) : (
+    <button
+      onClick={() => setIsSearchOpen(true)}
+      className="group flex items-center text-white/70 transition-all duration-200 hover:text-white"
+      aria-label="Abrir busca"
+    >
+      <Search className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+    </button>
+  )}
 </div>
 
 {/* Login interno */}
