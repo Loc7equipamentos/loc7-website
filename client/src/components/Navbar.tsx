@@ -210,20 +210,24 @@ export default function Navbar() {
                   </div>
                 ))}
 
-              {/* Busca */}
-<button
-  className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer"
-  aria-label="Buscar"
->
-  <Search className="w-4 h-4 text-white/60 hover:text-white/80" />
-</button>
+             <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 items-center md:flex">
+  
+  {/* Busca */}
+  <button
+    className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer"
+    aria-label="Buscar"
+  >
+    <Search className="w-4 h-4 text-white/60 hover:text-white/80" />
+  </button>
 
-{/* Acesso sistema */}
-<Link href="/admin-panel">
-                  <div className="ml-3 flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
-  <User className="w-4 h-4 text-white/60 hover:text-white/80" />
-</div>
-                </Link>
+  {/* Login interno */}
+  <Link href="/admin-panel">
+    <div className="ml-8 flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
+      <User className="w-4 h-4 text-white/45 hover:text-white/70" />
+    </div>
+  </Link>
+
+
               </div>
 
              <button
