@@ -209,22 +209,24 @@ export default function Navbar() {
                   </div>
                 ))}
 
-             <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 items-center md:flex">
-  
-  {/* Busca */}
+             {/* Busca */}
+<div className="absolute right-20 top-1/2 hidden -translate-y-1/2 md:flex">
   <button
     className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer"
     aria-label="Buscar"
   >
     <Search className="w-4 h-4 text-white/60 hover:text-white/80" />
   </button>
+</div>
 
-  {/* Login interno */}
-  <Link href="/admin-panel"> 
-    <div className="ml-8 flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
+{/* Login interno */}
+<div className="absolute right-0 top-1/2 hidden -translate-y-1/2 md:flex">
+  <Link href="/admin-panel">
+    <div className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
       <User className="w-4 h-4 text-white/45 hover:text-white/70" />
     </div>
   </Link>
+</div>
 
   </div>
               </div>
