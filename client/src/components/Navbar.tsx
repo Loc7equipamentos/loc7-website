@@ -226,7 +226,6 @@ export default function Navbar() {
       <User className="w-4 h-4 text-white/45 hover:text-white/70" />
     </div>
   </Link>
-</div>
 
   </div>
               </div>
