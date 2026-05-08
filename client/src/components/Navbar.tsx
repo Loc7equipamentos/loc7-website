@@ -211,7 +211,7 @@ export default function Navbar() {
                 ))}
 
              {/* Busca */}
-<div className="absolute right-20 top-1/2 hidden -translate-y-1/2 md:flex">
+<div className="ml-6 hidden items-center md:flex">
   <button
     className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer"
     aria-label="Buscar"
