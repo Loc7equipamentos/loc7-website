@@ -4,7 +4,12 @@ import { useParams } from "wouter";
 import ProductCard from "@/components/ProductCard";
 import { supabase, type Product } from "@/lib/supabase";
 
-const normalize = (text: string): string => text?.toLowerCase().trim() || "";
+const normalize = (text: string): string =>
+  text
+    ?.toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") || "";
 
 export default function Catalogo() {
   const params = useParams<{ category?: string }>();
@@ -12,6 +17,7 @@ export default function Catalogo() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,6 +36,12 @@ export default function Catalogo() {
     transmissores: "Transmissores",
     maquinaria: "Maquinária",
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const search = params.get("search") || "";
+    setSearchQuery(search);
+  }, []);
 
   useEffect(() => {
     if (params.category) {
@@ -85,7 +97,22 @@ export default function Catalogo() {
     loadData();
   }, []);
 
-  const categoryScopedProducts = products.filter((p) =>
+  const searchScopedProducts = products.filter((p) => {
+    if (!searchQuery.trim()) return true;
+
+    const searchableText = [
+      p.name,
+      p.category,
+      p.subcategory,
+      p.name ? p.name.split(" ")[0] : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return normalize(searchableText).includes(normalize(searchQuery));
+  });
+
+  const categoryScopedProducts = searchScopedProducts.filter((p) =>
     selectedCategory === "Todos"
       ? true
       : normalize(p.category || "") === normalize(selectedCategory)
@@ -95,39 +122,35 @@ export default function Catalogo() {
     .map((p) => p.subcategory)
     .filter(Boolean) as string[];
 
-  const uniqueSubcategories = Array.from(new Set(availableSubcategories.map(normalize)))
+  const uniqueSubcategories = Array.from(
+    new Set(availableSubcategories.map(normalize))
+  )
     .map(
       (normalized) =>
-        availableSubcategories.find((sub) => normalize(sub) === normalized) || ""
+        availableSubcategories.find((sub) => normalize(sub) === normalized) ||
+        ""
     )
     .filter(Boolean);
 
-  const subcategoryScopedProducts = categoryScopedProducts.filter((p) =>
-    selectedSubcategory === "Todas"
-      ? true
-      : normalize(p.subcategory || "") === normalize(selectedSubcategory)
+  const uniqueBrands = Array.from(
+    new Set(
+      categoryScopedProducts
+        .map((p) => (p.name ? p.name.split(" ")[0] : ""))
+        .filter(Boolean)
+    )
   );
 
- const uniqueBrands = Array.from(
-  new Set(
-    categoryScopedProducts
-      .map((p) => (p.name ? p.name.split(" ")[0] : ""))
-      .filter(Boolean)
-  )
-);
+  const filteredProducts = categoryScopedProducts.filter((p) => {
+    const matchSubcategory =
+      selectedSubcategory === "Todas" ||
+      normalize(p.subcategory || "") === normalize(selectedSubcategory);
 
- const filteredProducts = categoryScopedProducts.filter((p) => {
-  const matchSubcategory =
-    selectedSubcategory === "Todas" ||
-    normalize(p.subcategory || "") === normalize(selectedSubcategory);
+    const matchBrand =
+      selectedBrand === "Todas" ||
+      normalize(p.name || "").includes(normalize(selectedBrand));
 
-  const matchBrand =
-    selectedBrand === "Todas" ||
-    p.name?.toLowerCase().includes(selectedBrand.toLowerCase());
-
-  return matchSubcategory && matchBrand;
-});
-    
+    return matchSubcategory && matchBrand;
+  });
 
   const SidebarFilters = () => (
     <div className="space-y-8">
@@ -251,32 +274,34 @@ export default function Catalogo() {
     <main className="min-h-screen bg-[#f3f3f1] text-neutral-900">
       <section className="border-b border-neutral-200 bg-[#f3f3f1]">
         <div className="mx-auto max-w-[1600px] px-4 pb-2 pt-12 sm:px-6 lg:px-10">
-         <div className="flex flex-col gap-3">
-<div className="hidden items-start justify-between gap-16 border-b border-neutral-200 pb-6 lg:flex">
- <div className="w-[180px] shrink-0 pt-2">
- <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
-    01 / CATÁLOGO
-  </span>
-</div>
+          <div className="flex flex-col gap-3">
+            <div className="hidden items-start justify-between gap-16 border-b border-neutral-200 pb-6 lg:flex">
+              <div className="w-[180px] shrink-0 pt-2">
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
+                  01 / CATÁLOGO
+                </span>
+              </div>
 
-<div className="flex flex-1 justify-start">
-  <div className="max-w-[620px]">
-  <h1 className="font-sans text-[36px] font-normal uppercase leading-[1.02] tracking-[-0.04em] text-neutral-950">
-  Monte seu setup.
-</h1>
+              <div className="flex flex-1 justify-start">
+                <div className="max-w-[620px]">
+                  <h1 className="font-sans text-[36px] font-normal uppercase leading-[1.02] tracking-[-0.04em] text-neutral-950">
+                    Monte seu setup.
+                  </h1>
 
-    <p className="mt-2 text-[15px] font-medium leading-relaxed text-neutral-700">
-      Busque o que precisar, quando precisar.
-    </p>
-  </div>
-</div>
-</div>
+                  <p className="mt-2 text-[15px] font-medium leading-relaxed text-neutral-700">
+                    {searchQuery
+                      ? `Resultado da busca por "${searchQuery}".`
+                      : "Busque o que precisar, quando precisar."}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-<div className="lg:hidden">
-  <h1 className="text-[28px] font-bold tracking-tight text-neutral-950">
-    CATÁLOGO
-  </h1>
-</div>
+            <div className="lg:hidden">
+              <h1 className="text-[28px] font-bold tracking-tight text-neutral-950">
+                CATÁLOGO
+              </h1>
+            </div>
 
             {!isCategoryPage && (
               <div className="lg:hidden">
@@ -340,9 +365,9 @@ export default function Catalogo() {
           </aside>
 
           <div>
-           {loading ? (
-  <div className="grid grid-cols-2 gap-5 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-    {Array.from({ length: 10 }).map((_, index) => (
+            {loading ? (
+              <div className="grid grid-cols-2 gap-5 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+                {Array.from({ length: 10 }).map((_, index) => (
                   <div
                     key={index}
                     className="overflow-hidden rounded-xl border border-neutral-200 bg-white"
@@ -366,7 +391,7 @@ export default function Catalogo() {
                 </p>
               </div>
             ) : (
-             <div className="grid grid-cols-2 gap-5 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+              <div className="grid grid-cols-2 gap-5 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
