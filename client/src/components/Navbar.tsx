@@ -67,6 +67,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [location] = useLocation();
 
@@ -127,6 +128,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -153,6 +155,14 @@ export default function Navbar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleSearchSubmit = () => {
+    const query = searchQuery.trim();
+
+    if (!query) return;
+
+    console.log("BUSCAR:", query);
+  };
 
   return (
     <nav
@@ -237,7 +247,10 @@ export default function Navbar() {
                 ))}
 
                 {/* Busca */}
-                <div ref={searchRef} className="ml-6 hidden items-center md:flex">
+                <div
+                  ref={searchRef}
+                  className="ml-6 hidden items-center md:flex"
+                >
                   {isSearchOpen ? (
                     <div className="flex items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur-md transition-all duration-300">
                       <Search className="h-4 w-4 text-white/45" />
@@ -246,6 +259,13 @@ export default function Navbar() {
                         type="text"
                         placeholder="Buscar"
                         autoFocus
+                        value={searchQuery}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            handleSearchSubmit();
+                          }
+                        }}
                         className="ml-2 w-[180px] bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
                       />
                     </div>
