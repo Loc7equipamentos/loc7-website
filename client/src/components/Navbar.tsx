@@ -4,7 +4,7 @@
  * Mantém estrutura atual: logo + menu principal + submenu categorias + mobile
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import {
   Menu,
@@ -18,8 +18,8 @@ import {
   Radio,
   Flag,
   User,
-Search,
-ChevronDown,
+  Search,
+  ChevronDown,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -69,6 +69,9 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [location] = useLocation();
+
+  const searchRef = useRef<HTMLDivElement | null>(null);
+
   const [dropdownCategories, setDropdownCategories] = useState<
     Array<{ name: string; href: string }>
   >(fallbackCategories);
@@ -131,7 +134,25 @@ export default function Navbar() {
   useEffect(() => {
     setIsMobileOpen(false);
     setIsCatalogOpen(false);
+    setIsSearchOpen(false);
   }, [location]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setIsSearchOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav
@@ -147,27 +168,33 @@ export default function Navbar() {
             className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-20 md:h-[72px] overflow-visible"
           >
             <img
-  src="/loc7-logo-header.png"
-  alt="Loc 7 Equipamentos"
- className="absolute left-[-6px] md:left-[-12px] top-[78%] md:top-[108%] -translate-y-1/2 scale-[1.25] md:scale-[1.35] origin-left transition-transform duration-300 group-hover:scale-[1.28] md:group-hover:scale-[1.38]"
-/>
+              src="/loc7-logo-header.png"
+              alt="Loc 7 Equipamentos"
+              className="absolute left-[-6px] md:left-[-12px] top-[78%] md:top-[108%] -translate-y-1/2 scale-[1.25] md:scale-[1.35] origin-left transition-transform duration-300 group-hover:scale-[1.28] md:group-hover:scale-[1.38]"
+            />
           </Link>
 
           {/* Navegação desktop / mobile trigger */}
           <div className="flex flex-col flex-1 relative">
-<div className="flex items-center justify-center h-20 md:h-[82px] flex-1 md:translate-y-[48px]">
-  <div className="hidden md:flex items-center gap-10 lg:gap-12 justify-center flex-1 relative overflow-visible">
+            <div className="flex items-center justify-center h-20 md:h-[82px] flex-1 md:translate-y-[48px]">
+              <div className="hidden md:flex items-center gap-10 lg:gap-12 justify-center flex-1 relative overflow-visible">
                 {navLinks.map((link) => (
                   <div
                     key={link.name}
                     className="relative group whitespace-nowrap overflow-visible pointer-events-auto"
-                    onMouseEnter={() => link.hasDropdown && setIsCatalogOpen(true)}
-                    onMouseLeave={() => link.hasDropdown && setIsCatalogOpen(false)}
+                    onMouseEnter={() =>
+                      link.hasDropdown && setIsCatalogOpen(true)
+                    }
+                    onMouseLeave={() =>
+                      link.hasDropdown && setIsCatalogOpen(false)
+                    }
                   >
                     {link.hasDropdown ? (
                       <button
                         className={`flex items-center gap-1 text-sm font-medium text-white hover:text-gray-300 transition ${
-                          location.startsWith("/catalogo") ? "text-gray-300" : ""
+                          location.startsWith("/catalogo")
+                            ? "text-gray-300"
+                            : ""
                         }`}
                       >
                         {link.name}
@@ -184,13 +211,12 @@ export default function Navbar() {
                     )}
 
                     {link.hasDropdown && isCatalogOpen && (
-                   <div className="absolute left-1/2 top-full -translate-x-1/2 mt-0 max-h-[58vh] w-[280px] overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-black/95 py-2 shadow-2xl backdrop-blur-md z-[9999] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                      <div className="absolute left-1/2 top-full -translate-x-1/2 mt-0 max-h-[58vh] w-[280px] overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-black/95 py-2 shadow-2xl backdrop-blur-md z-[9999] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                        <div className="flex items-center justify-center gap-1 py-1 text-white/35">
+                          <ChevronDown className="w-3 h-3 animate-bounce" />
+                        </div>
 
-  <div className="flex items-center justify-center gap-1 py-1 text-white/35">
-    <ChevronDown className="w-3 h-3 animate-bounce" />
-  </div>
-
-  {loadingCategories ? (
+                        {loadingCategories ? (
                           <div className="px-4 py-3 text-white text-sm text-center">
                             Carregando...
                           </div>
@@ -199,7 +225,7 @@ export default function Navbar() {
                             <Link
                               key={cat.name}
                               href={cat.href}
-                             className="block px-4 py-2 text-center text-xs font-medium tracking-wide text-white/70 transition-all duration-150 hover:scale-[1.05] hover:text-white"
+                              className="block px-4 py-2 text-center text-xs font-medium tracking-wide text-white/70 transition-all duration-150 hover:scale-[1.05] hover:text-white"
                             >
                               {cat.name}
                             </Link>
@@ -210,53 +236,50 @@ export default function Navbar() {
                   </div>
                 ))}
 
-           {/* Busca */}
-<div className="ml-6 hidden items-center md:flex">
- {isSearchOpen ? (
-  <div className="flex items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur-md transition-all duration-300">
-    <Search className="h-4 w-4 text-white/45" />
+                {/* Busca */}
+                <div ref={searchRef} className="ml-6 hidden items-center md:flex">
+                  {isSearchOpen ? (
+                    <div className="flex items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur-md transition-all duration-300">
+                      <Search className="h-4 w-4 text-white/45" />
 
-    <input
-      type="text"
-      placeholder="Buscar"
-      autoFocus
-      className="ml-2 w-[180px] bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
-    />
-  </div>
-) : (
-    <button
-      onClick={() => setIsSearchOpen(true)}
-      className="group flex items-center text-white/70 transition-all duration-200 hover:text-white"
-      aria-label="Abrir busca"
-    >
-      <Search className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-    </button>
-  )}
-</div>
-
-{/* Login interno */}
-<div className="absolute right-0 top-1/2 hidden -translate-y-1/2 md:flex">
-  <Link href="/admin-panel">
-    <div className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
-      <User className="w-4 h-4 text-white/45 hover:text-white/70" />
-    </div>
-  </Link>
-
-  </div>
+                      <input
+                        type="text"
+                        placeholder="Buscar"
+                        autoFocus
+                        className="ml-2 w-[180px] bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setIsSearchOpen(true)}
+                      className="group flex items-center text-white/70 transition-all duration-200 hover:text-white"
+                      aria-label="Abrir busca"
+                    >
+                      <Search className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                    </button>
+                  )}
+                </div>
               </div>
 
-             <button
-  onClick={() => setIsMobileOpen(!isMobileOpen)}
-  className="md:hidden p-2 text-white translate-x-6 translate-y-[10px]"
-  aria-label="Abrir menu"
->
-  {isMobileOpen ? <X size={34} /> : <Menu size={34} />}
-</button>
+              {/* Login interno */}
+              <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 md:flex">
+                <Link href="/admin-panel">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
+                    <User className="w-4 h-4 text-white/45 hover:text-white/70" />
+                  </div>
+                </Link>
+              </div>
+
+              <button
+                onClick={() => setIsMobileOpen(!isMobileOpen)}
+                className="md:hidden p-2 text-white translate-x-6 translate-y-[10px]"
+                aria-label="Abrir menu"
+              >
+                {isMobileOpen ? <X size={34} /> : <Menu size={34} />}
+              </button>
             </div>
           </div>
         </div>
-
-    
 
         {/* Mobile menu */}
         {isMobileOpen && (
@@ -272,6 +295,7 @@ export default function Navbar() {
                       >
                         {link.name}
                       </button>
+
                       {isCatalogOpen && (
                         <div className="bg-black pl-4">
                           {dropdownCategories.map((cat) => (
