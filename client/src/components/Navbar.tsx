@@ -211,12 +211,16 @@ export default function Navbar() {
                 ))}
 
              {/* Busca */}
-<div className="ml-7 hidden items-center md:flex">
+<div className="ml-6 hidden items-center md:flex">
   <button
-    className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer"
+    className="group flex items-center gap-2 text-sm font-medium text-white/70 transition-all duration-200 hover:text-white"
     aria-label="Buscar"
   >
-    <Search className="w-4 h-4 text-white/60 hover:text-white/80" />
+    <Search className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+
+    <span className="tracking-[0.02em]">
+      Buscar
+    </span>
   </button>
 </div>
 
