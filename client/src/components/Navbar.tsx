@@ -212,26 +212,18 @@ export default function Navbar() {
 
            {/* Busca */}
 <div className="ml-6 hidden items-center md:flex">
-  {isSearchOpen ? (
-    <div className="flex items-center border-b border-white/20 pb-1">
-      <Search className="h-4 w-4 text-white/60" />
+ {isSearchOpen ? (
+  <div className="flex items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur-md transition-all duration-300">
+    <Search className="h-4 w-4 text-white/45" />
 
-      <input
-        type="text"
-        placeholder="Buscar"
-        autoFocus
-        className="ml-2 w-[180px] bg-transparent text-sm text-white placeholder:text-white/35 focus:outline-none"
-      />
-
-      <button
-        onClick={() => setIsSearchOpen(false)}
-        className="ml-3 text-white/40 transition hover:text-white/70"
-        aria-label="Fechar busca"
-      >
-        <X className="h-4 w-4" />
-      </button>
-    </div>
-  ) : (
+    <input
+      type="text"
+      placeholder="Buscar"
+      autoFocus
+      className="ml-2 w-[180px] bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
+    />
+  </div>
+) : (
     <button
       onClick={() => setIsSearchOpen(true)}
       className="group flex items-center text-white/70 transition-all duration-200 hover:text-white"
