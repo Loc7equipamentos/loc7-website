@@ -157,52 +157,44 @@ export default function Navbar() {
   }, []);
 
 const handleSearchSubmit = async () => {
-  const normalizedQuery = searchQuery
-    .trim()
+  const rawQuery = searchQuery.trim();
+
+  const normalizedQuery = rawQuery
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 
   if (!normalizedQuery) return;
 
-  try {
-    const { data: products, error } = await supabase
-      .from("products")
-      .select("name, slug");
-
-    if (!error && products) {
-      const matchedProduct = products.find((product) => {
-        const normalizedProductName = product.name
-          ?.toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "");
-
-        return normalizedProductName?.includes(normalizedQuery);
-      });
-
-      if (matchedProduct?.slug) {
-        window.location.href = `/equipamentos/${matchedProduct.slug}`;
-        return;
-      }
-    }
-  } catch (err) {
-    console.error("Erro busca produto:", err);
-  }
-
   const categoryMap: Record<string, string> = {
     camera: "/catalogo/cameras",
     cameras: "/catalogo/cameras",
+
     lente: "/catalogo/lentes",
     lentes: "/catalogo/lentes",
+
     iluminacao: "/catalogo/iluminacao",
     luz: "/catalogo/iluminacao",
+    luzes: "/catalogo/iluminacao",
+
     audio: "/catalogo/audio",
+    microfone: "/catalogo/audio",
+    microfones: "/catalogo/audio",
+    mic: "/catalogo/audio",
+
     monitor: "/catalogo/monitores",
     monitores: "/catalogo/monitores",
+
     movimento: "/catalogo/movimento",
+    gimbal: "/catalogo/movimento",
+    estabilizador: "/catalogo/movimento",
+
     transmissor: "/catalogo/transmissores",
     transmissores: "/catalogo/transmissores",
+
     maquinaria: "/catalogo/maquinaria",
+    tripe: "/catalogo/maquinaria",
+    tripes: "/catalogo/maquinaria",
   };
 
   const matchedCategory = Object.entries(categoryMap).find(([key]) =>
@@ -214,31 +206,42 @@ const handleSearchSubmit = async () => {
     return;
   }
 
-
   try {
-  const { data: products, error } = await supabase
-    .from("products")
-    .select("name, slug");
+    const { data: products, error } = await supabase
+      .from("products")
+      .select("name, slug, category, subcategory");
 
-  if (!error && products) {
-    const matchedProduct = products.find((product) => {
-      const normalizedProductName = product.name
-        ?.toLowerCase()
+    if (error) throw error;
+
+    const matchedProducts = (products || []).filter((product) => {
+      const searchableText = [
+        product.name,
+        product.category,
+        product.subcategory,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
 
-      return normalizedProductName?.includes(normalizedQuery);
+      return searchableText.includes(normalizedQuery);
     });
 
-    if (matchedProduct?.slug) {
-      window.location.href = `/equipamentos/${matchedProduct.slug}`;
+    if (matchedProducts.length === 1 && matchedProducts[0].slug) {
+      window.location.href = `/equipamentos/${matchedProducts[0].slug}`;
       return;
     }
+
+    if (matchedProducts.length > 1) {
+      window.location.href = `/catalogo?search=${encodeURIComponent(rawQuery)}`;
+      return;
+    }
+  } catch (err) {
+    console.error("Erro busca produto:", err);
   }
-} catch (err) {
-  console.error("Erro busca produto:", err);
-}
-  console.log("SEM RESULTADO:", normalizedQuery);
+
+  console.log("SEM RESULTADO:", rawQuery);
 };
 
   return (
