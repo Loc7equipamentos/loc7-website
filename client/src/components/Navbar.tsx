@@ -156,13 +156,42 @@ export default function Navbar() {
     };
   }, []);
 
-  const handleSearchSubmit = () => {
-    const query = searchQuery.trim();
+ const handleSearchSubmit = () => {
+  const query = searchQuery
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
-    if (!query) return;
+  if (!query) return;
 
-    console.log("BUSCAR:", query);
+  const categoryMap: Record<string, string> = {
+    camera: "/catalogo/cameras",
+    cameras: "/catalogo/cameras",
+    lente: "/catalogo/lentes",
+    lentes: "/catalogo/lentes",
+    iluminacao: "/catalogo/iluminacao",
+    luz: "/catalogo/iluminacao",
+    audio: "/catalogo/audio",
+    monitor: "/catalogo/monitores",
+    monitores: "/catalogo/monitores",
+    movimento: "/catalogo/movimento",
+    transmissor: "/catalogo/transmissores",
+    transmissores: "/catalogo/transmissores",
+    maquinaria: "/catalogo/maquinaria",
   };
+
+  const matchedCategory = Object.entries(categoryMap).find(([key]) =>
+    query.includes(key)
+  );
+
+  if (matchedCategory) {
+    window.location.href = matchedCategory[1];
+    return;
+  }
+
+  console.log("SEM RESULTADO:", query);
+};
 
   return (
     <nav
