@@ -221,7 +221,7 @@ export default function Navbar() {
   </button>
 
   {/* Login interno */}
-  <Link href="/admin-panel">
+  <Link href="/admin-panel"> 
     <div className="ml-8 flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
       <User className="w-4 h-4 text-white/45 hover:text-white/70" />
     </div>
