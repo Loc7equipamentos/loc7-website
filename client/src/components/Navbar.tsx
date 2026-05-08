@@ -214,6 +214,30 @@ const handleSearchSubmit = async () => {
     return;
   }
 
+
+  try {
+  const { data: products, error } = await supabase
+    .from("products")
+    .select("name, slug");
+
+  if (!error && products) {
+    const matchedProduct = products.find((product) => {
+      const normalizedProductName = product.name
+        ?.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+      return normalizedProductName?.includes(normalizedQuery);
+    });
+
+    if (matchedProduct?.slug) {
+      window.location.href = `/equipamentos/${matchedProduct.slug}`;
+      return;
+    }
+  }
+} catch (err) {
+  console.error("Erro busca produto:", err);
+}
   console.log("SEM RESULTADO:", normalizedQuery);
 };
 
