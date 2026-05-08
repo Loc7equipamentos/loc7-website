@@ -156,14 +156,38 @@ export default function Navbar() {
     };
   }, []);
 
- const handleSearchSubmit = () => {
-  const query = searchQuery
+const handleSearchSubmit = async () => {
+  const normalizedQuery = searchQuery
     .trim()
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 
-  if (!query) return;
+  if (!normalizedQuery) return;
+
+  try {
+    const { data: products, error } = await supabase
+      .from("products")
+      .select("name, slug");
+
+    if (!error && products) {
+      const matchedProduct = products.find((product) => {
+        const normalizedProductName = product.name
+          ?.toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+
+        return normalizedProductName?.includes(normalizedQuery);
+      });
+
+      if (matchedProduct?.slug) {
+        window.location.href = `/equipamentos/${matchedProduct.slug}`;
+        return;
+      }
+    }
+  } catch (err) {
+    console.error("Erro busca produto:", err);
+  }
 
   const categoryMap: Record<string, string> = {
     camera: "/catalogo/cameras",
@@ -182,7 +206,7 @@ export default function Navbar() {
   };
 
   const matchedCategory = Object.entries(categoryMap).find(([key]) =>
-    query.includes(key)
+    normalizedQuery.includes(key)
   );
 
   if (matchedCategory) {
@@ -190,7 +214,7 @@ export default function Navbar() {
     return;
   }
 
-  console.log("SEM RESULTADO:", query);
+  console.log("SEM RESULTADO:", normalizedQuery);
 };
 
   return (
