@@ -18,7 +18,6 @@ import {
   Radio,
   Flag,
   User,
-User,
 Search,
 ChevronDown,
 } from "lucide-react";
@@ -227,7 +226,7 @@ export default function Navbar() {
     </div>
   </Link>
 
-
+  </div>
               </div>
 
              <button
