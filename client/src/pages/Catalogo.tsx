@@ -21,9 +21,13 @@ export default function Catalogo() {
   const params = useParams<{ category?: string }>();
   const isCategoryPage = !!params.category;
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+ const [products, setProducts] = useState<Product[]>([]);
+const [categories, setCategories] = useState<string[]>([]);
+const [categoryRows, setCategoryRows] = useState<
+  { id: string; name: string }[]
+>([]);
+const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,16 +79,26 @@ export default function Catalogo() {
         setError(null);
 
         const { data: categoriesData, error: catError } = await supabase
-          .from("categories")
-          .select("name")
-          .order("name");
+  .from("categories")
+  .select("id, name")
+  .order("name");
 
         if (catError) throw catError;
 
-        const categoryNames = categoriesData?.map((c) => c.name) || [];
-        setCategories(["Todos", ...categoryNames]);
+       const categoryNames = categoriesData?.map((c) => c.name) || [];
+setCategories(["Todos", ...categoryNames]);
+setCategoryRows(categoriesData || []);
 
-        const { data: productsData, error: prodError } = await supabase
+const { data: subcategoriesData, error: subError } = await supabase
+  .from("subcategories")
+  .select("*")
+  .order("name");
+
+if (subError) throw subError;
+
+setSubcategories(subcategoriesData || []);
+
+const { data: productsData, error: prodError } = await supabase
           .from("products")
           .select("*")
           .order("name", { ascending: true });
@@ -124,19 +138,18 @@ export default function Catalogo() {
       : normalize(p.category || "") === normalize(selectedCategory)
   );
 
-  const availableSubcategories = categoryScopedProducts
-    .map((p) => p.subcategory)
-    .filter(Boolean) as string[];
+ const selectedCategoryRow = categoryRows.find(
+  (cat) => normalize(cat.name) === normalize(selectedCategory)
+);
 
-  const uniqueSubcategories = Array.from(
-    new Set(availableSubcategories.map(normalize))
-  )
-    .map(
-      (normalized) =>
-        availableSubcategories.find((sub) => normalize(sub) === normalized) ||
-        ""
-    )
-    .filter(Boolean);
+const uniqueSubcategories =
+  selectedCategory === "Todos" || !selectedCategoryRow
+    ? []
+    : subcategories
+        .filter((subcat) => subcat.category_id === selectedCategoryRow.id)
+        .map((subcat) => subcat.name)
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   const uniqueBrands = Array.from(
     new Set(
