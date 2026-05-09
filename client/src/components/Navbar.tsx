@@ -255,12 +255,12 @@ const handleSearchSubmit = async () => {
           {/* Logo */}
           <Link
             href="/"
-            className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-20 md:h-[72px] overflow-visible"
+            className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-[92px] md:h-[72px] overflow-visible"
           >
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-              className="absolute left-[-6px] md:left-[-12px] top-[78%] md:top-[108%] -translate-y-1/2 scale-[1.25] md:scale-[1.35] origin-left transition-transform duration-300 group-hover:scale-[1.28] md:group-hover:scale-[1.38]"
+             className="absolute left-[-6px] md:left-[-12px] top-[62%] md:top-[108%] -translate-y-1/2 scale-[1.25] md:scale-[1.35] origin-left transition-transform duration-300 group-hover:scale-[1.28] md:group-hover:scale-[1.38]"
             />
           </Link>
 
