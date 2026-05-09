@@ -594,10 +594,9 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       .from('subcategories')
       .insert([
         {
-          name: newSubcategory.name.trim(),
-          category_id: newSubcategory.category_id,
-          category_name: selectedCategory?.name || null,
-        },
+  name: newSubcategory.name.trim(),
+  category_id: newSubcategory.category_id
+}
       ]);
 
     if (err) throw err;
