@@ -264,10 +264,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   try {
     const { data, error: err } = await supabase
       .from('subcategories')
-      .select(`
-        *,
-        category:categories(name)
-      `)
+      .select('*')
       .order('name');
 
     if (err) throw err;
