@@ -642,8 +642,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     </option>
   ))}
 </select>
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                  />
+                    
                 </div>
 
                 <div>
