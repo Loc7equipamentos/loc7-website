@@ -1248,8 +1248,7 @@ const deleteSubcategory = async (id: string) => {
               </div>
             </div>
           </div>
-        )}
-      </div>
+               )}
 
         {activeTab === 'subcategories' && (
           <div className="space-y-6">
