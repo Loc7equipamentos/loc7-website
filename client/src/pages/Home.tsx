@@ -455,38 +455,33 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
-        {/* ===== HERO SECTION ===== */}
-className="relative overflow-hidden bg-black h-[185px] md:h-[460px] lg:h-[500px]"
-
+       {/* ===== HERO SECTION ===== */}
+<section className="relative h-[185px] overflow-hidden bg-black md:h-[460px] lg:h-[500px]">
   {/* DESKTOP IMAGE */}
   <img
     src={HERO_IMAGE}
     alt="Loc7 Equipamentos Audiovisuais"
-    className="hidden md:block absolute inset-y-0 right-0 h-full w-[72%] object-cover object-[50%_center]"
+    className="absolute inset-y-0 right-0 hidden h-full w-[72%] object-cover object-[50%_center] md:block"
   />
 
   {/* MOBILE CLEAN (SEM IMAGEM) */}
-  <div className="block md:hidden absolute inset-0 bg-black" />
+  <div className="absolute inset-0 block bg-black md:hidden" />
 
   {/* GRADIENT DESKTOP */}
-  <div className="hidden md:block absolute inset-y-0 left-0 w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent" />
+  <div className="absolute inset-y-0 left-0 hidden w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent md:block" />
 
   {/* CONTENT */}
-  className="relative z-10 container flex h-full items-start pt-[28px] md:pt-32 lg:pt-36"
+  <div className="container relative z-10 flex h-full items-start pt-[28px] md:pt-32 lg:pt-36">
     <div className="max-w-[560px]">
-
       <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
         LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
       </p>
 
-     <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
-  CINE · FOTO · BROADCAST
-</h1>
-
-
+      <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
+        CINE · FOTO · BROADCAST
+      </h1>
     </div>
   </div>
-
 </section>
       {/* ===== DESTAQUES ===== */}
 <section className="bg-[oklch(0.95_0_0)] py-10 md:py-12">
