@@ -24,18 +24,19 @@ export default function AdminDashboard() {
   const [isDragOverEditProduct, setIsDragOverEditProduct] = useState(false);
 
   const [newProduct, setNewProduct] = useState({
-    name: '',
-    category: '',
-    subcategory: '',
-    price: 0,
-    description: '',
-    includes: '',
-    image_url: '',
-    images: [] as string[],
-    badge: '',
-    catalog_order: null as number | null,
-    is_featured: false,
-    featured_order: null as number | null,
+   name: '',
+category: '',
+subcategory: '',
+price: 0,
+description: '',
+includes: '',
+image_url: '',
+images: [] as string[],
+brand: '',
+badge: '',
+catalog_order: null as number | null,
+is_featured: false,
+featured_order: null as number | null,
   });
 
   const [newCategory, setNewCategory] = useState('');
@@ -362,7 +363,8 @@ export default function AdminDashboard() {
           name: newProduct.name.trim(),
           category: newProduct.category,
           subcategory: normalizeSubcategory(newProduct.subcategory) || null,
-          price: newProduct.price,
+brand: newProduct.brand.trim() || null,
+price: newProduct.price,
           description: newProduct.description,
           includes: newProduct.includes.trim() || null,
           image_url: newProduct.image_url || null,
@@ -384,12 +386,13 @@ export default function AdminDashboard() {
         price: 0,
         description: '',
         includes: '',
-        image_url: '',
-        images: [],
-        badge: '',
-        catalog_order: null,
-        is_featured: false,
-        featured_order: null,
+       image_url: '',
+images: [],
+brand: '',
+badge: '',
+catalog_order: null,
+is_featured: false,
+featured_order: null,
       });
       setError(null);
       await loadProducts();
@@ -412,7 +415,8 @@ export default function AdminDashboard() {
           name: editingProduct.name.trim(),
           category: editingProduct.category,
           subcategory: normalizeSubcategory(editingProduct.subcategory) || null,
-          price: editingProduct.price,
+brand: editingProduct.brand?.trim() || null,
+price: editingProduct.price,
           description: editingProduct.description,
           includes: editingProduct.includes?.trim() || null,
           image_url: editingProduct.image_url || null,
@@ -540,6 +544,24 @@ export default function AdminDashboard() {
               <h2 className="text-lg font-semibold text-gray-900 mb-6">Novo Produto</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Marca
+  </label>
+
+  <input
+    type="text"
+    placeholder="Ex: Sony"
+    value={newProduct.brand}
+    onChange={(e) =>
+      setNewProduct((prev) => ({
+        ...prev,
+        brand: e.target.value,
+      }))
+    }
+    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+  />
+</div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
                   <input
@@ -966,7 +988,29 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Subcategoria</label>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Marca
+  </label>
+
+  <input
+    type="text"
+    value={editingProduct.brand || ''}
+    onChange={(e) =>
+      setEditingProduct((prev) =>
+        prev
+          ? {
+              ...prev,
+              brand: e.target.value,
+            }
+          : prev
+      )
+    }
+    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+  />
+</div>
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">Subcategoria</label>
                   <select
                     value={editingProduct.subcategory || ''}
                     onChange={(e) =>
