@@ -11,6 +11,12 @@ const normalize = (text: string): string =>
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "") || "";
 
+type Subcategory = {
+  id: string;
+  name: string;
+  category_id: string;
+};
+
 export default function Catalogo() {
   const params = useParams<{ category?: string }>();
   const isCategoryPage = !!params.category;
