@@ -16,13 +16,25 @@ type Brand = {
   name: string;
 };
 
+type Subcategory = {
+  id: string;
+  name: string;
+  category_id: string;
+  category?: {
+    name: string;
+  };
+};
+
 export default function AdminDashboard() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'brands'>('products');
+  const [activeTab, setActiveTab] = useState<
+  'products' | 'categories' | 'subcategories' | 'brands'
+>('products');
 
   const [editingProduct, setEditingProduct] = useState<ProductWithImages | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -48,6 +60,10 @@ export default function AdminDashboard() {
 
   const [newCategory, setNewCategory] = useState('');
   const [newBrand, setNewBrand] = useState('');
+  const [newSubcategory, setNewSubcategory] = useState({
+  category_id: '',
+  name: '',
+});
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
 const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
@@ -59,6 +75,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     loadProducts();
     loadCategories();
     loadBrands();
+    loadSubcategories();
   }, []);
 
   useEffect(() => {
@@ -109,24 +126,23 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   };
 
   const getSubcategoriesForCategory = (categoryName: string) => {
-    if (!categoryName) return [];
+  if (!categoryName) return [];
 
-    const uniqueMap = new Map<string, string>();
+  const selectedCategory = categories.find(
+    (cat) => cat.name === categoryName
+  );
 
-    products.forEach((product) => {
-      if (product.category !== categoryName) return;
+  if (!selectedCategory) return [];
 
-      const subcategory = normalizeSubcategory(product.subcategory);
-      if (!subcategory) return;
+  return subcategories
+    .filter(
+      (subcat) => subcat.category_id === selectedCategory.id
+    )
+    .map((subcat) => subcat.name)
+    .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+};
 
-      const normalizedKey = subcategory.toLowerCase();
-      if (!uniqueMap.has(normalizedKey)) {
-        uniqueMap.set(normalizedKey, subcategory);
-      }
-    });
 
-    return Array.from(uniqueMap.values()).sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  };
 
   const newProductSubcategories = getSubcategoriesForCategory(newProduct.category);
   const editingProductSubcategories = editingProduct
@@ -243,6 +259,24 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       console.error('Erro ao carregar marcas:', err);
     }
   };
+
+  const loadSubcategories = async () => {
+  try {
+    const { data, error: err } = await supabase
+      .from('subcategories')
+      .select(`
+        *,
+        category:categories(name)
+      `)
+      .order('name');
+
+    if (err) throw err;
+
+    setSubcategories((data as Subcategory[]) || []);
+  } catch (err) {
+    console.error('Erro ao carregar subcategorias:', err);
+  }
+};
 
   const processFiles = async (files: FileList, isEditing: boolean = false) => {
     if (!files || files.length === 0) return;
@@ -545,6 +579,71 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
   };
 
+  const addSubcategory = async () => {
+  if (!newSubcategory.category_id || !newSubcategory.name.trim()) {
+    setError('Selecione a categoria e informe o nome da subcategoria');
+    return;
+  }
+
+  try {
+    const selectedCategory = categories.find(
+      (cat) => cat.id === newSubcategory.category_id
+    );
+
+    const { error: err } = await supabase
+      .from('subcategories')
+      .insert([
+        {
+          name: newSubcategory.name.trim(),
+          category_id: newSubcategory.category_id,
+          category_name: selectedCategory?.name || null,
+        },
+      ]);
+
+    if (err) throw err;
+
+    setNewSubcategory({
+      category_id: '',
+      name: '',
+    });
+
+    setError(null);
+
+    await loadSubcategories();
+
+    alert('Subcategoria adicionada com sucesso!');
+  } catch (err) {
+    setError(
+      err instanceof Error
+        ? err.message
+        : 'Erro ao adicionar subcategoria'
+    );
+  }
+};
+
+const deleteSubcategory = async (id: string) => {
+  if (!confirm('Tem certeza que deseja deletar esta subcategoria?')) return;
+
+  try {
+    const { error: err } = await supabase
+      .from('subcategories')
+      .delete()
+      .eq('id', id);
+
+    if (err) throw err;
+
+    await loadSubcategories();
+
+    alert('Subcategoria deletada com sucesso!');
+  } catch (err) {
+    setError(
+      err instanceof Error
+        ? err.message
+        : 'Erro ao deletar subcategoria'
+    );
+  }
+};
+  
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -613,6 +712,18 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
           >
             Marcas
           </button>
+
+<button
+  onClick={() => setActiveTab('subcategories')}
+  className={`pb-3 px-1 font-medium text-sm ${
+    activeTab === 'subcategories'
+      ? 'text-gray-900 border-b-2 border-gray-900'
+      : 'text-gray-500'
+  }`}
+>
+  Subcategorias
+</button>
+          
         </div>
 
         {activeTab === 'products' && (
@@ -1142,6 +1253,118 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         )}
       </div>
 
+        {activeTab === 'subcategories' && (
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded border border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Nova Subcategoria
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <select
+                  value={newSubcategory.category_id}
+                  onChange={(e) =>
+                    setNewSubcategory((prev) => ({
+                      ...prev,
+                      category_id: e.target.value,
+                    }))
+                  }
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                >
+                  <option value="">Selecione uma categoria</option>
+
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="Nome da subcategoria"
+                  value={newSubcategory.name}
+                  onChange={(e) =>
+                    setNewSubcategory((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
+
+              <button
+                onClick={addSubcategory}
+                className="mt-4 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
+              >
+                <Plus size={16} />
+                Adicionar Subcategoria
+              </button>
+            </div>
+
+            <div className="bg-white rounded border border-gray-200 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                        Subcategoria
+                      </th>
+
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                        Categoria
+                      </th>
+
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                        Ações
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-gray-200">
+                    {subcategories.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="px-4 py-8 text-center text-gray-500"
+                        >
+                          Nenhuma subcategoria cadastrada
+                        </td>
+                      </tr>
+                    ) : (
+                      subcategories.map((subcat) => (
+                        <tr key={subcat.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-gray-900 font-medium">
+                            {subcat.name}
+                          </td>
+
+                          <td className="px-4 py-3 text-gray-600">
+                            {subcat.category?.name || '-'}
+                          </td>
+
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => deleteSubcategory(subcat.id)}
+                              className="p-1 hover:bg-gray-200 rounded"
+                              title="Deletar"
+                            >
+                              <Trash2
+                                size={16}
+                                className="text-gray-600"
+                              />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+      
       {showEditModal && editingProduct && (
         <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded max-w-2xl w-full max-h-[90vh] overflow-y-auto">
