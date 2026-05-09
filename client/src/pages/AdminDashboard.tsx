@@ -269,6 +269,8 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
     if (err) throw err;
 
+console.log('SUBCATEGORIES DATA:', data);
+    
     setSubcategories((data as Subcategory[]) || []);
   } catch (err) {
     console.error('Erro ao carregar subcategorias:', err);
