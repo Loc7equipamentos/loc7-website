@@ -1220,18 +1220,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     </option>
   ))}
 </select>
-                    onChange={(e) =>
-                      setEditingProduct((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              brand: e.target.value,
-                            }
-                          : prev
-                      )
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
-                  />
+                
                 </div>
 
                 <div>
