@@ -262,10 +262,10 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
   const loadSubcategories = async () => {
   try {
-    const { data, error: err } = await supabase
-      .from('subcategories')
-      .select('*')
-      .order('name');
+   const { data, error: err } = await supabase
+  .from('subcategories')
+  .select('*')
+  .order('name');
 
     if (err) throw err;
 
