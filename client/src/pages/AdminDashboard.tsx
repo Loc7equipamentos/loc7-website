@@ -214,7 +214,10 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       setLoading(true);
       const { data, error: err } = await supabase
         .from('products')
-        .select('*')
+        .select(`
+  *,
+  category:categories(name)
+`)
         .order('created_at', { ascending: false });
 
       if (err) throw err;
