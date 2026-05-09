@@ -845,7 +845,7 @@ price: editingProduct.price,
                   <tbody className="divide-y divide-gray-200">
                     {filteredProducts.length === 0? (
                       <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
                           Nenhum produto cadastrado
                         </td>
                       </tr>
