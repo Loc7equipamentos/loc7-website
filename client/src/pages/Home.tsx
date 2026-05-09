@@ -456,7 +456,7 @@ export default function Home() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
         {/* ===== HERO SECTION ===== */}
-<section className="relative overflow-hidden bg-black h-[240px] md:h-[460px] lg:h-[500px]">
+className="relative overflow-hidden bg-black h-[185px] md:h-[460px] lg:h-[500px]"
 
   {/* DESKTOP IMAGE */}
   <img
@@ -472,7 +472,7 @@ export default function Home() {
   <div className="hidden md:block absolute inset-y-0 left-0 w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent" />
 
   {/* CONTENT */}
-  <div className="relative z-10 container flex h-full items-start pt-[52px] md:pt-32 lg:pt-36">
+  className="relative z-10 container flex h-full items-start pt-[28px] md:pt-32 lg:pt-36"
     <div className="max-w-[560px]">
 
       <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
