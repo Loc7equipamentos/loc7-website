@@ -40,6 +40,7 @@ featured_order: null as number | null,
   });
 
   const [newCategory, setNewCategory] = useState('');
+const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
 
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR').format(value);
@@ -502,6 +503,11 @@ price: editingProduct.price,
   const editingProductPreviewImages = editingProduct
     ? getCombinedImages(editingProduct.image_url, editingProduct.images)
     : [];
+  const filteredProducts = selectedCategoryFilter
+  ? products.filter(
+      (product) => product.category === selectedCategoryFilter
+    )
+  : products;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -799,6 +805,28 @@ price: editingProduct.price,
               </button>
             </div>
 
+<div className="flex justify-end mb-4">
+  <div className="w-full md:w-64">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Filtrar por categoria
+    </label>
+
+    <select
+      value={selectedCategoryFilter}
+      onChange={(e) => setSelectedCategoryFilter(e.target.value)}
+      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+    >
+      <option value="">Todas as categorias</option>
+
+      {categories.map((cat) => (
+        <option key={cat.id} value={cat.name}>
+          {cat.name}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+            
             <div className="bg-white rounded border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -813,14 +841,14 @@ price: editingProduct.price,
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {products.length === 0 ? (
+                    {filteredProducts.length === 0? (
                       <tr>
                         <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                           Nenhum produto cadastrado
                         </td>
                       </tr>
                     ) : (
-                      products.map((product) => (
+                      filteredProducts.map((product) => (
                         <tr key={product.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 text-gray-900 font-medium">{product.name}</td>
                           <td className="px-4 py-3 text-gray-600">{product.category}</td>
