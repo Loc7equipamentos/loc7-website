@@ -622,12 +622,26 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Sony"
-                    value={newProduct.brand}
-                    onChange={(e) => setNewProduct((prev) => ({ ...prev, brand: e.target.value }))}
+                 <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+
+<select
+  value={newProduct.brand}
+  onChange={(e) =>
+    setNewProduct((prev) => ({
+      ...prev,
+      brand: e.target.value,
+    }))
+  }
+  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+>
+  <option value="">Selecione uma marca</option>
+
+  {brands.map((brand) => (
+    <option key={brand.id} value={brand.name}>
+      {brand.name}
+    </option>
+  ))}
+</select>
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
                 </div>
@@ -1182,10 +1196,30 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
-                  <input
-                    type="text"
-                    value={editingProduct.brand || ''}
+                 <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+
+<select
+  value={editingProduct.brand || ''}
+  onChange={(e) =>
+    setEditingProduct((prev) =>
+      prev
+        ? {
+            ...prev,
+            brand: e.target.value,
+          }
+        : prev
+    )
+  }
+  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+>
+  <option value="">Selecione uma marca</option>
+
+  {brands.map((brand) => (
+    <option key={brand.id} value={brand.name}>
+      {brand.name}
+    </option>
+  ))}
+</select>
                     onChange={(e) =>
                       setEditingProduct((prev) =>
                         prev
