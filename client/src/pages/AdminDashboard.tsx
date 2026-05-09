@@ -611,13 +611,15 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     await loadSubcategories();
 
     alert('Subcategoria adicionada com sucesso!');
-  } catch (err) {
-    setError(
-      err instanceof Error
-        ? err.message
-        : 'Erro ao adicionar subcategoria'
-    );
-  }
+ } catch (err) {
+  console.error('ERRO SUBCATEGORY:', err);
+
+  setError(
+    err instanceof Error
+      ? err.message
+      : JSON.stringify(err)
+  );
+}
 };
 
 const deleteSubcategory = async (id: string) => {
