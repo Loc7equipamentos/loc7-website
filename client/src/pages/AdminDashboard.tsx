@@ -49,6 +49,7 @@ export default function AdminDashboard() {
   const [newCategory, setNewCategory] = useState('');
   const [newBrand, setNewBrand] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
+const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR').format(value);
@@ -557,9 +558,17 @@ export default function AdminDashboard() {
     ? getCombinedImages(editingProduct.image_url, editingProduct.images)
     : [];
 
-  const filteredProducts = selectedCategoryFilter
-    ? products.filter((product) => product.category === selectedCategoryFilter)
-    : products;
+  const filteredProducts = products.filter((product) => {
+  const categoryMatch = selectedCategoryFilter
+    ? product.category === selectedCategoryFilter
+    : true;
+
+  const brandMatch = selectedBrandFilter
+    ? product.brand === selectedBrandFilter
+    : true;
+
+  return categoryMatch && brandMatch;
+});
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -862,27 +871,47 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            <div className="flex justify-end mb-4">
-              <div className="w-full md:w-64">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Filtrar por categoria
-                </label>
+            <div className="flex flex-col md:flex-row gap-4 justify-end mb-4">
+  <div className="w-full md:w-64">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Filtrar por categoria
+    </label>
 
-                <select
-                  value={selectedCategoryFilter}
-                  onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
-                >
-                  <option value="">Todas as categorias</option>
+    <select
+      value={selectedCategoryFilter}
+      onChange={(e) => setSelectedCategoryFilter(e.target.value)}
+      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+    >
+      <option value="">Todas as categorias</option>
 
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.name}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+      {categories.map((cat) => (
+        <option key={cat.id} value={cat.name}>
+          {cat.name}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div className="w-full md:w-64">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Filtrar por marca
+    </label>
+
+    <select
+      value={selectedBrandFilter}
+      onChange={(e) => setSelectedBrandFilter(e.target.value)}
+      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+    >
+      <option value="">Todas as marcas</option>
+
+      {brands.map((brand) => (
+        <option key={brand.id} value={brand.name}>
+          {brand.name}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
 
             <div className="bg-white rounded border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
