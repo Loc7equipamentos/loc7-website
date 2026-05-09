@@ -833,8 +833,10 @@ price: editingProduct.price,
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Nome</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
+<th className="px-4 py-3 text-left font-semibold text-gray-900">Marca</th>
+<th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
+<th className="px-4 py-3 text-left font-semibold text-gray-900">Subcategoria</th>
+<th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Destaque</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ordem</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ações</th>
@@ -850,9 +852,25 @@ price: editingProduct.price,
                     ) : (
                       filteredProducts.map((product) => (
                         <tr key={product.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-gray-900 font-medium">{product.name}</td>
-                          <td className="px-4 py-3 text-gray-600">{product.category}</td>
-                          <td className="px-4 py-3 text-gray-900">R$ {formatPrice(product.price)}</td>
+                         <td className="px-4 py-3 text-gray-900 font-medium">
+  {product.name}
+</td>
+
+<td className="px-4 py-3 text-gray-600">
+  {product.brand || "-"}
+</td>
+
+<td className="px-4 py-3 text-gray-600">
+  {product.category}
+</td>
+
+<td className="px-4 py-3 text-gray-600">
+  {product.subcategory || "-"}
+</td>
+
+<td className="px-4 py-3 text-gray-900">
+  R$ {formatPrice(product.price)}
+</td>
                           <td className="px-4 py-3">
                             {product.is_featured ? (
                               <span className="text-sm text-gray-900 font-medium">Sim</span>
