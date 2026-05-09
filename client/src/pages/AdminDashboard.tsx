@@ -8,14 +8,21 @@ type ProductWithImages = Product & {
   catalog_order?: number | null;
   is_featured?: boolean | null;
   featured_order?: number | null;
+  brand?: string | null;
+};
+
+type Brand = {
+  id: string;
+  name: string;
 };
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'products' | 'categories'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'brands'>('products');
 
   const [editingProduct, setEditingProduct] = useState<ProductWithImages | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -24,23 +31,24 @@ export default function AdminDashboard() {
   const [isDragOverEditProduct, setIsDragOverEditProduct] = useState(false);
 
   const [newProduct, setNewProduct] = useState({
-   name: '',
-category: '',
-subcategory: '',
-price: 0,
-description: '',
-includes: '',
-image_url: '',
-images: [] as string[],
-brand: '',
-badge: '',
-catalog_order: null as number | null,
-is_featured: false,
-featured_order: null as number | null,
+    name: '',
+    category: '',
+    subcategory: '',
+    price: 0,
+    description: '',
+    includes: '',
+    image_url: '',
+    images: [] as string[],
+    brand: '',
+    badge: '',
+    catalog_order: null as number | null,
+    is_featured: false,
+    featured_order: null as number | null,
   });
 
   const [newCategory, setNewCategory] = useState('');
-const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
+  const [newBrand, setNewBrand] = useState('');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
 
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR').format(value);
@@ -49,6 +57,7 @@ const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
   useEffect(() => {
     loadProducts();
     loadCategories();
+    loadBrands();
   }, []);
 
   useEffect(() => {
@@ -223,6 +232,17 @@ const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
     }
   };
 
+  const loadBrands = async () => {
+    try {
+      const { data, error: err } = await supabase.from('brands').select('*').order('name');
+
+      if (err) throw err;
+      setBrands((data as Brand[]) || []);
+    } catch (err) {
+      console.error('Erro ao carregar marcas:', err);
+    }
+  };
+
   const processFiles = async (files: FileList, isEditing: boolean = false) => {
     if (!files || files.length === 0) return;
 
@@ -364,8 +384,8 @@ const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
           name: newProduct.name.trim(),
           category: newProduct.category,
           subcategory: normalizeSubcategory(newProduct.subcategory) || null,
-brand: newProduct.brand.trim() || null,
-price: newProduct.price,
+          brand: newProduct.brand.trim() || null,
+          price: newProduct.price,
           description: newProduct.description,
           includes: newProduct.includes.trim() || null,
           image_url: newProduct.image_url || null,
@@ -387,13 +407,13 @@ price: newProduct.price,
         price: 0,
         description: '',
         includes: '',
-       image_url: '',
-images: [],
-brand: '',
-badge: '',
-catalog_order: null,
-is_featured: false,
-featured_order: null,
+        image_url: '',
+        images: [],
+        brand: '',
+        badge: '',
+        catalog_order: null,
+        is_featured: false,
+        featured_order: null,
       });
       setError(null);
       await loadProducts();
@@ -416,8 +436,8 @@ featured_order: null,
           name: editingProduct.name.trim(),
           category: editingProduct.category,
           subcategory: normalizeSubcategory(editingProduct.subcategory) || null,
-brand: editingProduct.brand?.trim() || null,
-price: editingProduct.price,
+          brand: editingProduct.brand?.trim() || null,
+          price: editingProduct.price,
           description: editingProduct.description,
           includes: editingProduct.includes?.trim() || null,
           image_url: editingProduct.image_url || null,
@@ -491,6 +511,39 @@ price: editingProduct.price,
     }
   };
 
+  const addBrand = async () => {
+    if (!newBrand.trim()) {
+      setError('Digite o nome da marca');
+      return;
+    }
+
+    try {
+      const { error: err } = await supabase.from('brands').insert([{ name: newBrand.trim() }]);
+
+      if (err) throw err;
+      setNewBrand('');
+      setError(null);
+      await loadBrands();
+      alert('Marca adicionada com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao adicionar marca');
+    }
+  };
+
+  const deleteBrand = async (id: string) => {
+    if (!confirm('Tem certeza que deseja deletar esta marca?')) return;
+
+    try {
+      const { error: err } = await supabase.from('brands').delete().eq('id', id);
+
+      if (err) throw err;
+      await loadBrands();
+      alert('Marca deletada com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao deletar marca');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -503,17 +556,16 @@ price: editingProduct.price,
   const editingProductPreviewImages = editingProduct
     ? getCombinedImages(editingProduct.image_url, editingProduct.images)
     : [];
+
   const filteredProducts = selectedCategoryFilter
-  ? products.filter(
-      (product) => product.category === selectedCategoryFilter
-    )
-  : products;
+    ? products.filter((product) => product.category === selectedCategoryFilter)
+    : products;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Painel de Administração</h1>
-        <p className="text-gray-600 mb-8">Gerenciar produtos e categorias</p>
+        <p className="text-gray-600 mb-8">Gerenciar produtos, categorias e marcas</p>
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
@@ -542,6 +594,16 @@ price: editingProduct.price,
           >
             Categorias
           </button>
+          <button
+            onClick={() => setActiveTab('brands')}
+            className={`pb-3 px-1 font-medium text-sm ${
+              activeTab === 'brands'
+                ? 'text-gray-900 border-b-2 border-gray-900'
+                : 'text-gray-500'
+            }`}
+          >
+            Marcas
+          </button>
         </div>
 
         {activeTab === 'products' && (
@@ -551,23 +613,16 @@ price: editingProduct.price,
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Marca
-  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Sony"
+                    value={newProduct.brand}
+                    onChange={(e) => setNewProduct((prev) => ({ ...prev, brand: e.target.value }))}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                  />
+                </div>
 
-  <input
-    type="text"
-    placeholder="Ex: Sony"
-    value={newProduct.brand}
-    onChange={(e) =>
-      setNewProduct((prev) => ({
-        ...prev,
-        brand: e.target.value,
-      }))
-    }
-    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-  />
-</div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
                   <input
@@ -599,7 +654,9 @@ price: editingProduct.price,
                   <label className="block text-sm font-medium text-gray-700 mb-1">Subcategoria</label>
                   <select
                     value={newProduct.subcategory}
-                    onChange={(e) => setNewProduct((prev) => ({ ...prev, subcategory: e.target.value }))}
+                    onChange={(e) =>
+                      setNewProduct((prev) => ({ ...prev, subcategory: e.target.value }))
+                    }
                     disabled={!newProduct.category}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
                   >
@@ -805,45 +862,45 @@ price: editingProduct.price,
               </button>
             </div>
 
-<div className="flex justify-end mb-4">
-  <div className="w-full md:w-64">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Filtrar por categoria
-    </label>
+            <div className="flex justify-end mb-4">
+              <div className="w-full md:w-64">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Filtrar por categoria
+                </label>
 
-    <select
-      value={selectedCategoryFilter}
-      onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
-    >
-      <option value="">Todas as categorias</option>
+                <select
+                  value={selectedCategoryFilter}
+                  onChange={(e) => setSelectedCategoryFilter(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                >
+                  <option value="">Todas as categorias</option>
 
-      {categories.map((cat) => (
-        <option key={cat.id} value={cat.name}>
-          {cat.name}
-        </option>
-      ))}
-    </select>
-  </div>
-</div>
-            
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.name}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="bg-white rounded border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Nome</th>
-<th className="px-4 py-3 text-left font-semibold text-gray-900">Marca</th>
-<th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
-<th className="px-4 py-3 text-left font-semibold text-gray-900">Subcategoria</th>
-<th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Marca</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Subcategoria</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Destaque</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ordem</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ações</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {filteredProducts.length === 0? (
+                    {filteredProducts.length === 0 ? (
                       <tr>
                         <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
                           Nenhum produto cadastrado
@@ -852,25 +909,21 @@ price: editingProduct.price,
                     ) : (
                       filteredProducts.map((product) => (
                         <tr key={product.id} className="hover:bg-gray-50">
-                         <td className="px-4 py-3 text-gray-900 font-medium">
-  {product.name}
-</td>
-
-<td className="px-4 py-3 text-gray-600">
-  {product.brand || "-"}
-</td>
-
-<td className="px-4 py-3 text-gray-600">
-  {product.category}
-</td>
-
-<td className="px-4 py-3 text-gray-600">
-  {product.subcategory || "-"}
-</td>
-
-<td className="px-4 py-3 text-gray-900">
-  R$ {formatPrice(product.price)}
-</td>
+                          <td className="px-4 py-3 text-gray-900 font-medium">
+                            {product.name}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {product.brand || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {product.category}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {product.subcategory || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-900">
+                            R$ {formatPrice(product.price)}
+                          </td>
                           <td className="px-4 py-3">
                             {product.is_featured ? (
                               <span className="text-sm text-gray-900 font-medium">Sim</span>
@@ -979,6 +1032,72 @@ price: editingProduct.price,
             </div>
           </div>
         )}
+
+        {activeTab === 'brands' && (
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded border border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Nova Marca</h2>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  placeholder="Nome da marca"
+                  value={newBrand}
+                  onChange={(e) => setNewBrand(e.target.value)}
+                  style={{
+                    color: '#111827',
+                    backgroundColor: '#ffffff',
+                    WebkitTextFillColor: '#111827',
+                    caretColor: '#111827',
+                  }}
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder:text-gray-400"
+                />
+                <button
+                  onClick={addBrand}
+                  className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
+                >
+                  <Plus size={16} /> Adicionar
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-white rounded border border-gray-200 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Marca</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {brands.length === 0 ? (
+                      <tr>
+                        <td colSpan={2} className="px-4 py-8 text-center text-gray-500">
+                          Nenhuma marca cadastrada
+                        </td>
+                      </tr>
+                    ) : (
+                      brands.map((brand) => (
+                        <tr key={brand.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-gray-900 font-medium">{brand.name}</td>
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => deleteBrand(brand.id)}
+                              className="p-1 hover:bg-gray-200 rounded"
+                              title="Deletar"
+                            >
+                              <Trash2 size={16} className="text-gray-600" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {showEditModal && editingProduct && (
@@ -1034,29 +1153,26 @@ price: editingProduct.price,
                 </div>
 
                 <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Marca
-  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                  <input
+                    type="text"
+                    value={editingProduct.brand || ''}
+                    onChange={(e) =>
+                      setEditingProduct((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              brand: e.target.value,
+                            }
+                          : prev
+                      )
+                    }
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                  />
+                </div>
 
-  <input
-    type="text"
-    value={editingProduct.brand || ''}
-    onChange={(e) =>
-      setEditingProduct((prev) =>
-        prev
-          ? {
-              ...prev,
-              brand: e.target.value,
-            }
-          : prev
-      )
-    }
-    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
-  />
-</div>
-
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Subcategoria</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Subcategoria</label>
                   <select
                     value={editingProduct.subcategory || ''}
                     onChange={(e) =>
