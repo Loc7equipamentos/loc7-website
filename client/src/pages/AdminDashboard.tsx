@@ -7,7 +7,7 @@ type ProductWithImages = Product & {
   includes?: string | null;
   catalog_order?: number | null;
   is_featured?: boolean | null;
-  featured_order?: number | null;
+  featured_order?: number | null
   brand?: string | null;
 };
 
