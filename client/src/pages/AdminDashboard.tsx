@@ -849,18 +849,6 @@ const deleteSubcategory = async (id: string) => {
                   />
                 </div>
 
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-                  <textarea
-                    placeholder="Descrição do produto"
-                    value={newProduct.description}
-                    onChange={(e) =>
-                      setNewProduct((prev) => ({ ...prev, description: e.target.value }))
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                    rows={3}
-                  />
-                </div>
 
 <div className="md:col-span-2">
   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1536,19 +1524,7 @@ const deleteSubcategory = async (id: string) => {
                   />
                 </div>
 
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-                  <textarea
-                    value={editingProduct.description || ''}
-                    onChange={(e) =>
-                      setEditingProduct((prev) =>
-                        prev ? { ...prev, description: e.target.value } : prev
-                      )
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
-                    rows={3}
-                  />
-                </div>
+              
 
 <div className="md:col-span-2">
   <label className="block text-sm font-medium text-gray-700 mb-1">
