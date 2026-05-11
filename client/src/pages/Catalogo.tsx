@@ -316,11 +316,21 @@ const uniqueSubcategories =
               </div>
             </div>
 
-            <div className="lg:hidden">
-              <h1 className="text-[28px] font-bold tracking-tight text-neutral-950">
-                CATÁLOGO
-              </h1>
-            </div>
+            <div className="lg:hidden border-b border-neutral-200 pb-5">
+  <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
+    01 / CATÁLOGO
+  </span>
+
+  <h1 className="mt-2 text-[32px] font-bold leading-[0.95] tracking-[-0.04em] text-neutral-950">
+    Monte seu setup.
+  </h1>
+
+  <p className="mt-3 max-w-[320px] text-[14px] font-medium leading-relaxed text-neutral-700">
+    {searchQuery
+      ? `Resultado da busca por "${searchQuery}".`
+      : "Busque o que precisar, quando precisar."}
+  </p>
+</div>
 
             {!isCategoryPage && (
               <div className="lg:hidden">
@@ -334,11 +344,11 @@ const uniqueSubcategories =
                           setSelectedSubcategory("Todas");
                           setSelectedBrand("Todas");
                         }}
-                        className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition-colors ${
-                          selectedCategory === cat
-                            ? "border-neutral-900 bg-neutral-900 text-white"
-                            : "border-neutral-300 bg-white text-neutral-700"
-                        }`}
+                        className={`whitespace-nowrap rounded-full border px-4 py-[10px] text-[13px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
+  selectedCategory === cat
+    ? "border-black bg-black text-white shadow-sm"
+    : "border-neutral-300 bg-white text-neutral-800 hover:border-neutral-500"
+}`}
                       >
                         {cat}
                       </button>
@@ -346,7 +356,7 @@ const uniqueSubcategories =
 
                     <button
                       onClick={() => setShowMobileFilters(true)}
-                      className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700"
+                     className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-neutral-400 bg-white px-4 py-[10px] text-[13px] font-semibold text-neutral-900 shadow-sm"
                     >
                       <SlidersHorizontal className="h-4 w-4" />
                       Filtros
