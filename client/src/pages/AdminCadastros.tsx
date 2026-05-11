@@ -188,7 +188,7 @@ export default function AdminCadastros() {
             <table className="min-w-[1380px] w-full text-sm">
               <thead className="bg-gray-50 border-b text-xs uppercase text-gray-500 tracking-wide">
                 <tr>
-                  <th className="text-left px-6 py-3 w-[170px]">
+                  <th className="text-left px-6 py-3 w-[150px]">
                     ID
                   </th>
 
@@ -233,9 +233,9 @@ export default function AdminCadastros() {
                     className="border-b hover:bg-gray-50 transition"
                   >
                     <td className="px-6 py-4">
-                      <div className="inline-flex rounded-md border border-gray-300 bg-gray-50 px-3 py-1 text-xs font-black tracking-wide text-gray-900">
+                      <span className="whitespace-nowrap text-[11px] font-bold tracking-[0.08em] text-gray-500">
                         {c.display_id || "SEM ID"}
-                      </div>
+                      </span>
                     </td>
 
                     <td className="px-6 py-4">
