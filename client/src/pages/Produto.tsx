@@ -3,6 +3,8 @@ import { Link, useParams } from "wouter";
 import { supabase, type Product } from "@/lib/supabase";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
+const OFFICIAL_DOMAIN = "https://www.loc7equipamentos.com.br";
+
 type ProductImage = string;
 
 function parseImages(images: unknown): ProductImage[] {
@@ -162,6 +164,62 @@ export default function Produto() {
         productName: product.name,
       })
     : "#";
+
+  useEffect(() => {
+    if (!product) return;
+
+    const productSlug = (product as Product & { slug?: string | null }).slug || slug || "";
+    const canonicalUrl = `${OFFICIAL_DOMAIN}/equipamentos/${productSlug}`;
+    const pageTitle = `${product.name} para locação em São Paulo | LOC7`;
+    const pageDescription = `Locação de ${product.name} para produções audiovisuais, publicidade, cinema e broadcast em São Paulo. Equipamentos profissionais com suporte técnico especializado.`;
+    const ogImage = product.image_url || currentImage || "";
+
+    document.title = pageTitle;
+
+    const setMetaTag = (
+      key: "name" | "property",
+      value: string,
+      content: string
+    ) => {
+      let tag = document.head.querySelector(
+        `meta[${key}="${value}"]`
+      ) as HTMLMetaElement | null;
+
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute(key, value);
+        document.head.appendChild(tag);
+      }
+
+      tag.setAttribute("content", content);
+    };
+
+    setMetaTag("name", "description", pageDescription);
+    setMetaTag("property", "og:title", pageTitle);
+    setMetaTag("property", "og:description", pageDescription);
+    setMetaTag("property", "og:image", ogImage);
+    setMetaTag("property", "og:url", canonicalUrl);
+    setMetaTag("property", "og:type", "website");
+
+    let canonical = document.head.querySelector(
+      'link[rel="canonical"]'
+    ) as HTMLLinkElement | null;
+
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+
+    canonical.setAttribute("href", canonicalUrl);
+
+    const hostname = window.location.hostname;
+    const isStaging =
+      hostname.includes("loc7.com.br") &&
+      !hostname.includes("loc7equipamentos.com.br");
+
+    setMetaTag("name", "robots", isStaging ? "noindex, nofollow" : "index, follow");
+  }, [product, slug, currentImage]);
 
   if (loading) {
     return (
