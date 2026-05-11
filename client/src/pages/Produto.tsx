@@ -64,7 +64,7 @@ export default function Produto() {
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [previewImage, setPreviewImage] = useState<number | null>(null);
-  const [mobileTab, setMobileTab] = useState<"includes" | "highlights">("highlights");
+  const [mobileTab, setMobileTab] = useState<"includes" | "specs">("specs");
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -132,7 +132,7 @@ export default function Produto() {
 
   useEffect(() => {
     if (detailHighlights.length > 0) {
-      setMobileTab("highlights");
+      setMobileTab("specs");
       return;
     }
 
@@ -413,7 +413,7 @@ export default function Produto() {
               {detailHighlights.length > 0 && (
                 <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
                   <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                    Highlights
+                    Specs
                   </h2>
 
                   <ul className="space-y-3 text-sm text-neutral-800">
@@ -433,16 +433,16 @@ export default function Produto() {
                 {includes.length > 0 && detailHighlights.length > 0 && (
                   <div className="mb-5 flex items-center gap-6 border-b border-neutral-200 pb-3">
                     <button
-                      onClick={() => setMobileTab("highlights")}
+                      onClick={() => setMobileTab("specs")}
                       className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
-                        mobileTab === "highlights"
+                        mobileTab === "specs"
                           ? "text-neutral-950"
                           : "text-neutral-400"
                       }`}
                     >
-                      Highlights
+                      Specs
 
-                      {mobileTab === "highlights" && (
+                      {mobileTab === "specs" && (
                         <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
                       )}
                     </button>
@@ -465,11 +465,11 @@ export default function Produto() {
                 )}
 
                 {detailHighlights.length > 0 &&
-                  (mobileTab === "highlights" || includes.length === 0) && (
+                  (mobileTab === "specs" || includes.length === 0) && (
                     <>
                       {includes.length === 0 && (
                         <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                          Highlights
+                          Specs
                         </h2>
                       )}
 
