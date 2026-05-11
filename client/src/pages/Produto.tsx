@@ -64,6 +64,7 @@ export default function Produto() {
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [previewImage, setPreviewImage] = useState<number | null>(null);
+  const [mobileTab, setMobileTab] = useState<"includes" | "highlights">("highlights");
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -123,6 +124,22 @@ export default function Produto() {
     () => (product ? parseHighlights(product.description) : []),
     [product]
   );
+
+  const detailHighlights = useMemo(
+    () => [product?.badge, ...highlights].filter(Boolean) as string[],
+    [product?.badge, highlights]
+  );
+
+  useEffect(() => {
+    if (detailHighlights.length > 0) {
+      setMobileTab("highlights");
+      return;
+    }
+
+    if (includes.length > 0) {
+      setMobileTab("includes");
+    }
+  }, [detailHighlights.length, includes.length]);
 
   const currentImage =
     gallery[previewImage ?? selectedImage] || product?.image_url || "";
@@ -373,52 +390,123 @@ export default function Produto() {
           </aside>
         </section>
 
-        <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_1fr]">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
-            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-              O que acompanha
-            </h2>
+        {(includes.length > 0 || detailHighlights.length > 0) && (
+          <>
+            <section className="mt-6 hidden gap-6 lg:grid lg:grid-cols-[1fr_1fr]">
+              {includes.length > 0 && (
+                <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
+                  <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                    O que acompanha
+                  </h2>
 
-            {includes.length > 0 ? (
-              <ul className="space-y-3 text-sm text-neutral-800">
-                {includes.map((item, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-neutral-500">
-                Consulte nossa equipe para confirmar o kit completo deste item.
-              </p>
-            )}
-          </div>
+                  <ul className="space-y-3 text-sm text-neutral-800">
+                    {includes.map((item, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
-            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-              Highlights
-            </h2>
+              {detailHighlights.length > 0 && (
+                <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
+                  <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                    Highlights
+                  </h2>
 
-            {[product.badge, ...highlights].filter(Boolean).length > 0 ? (
-              <ul className="space-y-3 text-sm text-neutral-800">
-                {[product.badge, ...highlights]
-                  .filter(Boolean)
-                  .slice(0, 8)
-                  .map((item, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-neutral-500">
-                Consulte nossa equipe para conhecer os principais destaques deste item.
-              </p>
-            )}
-          </div>
-        </section>
+                  <ul className="space-y-3 text-sm text-neutral-800">
+                    {detailHighlights.slice(0, 8).map((item, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
+
+            <section className="mt-6 lg:hidden">
+              <div className="rounded-2xl border border-neutral-200 bg-white p-5">
+                {includes.length > 0 && detailHighlights.length > 0 && (
+                  <div className="mb-5 flex items-center gap-6 border-b border-neutral-200 pb-3">
+                    <button
+                      onClick={() => setMobileTab("highlights")}
+                      className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
+                        mobileTab === "highlights"
+                          ? "text-neutral-950"
+                          : "text-neutral-400"
+                      }`}
+                    >
+                      Highlights
+
+                      {mobileTab === "highlights" && (
+                        <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
+                      )}
+                    </button>
+
+                    <button
+                      onClick={() => setMobileTab("includes")}
+                      className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
+                        mobileTab === "includes"
+                          ? "text-neutral-950"
+                          : "text-neutral-400"
+                      }`}
+                    >
+                      O que acompanha
+
+                      {mobileTab === "includes" && (
+                        <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
+                      )}
+                    </button>
+                  </div>
+                )}
+
+                {detailHighlights.length > 0 &&
+                  (mobileTab === "highlights" || includes.length === 0) && (
+                    <>
+                      {includes.length === 0 && (
+                        <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                          Highlights
+                        </h2>
+                      )}
+
+                      <ul className="space-y-3 text-sm text-neutral-800">
+                        {detailHighlights.slice(0, 8).map((item, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+
+                {includes.length > 0 &&
+                  (mobileTab === "includes" || detailHighlights.length === 0) && (
+                    <>
+                      {detailHighlights.length === 0 && (
+                        <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                          O que acompanha
+                        </h2>
+                      )}
+
+                      <ul className="space-y-3 text-sm text-neutral-800">
+                        {includes.map((item, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+              </div>
+            </section>
+          </>
+        )}
       </div>
     </main>
   );
