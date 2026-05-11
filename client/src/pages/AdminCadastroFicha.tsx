@@ -384,7 +384,7 @@ export default function AdminCadastroFicha() {
 
                               const a = document.createElement("a");
                               a.href = url;
-                              a.download = `${getDisplayId(data.id)}_DOC${index + 1}.${getFileExtension(doc.name)}`;
+                              a.download = `${getDisplayId(data.display_id, data.id)}_DOC${index + 1}.${getFileExtension(doc.name)}`;
 
                               document.body.appendChild(a);
                               a.click();
@@ -504,7 +504,7 @@ export default function AdminCadastroFicha() {
           </div>
 
           <footer className="mt-8 border-t border-gray-300 pt-4 text-xs font-medium text-gray-600">
-            <div>ID do cadastro: {getDisplayId(data.id)}</div>
+            <div>ID do cadastro: {getDisplayId(data.display_id, data.id)}</div>
             <div>Documento gerado pelo sistema interno LOC7</div>
           </footer>
         </div>
@@ -732,7 +732,9 @@ function formatDate(date?: string) {
   return new Date(date).toLocaleString("pt-BR");
 }
 
-function getDisplayId(id?: string) {
+function getDisplayId(displayId?: string, id?: string) {
+  if (displayId) return displayId;
+
   if (!id) return "—";
 
   const short = id.replace(/-/g, "").slice(0, 6).toUpperCase();
