@@ -64,7 +64,7 @@ export default function Produto() {
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [previewImage, setPreviewImage] = useState<number | null>(null);
-  const [mobileTab, setMobileTab] = useState<"includes" | "specs">("specs");
+  const [mobileTab, setMobileTab] = useState<"includes" | "specs">("includes");
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -131,13 +131,13 @@ export default function Produto() {
   );
 
   useEffect(() => {
-    if (detailHighlights.length > 0) {
-      setMobileTab("specs");
+    if (includes.length > 0) {
+      setMobileTab("includes");
       return;
     }
 
-    if (includes.length > 0) {
-      setMobileTab("includes");
+    if (detailHighlights.length > 0) {
+      setMobileTab("specs");
     }
   }, [detailHighlights.length, includes.length]);
 
@@ -433,21 +433,6 @@ export default function Produto() {
                 {includes.length > 0 && detailHighlights.length > 0 && (
                   <div className="mb-5 flex items-center gap-6 border-b border-neutral-200 pb-3">
                     <button
-                      onClick={() => setMobileTab("specs")}
-                      className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
-                        mobileTab === "specs"
-                          ? "text-neutral-950"
-                          : "text-neutral-400"
-                      }`}
-                    >
-                      Specs
-
-                      {mobileTab === "specs" && (
-                        <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
-                      )}
-                    </button>
-
-                    <button
                       onClick={() => setMobileTab("includes")}
                       className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
                         mobileTab === "includes"
@@ -461,28 +446,23 @@ export default function Produto() {
                         <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
                       )}
                     </button>
+
+                    <button
+                      onClick={() => setMobileTab("specs")}
+                      className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
+                        mobileTab === "specs"
+                          ? "text-neutral-950"
+                          : "text-neutral-400"
+                      }`}
+                    >
+                      Specs
+
+                      {mobileTab === "specs" && (
+                        <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
+                      )}
+                    </button>
                   </div>
                 )}
-
-                {detailHighlights.length > 0 &&
-                  (mobileTab === "specs" || includes.length === 0) && (
-                    <>
-                      {includes.length === 0 && (
-                        <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                          Specs
-                        </h2>
-                      )}
-
-                      <ul className="space-y-3 text-sm text-neutral-800">
-                        {detailHighlights.slice(0, 8).map((item, index) => (
-                          <li key={index} className="flex items-start gap-3">
-                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  )}
 
                 {includes.length > 0 &&
                   (mobileTab === "includes" || detailHighlights.length === 0) && (
@@ -495,6 +475,26 @@ export default function Produto() {
 
                       <ul className="space-y-3 text-sm text-neutral-800">
                         {includes.map((item, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+
+                {detailHighlights.length > 0 &&
+                  (mobileTab === "specs" || includes.length === 0) && (
+                    <>
+                      {includes.length === 0 && (
+                        <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                          Specs
+                        </h2>
+                      )}
+
+                      <ul className="space-y-3 text-sm text-neutral-800">
+                        {detailHighlights.slice(0, 8).map((item, index) => (
                           <li key={index} className="flex items-start gap-3">
                             <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
                             <span>{item}</span>
