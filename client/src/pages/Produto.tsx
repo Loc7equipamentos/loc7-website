@@ -121,7 +121,7 @@ export default function Produto() {
   const includes = useMemo(() => (product ? parseIncludes(product.includes) : []), [product]);
 
   const highlights = useMemo(
-    () => (product ? parseHighlights(product.description) : []),
+    () => (product ? parseHighlights((product as Product & { specs?: string | null }).specs) : []),
     [product]
   );
 
