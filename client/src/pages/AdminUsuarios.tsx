@@ -204,6 +204,7 @@ export default function AdminUsuarios() {
                 <label className="mb-1 block text-sm font-bold text-black">
                   Senha
                 </label>
+
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -230,6 +231,7 @@ export default function AdminUsuarios() {
                 <label className="mb-1 block text-sm font-bold text-black">
                   Permissão de acesso
                 </label>
+
                 <select
                   value={form.role}
                   onChange={(e) =>
@@ -255,6 +257,37 @@ export default function AdminUsuarios() {
               >
                 {saving ? "Criando..." : "Criar Usuário"}
               </button>
+
+              <div className="mt-5 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500">
+                  Estrutura de permissões
+                </p>
+
+                <div className="mt-4 space-y-3">
+
+                  <div className="rounded-lg border border-gray-200 bg-white p-3">
+                    <div className="text-sm font-bold text-gray-900">
+                      Administrador
+                    </div>
+
+                    <div className="mt-1 text-xs leading-5 text-gray-600">
+                      Acesso completo ao sistema:
+                      usuários, produtos, cadastros e operações administrativas.
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-gray-200 bg-white p-3">
+                    <div className="text-sm font-bold text-gray-900">
+                      Operador
+                    </div>
+
+                    <div className="mt-1 text-xs leading-5 text-gray-600">
+                      Acesso operacional aos cadastros e análise de clientes.
+                    </div>
+                  </div>
+
+                </div>
+              </div>
             </form>
           </section>
 
@@ -304,12 +337,15 @@ export default function AdminUsuarios() {
                           <p className="font-bold text-black">
                             {user.name || "Sem nome"}
                           </p>
+
                           <p className="text-xs text-gray-500">
                             Profissional interno
                           </p>
                         </td>
 
-                        <td className="px-4 py-4 text-black">{user.email}</td>
+                        <td className="px-4 py-4 text-black">
+                          {user.email}
+                        </td>
 
                         <td className="px-4 py-4 text-black">
                           {user.role || "Operador"}
