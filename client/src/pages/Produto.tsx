@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
-import { CheckCircle2 } from "lucide-react";
 import { supabase, type Product } from "@/lib/supabase";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
@@ -45,6 +44,15 @@ function parseIncludes(includes: unknown): string[] {
   }
 
   return [];
+}
+
+function parseHighlights(description: unknown): string[] {
+  if (typeof description !== "string") return [];
+
+  return description
+    .split(/\n|•/)
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 export default function Produto() {
@@ -110,6 +118,11 @@ export default function Produto() {
   }, [product]);
 
   const includes = useMemo(() => (product ? parseIncludes(product.includes) : []), [product]);
+
+  const highlights = useMemo(
+    () => (product ? parseHighlights(product.description) : []),
+    [product]
+  );
 
   const currentImage =
     gallery[previewImage ?? selectedImage] || product?.image_url || "";
@@ -387,14 +400,14 @@ export default function Produto() {
               Highlights
             </h2>
 
-            {[product.badge, product.description].filter(Boolean).length > 0 ? (
+            {[product.badge, ...highlights].filter(Boolean).length > 0 ? (
               <ul className="space-y-3 text-sm text-neutral-800">
-                {[product.badge, product.description]
+                {[product.badge, ...highlights]
                   .filter(Boolean)
-                  .slice(0, 5)
+                  .slice(0, 8)
                   .map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-neutral-900" />
+                      <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
                       <span>{item}</span>
                     </li>
                   ))}
