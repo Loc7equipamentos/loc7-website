@@ -65,6 +65,7 @@ export default function Produto() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [previewImage, setPreviewImage] = useState<number | null>(null);
   const [mobileTab, setMobileTab] = useState<"includes" | "specs">("includes");
+  const [showAllSpecs, setShowAllSpecs] = useState(false);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -95,6 +96,7 @@ export default function Produto() {
         setProduct(data);
         setSelectedImage(0);
         setPreviewImage(null);
+        setShowAllSpecs(false);
       } catch (err) {
         console.error("Erro ao carregar produto:", err);
         setError("Erro ao carregar produto.");
@@ -129,6 +131,9 @@ export default function Produto() {
     () => [product?.badge, ...highlights].filter(Boolean) as string[],
     [product?.badge, highlights]
   );
+
+  const visibleSpecs = showAllSpecs ? detailHighlights : detailHighlights.slice(0, 8);
+  const hasMoreSpecs = detailHighlights.length > 8;
 
   useEffect(() => {
     if (includes.length > 0) {
@@ -392,9 +397,9 @@ export default function Produto() {
 
         {(includes.length > 0 || detailHighlights.length > 0) && (
           <>
-            <section className="mt-6 hidden gap-6 lg:grid lg:grid-cols-[1fr_1fr]">
+            <section className="mt-6 hidden gap-6 lg:flex lg:items-start">
               {includes.length > 0 && (
-                <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
+                <div className="flex-1 rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
                   <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                     O que acompanha
                   </h2>
@@ -411,19 +416,29 @@ export default function Produto() {
               )}
 
               {detailHighlights.length > 0 && (
-                <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
+                <div className="flex-1 rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
                   <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                     Specs
                   </h2>
 
                   <ul className="space-y-3 text-sm text-neutral-800">
-                    {detailHighlights.slice(0, 8).map((item, index) => (
+                    {visibleSpecs.map((item, index) => (
                       <li key={index} className="flex items-start gap-3">
                         <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
                         <span>{item}</span>
                       </li>
                     ))}
                   </ul>
+
+                  {hasMoreSpecs && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllSpecs((prev) => !prev)}
+                      className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-900 underline underline-offset-4"
+                    >
+                      {showAllSpecs ? "Ver menos" : "Ver mais"}
+                    </button>
+                  )}
                 </div>
               )}
             </section>
@@ -494,13 +509,23 @@ export default function Produto() {
                       )}
 
                       <ul className="space-y-3 text-sm text-neutral-800">
-                        {detailHighlights.slice(0, 8).map((item, index) => (
+                        {visibleSpecs.map((item, index) => (
                           <li key={index} className="flex items-start gap-3">
                             <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
                             <span>{item}</span>
                           </li>
                         ))}
                       </ul>
+
+                      {hasMoreSpecs && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAllSpecs((prev) => !prev)}
+                          className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-900 underline underline-offset-4"
+                        >
+                          {showAllSpecs ? "Ver menos" : "Ver mais"}
+                        </button>
+                      )}
                     </>
                   )}
               </div>
