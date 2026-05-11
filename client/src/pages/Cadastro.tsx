@@ -355,6 +355,22 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+async function generateDisplayId() {
+  const currentYear = new Date().getFullYear();
+
+  const { count, error } = await supabase
+    .from("rental_registrations")
+    .select("*", { count: "exact", head: true });
+
+  if (error) {
+    throw error;
+  }
+
+  const nextNumber = (count || 0) + 1;
+
+  return `LOC7-${currentYear}-${String(nextNumber).padStart(4, "0")}`;
+}
+  
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -397,14 +413,17 @@ function validateStep(step: number, formState: any, tipo: string): { valid: bool
       return;
     }
 
-    try {
-    const payload = {
-  full_name: fullName,
-  email,
-  phone,
-  registration_type: tipo,
-  form_data: formState,
-};
+   try {
+  const displayId = await generateDisplayId();
+
+  const payload = {
+    display_id: displayId,
+    full_name: fullName,
+    email,
+    phone,
+    registration_type: tipo,
+    form_data: formState,
+  };
 
      const { data: insertData, error: insertError } = await supabase
   .from("rental_registrations")
