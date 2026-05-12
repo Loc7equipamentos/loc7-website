@@ -36,6 +36,46 @@ function AdminPanelRedirect() {
   );
 }
 
+function getPageTitle(location: string) {
+  if (location === "/") {
+    return "Loc7 Equipamentos | Locação de equipamentos audiovisuais em São Paulo";
+  }
+
+  if (location === "/catalogo") {
+    return "Catálogo de Equipamentos | Loc7 Equipamentos";
+  }
+
+  if (location.startsWith("/catalogo/")) {
+    return "Equipamentos para Locação | Loc7 Equipamentos";
+  }
+
+  if (location === "/orcamento") {
+    return "Solicitar Orçamento | Loc7 Equipamentos";
+  }
+
+  if (location === "/cadastro-locacao") {
+    return "Cadastro para Locação | Loc7 Equipamentos";
+  }
+
+  if (location.startsWith("/status-cadastro")) {
+    return "Status do Cadastro | Loc7 Equipamentos";
+  }
+
+  if (location === "/admin-login") {
+    return "Login Administrativo | Loc7";
+  }
+
+  if (location.startsWith("/admin-panel")) {
+    return "Painel Administrativo | Loc7";
+  }
+
+  if (location.startsWith("/equipamentos/")) {
+    return document.title;
+  }
+
+  return "Página não encontrada | Loc7 Equipamentos";
+}
+
 export default function App() {
   const [location] = useLocation();
 
@@ -47,6 +87,12 @@ export default function App() {
     location.startsWith("/status-cadastro");
 
   const hasPublicNavbar = !isAdminRoute && !isCleanRoute;
+
+  useEffect(() => {
+    if (location.startsWith("/equipamentos/")) return;
+
+    document.title = getPageTitle(location);
+  }, [location]);
 
   return (
     <>
