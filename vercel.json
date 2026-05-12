@@ -1,5 +1,45 @@
 {
+  "redirects": [
+    {
+      "source": "/equipamentos/luz",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-ptz/:slug",
+      "destination": "/equipamentos/cameras/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/:slug",
+      "destination": "/equipamentos/iluminacao/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/:slug",
+      "destination": "/equipamentos/lentes/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-pl-mount/:slug",
+      "destination": "/equipamentos/lentes/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/:slug",
+      "destination": "/equipamentos/maquinaria/:slug",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
   ]
 }
