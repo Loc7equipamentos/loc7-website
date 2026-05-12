@@ -1,8 +1,2 @@
 User-agent: *
-Allow: /
-
-Disallow: /admin
-Disallow: /admin-panel
-Disallow: /admin-login
-
-Sitemap: https://www.loc7equipamentos.com.br/sitemap.xml
+Disallow: /
