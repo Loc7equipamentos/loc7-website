@@ -18,6 +18,7 @@ import AdminCadastroFicha from "./pages/AdminCadastroFicha";
 import AdminUsuarios from "./pages/AdminUsuarios";
 import AdminLogin from "./pages/AdminLogin";
 import AdminHub from "./pages/AdminHub";
+import NotFound from "./pages/NotFound";
 
 import AdminProtected from "./components/AdminProtected";
 
@@ -96,6 +97,9 @@ export default function App() {
               <AdminHub />
             </AdminProtected>
           </Route>
+
+          {/* GLOBAL 404 */}
+          <Route component={NotFound} />
         </Switch>
       </div>
 
