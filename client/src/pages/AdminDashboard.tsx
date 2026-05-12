@@ -798,7 +798,7 @@ const deleteSubcategory = async (id: string) => {
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
                   >
                     <option value="">Selecione</option>
-                   {subcategories.map((subcategory) => (
+                   {newProductSubcategories.map((subcategory) => (
   <option key={subcategory.id} value={subcategory.name}>
     {subcategory.name}
   </option>
