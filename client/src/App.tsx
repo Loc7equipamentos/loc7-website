@@ -36,6 +36,20 @@ function AdminPanelRedirect() {
   );
 }
 
+function setMetaDescription(content: string) {
+  let tag = document.head.querySelector(
+    'meta[name="description"]'
+  ) as HTMLMetaElement | null;
+
+  if (!tag) {
+    tag = document.createElement("meta");
+    tag.setAttribute("name", "description");
+    document.head.appendChild(tag);
+  }
+
+  tag.setAttribute("content", content);
+}
+
 function getPageTitle(location: string) {
   if (location === "/") {
     return "Loc7 Equipamentos | Locação de equipamentos audiovisuais em São Paulo";
@@ -76,6 +90,38 @@ function getPageTitle(location: string) {
   return "Página não encontrada | Loc7 Equipamentos";
 }
 
+function getPageDescription(location: string) {
+  if (location === "/") {
+    return "Locação profissional de equipamentos audiovisuais em São Paulo para cinema, foto, broadcast e produções corporativas.";
+  }
+
+  if (location === "/catalogo") {
+    return "Catálogo de equipamentos audiovisuais para locação: câmeras, lentes, iluminação, áudio, monitores, transmissão e acessórios profissionais.";
+  }
+
+  if (location.startsWith("/catalogo/")) {
+    return "Equipamentos profissionais para locação em São Paulo com suporte técnico especializado para produções audiovisuais.";
+  }
+
+  if (location === "/orcamento") {
+    return "Solicite orçamento para locação de equipamentos audiovisuais profissionais com atendimento especializado da Loc7.";
+  }
+
+  if (location === "/cadastro-locacao") {
+    return "Cadastro para locação de equipamentos audiovisuais profissionais na Loc7.";
+  }
+
+  if (location.startsWith("/status-cadastro")) {
+    return "Acompanhe o status do seu cadastro de locação na Loc7.";
+  }
+
+  if (location === "/admin-login" || location.startsWith("/admin-panel")) {
+    return "Área administrativa interna da Loc7.";
+  }
+
+  return "A página acessada não foi encontrada. Continue navegando pelo catálogo de equipamentos audiovisuais da Loc7.";
+}
+
 export default function App() {
   const [location] = useLocation();
 
@@ -92,6 +138,7 @@ export default function App() {
     if (location.startsWith("/equipamentos/")) return;
 
     document.title = getPageTitle(location);
+    setMetaDescription(getPageDescription(location));
   }, [location]);
 
   return (
