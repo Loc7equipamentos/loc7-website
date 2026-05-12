@@ -57,8 +57,19 @@ function parseHighlights(description: unknown): string[] {
     .filter(Boolean);
 }
 
+function slugifyPathSegment(value?: string | null): string {
+  return (value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+}
+
 export default function Produto() {
-  const params = useParams<{ slug?: string }>();
+  const params = useParams<{ category?: string; slug?: string }>();
   const slug = params.slug;
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -169,7 +180,8 @@ export default function Produto() {
     if (!product) return;
 
     const productSlug = (product as Product & { slug?: string | null }).slug || slug || "";
-    const canonicalUrl = `${OFFICIAL_DOMAIN}/equipamentos/${productSlug}`;
+    const categorySlug = slugifyPathSegment(product.category) || "catalogo";
+    const canonicalUrl = `${OFFICIAL_DOMAIN}/equipamentos/${categorySlug}/${productSlug}`;
     const pageTitle = `${product.name} para locação em São Paulo | LOC7`;
     const pageDescription = `Locação de ${product.name} para produções audiovisuais, publicidade, cinema e broadcast em São Paulo. Equipamentos profissionais com suporte técnico especializado.`;
     const ogImage = product.image_url || currentImage || "";
@@ -275,11 +287,7 @@ export default function Produto() {
           {product.category ? (
             <>
               <Link
-                href={`/catalogo/${(product.category || "")
-                  .toLowerCase()
-                  .normalize("NFD")
-                  .replace(/[\u0300-\u036f]/g, "")
-                  .replace(/\s+/g, "-")}`}
+                href={`/catalogo/${slugifyPathSegment(product.category)}`}
                 className="hover:text-neutral-900"
               >
                 {product.category}
@@ -405,7 +413,7 @@ export default function Produto() {
               </a>
             </div>
 
-            {product.price && (
+            {product.price ? (
               <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4">
                 <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                   Diária
@@ -447,6 +455,15 @@ export default function Produto() {
                     <span className="h-1.5 w-1.5 rounded-full bg-neutral-400" />
                     <span>Desenvolvimento de projetos especiais</span>
                   </div>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4">
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                  Diária
+                </span>
+                <div className="mt-1 text-2xl font-semibold text-neutral-950">
+                  Sob consulta
                 </div>
               </div>
             )}
