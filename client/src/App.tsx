@@ -1,3 +1,4 @@
+```tsx
 import { useEffect } from "react";
 import { Route, Switch, useLocation } from "wouter";
 
@@ -40,12 +41,23 @@ function AdminPanelRedirect() {
 }
 
 function getPageSEO(location: string) {
+  const noIndexRoutes =
+    location === "/admin-login" ||
+    location.startsWith("/admin-panel") ||
+    location === "/cadastro-locacao" ||
+    location.startsWith("/status-cadastro");
+
+  const robots = noIndexRoutes
+    ? "noindex,nofollow"
+    : "index,follow";
+
   if (location === "/") {
     return {
       title:
         "Loc7 Equipamentos | Locação de equipamentos audiovisuais em São Paulo",
       description:
         "Locadora profissional de equipamentos audiovisuais em São Paulo. Câmeras, lentes, iluminação, áudio, broadcast e produção.",
+      robots,
     };
   }
 
@@ -54,6 +66,7 @@ function getPageSEO(location: string) {
       title: "Catálogo de Equipamentos | Loc7 Equipamentos",
       description:
         "Explore o catálogo profissional da Loc7 com equipamentos para cinema, broadcast, fotografia, iluminação e produção audiovisual.",
+      robots,
     };
   }
 
@@ -62,6 +75,7 @@ function getPageSEO(location: string) {
       title: "Equipamentos para Locação | Loc7 Equipamentos",
       description:
         "Equipamentos profissionais para locação audiovisual em São Paulo.",
+      robots,
     };
   }
 
@@ -70,6 +84,7 @@ function getPageSEO(location: string) {
       title: "Solicitar Orçamento | Loc7 Equipamentos",
       description:
         "Solicite um orçamento para locação de equipamentos audiovisuais profissionais.",
+      robots,
     };
   }
 
@@ -78,6 +93,7 @@ function getPageSEO(location: string) {
       title: "Cadastro para Locação | Loc7 Equipamentos",
       description:
         "Realize seu cadastro para locação de equipamentos audiovisuais na Loc7.",
+      robots,
     };
   }
 
@@ -86,6 +102,7 @@ function getPageSEO(location: string) {
       title: "Status do Cadastro | Loc7 Equipamentos",
       description:
         "Acompanhe o status do seu cadastro de locação na Loc7 Equipamentos.",
+      robots,
     };
   }
 
@@ -93,6 +110,7 @@ function getPageSEO(location: string) {
     return {
       title: "Login Administrativo | Loc7",
       description: "Área administrativa interna da Loc7.",
+      robots,
     };
   }
 
@@ -100,6 +118,7 @@ function getPageSEO(location: string) {
     return {
       title: "Painel Administrativo | Loc7",
       description: "Painel interno administrativo da Loc7.",
+      robots,
     };
   }
 
@@ -108,6 +127,7 @@ function getPageSEO(location: string) {
       title: document.title,
       description:
         "Equipamento audiovisual profissional disponível para locação na Loc7.",
+      robots,
     };
   }
 
@@ -115,6 +135,7 @@ function getPageSEO(location: string) {
     title: "Página não encontrada | Loc7 Equipamentos",
     description:
       "A página acessada não existe ou foi removida da Loc7 Equipamentos.",
+    robots: "noindex,nofollow",
   };
 }
 
@@ -127,7 +148,13 @@ function updateMetaProperty(
 
   if (!tag) {
     tag = document.createElement("meta");
-    tag.setAttribute(attribute, selector.includes("property") ? selector.match(/"(.*)"/)?.[1] || "" : selector.match(/"(.*)"/)?.[1] || "");
+
+    const match = selector.match(/"(.*)"/);
+
+    if (match?.[1]) {
+      tag.setAttribute(attribute, match[1]);
+    }
+
     document.head.appendChild(tag);
   }
 
@@ -164,6 +191,18 @@ export default function App() {
     }
 
     metaDescription.setAttribute("content", seo.description);
+
+    let robotsMeta = document.querySelector(
+      'meta[name="robots"]'
+    );
+
+    if (!robotsMeta) {
+      robotsMeta = document.createElement("meta");
+      robotsMeta.setAttribute("name", "robots");
+      document.head.appendChild(robotsMeta);
+    }
+
+    robotsMeta.setAttribute("content", seo.robots);
 
     const canonicalUrl = `${SITE_URL}${location}`;
 
@@ -294,3 +333,4 @@ export default function App() {
     </>
   );
 }
+```
