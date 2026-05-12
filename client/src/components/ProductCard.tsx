@@ -33,6 +33,17 @@ function parseImages(images: unknown): string[] {
   return [];
 }
 
+function slugifyPathSegment(value?: string | null): string {
+  return (value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+}
+
 export default function ProductCard({ product }: Props) {
   const gallery = useMemo(() => {
     const parsedImages = parseImages(product.images);
@@ -47,10 +58,15 @@ export default function ProductCard({ product }: Props) {
   const primaryImage = gallery[0] || "/placeholder.jpg";
   const hoverImage = gallery[1] || primaryImage;
 
+  const categorySlug = slugifyPathSegment(product.category) || "catalogo";
+
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <Link href={`/equipamentos/${product.slug}`} className="block h-full">
+    <Link
+      href={`/equipamentos/${categorySlug}/${product.slug}`}
+      className="block h-full"
+    >
       <div
         className="flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-neutral-200/70 bg-white shadow-[0_12px_34px_rgba(0,0,0,0.09)] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_18px_48px_rgba(0,0,0,0.14)]"
         onMouseEnter={() => setIsHovered(true)}
@@ -97,13 +113,19 @@ export default function ProductCard({ product }: Props) {
             {product.name}
           </h3>
 
-          {product.price && (
+          {product.price ? (
             <div className="mt-1.5 flex items-baseline gap-1">
-  <span className="text-[13px] font-semibold text-neutral-850 sm:text-[13.5px]">
-    R$ {Number(product.price).toLocaleString("pt-BR")}
-  </span>
-  <span className="text-[10px] font-medium text-neutral-500">/ dia</span>
-</div>
+              <span className="text-[13px] font-semibold text-neutral-850 sm:text-[13.5px]">
+                R$ {Number(product.price).toLocaleString("pt-BR")}
+              </span>
+              <span className="text-[10px] font-medium text-neutral-500">
+                / dia
+              </span>
+            </div>
+          ) : (
+            <div className="mt-1.5 text-[12px] font-semibold text-neutral-700">
+              Sob consulta
+            </div>
           )}
         </div>
       </div>
