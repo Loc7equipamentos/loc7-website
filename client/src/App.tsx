@@ -22,6 +22,9 @@ import NotFound from "./pages/NotFound";
 
 import AdminProtected from "./components/AdminProtected";
 
+const SITE_URL = "https://loc7equipamentos.com.br";
+const DEFAULT_OG_IMAGE = `${SITE_URL}/hero-loc7.jpg`;
+
 function AdminPanelRedirect() {
   const [, setLocation] = useLocation();
 
@@ -115,6 +118,22 @@ function getPageSEO(location: string) {
   };
 }
 
+function updateMetaProperty(
+  selector: string,
+  attribute: string,
+  value: string
+) {
+  let tag = document.querySelector(selector);
+
+  if (!tag) {
+    tag = document.createElement("meta");
+    tag.setAttribute(attribute, selector.includes("property") ? selector.match(/"(.*)"/)?.[1] || "" : selector.match(/"(.*)"/)?.[1] || "");
+    document.head.appendChild(tag);
+  }
+
+  tag.setAttribute("content", value);
+}
+
 export default function App() {
   const [location] = useLocation();
 
@@ -145,6 +164,74 @@ export default function App() {
     }
 
     metaDescription.setAttribute("content", seo.description);
+
+    const canonicalUrl = `${SITE_URL}${location}`;
+
+    let canonical = document.querySelector(
+      'link[rel="canonical"]'
+    ) as HTMLLinkElement | null;
+
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+
+    canonical.setAttribute("href", canonicalUrl);
+
+    updateMetaProperty(
+      'meta[property="og:title"]',
+      "property",
+      seo.title
+    );
+
+    updateMetaProperty(
+      'meta[property="og:description"]',
+      "property",
+      seo.description
+    );
+
+    updateMetaProperty(
+      'meta[property="og:type"]',
+      "property",
+      "website"
+    );
+
+    updateMetaProperty(
+      'meta[property="og:url"]',
+      "property",
+      canonicalUrl
+    );
+
+    updateMetaProperty(
+      'meta[property="og:image"]',
+      "property",
+      DEFAULT_OG_IMAGE
+    );
+
+    updateMetaProperty(
+      'meta[name="twitter:card"]',
+      "name",
+      "summary_large_image"
+    );
+
+    updateMetaProperty(
+      'meta[name="twitter:title"]',
+      "name",
+      seo.title
+    );
+
+    updateMetaProperty(
+      'meta[name="twitter:description"]',
+      "name",
+      seo.description
+    );
+
+    updateMetaProperty(
+      'meta[name="twitter:image"]',
+      "name",
+      DEFAULT_OG_IMAGE
+    );
   }, [location]);
 
   return (
