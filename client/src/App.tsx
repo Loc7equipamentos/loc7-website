@@ -36,90 +36,83 @@ function AdminPanelRedirect() {
   );
 }
 
-function setMetaDescription(content: string) {
-  let tag = document.head.querySelector(
-    'meta[name="description"]'
-  ) as HTMLMetaElement | null;
-
-  if (!tag) {
-    tag = document.createElement("meta");
-    tag.setAttribute("name", "description");
-    document.head.appendChild(tag);
-  }
-
-  tag.setAttribute("content", content);
-}
-
-function getPageTitle(location: string) {
+function getPageSEO(location: string) {
   if (location === "/") {
-    return "Loc7 Equipamentos | Locação de equipamentos audiovisuais em São Paulo";
+    return {
+      title:
+        "Loc7 Equipamentos | Locação de equipamentos audiovisuais em São Paulo",
+      description:
+        "Locadora profissional de equipamentos audiovisuais em São Paulo. Câmeras, lentes, iluminação, áudio, broadcast e produção.",
+    };
   }
 
   if (location === "/catalogo") {
-    return "Catálogo de Equipamentos | Loc7 Equipamentos";
+    return {
+      title: "Catálogo de Equipamentos | Loc7 Equipamentos",
+      description:
+        "Explore o catálogo profissional da Loc7 com equipamentos para cinema, broadcast, fotografia, iluminação e produção audiovisual.",
+    };
   }
 
   if (location.startsWith("/catalogo/")) {
-    return "Equipamentos para Locação | Loc7 Equipamentos";
+    return {
+      title: "Equipamentos para Locação | Loc7 Equipamentos",
+      description:
+        "Equipamentos profissionais para locação audiovisual em São Paulo.",
+    };
   }
 
   if (location === "/orcamento") {
-    return "Solicitar Orçamento | Loc7 Equipamentos";
+    return {
+      title: "Solicitar Orçamento | Loc7 Equipamentos",
+      description:
+        "Solicite um orçamento para locação de equipamentos audiovisuais profissionais.",
+    };
   }
 
   if (location === "/cadastro-locacao") {
-    return "Cadastro para Locação | Loc7 Equipamentos";
+    return {
+      title: "Cadastro para Locação | Loc7 Equipamentos",
+      description:
+        "Realize seu cadastro para locação de equipamentos audiovisuais na Loc7.",
+    };
   }
 
   if (location.startsWith("/status-cadastro")) {
-    return "Status do Cadastro | Loc7 Equipamentos";
+    return {
+      title: "Status do Cadastro | Loc7 Equipamentos",
+      description:
+        "Acompanhe o status do seu cadastro de locação na Loc7 Equipamentos.",
+    };
   }
 
   if (location === "/admin-login") {
-    return "Login Administrativo | Loc7";
+    return {
+      title: "Login Administrativo | Loc7",
+      description: "Área administrativa interna da Loc7.",
+    };
   }
 
   if (location.startsWith("/admin-panel")) {
-    return "Painel Administrativo | Loc7";
+    return {
+      title: "Painel Administrativo | Loc7",
+      description: "Painel interno administrativo da Loc7.",
+    };
   }
 
   if (location.startsWith("/equipamentos/")) {
-    return document.title;
+    return {
+      title: document.title,
+      description:
+        "Equipamento audiovisual profissional disponível para locação na Loc7.",
+    };
   }
 
-  return "Página não encontrada | Loc7 Equipamentos";
-}
-
-function getPageDescription(location: string) {
-  if (location === "/") {
-    return "Locação profissional de equipamentos audiovisuais em São Paulo para cinema, foto, broadcast e produções corporativas.";
-  }
-
-  if (location === "/catalogo") {
-    return "Catálogo de equipamentos audiovisuais para locação: câmeras, lentes, iluminação, áudio, monitores, transmissão e acessórios profissionais.";
-  }
-
-  if (location.startsWith("/catalogo/")) {
-    return "Equipamentos profissionais para locação em São Paulo com suporte técnico especializado para produções audiovisuais.";
-  }
-
-  if (location === "/orcamento") {
-    return "Solicite orçamento para locação de equipamentos audiovisuais profissionais com atendimento especializado da Loc7.";
-  }
-
-  if (location === "/cadastro-locacao") {
-    return "Cadastro para locação de equipamentos audiovisuais profissionais na Loc7.";
-  }
-
-  if (location.startsWith("/status-cadastro")) {
-    return "Acompanhe o status do seu cadastro de locação na Loc7.";
-  }
-
-  if (location === "/admin-login" || location.startsWith("/admin-panel")) {
-    return "Área administrativa interna da Loc7.";
-  }
-
-  return "A página acessada não foi encontrada. Continue navegando pelo catálogo de equipamentos audiovisuais da Loc7.";
+  return {
+    title: "Página não encontrada | Loc7 Equipamentos",
+    description:
+      "A página acessada não existe ou foi removida da Loc7 Equipamentos.",
+  };
 }
 
 export default function App() {
@@ -137,8 +130,21 @@ export default function App() {
   useEffect(() => {
     if (location.startsWith("/equipamentos/")) return;
 
-    document.title = getPageTitle(location);
-    setMetaDescription(getPageDescription(location));
+    const seo = getPageSEO(location);
+
+    document.title = seo.title;
+
+    let metaDescription = document.querySelector(
+      'meta[name="description"]'
+    );
+
+    if (!metaDescription) {
+      metaDescription = document.createElement("meta");
+      metaDescription.setAttribute("name", "description");
+      document.head.appendChild(metaDescription);
+    }
+
+    metaDescription.setAttribute("content", seo.description);
   }, [location]);
 
   return (
