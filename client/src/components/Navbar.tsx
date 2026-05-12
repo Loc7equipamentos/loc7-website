@@ -259,7 +259,7 @@ export default function Navbar() {
       console.error("Erro busca produto:", err);
     }
 
-    console.log("SEM RESULTADO:", rawQuery);
+    window.location.href = `/catalogo?search=${encodeURIComponent(rawQuery)}`;
   };
 
   return (
