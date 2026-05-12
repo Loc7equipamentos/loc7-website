@@ -1,2 +1,11 @@
 User-agent: *
-Disallow: /
+Allow: /
+
+Disallow: /admin-login
+Disallow: /admin-panel
+Disallow: /admin-panel/*
+Disallow: /status-cadastro
+Disallow: /status-cadastro/*
+Disallow: /cadastro-locacao
+
+Sitemap: https://loc7equipamentos.com.br/sitemap.xml
