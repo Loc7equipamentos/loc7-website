@@ -11,6 +11,16 @@ const normalize = (text: string): string =>
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "") || "";
 
+const slugifyPathSegment = (text: string): string =>
+  text
+    ?.toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "") || "";
+
 type Subcategory = {
   id: string;
   name: string;
@@ -21,17 +31,13 @@ export default function Catalogo() {
   const params = useParams<{ category?: string }>();
   const isCategoryPage = !!params.category;
 
-  const categoryExists = params.category
-  ? Object.keys(slugToCategoryName).includes(params.category)
-  : true;
-
- const [products, setProducts] = useState<Product[]>([]);
-const [categories, setCategories] = useState<string[]>([]);
-const [categoryRows, setCategoryRows] = useState<
-  { id: string; name: string }[]
->([]);
-const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
-const [searchQuery, setSearchQuery] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [categoryRows, setCategoryRows] = useState<
+    { id: string; name: string }[]
+  >([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -83,26 +89,26 @@ const [searchQuery, setSearchQuery] = useState("");
         setError(null);
 
         const { data: categoriesData, error: catError } = await supabase
-  .from("categories")
-  .select("id, name")
-  .order("name");
+          .from("categories")
+          .select("id, name")
+          .order("name");
 
         if (catError) throw catError;
 
-       const categoryNames = categoriesData?.map((c) => c.name) || [];
-setCategories(["Todos", ...categoryNames]);
-setCategoryRows(categoriesData || []);
+        const categoryNames = categoriesData?.map((c) => c.name) || [];
+        setCategories(["Todos", ...categoryNames]);
+        setCategoryRows(categoriesData || []);
 
-const { data: subcategoriesData, error: subError } = await supabase
-  .from("subcategories")
-  .select("*")
-  .order("name");
+        const { data: subcategoriesData, error: subError } = await supabase
+          .from("subcategories")
+          .select("*")
+          .order("name");
 
-if (subError) throw subError;
+        if (subError) throw subError;
 
-setSubcategories(subcategoriesData || []);
+        setSubcategories(subcategoriesData || []);
 
-const { data: productsData, error: prodError } = await supabase
+        const { data: productsData, error: prodError } = await supabase
           .from("products")
           .select("*")
           .order("name", { ascending: true });
@@ -120,6 +126,11 @@ const { data: productsData, error: prodError } = await supabase
 
     loadData();
   }, []);
+
+  const categoryExists =
+    !params.category ||
+    loading ||
+    categoryRows.some((cat) => slugifyPathSegment(cat.name) === params.category);
 
   const searchScopedProducts = products.filter((p) => {
     if (!searchQuery.trim()) return true;
@@ -142,18 +153,18 @@ const { data: productsData, error: prodError } = await supabase
       : normalize(p.category || "") === normalize(selectedCategory)
   );
 
- const selectedCategoryRow = categoryRows.find(
-  (cat) => normalize(cat.name) === normalize(selectedCategory)
-);
+  const selectedCategoryRow = categoryRows.find(
+    (cat) => normalize(cat.name) === normalize(selectedCategory)
+  );
 
-const uniqueSubcategories =
-  selectedCategory === "Todos" || !selectedCategoryRow
-    ? []
-    : subcategories
-        .filter((subcat) => subcat.category_id === selectedCategoryRow.id)
-        .map((subcat) => subcat.name)
-        .filter(Boolean)
-        .sort((a, b) => a.localeCompare(b, "pt-BR"));
+  const uniqueSubcategories =
+    selectedCategory === "Todos" || !selectedCategoryRow
+      ? []
+      : subcategories
+          .filter((subcat) => subcat.category_id === selectedCategoryRow.id)
+          .map((subcat) => subcat.name)
+          .filter(Boolean)
+          .sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   const uniqueBrands = Array.from(
     new Set(
@@ -283,34 +294,34 @@ const uniqueSubcategories =
     </div>
   );
 
-  if (isCategoryPage && !categoryExists) {
-  return (
-    <main className="min-h-screen bg-[#f3f3f1] px-4 pb-16 pt-28 sm:px-6 lg:px-10">
-      <div className="mx-auto max-w-[1600px] rounded-2xl border border-neutral-200 bg-white px-6 py-14 text-center">
-        <h1 className="text-2xl font-semibold text-neutral-950">
-          Categoria não encontrada
-        </h1>
-
-        <p className="mt-3 text-sm text-neutral-600">
-          A categoria acessada não existe ou foi removida.
-        </p>
-
-        <a
-          href="/catalogo"
-          className="mt-6 inline-flex rounded-lg bg-black px-5 py-3 text-sm font-medium text-white transition hover:opacity-90"
-        >
-          Voltar ao catálogo
-        </a>
-      </div>
-    </main>
-  );
-}
-  
   if (error) {
     return (
       <main className="min-h-screen bg-[#f3f3f1] px-4 pb-16 pt-28 sm:px-6 lg:px-10">
         <div className="mx-auto max-w-[1600px] rounded-2xl border border-red-200 bg-red-50 px-6 py-5 text-sm text-red-700">
           {error}
+        </div>
+      </main>
+    );
+  }
+
+  if (isCategoryPage && !categoryExists) {
+    return (
+      <main className="min-h-screen bg-[#f3f3f1] px-4 pb-16 pt-28 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1600px] rounded-2xl border border-neutral-200 bg-white px-6 py-14 text-center">
+          <h1 className="text-2xl font-semibold text-neutral-950">
+            Categoria não encontrada
+          </h1>
+
+          <p className="mt-3 text-sm text-neutral-600">
+            A categoria acessada não existe ou foi removida.
+          </p>
+
+          <a
+            href="/catalogo"
+            className="mt-6 inline-flex rounded-lg bg-black px-5 py-3 text-sm font-medium text-white transition hover:opacity-90"
+          >
+            Voltar ao catálogo
+          </a>
         </div>
       </main>
     );
@@ -344,20 +355,20 @@ const uniqueSubcategories =
             </div>
 
             <div className="lg:hidden border-b border-neutral-200 pb-5">
-  <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
-    01 / CATÁLOGO
-  </span>
+              <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
+                01 / CATÁLOGO
+              </span>
 
-  <h1 className="mt-2 text-[32px] font-bold leading-[0.95] tracking-[-0.04em] text-neutral-950">
-    Monte seu setup.
-  </h1>
+              <h1 className="mt-2 text-[32px] font-bold leading-[0.95] tracking-[-0.04em] text-neutral-950">
+                Monte seu setup.
+              </h1>
 
-  <p className="mt-3 max-w-[320px] text-[14px] font-medium leading-relaxed text-neutral-700">
-    {searchQuery
-      ? `Resultado da busca por "${searchQuery}".`
-      : "Busque o que precisar, quando precisar."}
-  </p>
-</div>
+              <p className="mt-3 max-w-[320px] text-[14px] font-medium leading-relaxed text-neutral-700">
+                {searchQuery
+                  ? `Resultado da busca por "${searchQuery}".`
+                  : "Busque o que precisar, quando precisar."}
+              </p>
+            </div>
 
             {!isCategoryPage && (
               <div className="lg:hidden">
@@ -372,10 +383,10 @@ const uniqueSubcategories =
                           setSelectedBrand("Todas");
                         }}
                         className={`whitespace-nowrap rounded-full border px-4 py-[10px] text-[13px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
-  selectedCategory === cat
-    ? "border-black bg-black text-white shadow-sm"
-    : "border-neutral-300 bg-white text-neutral-800 hover:border-neutral-500"
-}`}
+                          selectedCategory === cat
+                            ? "border-black bg-black text-white shadow-sm"
+                            : "border-neutral-300 bg-white text-neutral-800 hover:border-neutral-500"
+                        }`}
                       >
                         {cat}
                       </button>
@@ -383,7 +394,7 @@ const uniqueSubcategories =
 
                     <button
                       onClick={() => setShowMobileFilters(true)}
-                     className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-neutral-400 bg-white px-4 py-[10px] text-[13px] font-semibold text-neutral-900 shadow-sm"
+                      className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-neutral-400 bg-white px-4 py-[10px] text-[13px] font-semibold text-neutral-900 shadow-sm"
                     >
                       <SlidersHorizontal className="h-4 w-4" />
                       Filtros
