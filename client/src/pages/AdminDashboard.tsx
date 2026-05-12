@@ -799,8 +799,8 @@ const deleteSubcategory = async (id: string) => {
                   >
                     <option value="">Selecione</option>
                    {newProductSubcategories.map((subcategory) => (
-  <option key={subcategory.id} value={subcategory.name}>
-    {subcategory.name}
+  <option key={subcategory} value={subcategory}>
+    {subcategory}
   </option>
 ))}
                   </select>
