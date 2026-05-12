@@ -78,6 +78,17 @@ export default function Navbar() {
   >(fallbackCategories);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
+  const handleMobileHomeReload = () => {
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile && location === "/") {
+      window.location.reload();
+      return;
+    }
+
+    window.location.href = "/";
+  };
+
   useEffect(() => {
     const loadCategories = async () => {
       try {
@@ -272,6 +283,14 @@ export default function Navbar() {
         <div className="flex items-stretch justify-between overflow-visible">
           <Link
             href="/"
+            onClick={(event) => {
+              const isMobile = window.innerWidth < 768;
+
+              if (isMobile) {
+                event.preventDefault();
+                handleMobileHomeReload();
+              }
+            }}
             className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-[92px] md:h-[72px] overflow-visible"
           >
             <img
@@ -423,6 +442,12 @@ export default function Navbar() {
                   ) : (
                     <Link
                       href={link.href}
+                      onClick={(event) => {
+                        if (link.href === "/") {
+                          event.preventDefault();
+                          handleMobileHomeReload();
+                        }
+                      }}
                       className="block px-4 py-3 text-white hover:bg-gray-900 transition text-sm font-medium"
                     >
                       {link.name}
