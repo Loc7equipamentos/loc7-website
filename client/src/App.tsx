@@ -3,7 +3,7 @@ import { Route, Switch, useLocation } from "wouter";
 
 import Navbar from "./components/Navbar";
 import WhatsAppFloat from "./components/WhatsAppFloat";
-import Footer from "./components/Footer"; // ← ADICIONADO
+import Footer from "./components/Footer";
 
 import Home from "./pages/Home";
 import Catalogo from "./pages/Catalogo";
@@ -57,6 +57,7 @@ export default function App() {
           <Route path="/" component={Home} />
           <Route path="/catalogo" component={Catalogo} />
           <Route path="/catalogo/:category" component={Catalogo} />
+          <Route path="/equipamentos/:category/:slug" component={Produto} />
           <Route path="/equipamentos/:slug" component={Produto} />
           <Route path="/orcamento" component={Orcamento} />
           <Route path="/cadastro-locacao" component={CadastroPage} />
@@ -98,9 +99,7 @@ export default function App() {
         </Switch>
       </div>
 
-      {/* FOOTER ADICIONADO */}
       {hasPublicNavbar && <Footer />}
-
       {hasPublicNavbar && <WhatsAppFloat />}
     </>
   );
