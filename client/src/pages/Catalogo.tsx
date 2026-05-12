@@ -21,6 +21,10 @@ export default function Catalogo() {
   const params = useParams<{ category?: string }>();
   const isCategoryPage = !!params.category;
 
+  const categoryExists = params.category
+  ? Object.keys(slugToCategoryName).includes(params.category)
+  : true;
+
  const [products, setProducts] = useState<Product[]>([]);
 const [categories, setCategories] = useState<string[]>([]);
 const [categoryRows, setCategoryRows] = useState<
@@ -279,6 +283,29 @@ const uniqueSubcategories =
     </div>
   );
 
+  if (isCategoryPage && !categoryExists) {
+  return (
+    <main className="min-h-screen bg-[#f3f3f1] px-4 pb-16 pt-28 sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-[1600px] rounded-2xl border border-neutral-200 bg-white px-6 py-14 text-center">
+        <h1 className="text-2xl font-semibold text-neutral-950">
+          Categoria não encontrada
+        </h1>
+
+        <p className="mt-3 text-sm text-neutral-600">
+          A categoria acessada não existe ou foi removida.
+        </p>
+
+        <a
+          href="/catalogo"
+          className="mt-6 inline-flex rounded-lg bg-black px-5 py-3 text-sm font-medium text-white transition hover:opacity-90"
+        >
+          Voltar ao catálogo
+        </a>
+      </div>
+    </main>
+  );
+}
+  
   if (error) {
     return (
       <main className="min-h-screen bg-[#f3f3f1] px-4 pb-16 pt-28 sm:px-6 lg:px-10">
