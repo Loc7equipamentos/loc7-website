@@ -85,18 +85,26 @@ export default function Navbar() {
 
         const { data, error } = await supabase
           .from("categories")
-          .select("name")
+          .select("name, slug")
           .order("name");
 
         if (error) {
           console.warn("[DEBUG] Erro ao carregar categorias:", error);
           setDropdownCategories(fallbackCategories);
         } else if (data && data.length > 0) {
-          const categories = data.map((cat: { name: string }) => ({
-            name: cat.name.toUpperCase(),
-            href: `/catalogo/${cat.name.toLowerCase().replace(/\s+/g, "-")}`,
-          }));
-          setDropdownCategories(categories);
+          const categories = data
+            .filter(
+              (cat: { name?: string | null; slug?: string | null }) =>
+                !!cat.name?.trim() && !!cat.slug?.trim()
+            )
+            .map((cat: { name: string; slug: string }) => ({
+              name: cat.name.toUpperCase(),
+              href: `/catalogo/${cat.slug}`,
+            }));
+
+          setDropdownCategories(
+            categories.length > 0 ? categories : fallbackCategories
+          );
         } else {
           setDropdownCategories(fallbackCategories);
         }
@@ -156,93 +164,103 @@ export default function Navbar() {
     };
   }, []);
 
-const handleSearchSubmit = async () => {
-  const rawQuery = searchQuery.trim();
+  const handleSearchSubmit = async () => {
+    const rawQuery = searchQuery.trim();
 
-  const normalizedQuery = rawQuery
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    const normalizedQuery = rawQuery
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
 
-  if (!normalizedQuery) return;
+    if (!normalizedQuery) return;
 
-  const categoryMap: Record<string, string> = {
-    camera: "/catalogo/cameras",
-    cameras: "/catalogo/cameras",
+    const categoryMap: Record<string, string> = {
+      camera: "/catalogo/cameras",
+      cameras: "/catalogo/cameras",
 
-    lente: "/catalogo/lentes",
-    lentes: "/catalogo/lentes",
+      lente: "/catalogo/lentes",
+      lentes: "/catalogo/lentes",
 
-    iluminacao: "/catalogo/iluminacao",
-    luz: "/catalogo/iluminacao",
-    luzes: "/catalogo/iluminacao",
+      iluminacao: "/catalogo/iluminacao",
+      luz: "/catalogo/iluminacao",
+      luzes: "/catalogo/iluminacao",
 
-    audio: "/catalogo/audio",
-    microfone: "/catalogo/audio",
-    microfones: "/catalogo/audio",
-    mic: "/catalogo/audio",
+      audio: "/catalogo/audio",
+      microfone: "/catalogo/audio",
+      microfones: "/catalogo/audio",
+      mic: "/catalogo/audio",
 
-    monitor: "/catalogo/monitores",
-    monitores: "/catalogo/monitores",
+      monitor: "/catalogo/monitores",
+      monitores: "/catalogo/monitores",
 
-    movimento: "/catalogo/movimento",
-    gimbal: "/catalogo/movimento",
-    estabilizador: "/catalogo/movimento",
+      movimento: "/catalogo/movimento",
+      gimbal: "/catalogo/movimento",
+      estabilizador: "/catalogo/movimento",
 
-    transmissor: "/catalogo/transmissores",
-    transmissores: "/catalogo/transmissores",
+      transmissor: "/catalogo/transmissores",
+      transmissores: "/catalogo/transmissores",
 
-    maquinaria: "/catalogo/maquinaria",
-    tripe: "/catalogo/maquinaria",
-    tripes: "/catalogo/maquinaria",
+      maquinaria: "/catalogo/maquinaria",
+      tripe: "/catalogo/maquinaria",
+      tripes: "/catalogo/maquinaria",
+    };
+
+    const matchedCategory = Object.entries(categoryMap).find(([key]) =>
+      normalizedQuery.includes(key)
+    );
+
+    if (matchedCategory) {
+      window.location.href = matchedCategory[1];
+      return;
+    }
+
+    try {
+      const { data: products, error } = await supabase
+        .from("products")
+        .select("name, slug, category, subcategory");
+
+      if (error) throw error;
+
+      const matchedProducts = (products || []).filter((product) => {
+        const searchableText = [
+          product.name,
+          product.category,
+          product.subcategory,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+
+        return searchableText.includes(normalizedQuery);
+      });
+
+      if (matchedProducts.length === 1 && matchedProducts[0].slug) {
+        const categorySlug =
+          matchedProducts[0].category
+            ?.toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+            .replace(/-{2,}/g, "-") || "catalogo";
+
+        window.location.href = `/equipamentos/${categorySlug}/${matchedProducts[0].slug}`;
+        return;
+      }
+
+      if (matchedProducts.length > 1) {
+        window.location.href = `/catalogo?search=${encodeURIComponent(rawQuery)}`;
+        return;
+      }
+    } catch (err) {
+      console.error("Erro busca produto:", err);
+    }
+
+    console.log("SEM RESULTADO:", rawQuery);
   };
-
-  const matchedCategory = Object.entries(categoryMap).find(([key]) =>
-    normalizedQuery.includes(key)
-  );
-
-  if (matchedCategory) {
-    window.location.href = matchedCategory[1];
-    return;
-  }
-
-  try {
-    const { data: products, error } = await supabase
-      .from("products")
-      .select("name, slug, category, subcategory");
-
-    if (error) throw error;
-
-    const matchedProducts = (products || []).filter((product) => {
-      const searchableText = [
-        product.name,
-        product.category,
-        product.subcategory,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-
-      return searchableText.includes(normalizedQuery);
-    });
-
-    if (matchedProducts.length === 1 && matchedProducts[0].slug) {
-      window.location.href = `/equipamentos/${matchedProducts[0].slug}`;
-      return;
-    }
-
-    if (matchedProducts.length > 1) {
-      window.location.href = `/catalogo?search=${encodeURIComponent(rawQuery)}`;
-      return;
-    }
-  } catch (err) {
-    console.error("Erro busca produto:", err);
-  }
-
-  console.log("SEM RESULTADO:", rawQuery);
-};
 
   return (
     <nav
@@ -252,7 +270,6 @@ const handleSearchSubmit = async () => {
     >
       <div className="container md:min-h-[120px]">
         <div className="flex items-stretch justify-between overflow-visible">
-          {/* Logo */}
           <Link
             href="/"
             className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-[92px] md:h-[72px] overflow-visible"
@@ -260,11 +277,10 @@ const handleSearchSubmit = async () => {
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-             className="absolute left-[-6px] md:left-[-12px] top-[62%] md:top-[108%] -translate-y-1/2 scale-[1.25] md:scale-[1.35] origin-left transition-transform duration-300 group-hover:scale-[1.28] md:group-hover:scale-[1.38]"
+              className="absolute left-[-6px] md:left-[-12px] top-[62%] md:top-[108%] -translate-y-1/2 scale-[1.25] md:scale-[1.35] origin-left transition-transform duration-300 group-hover:scale-[1.28] md:group-hover:scale-[1.38]"
             />
           </Link>
 
-          {/* Navegação desktop / mobile trigger */}
           <div className="flex flex-col flex-1 relative">
             <div className="flex items-center justify-center h-20 md:h-[82px] flex-1 md:translate-y-[48px]">
               <div className="hidden md:flex items-center gap-10 lg:gap-12 justify-center flex-1 relative overflow-visible">
@@ -326,11 +342,7 @@ const handleSearchSubmit = async () => {
                   </div>
                 ))}
 
-                {/* Busca */}
-                <div
-                  ref={searchRef}
-                  className="ml-6 hidden items-center md:flex"
-                >
+                <div ref={searchRef} className="ml-6 hidden items-center md:flex">
                   {isSearchOpen ? (
                     <div className="flex items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur-md transition-all duration-300">
                       <Search className="h-4 w-4 text-white/45" />
@@ -361,7 +373,6 @@ const handleSearchSubmit = async () => {
                 </div>
               </div>
 
-              {/* Login interno */}
               <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 md:flex">
                 <Link href="/admin-panel">
                   <div className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
@@ -381,7 +392,6 @@ const handleSearchSubmit = async () => {
           </div>
         </div>
 
-        {/* Mobile menu */}
         {isMobileOpen && (
           <div className="md:hidden bg-gray-950 border-t border-gray-800">
             <div className="flex flex-col">
