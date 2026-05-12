@@ -257,13 +257,12 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
     isHovered && secondaryImage ? secondaryImage : primaryImage;
 
   return (
-   <Link
-  href={`/equipamentos/${product.slug || product.id}`}
-  className="group block"
->
-     
-    <div
-  className="h-full overflow-hidden rounded-xl border border-black/[0.04] bg-white shadow-[0_16px_42px_rgba(0,0,0,0.12)] transition-all duration-500 ease-out hover:-translate-y-[4px] hover:shadow-[0_22px_55px_rgba(0,0,0,0.16)]"
+    <Link
+      href={`/equipamentos/${product.slug || product.id}`}
+      className="group block"
+    >
+      <div
+        className="h-full overflow-hidden rounded-xl border border-black/[0.04] bg-white shadow-[0_16px_42px_rgba(0,0,0,0.12)] transition-all duration-500 ease-out hover:-translate-y-[4px] hover:shadow-[0_22px_55px_rgba(0,0,0,0.16)]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -277,17 +276,17 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
             </div>
           )}
 
-         <div className="flex h-[175px] items-center justify-center sm:h-[195px] md:h-[215px]">
-  {currentImage ? (
-    <img
-      src={currentImage}
-      alt={product.name}
-      className="max-h-full max-w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-    />
-  ) : (
-    <span className="text-xs text-neutral-400">Sem imagem</span>
-  )}
-</div>
+          <div className="flex h-[175px] items-center justify-center sm:h-[195px] md:h-[215px]">
+            {currentImage ? (
+              <img
+                src={currentImage}
+                alt={product.name}
+                className="max-h-full max-w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+              />
+            ) : (
+              <span className="text-xs text-neutral-400">Sem imagem</span>
+            )}
+          </div>
         </div>
 
         {/* CONTEÚDO */}
@@ -298,8 +297,8 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
             </p>
 
             <h3 className="line-clamp-2 min-h-[38px] text-[13.5px] sm:text-[14.5px] font-semibold leading-[1.18] tracking-[-0.01em] text-neutral-950">
-  {product.name}
-</h3>
+              {product.name}
+            </h3>
           </div>
 
           <div className="mt-2 flex items-end justify-between">
@@ -308,15 +307,14 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
               <span className="ml-1 text-[10px] text-neutral-500">/dia</span>
             </span>
 
-            <span className="text-[11px] text-neutral-400">
-              Ver item
-            </span>
+            <span className="text-[11px] text-neutral-400">Ver item</span>
           </div>
         </div>
       </div>
     </Link>
   );
 }
+
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -327,7 +325,6 @@ export default function Home() {
     Array<{ value: string; label: string }>
   >([{ value: "todas", label: "Todas" }]);
   const [loadingProducts, setLoadingProducts] = useState(true);
-  const [selectedFeaturedCategory, setSelectedFeaturedCategory] = useState("todas");
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const heroSlidesContent = [
@@ -372,40 +369,42 @@ export default function Home() {
     return () => clearInterval(carouselTimer);
   }, []);
 
- useEffect(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        setIsVisible((prev) => ({
-          ...prev,
-          [entry.target.id]: entry.isIntersecting,
-        }));
-      });
-    },
-    { threshold: 0.15 }
-  );
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible((prev) => ({
+            ...prev,
+            [entry.target.id]: entry.isIntersecting,
+          }));
+        });
+      },
+      { threshold: 0.15 }
+    );
 
-  Object.values(sectionRefs.current).forEach((ref) => {
-    if (ref) observer.observe(ref);
-  });
+    Object.values(sectionRefs.current).forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
 
-  return () => observer.disconnect();
-}, []);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const [{ data: productsData, error: productsError }, { data: categoriesData, error: categoriesError }] =
-         await Promise.all([
-  supabase
-    .from("products")
-    .select("*")
-    .eq("is_featured", true)
-    .order("featured_order", { ascending: true })
-    .limit(4),
+        const [
+          { data: productsData, error: productsError },
+          { data: categoriesData, error: categoriesError },
+        ] = await Promise.all([
+          supabase
+            .from("products")
+            .select("*")
+            .eq("is_featured", true)
+            .order("featured_order", { ascending: true })
+            .limit(4),
 
-  supabase.from("categories").select("name").order("name"),
-]);
+          supabase.from("categories").select("name").order("name"),
+        ]);
 
         if (productsError) throw productsError;
         if (categoriesError) throw categoriesError;
@@ -445,215 +444,200 @@ export default function Home() {
     sectionRefs.current[id] = el;
   };
 
-  const filteredFeaturedProducts = useMemo(() => {
-    if (selectedFeaturedCategory === "todas") return featuredProducts;
-
-    return featuredProducts.filter(
-      (product) => normalizeCategory(product.category) === selectedFeaturedCategory
-    );
-  }, [featuredProducts, selectedFeaturedCategory]);
-
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
-       {/* ===== HERO SECTION ===== */}
-<section className="relative h-[185px] overflow-hidden bg-black md:h-[460px] lg:h-[500px]">
-  {/* DESKTOP IMAGE */}
-  <img
-    src={HERO_IMAGE}
-    alt="Loc7 Equipamentos Audiovisuais"
-    className="absolute inset-y-0 right-0 hidden h-full w-[72%] object-cover object-[50%_center] md:block"
-  />
+      {/* ===== HERO SECTION ===== */}
+      <section className="relative h-[185px] overflow-hidden bg-black md:h-[460px] lg:h-[500px]">
+        {/* DESKTOP IMAGE */}
+        <img
+          src={HERO_IMAGE}
+          alt="Loc7 Equipamentos Audiovisuais"
+          className="absolute inset-y-0 right-0 hidden h-full w-[72%] object-cover object-[50%_center] md:block"
+        />
 
-  {/* MOBILE CLEAN (SEM IMAGEM) */}
-  <div className="absolute inset-0 block bg-black md:hidden" />
+        {/* MOBILE CLEAN (SEM IMAGEM) */}
+        <div className="absolute inset-0 block bg-black md:hidden" />
 
-  {/* GRADIENT DESKTOP */}
-  <div className="absolute inset-y-0 left-0 hidden w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent md:block" />
+        {/* GRADIENT DESKTOP */}
+        <div className="absolute inset-y-0 left-0 hidden w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent md:block" />
 
-  {/* CONTENT */}
-  <div className="container relative z-10 flex h-full items-start pt-[28px] md:pt-32 lg:pt-36">
-    <div className="max-w-[560px]">
-      <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
-        LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
-      </p>
+        {/* CONTENT */}
+        <div className="container relative z-10 flex h-full items-start pt-[28px] md:pt-32 lg:pt-36">
+          <div className="max-w-[560px]">
+            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
+              LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
+            </p>
 
-      <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
-        CINE · FOTO · BROADCAST
-      </h1>
-    </div>
-  </div>
-</section>
-      {/* ===== DESTAQUES ===== */}
-<section className="bg-[oklch(0.95_0_0)] py-10 md:py-12">
-  <div className="container">
-
-    {/* Título */}
-<div className="mb-6 md:mb-8">
-  <div className="flex items-center gap-3">
-    <span className="text-[13px] uppercase tracking-[0.2em] text-black/80 font-medium">
-      EQUIPAMENTOS EM DESTAQUE
-    </span>
-
-    <div className="h-[1px] flex-1 bg-black/15" />
-  </div>
-
-  <div className="mt-2 h-[2px] w-10 bg-red-700" />
-</div>
-
-    {/* Categorias */}
-    <div className="mb-6 sm:hidden">
-      <div className="overflow-x-auto">
-        <div className="flex gap-2 pb-1">
-          {featuredCategoryOptions.map((category) => (
-            <button
-              key={category.value}
-              onClick={() => setSelectedFeaturedCategory(category.value)}
-              className={`whitespace-nowrap rounded-full border px-4 py-2 text-[12px] font-medium transition-colors ${
-                selectedFeaturedCategory === category.value
-                  ? "bg-black text-white border-black"
-                  : "bg-white text-neutral-700 border-neutral-300"
-              }`}
-            >
-              {category.label}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-
-    {/* GRID */}
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-4 md:gap-5 lg:grid-cols-4 lg:gap-5">
-     {filteredFeaturedProducts
-  .slice(0, 4)
-  .map((product) => (
-    <HomeFeaturedCard
-      key={product.id}
-      product={product}
-    />
-))}
-    </div>
-
-    {/* CTA */}
-    <div className="mt-10 flex justify-center">
-     <Link
-  href="/catalogo"
-  onClick={() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "auto",
-    });
-  }}
-  className="inline-flex items-center justify-center border border-black/70 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
->
-  Ver catálogo completo
-</Link>
-    </div>
-
-  </div>
-</section>
-
-      
-{/* ===== TRABALHOS REALIZADOS ===== */}
-<section
-  id="trabalhos-realizados"
-  ref={setSectionRef("trabalhos-realizados")}
-  className="bg-black py-8 md:py-10"
->
-
-
-<div className="container">
-    <div className="mb-6">
-      <div className="flex items-center gap-3">
-        <span className="text-[13px] uppercase tracking-[0.2em] text-white/80">
-          ALGUNS TRABALHOS REALIZADOS
-        </span>
-
-        <div className="h-[1px] flex-1 bg-white/15" />
-      </div>
-
-      <div className="mt-2 h-[2px] w-10 bg-red-700" />
-    </div>
-
-    <div className="flex gap-4 overflow-x-auto pb-1 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible">
-      {[
-        {
-          img: "/images/trabalhos/the-voice-globo.jpg",
-          title: "The Voice Brasil — TV Globo",
-        },
-        {
-          img: "/images/trabalhos/esquadrao-moda-sbt.jpg",
-          title: "Esquadrão da Moda — SBT",
-        },
-        {
-          img: "/images/trabalhos/pesadelo-cozinha-band.jpg",
-          title: "Pesadelo na Cozinha — Band",
-        },
-        {
-          img: "/images/trabalhos/bbb-globo.jpg",
-          title: "Big Brother Brasil — TV Globo",
-        },
-      ].map((item, index) => (
-        <div
-          key={index}
-          className={`snap-start relative min-w-[88%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-0 transition-all duration-700 ease-out ${
-            isVisible["trabalhos-realizados"]
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 translate-x-[-40px]"
-          }`}
-          style={{
-            transitionDelay: `${index * 0.08}s`,
-          }}
-        >
-          <img
-            src={item.img}
-            alt={item.title}
-            className="h-[420px] md:h-[480px] w-full object-cover object-top transition-transform duration-700 ease-out hover:scale-[1.02]"
-          />
-
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-4">
-            <span className="text-sm font-medium text-white">
-              {item.title}
-            </span>
+            <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
+              CINE · FOTO · BROADCAST
+            </h1>
           </div>
         </div>
-      ))}
+      </section>
+
+      {/* ===== DESTAQUES ===== */}
+      <section className="bg-[oklch(0.95_0_0)] py-10 md:py-12">
+        <div className="container">
+          {/* Título */}
+          <div className="mb-6 md:mb-8">
+            <div className="flex items-center gap-3">
+              <span className="text-[13px] uppercase tracking-[0.2em] text-black/80 font-medium">
+                EQUIPAMENTOS EM DESTAQUE
+              </span>
+
+              <div className="h-[1px] flex-1 bg-black/15" />
+            </div>
+
+            <div className="mt-2 h-[2px] w-10 bg-red-700" />
+          </div>
+
+          {/* Categorias */}
+          <div className="mb-6 sm:hidden">
+            <div className="overflow-x-auto">
+              <div className="flex gap-2 pb-1">
+                {featuredCategoryOptions.map((category) =>
+                  category.value === "todas" ? (
+                    <button
+                      key={category.value}
+                      type="button"
+                      className="whitespace-nowrap rounded-full border border-black bg-black px-4 py-2 text-[12px] font-medium text-white transition-colors"
+                    >
+                      {category.label}
+                    </button>
+                  ) : (
+                    <Link
+                      key={category.value}
+                      href={`/catalogo/${category.value}`}
+                      className="whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-[12px] font-medium text-neutral-700 transition-colors hover:border-black hover:text-black"
+                    >
+                      {category.label}
+                    </Link>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* GRID */}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-4 md:gap-5 lg:grid-cols-4 lg:gap-5">
+            {featuredProducts.slice(0, 4).map((product) => (
+              <HomeFeaturedCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="mt-10 flex justify-center">
+            <Link
+              href="/catalogo"
+              onClick={() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "auto",
+                });
+              }}
+              className="inline-flex items-center justify-center border border-black/70 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+            >
+              Ver catálogo completo
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== TRABALHOS REALIZADOS ===== */}
+      <section
+        id="trabalhos-realizados"
+        ref={setSectionRef("trabalhos-realizados")}
+        className="bg-black py-8 md:py-10"
+      >
+        <div className="container">
+          <div className="mb-6">
+            <div className="flex items-center gap-3">
+              <span className="text-[13px] uppercase tracking-[0.2em] text-white/80">
+                ALGUNS TRABALHOS REALIZADOS
+              </span>
+
+              <div className="h-[1px] flex-1 bg-white/15" />
+            </div>
+
+            <div className="mt-2 h-[2px] w-10 bg-red-700" />
+          </div>
+
+          <div className="flex gap-4 overflow-x-auto pb-1 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible">
+            {[
+              {
+                img: "/images/trabalhos/the-voice-globo.jpg",
+                title: "The Voice Brasil — TV Globo",
+              },
+              {
+                img: "/images/trabalhos/esquadrao-moda-sbt.jpg",
+                title: "Esquadrão da Moda — SBT",
+              },
+              {
+                img: "/images/trabalhos/pesadelo-cozinha-band.jpg",
+                title: "Pesadelo na Cozinha — Band",
+              },
+              {
+                img: "/images/trabalhos/bbb-globo.jpg",
+                title: "Big Brother Brasil — TV Globo",
+              },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className={`snap-start relative min-w-[88%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-0 transition-all duration-700 ease-out ${
+                  isVisible["trabalhos-realizados"]
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 translate-x-[-40px]"
+                }`}
+                style={{
+                  transitionDelay: `${index * 0.08}s`,
+                }}
+              >
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  className="h-[420px] md:h-[480px] w-full object-cover object-top transition-transform duration-700 ease-out hover:scale-[1.02]"
+                />
+
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-4">
+                  <span className="text-sm font-medium text-white">
+                    {item.title}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== MAPA ===== */}
+      <section className="bg-[oklch(0.95_0_0)] py-6 md:py-7">
+        <div className="container">
+          {/* Título padrão */}
+          <div className="mb-5">
+            <div className="flex items-center gap-3">
+              <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
+                LOCALIZAÇÃO
+              </span>
+
+              <div className="h-[1px] flex-1 bg-black/15" />
+            </div>
+
+            <div className="mt-2 h-[2px] w-10 bg-red-700" />
+          </div>
+
+          {/* Mapa */}
+          <div className="overflow-hidden rounded-xl border border-black/5">
+            <iframe
+              src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
+              width="100%"
+              height="380"
+              style={{ border: 0 }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </div>
+      </section>
     </div>
-  </div>
-</section>
-
-  {/* ===== MAPA ===== */}
-<section className="bg-[oklch(0.95_0_0)] py-6 md:py-7">
-  <div className="container">
-
-    {/* Título padrão */}
-<div className="mb-5">
-  <div className="flex items-center gap-3">
-    <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
-      LOCALIZAÇÃO
-    </span>
-
-    <div className="h-[1px] flex-1 bg-black/15" />
-  </div>
-
-  <div className="mt-2 h-[2px] w-10 bg-red-700" />
-</div>
-
-    {/* Mapa */}
-    <div className="overflow-hidden rounded-xl border border-black/5">
-      <iframe
-        src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
-        width="100%"
-        height="380"
-        style={{ border: 0 }}
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-      />
-    </div>
-
-  </div>
-</section>
-
-
-</div>
-);
+  );
 }
