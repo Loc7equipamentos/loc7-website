@@ -204,7 +204,7 @@ export default function App() {
 
     robotsMeta.setAttribute("content", seo.robots);
 
-    const canonicalUrl = `${SITE_URL}${location}`;
+    const canonicalUrl = SITE_URL + location;
 
     let canonical = document.querySelector(
       'link[rel="canonical"]'
