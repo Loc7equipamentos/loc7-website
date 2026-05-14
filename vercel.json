@@ -1,6 +1,26 @@
 {
   "redirects": [
     {
+      "source": "/equipamentos/cameras",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
       "source": "/equipamentos/luz",
       "destination": "/catalogo/iluminacao",
       "permanent": true
