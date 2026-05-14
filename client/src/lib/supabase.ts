@@ -1,10 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Variáveis de ambiente Supabase não configuradas');
+  throw new Error("Variáveis de ambiente Supabase não configuradas");
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -13,11 +13,20 @@ export interface Product {
   id: string;
   name: string;
   category: string;
-  price: number;
-  description: string;
-  image_url?: string;
-  badge?: string;
-  slug?: string;
+  subcategory?: string | null;
+  brand?: string | null;
+  price: number | null;
+  description?: string | null;
+  specs?: string | null;
+  image_url?: string | null;
+  images?: string[] | string | null;
+  includes?: string[] | string | null;
+  badge?: string | null;
+  slug?: string | null;
+  catalog_order?: number | null;
+  is_featured?: boolean | null;
+  featured_order?: number | null;
+  is_featured_special?: boolean | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -25,6 +34,8 @@ export interface Product {
 export interface Category {
   id: string;
   name: string;
-  icon?: string;
+  slug?: string | null;
+  icon?: string | null;
   created_at?: string;
+  updated_at?: string;
 }
