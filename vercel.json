@@ -31,6 +31,21 @@
       "permanent": true
     },
     {
+      "source": "/equipamentos/conversores",
+      "destination": "/catalogo/infraestrutura-tecnica",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/computadores-e-tablets",
+      "destination": "/catalogo/dit",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/hds-e-cartoes-de-memoria",
+      "destination": "/catalogo/cartoes-armazenamento",
+      "permanent": true
+    },
+    {
       "source": "/equipamentos/cameras-ptz/:slug",
       "destination": "/equipamentos/cameras/:slug",
       "permanent": true
