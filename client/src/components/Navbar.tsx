@@ -55,6 +55,7 @@ const fallbackCategories = [
   { name: "MATTEBOX", href: "/catalogo/mattebox" },
   { name: "MONITORES", href: "/catalogo/monitores" },
   { name: "MOVIMENTO", href: "/catalogo/movimento" },
+  { name: "SWITCHERS", href: "/catalogo/switchers" },
   { name: "TELEPROMPTER", href: "/catalogo/teleprompter" },
   { name: "TRANSMISSORES", href: "/catalogo/transmissores" },
   { name: "TRIPÉS DE CÂMERA", href: "/catalogo/tripes" },
