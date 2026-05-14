@@ -139,6 +139,7 @@ export default function Catalogo() {
       p.name,
       p.category,
       p.subcategory,
+      p.brand,
       p.name ? p.name.split(" ")[0] : "",
     ]
       .filter(Boolean)
@@ -169,10 +170,10 @@ export default function Catalogo() {
   const uniqueBrands = Array.from(
     new Set(
       categoryScopedProducts
-        .map((p) => (p.name ? p.name.split(" ")[0] : ""))
+        .map((p) => p.brand || "")
         .filter(Boolean)
     )
-  );
+  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   const filteredProducts = categoryScopedProducts.filter((p) => {
     const matchSubcategory =
@@ -181,7 +182,7 @@ export default function Catalogo() {
 
     const matchBrand =
       selectedBrand === "Todas" ||
-      normalize(p.name || "").includes(normalize(selectedBrand));
+      normalize(p.brand || "") === normalize(selectedBrand);
 
     return matchSubcategory && matchBrand;
   });
