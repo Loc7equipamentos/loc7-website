@@ -54,7 +54,7 @@ const fallbackCategories = [
   { name: "SWITCHES", href: "/catalogo/switches" },
   { name: "TELE-PROMPTER", href: "/catalogo/tele-prompter" },
   { name: "TRANSMISSORES", href: "/catalogo/transmissores" },
-  { name: "TRIPÉS", href: "/catalogo/tripes" },
+  { name: "TRIPÉS DE CÂMERA", href: "/catalogo/tripes" },
 ];
 
 const navLinks = [
