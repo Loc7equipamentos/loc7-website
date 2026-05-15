@@ -25,6 +25,8 @@ export default function AdminCadastroFicha() {
   const [data, setData] = useState<any>(null);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [analysisLogs, setAnalysisLogs] = useState<AnalysisLogItem[]>([]);
+  const [internalReferences, setInternalReferences] = useState<any[]>([]);
+  const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
   const [internalNotesDraft, setInternalNotesDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -50,12 +52,38 @@ export default function AdminCadastroFicha() {
         );
         setDocuments(docs);
         await loadAnalysisLogs(data.id);
+        await loadInternalReferences(data.id);
+        await loadInternalDocuments(data.id);
       }
     };
 
     load();
   }, [id]);
 
+async function loadInternalReferences(registrationId: string) {
+  const { data, error } = await supabase
+    .from("registration_internal_references")
+    .select("*")
+    .eq("registration_id", registrationId)
+    .order("created_at", { ascending: false });
+
+  if (!error && data) {
+    setInternalReferences(data);
+  }
+}
+
+async function loadInternalDocuments(registrationId: string) {
+  const { data, error } = await supabase
+    .from("registration_internal_documents")
+    .select("*")
+    .eq("registration_id", registrationId)
+    .order("created_at", { ascending: false });
+
+  if (!error && data) {
+    setInternalDocuments(data);
+  }
+}
+  
   async function loadAnalysisLogs(registrationId: string) {
     const { data, error } = await supabase
       .from("registration_analysis_logs")
