@@ -28,6 +28,13 @@ export default function AdminCadastroFicha() {
   const [internalReferences, setInternalReferences] = useState<any[]>([]);
   const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
   const [showInternalReferenceForm, setShowInternalReferenceForm] = useState(false);
+  const [internalReferenceDraft, setInternalReferenceDraft] = useState({
+  company_name: "",
+  contact_name: "",
+  phone: "",
+  status: "Não verificada",
+  notes: "",
+});
   const [internalNotesDraft, setInternalNotesDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -61,6 +68,48 @@ export default function AdminCadastroFicha() {
     load();
   }, [id]);
 
+async function saveInternalReference() {
+  if (!data?.id) return;
+
+  if (!internalReferenceDraft.company_name.trim()) {
+    alert("Informe o nome da empresa da referência interna.");
+    return;
+  }
+
+  setSaving(true);
+
+  const { error } = await supabase.from("registration_internal_references").insert([
+    {
+      registration_id: data.id,
+      company_name: internalReferenceDraft.company_name.trim(),
+      contact_name: internalReferenceDraft.contact_name.trim() || null,
+      phone: internalReferenceDraft.phone.trim() || null,
+      status: internalReferenceDraft.status,
+      notes: internalReferenceDraft.notes.trim() || null,
+      created_by: userEmail || "admin",
+    },
+  ]);
+
+  if (error) {
+    alert(`Erro ao salvar referência interna:\n\n${error.message}`);
+    setSaving(false);
+    return;
+  }
+
+  setInternalReferenceDraft({
+    company_name: "",
+    contact_name: "",
+    phone: "",
+    status: "Não verificada",
+    notes: "",
+  });
+
+  setShowInternalReferenceForm(false);
+  await loadInternalReferences(data.id);
+
+  setSaving(false);
+}
+  
 async function loadInternalReferences(registrationId: string) {
   const { data, error } = await supabase
     .from("registration_internal_references")
@@ -498,40 +547,78 @@ async function loadInternalDocuments(registrationId: string) {
               {showInternalReferenceForm && (
                 <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                    <input
-                      className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-                      placeholder="Empresa"
-                    />
+                   <input
+  value={internalReferenceDraft.company_name}
+  onChange={(e) =>
+    setInternalReferenceDraft((prev) => ({
+      ...prev,
+      company_name: e.target.value,
+    }))
+  }
+  className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+  placeholder="Empresa"
+/>
 
-                    <input
-                      className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-                      placeholder="Contato"
-                    />
+<input
+  value={internalReferenceDraft.contact_name}
+  onChange={(e) =>
+    setInternalReferenceDraft((prev) => ({
+      ...prev,
+      contact_name: e.target.value,
+    }))
+  }
+  className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+  placeholder="Contato"
+/>
 
-                    <input
-                      className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-                      placeholder="Telefone"
-                    />
+<input
+  value={internalReferenceDraft.phone}
+  onChange={(e) =>
+    setInternalReferenceDraft((prev) => ({
+      ...prev,
+      phone: e.target.value,
+    }))
+  }
+  className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+  placeholder="Telefone"
+/>
 
-                    <select className="rounded-md border border-gray-300 px-3 py-2 text-sm font-bold text-gray-900 outline-none focus:border-[#b91c1c]">
-                      <option>Não verificada</option>
-                      <option>Em contato</option>
-                      <option>Confirmada</option>
-                      <option>Inválida</option>
-                      <option>Divergente</option>
-                    </select>
+<select
+  value={internalReferenceDraft.status}
+  onChange={(e) =>
+    setInternalReferenceDraft((prev) => ({
+      ...prev,
+      status: e.target.value,
+    }))
+  }
+  className="rounded-md border border-gray-300 px-3 py-2 text-sm font-bold text-gray-900 outline-none focus:border-[#b91c1c]"
+>
+  <option>Não verificada</option>
+  <option>Em contato</option>
+  <option>Confirmada</option>
+  <option>Inválida</option>
+  <option>Divergente</option>
+</select>
 
-                    <textarea
-                      className="min-h-[78px] rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c] md:col-span-2"
-                      placeholder="Observação interna"
-                    />
+<textarea
+  value={internalReferenceDraft.notes}
+  onChange={(e) =>
+    setInternalReferenceDraft((prev) => ({
+      ...prev,
+      notes: e.target.value,
+    }))
+  }
+  className="min-h-[78px] rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c] md:col-span-2"
+  placeholder="Observação interna"
+/>
                   </div>
 
                   <div className="mt-3 flex justify-end">
-                    <button
-                      type="button"
-                      className="rounded-md bg-black px-4 py-2 text-xs font-bold text-white hover:bg-gray-800"
-                    >
+                   <button
+  type="button"
+  onClick={saveInternalReference}
+  className="rounded-md bg-black px-4 py-2 text-xs font-bold text-white hover:bg-gray-800"
+>
                       Salvar referência
                     </button>
                   </div>
