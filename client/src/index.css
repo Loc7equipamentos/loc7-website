@@ -5,6 +5,11 @@
  * Fonts: Oswald (display) + DM Sans (body) + JetBrains Mono (prices/codes)
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Futura:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -477,10 +482,7 @@
 }
 
 /* Brand Font Classes */
-@import url('https://fonts.googleapis.com/css2?family=Futura:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
 
 .font-sony {
   font-family: 'Futura', 'Century Gothic', sans-serif;
