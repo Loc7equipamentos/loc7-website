@@ -482,6 +482,52 @@ async function loadInternalDocuments(registrationId: string) {
             </div>
           </Section>
 
+          <div className="no-print">
+            <Section title="Referências comerciais internas">
+              {internalReferences.length > 0 ? (
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {internalReferences.map((ref) => (
+                    <div
+                      key={ref.id}
+                      className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                    >
+                      <div className="mb-2 text-xs font-black uppercase tracking-wide text-[#b91c1c]">
+                        {ref.status || "Não verificada"}
+                      </div>
+
+                      <div className="text-base font-black text-gray-950">
+                        {ref.company_name || "Empresa não informada"}
+                      </div>
+
+                      <div className="mt-2 text-sm font-medium text-gray-800">
+                        <strong>Contato:</strong> {ref.contact_name || "—"}
+                      </div>
+
+                      <div className="text-sm font-medium text-gray-800">
+                        <strong>Telefone:</strong> {ref.phone || "—"}
+                      </div>
+
+                      {ref.notes && (
+                        <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 text-xs font-medium text-gray-700">
+                          {ref.notes}
+                        </div>
+                      )}
+
+                      <div className="mt-3 text-[11px] font-medium text-gray-400">
+                        {formatDate(ref.created_at)}
+                        {ref.created_by ? ` · ${ref.created_by}` : ""}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm font-semibold text-gray-700">
+                  Nenhuma referência interna registrada.
+                </div>
+              )}
+            </Section>
+          </div>
+          
           <Section title="Observações internas">
             <textarea
               className="no-print min-h-[120px] w-full rounded-lg border border-gray-300 bg-white p-4 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
