@@ -779,9 +779,65 @@ async function uploadInternalDocument() {
         ))}
       </div>
     ) : (
-      <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm font-semibold text-gray-700">
-        Nenhum documento interno anexado.
-      </div>
+
+<div className="rounded-lg border border-gray-200 bg-white p-4 text-sm font-semibold text-gray-700">
+  Nenhum documento interno anexado.
+</div>
+
+<div className="mt-4 rounded-lg border border-gray-200 bg-white p-4">
+  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <select
+      value={internalDocumentDraft.document_type}
+      onChange={(e) =>
+        setInternalDocumentDraft((prev) => ({
+          ...prev,
+          document_type: e.target.value,
+        }))
+      }
+      className="h-[44px] rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+    >
+      <option>Consulta crédito</option>
+      <option>Contrato social</option>
+      <option>Comprovante adicional</option>
+      <option>Documento operacional</option>
+      <option>Outros</option>
+    </select>
+
+    <input
+      type="file"
+      onChange={(e) =>
+        setInternalDocumentFile(e.target.files?.[0] || null)
+      }
+      className="block w-full text-sm text-gray-700"
+    />
+  </div>
+
+  <textarea
+    value={internalDocumentDraft.notes}
+    onChange={(e) =>
+      setInternalDocumentDraft((prev) => ({
+        ...prev,
+        notes: e.target.value,
+      }))
+    }
+    placeholder="Observações internas do documento"
+    className="mt-3 min-h-[90px] w-full rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+  />
+
+  <div className="mt-3 flex justify-end">
+    <button
+      type="button"
+      onClick={uploadInternalDocument}
+      disabled={!internalDocumentFile || uploadingInternalDocument}
+      className="rounded-md bg-black px-4 py-2 text-xs font-bold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
+    >
+      {uploadingInternalDocument
+        ? "Enviando..."
+        : "Enviar documento"}
+    </button>
+  </div>
+</div>
+  
     )}
   </Section>
 </div>
