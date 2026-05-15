@@ -27,6 +27,14 @@ export default function AdminCadastroFicha() {
   const [analysisLogs, setAnalysisLogs] = useState<AnalysisLogItem[]>([]);
   const [internalReferences, setInternalReferences] = useState<any[]>([]);
   const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
+  const [internalDocumentFile, setInternalDocumentFile] = useState<File | null>(null);
+
+const [internalDocumentDraft, setInternalDocumentDraft] = useState({
+  document_type: "Consulta crédito",
+  notes: "",
+});
+
+const [uploadingInternalDocument, setUploadingInternalDocument] = useState(false);
   const [showInternalReferenceForm, setShowInternalReferenceForm] = useState(false);
   const [internalReferenceDraft, setInternalReferenceDraft] = useState({
   company_name: "",
