@@ -27,6 +27,7 @@ export default function AdminCadastroFicha() {
   const [analysisLogs, setAnalysisLogs] = useState<AnalysisLogItem[]>([]);
   const [internalReferences, setInternalReferences] = useState<any[]>([]);
   const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
+  const [showInternalReferenceForm, setShowInternalReferenceForm] = useState(false);
   const [internalNotesDraft, setInternalNotesDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -484,6 +485,58 @@ async function loadInternalDocuments(registrationId: string) {
 
           <div className="no-print">
             <Section title="Referências comerciais internas">
+                            <div className="mb-3 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowInternalReferenceForm((current) => !current)}
+                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-bold text-gray-800 hover:bg-gray-50"
+                >
+                  {showInternalReferenceForm ? "Cancelar" : "Nova referência interna"}
+                </button>
+              </div>
+
+              {showInternalReferenceForm && (
+                <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                    <input
+                      className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+                      placeholder="Empresa"
+                    />
+
+                    <input
+                      className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+                      placeholder="Contato"
+                    />
+
+                    <input
+                      className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+                      placeholder="Telefone"
+                    />
+
+                    <select className="rounded-md border border-gray-300 px-3 py-2 text-sm font-bold text-gray-900 outline-none focus:border-[#b91c1c]">
+                      <option>Não verificada</option>
+                      <option>Em contato</option>
+                      <option>Confirmada</option>
+                      <option>Inválida</option>
+                      <option>Divergente</option>
+                    </select>
+
+                    <textarea
+                      className="min-h-[78px] rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c] md:col-span-2"
+                      placeholder="Observação interna"
+                    />
+                  </div>
+
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      type="button"
+                      className="rounded-md bg-black px-4 py-2 text-xs font-bold text-white hover:bg-gray-800"
+                    >
+                      Salvar referência
+                    </button>
+                  </div>
+                </div>
+              )}
               {internalReferences.length > 0 ? (
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {internalReferences.map((ref) => (
