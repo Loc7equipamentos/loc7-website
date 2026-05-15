@@ -211,6 +211,7 @@ if (!documentFiles.comprovante_endereco_pj) {
   return "Envie o comprovante de endereço da empresa para concluir o envio do cadastro.";
 
     }
+    }  
 
     return "";
   }
