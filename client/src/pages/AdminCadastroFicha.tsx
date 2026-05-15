@@ -141,6 +141,64 @@ async function loadInternalDocuments(registrationId: string) {
     setInternalDocuments(data);
   }
 }
+
+async function uploadInternalDocument() {
+  if (!data?.id) return;
+
+  if (!internalDocumentFile) {
+    alert("Selecione um documento interno.");
+    return;
+  }
+
+  setUploadingInternalDocument(true);
+
+  const extension = internalDocumentFile.name.split(".").pop();
+
+  const filename = `${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2)}.${extension}`;
+
+  const storagePath = `${data.id}/${filename}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("internal-documents")
+    .upload(storagePath, internalDocumentFile);
+
+  if (uploadError) {
+    alert(`Erro no upload:\n\n${uploadError.message}`);
+    setUploadingInternalDocument(false);
+    return;
+  }
+
+  const { error: insertError } = await supabase
+    .from("registration_internal_documents")
+    .insert([
+      {
+        registration_id: data.id,
+        document_type: internalDocumentDraft.document_type,
+        notes: internalDocumentDraft.notes || null,
+        file_path: storagePath,
+        uploaded_by: userEmail || "admin",
+      },
+    ]);
+
+  if (insertError) {
+    alert(`Erro ao salvar documento:\n\n${insertError.message}`);
+    setUploadingInternalDocument(false);
+    return;
+  }
+
+  setInternalDocumentFile(null);
+
+  setInternalDocumentDraft({
+    document_type: "Consulta crédito",
+    notes: "",
+  });
+
+  await loadInternalDocuments(data.id);
+
+  setUploadingInternalDocument(false);
+}
   
   async function loadAnalysisLogs(registrationId: string) {
     const { data, error } = await supabase
