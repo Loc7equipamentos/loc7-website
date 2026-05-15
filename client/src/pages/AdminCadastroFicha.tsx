@@ -803,13 +803,26 @@ async function uploadInternalDocument() {
         <option>Outros</option>
       </select>
 
-      <input
-        type="file"
-        onChange={(e) =>
-          setInternalDocumentFile(e.target.files?.[0] || null)
-        }
-        className="block w-full text-sm text-gray-700"
-      />
+     <label className="flex h-[44px] cursor-pointer items-center justify-between rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 transition hover:border-[#b91c1c] hover:bg-gray-50">
+  <span className="truncate">
+    {internalDocumentFile
+      ? internalDocumentFile.name
+      : "Selecionar documento interno"}
+  </span>
+
+  <span className="ml-3 rounded-md bg-black px-3 py-1 text-xs font-bold text-white">
+    Procurar
+  </span>
+
+  <input
+    type="file"
+    accept=".pdf,.jpg,.jpeg,.png"
+    onChange={(e) =>
+      setInternalDocumentFile(e.target.files?.[0] || null)
+    }
+    className="hidden"
+  />
+</label>
     </div>
 
     <textarea
