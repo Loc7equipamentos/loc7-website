@@ -9,7 +9,8 @@ type DocumentKey =
   | "comprovante_residencia"
   | "cartao_cnpj"
   | "documento_responsavel"
-  | "contrato_social";
+  | "contrato_social"
+| "comprovante_endereco_pj";
 
 type DocumentFilesState = Record<DocumentKey, File | null>;
 
@@ -25,6 +26,7 @@ function createInitialDocumentFiles(): DocumentFilesState {
     cartao_cnpj: null,
     documento_responsavel: null,
     contrato_social: null,
+    comprovante_endereco_pj: null,
   };
 }
 
@@ -201,9 +203,13 @@ export default function CadastroPage() {
         return "Envie o cartão do CNPJ para concluir o envio do cadastro.";
       }
 
-      if (!documentFiles.documento_responsavel) {
-        return "Envie o documento do responsável para concluir o envio do cadastro.";
-      }
+     if (!documentFiles.documento_responsavel) {
+  return "Envie o documento do responsável para concluir o envio do cadastro.";
+}
+
+if (!documentFiles.comprovante_endereco_pj) {
+  return "Envie o comprovante de endereço da empresa para concluir o envio do cadastro.";
+
     }
 
     return "";
@@ -1256,6 +1262,33 @@ if (success) {
                     )}
                   </div>
 
+<div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+  <label className={labelClass}>
+    Comprovante de endereço da empresa <span className="text-red-600">*</span>
+  </label>
+
+  <input
+    type="file"
+    name="comprovanteEnderecoPj"
+    accept=".pdf,.jpg,.jpeg,.png,.webp"
+    onChange={(e) =>
+      handleDocumentFileChange("comprovante_endereco_pj", e)
+    }
+    className="block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-700 file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-black"
+  />
+
+  <p className="mt-3 text-xs leading-relaxed text-zinc-500">
+    Obrigatório para envio do cadastro. Envie comprovante recente em PDF,
+    JPG, PNG ou WebP até {MAX_DOCUMENT_SIZE_MB}MB.
+  </p>
+
+  {documentFiles.comprovante_endereco_pj && (
+    <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800">
+      Arquivo selecionado: {documentFiles.comprovante_endereco_pj.name}
+    </div>
+  )}
+</div>
+                  
                   <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
                     <label className={labelClass}>Contrato social</label>
 
