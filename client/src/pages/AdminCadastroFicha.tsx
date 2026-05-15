@@ -683,6 +683,44 @@ async function loadInternalDocuments(registrationId: string) {
           </Section>
 
           <div className="no-print">
+  <Section title="Documentos internos da análise">
+    {internalDocuments.length > 0 ? (
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        {internalDocuments.map((doc) => (
+          <div
+            key={doc.id}
+            className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+          >
+            <div className="mb-2 text-xs font-black uppercase tracking-wide text-[#b91c1c]">
+              {doc.document_type || "Documento interno"}
+            </div>
+
+            <div className="text-sm font-semibold text-gray-950">
+              {doc.file_path || "Arquivo não informado"}
+            </div>
+
+            {doc.notes && (
+              <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 text-xs font-medium text-gray-700">
+                {doc.notes}
+              </div>
+            )}
+
+            <div className="mt-3 text-[11px] font-medium text-gray-400">
+              {formatDate(doc.created_at)}
+              {doc.uploaded_by ? ` · ${doc.uploaded_by}` : ""}
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm font-semibold text-gray-700">
+        Nenhum documento interno anexado.
+      </div>
+    )}
+  </Section>
+</div>
+          
+          <div className="no-print">
             <Section title="Última alteração">
               {analysisLogs.length > 0 ? (
                 <div className="max-w-3xl rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
