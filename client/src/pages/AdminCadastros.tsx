@@ -293,25 +293,16 @@ export default function AdminCadastros() {
                     </td>
 
                     <td className="px-6">
-                      <div className="flex items-center justify-end gap-2 whitespace-nowrap">
-                        <Link href={`/admin-panel/cadastro/${c.id}`}>
-                          <button
-                            type="button"
-                            className="rounded-md border border-gray-300 px-3 py-2 text-xs text-gray-800 hover:bg-gray-100 transition whitespace-nowrap"
-                          >
-                            Ver ficha
-                          </button>
-                        </Link>
-
-                        <Link href={`/admin-panel/cadastro/${c.id}`}>
-                          <button
-                            type="button"
-                            className="rounded-md bg-black px-4 py-2 text-xs text-white hover:bg-gray-800 transition whitespace-nowrap"
-                          >
-                            Editar
-                          </button>
-                        </Link>
-                      </div>
+                      <div className="flex items-center justify-end whitespace-nowrap">
+  <Link href={`/admin-panel/cadastro/${c.id}`}>
+    <button
+      type="button"
+      className="rounded-md bg-black px-4 py-2 text-xs font-bold text-white hover:bg-gray-800 transition whitespace-nowrap"
+    >
+      Abrir ficha
+    </button>
+  </Link>
+</div>
                     </td>
                   </tr>
                 ))}
