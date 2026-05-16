@@ -184,7 +184,7 @@ export default function AdminCadastros() {
             </div>
           </div>
 
-          <div className="max-h-[70vh] overflow-auto">
+          <div className="h-[calc(100vh-360px)] min-h-[420px] overflow-auto">
             <table className="min-w-[1380px] w-full text-sm">
               <thead className="bg-gray-50 border-b text-xs uppercase text-gray-500 tracking-wide">
                 <tr>
