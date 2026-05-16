@@ -34,7 +34,7 @@ const [internalDocumentDraft, setInternalDocumentDraft] = useState({
   notes: "",
 });
 
-const [uploadingInternalDocument, setUploadingInternalDocument] = useState(false);
+  const [uploadingInternalDocument, setUploadingInternalDocument] = useState(false);
   const [showInternalReferenceForm, setShowInternalReferenceForm] = useState(false);
   const [internalReferenceDraft, setInternalReferenceDraft] = useState({
   company_name: "",
@@ -45,6 +45,16 @@ const [uploadingInternalDocument, setUploadingInternalDocument] = useState(false
 });
   const [internalNotesDraft, setInternalNotesDraft] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const [editingReferenceId, setEditingReferenceId] = useState<string | null>(null);
+
+const [editingReferenceDraft, setEditingReferenceDraft] = useState({
+  company_name: "",
+  contact_name: "",
+  phone: "",
+  notes: "",
+});
+  
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
