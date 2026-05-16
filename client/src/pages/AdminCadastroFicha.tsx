@@ -128,6 +128,60 @@ async function saveInternalReference() {
   setSaving(false);
 }
 
+function startEditInternalReference(ref: any) {
+  setEditingReferenceId(ref.id);
+  setEditingReferenceDraft({
+    company_name: ref.company_name || "",
+    contact_name: ref.contact_name || "",
+    phone: ref.phone || "",
+    notes: ref.notes || "",
+  });
+  setShowInternalReferenceForm(false);
+}
+
+function cancelEditInternalReference() {
+  setEditingReferenceId(null);
+  setEditingReferenceDraft({
+    company_name: "",
+    contact_name: "",
+    phone: "",
+    notes: "",
+  });
+}
+
+async function saveEditedInternalReference(referenceId: string) {
+  if (!editingReferenceDraft.company_name.trim()) {
+    alert("Informe o nome da empresa da referência interna.");
+    return;
+  }
+
+  setSaving(true);
+
+  const { error } = await supabase
+    .from("registration_internal_references")
+    .update({
+      company_name: editingReferenceDraft.company_name.trim(),
+      contact_name: editingReferenceDraft.contact_name.trim() || null,
+      phone: editingReferenceDraft.phone.trim() || null,
+      notes: editingReferenceDraft.notes.trim() || null,
+    })
+    .eq("id", referenceId);
+
+  if (error) {
+    alert(`Erro ao editar referência:\n\n${error.message}`);
+    setSaving(false);
+    return;
+  }
+
+  cancelEditInternalReference();
+
+  if (data?.id) {
+    await loadInternalReferences(data.id);
+  }
+
+  setSaving(false);
+}
+  
 async function deleteInternalReference(referenceId: string) {
   if (!confirm("Deseja remover esta referência interna?")) {
     return;
