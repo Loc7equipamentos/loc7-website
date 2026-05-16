@@ -92,7 +92,7 @@ async function saveInternalReference() {
       company_name: internalReferenceDraft.company_name.trim(),
       contact_name: internalReferenceDraft.contact_name.trim() || null,
       phone: internalReferenceDraft.phone.trim() || null,
-      status: internalReferenceDraft.status,
+      status: "Não verificada",
       notes: internalReferenceDraft.notes.trim() || null,
       created_by: userEmail || "admin",
     },
