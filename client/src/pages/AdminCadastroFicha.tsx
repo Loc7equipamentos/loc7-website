@@ -40,7 +40,7 @@ const [uploadingInternalDocument, setUploadingInternalDocument] = useState(false
   company_name: "",
   contact_name: "",
   phone: "",
-  status: "Não verificada",
+ 
   notes: "",
 });
   const [internalNotesDraft, setInternalNotesDraft] = useState("");
@@ -108,7 +108,7 @@ async function saveInternalReference() {
     company_name: "",
     contact_name: "",
     phone: "",
-    status: "Não verificada",
+    
     notes: "",
   });
 
@@ -649,22 +649,6 @@ async function uploadInternalDocument() {
   placeholder="Telefone"
 />
 
-<select
-  value={internalReferenceDraft.status}
-  onChange={(e) =>
-    setInternalReferenceDraft((prev) => ({
-      ...prev,
-      status: e.target.value,
-    }))
-  }
-  className="rounded-md border border-gray-300 px-3 py-2 text-sm font-bold text-gray-900 outline-none focus:border-[#b91c1c]"
->
-  <option>Não verificada</option>
-  <option>Em contato</option>
-  <option>Confirmada</option>
-  <option>Inválida</option>
-  <option>Divergente</option>
-</select>
 
 <textarea
   value={internalReferenceDraft.notes}
@@ -697,10 +681,7 @@ async function uploadInternalDocument() {
                       key={ref.id}
                       className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
                     >
-                      <div className="mb-2 text-xs font-black uppercase tracking-wide text-[#b91c1c]">
-                        {ref.status || "Não verificada"}
-                      </div>
-
+                     
                       <div className="text-base font-black text-gray-950">
                         {ref.company_name || "Empresa não informada"}
                       </div>
