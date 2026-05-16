@@ -642,7 +642,7 @@ async function uploadInternalDocument() {
   onChange={(e) =>
     setInternalReferenceDraft((prev) => ({
       ...prev,
-      phone: e.target.value,
+      phone: formatPhone(e.target.value),
     }))
   }
   className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
@@ -1103,6 +1103,20 @@ function getRiskTone(value?: string) {
   if (v.includes("restrito")) return "border-gray-900 bg-gray-900 text-white";
 
   return "border-gray-300 bg-white text-gray-900";
+}
+
+function formatPhone(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+
+  if (digits.length <= 10) {
+    return digits
+      .replace(/^(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{4})(\d)/, "$1-$2");
+  }
+
+  return digits
+    .replace(/^(\d{2})(\d)/, "($1) $2")
+    .replace(/(\d{5})(\d)/, "$1-$2");
 }
 
 function normalize(value?: string) {
