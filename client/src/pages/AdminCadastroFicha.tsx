@@ -761,10 +761,11 @@ async function uploadInternalDocument() {
               {internalReferences.length > 0 ? (
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {internalReferences.map((ref) => (
-                    <div
-                      key={ref.id}
-                      className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-                    >
+                   <div
+  key={ref.id}
+  className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+>
+  {editingReferenceId === ref.id ? (
                      
                       <div className="text-base font-black text-gray-950">
                         {ref.company_name || "Empresa não informada"}
@@ -782,7 +783,53 @@ async function uploadInternalDocument() {
                         <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 text-xs font-medium text-gray-700">
                           {ref.notes}
                         </div>
-                      )}
+                      </div>
+  ) : (
+    <>
+      <div className="text-base font-black text-gray-950">
+        {ref.company_name || "Empresa não informada"}
+      </div>
+
+      <div className="mt-2 text-sm font-medium text-gray-800">
+        <strong>Contato:</strong> {ref.contact_name || "—"}
+      </div>
+
+      <div className="text-sm font-medium text-gray-800">
+        <strong>Telefone:</strong> {ref.phone || "—"}
+      </div>
+
+      {ref.notes && (
+        <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 text-xs font-medium text-gray-700">
+          {ref.notes}
+        </div>
+      )}
+
+      <div className="mt-4 flex flex-wrap justify-end gap-2">
+        <button
+          type="button"
+          onClick={() => startEditInternalReference(ref)}
+          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-[11px] font-bold text-gray-700 transition hover:bg-gray-100"
+        >
+          Editar referência
+        </button>
+
+        <button
+          type="button"
+          onClick={() => deleteInternalReference(ref.id)}
+          className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[11px] font-bold text-red-700 transition hover:bg-red-100"
+        >
+          Excluir referência
+        </button>
+      </div>
+
+      <div className="mt-3 text-[11px] font-medium text-gray-400">
+        {formatDate(ref.created_at)}
+        {ref.created_by ? ` · ${ref.created_by}` : ""}
+      </div>
+    </>
+  )}
+</div>
+                  ))}
 
 <div className="mt-4 flex flex-wrap justify-end gap-2">
 
