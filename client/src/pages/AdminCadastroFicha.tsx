@@ -117,6 +117,26 @@ async function saveInternalReference() {
 
   setSaving(false);
 }
+
+async function deleteInternalReference(referenceId: string) {
+  if (!confirm("Deseja remover esta referência interna?")) {
+    return;
+  }
+
+  const { error } = await supabase
+    .from("registration_internal_references")
+    .delete()
+    .eq("id", referenceId);
+
+  if (error) {
+    alert(`Erro ao remover referência:\n\n${error.message}`);
+    return;
+  }
+
+  if (data?.id) {
+    await loadInternalReferences(data.id);
+  }
+}
   
 async function loadInternalReferences(registrationId: string) {
   const { data, error } = await supabase
@@ -700,6 +720,16 @@ async function uploadInternalDocument() {
                         </div>
                       )}
 
+<div className="mt-4 flex justify-end">
+  <button
+    type="button"
+    onClick={() => deleteInternalReference(ref.id)}
+    className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[11px] font-bold text-red-700 transition hover:bg-red-100"
+  >
+    Excluir referência
+  </button>
+</div>
+                      
                       <div className="mt-3 text-[11px] font-medium text-gray-400">
                         {formatDate(ref.created_at)}
                         {ref.created_by ? ` · ${ref.created_by}` : ""}
