@@ -11,9 +11,10 @@ export default function StatusCadastro() {
 
   const [status, setStatus] = useState<StatusType>("received");
   const [createdAt, setCreatedAt] = useState<string | null>(null);
+  const [displayId, setDisplayId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  const cadastroId = params?.id || "";
+  const cadastroId = displayId || params?.id || "";
 
   useEffect(() => {
     if (!params?.id) return;
@@ -21,13 +22,17 @@ export default function StatusCadastro() {
     const load = async () => {
       const { data } = await supabase
         .from("rental_registrations")
-        .select("public_status, created_at")
+        .select("public_status, created_at, display_id")
         .eq("id", params.id)
         .single();
 
       if (data) {
         setStatus(normalizeStatus(data.public_status));
         setCreatedAt(data.created_at);
+        setDisplayId(
+          data.display_id ||
+            `LOC7-${params.id.replace(/-/g, "").slice(0, 6).toUpperCase()}`
+        );
       }
 
       setLoading(false);
@@ -95,9 +100,7 @@ export default function StatusCadastro() {
             <p className={`text-lg font-semibold ${statusInfo.color}`}>
               {statusInfo.label}
             </p>
-            <p className="mt-2 text-sm text-zinc-600">
-              {statusInfo.message}
-            </p>
+            <p className="mt-2 text-sm text-zinc-600">{statusInfo.message}</p>
           </div>
 
           <div className="mb-8">
