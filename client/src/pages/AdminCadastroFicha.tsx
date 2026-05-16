@@ -683,238 +683,213 @@ async function uploadInternalDocument() {
           </Section>
 
           <div className="no-print">
-            <Section title="Referências comerciais internas">
-                            <div className="mb-3 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowInternalReferenceForm((current) => !current)}
-                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-bold text-gray-800 hover:bg-gray-50"
-                >
-                  {showInternalReferenceForm ? "Cancelar" : "Nova referência interna"}
-                </button>
-              </div>
+  <Section title="Referências comerciais internas">
+    <div className="mb-3 flex justify-end">
+      <button
+        type="button"
+        onClick={() => {
+          cancelEditInternalReference();
+          setShowInternalReferenceForm((current) => !current);
+        }}
+        className="rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-bold text-gray-800 hover:bg-gray-50"
+      >
+        {showInternalReferenceForm ? "Cancelar" : "Nova referência interna"}
+      </button>
+    </div>
 
-              {showInternalReferenceForm && (
-                <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                   <input
-  value={internalReferenceDraft.company_name}
-  onChange={(e) =>
-    setInternalReferenceDraft((prev) => ({
-      ...prev,
-      company_name: e.target.value,
-    }))
-  }
-  className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-  placeholder="Empresa"
-/>
+    {showInternalReferenceForm && (
+      <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+          <input
+            value={internalReferenceDraft.company_name}
+            onChange={(e) =>
+              setInternalReferenceDraft((prev) => ({
+                ...prev,
+                company_name: e.target.value,
+              }))
+            }
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+            placeholder="Empresa"
+          />
 
-<input
-  value={internalReferenceDraft.contact_name}
-  onChange={(e) =>
-    setInternalReferenceDraft((prev) => ({
-      ...prev,
-      contact_name: e.target.value,
-    }))
-  }
-  className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-  placeholder="Contato"
-/>
+          <input
+            value={internalReferenceDraft.contact_name}
+            onChange={(e) =>
+              setInternalReferenceDraft((prev) => ({
+                ...prev,
+                contact_name: e.target.value,
+              }))
+            }
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+            placeholder="Contato"
+          />
 
-<input
-  value={internalReferenceDraft.phone}
-  onChange={(e) =>
-    setInternalReferenceDraft((prev) => ({
-      ...prev,
-      phone: formatPhone(e.target.value),
-    }))
-  }
-  className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-  placeholder="Telefone"
-/>
+          <input
+            value={internalReferenceDraft.phone}
+            onChange={(e) =>
+              setInternalReferenceDraft((prev) => ({
+                ...prev,
+                phone: formatPhone(e.target.value),
+              }))
+            }
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+            placeholder="Telefone"
+          />
 
-
-<textarea
-  value={internalReferenceDraft.notes}
-  onChange={(e) =>
-    setInternalReferenceDraft((prev) => ({
-      ...prev,
-      notes: e.target.value,
-    }))
-  }
-  className="min-h-[78px] rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c] md:col-span-2"
-  placeholder="Observação interna"
-/>
-                  </div>
-
-                  <div className="mt-3 flex justify-end">
-                   <button
-  type="button"
-  onClick={saveInternalReference}
-  className="rounded-md bg-black px-4 py-2 text-xs font-bold text-white hover:bg-gray-800"
->
-                      Salvar referência
-                    </button>
-                  </div>
-                </div>
-              )}
-              {internalReferences.length > 0 ? (
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                  {internalReferences.map((ref) => (
-                   <div
-  key={ref.id}
-  className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
->
-  {editingReferenceId === ref.id ? (
-                     
-                     <>
-  <input
-    value={editingReferenceDraft.company_name}
-    onChange={(e) =>
-      setEditingReferenceDraft((prev) => ({
-        ...prev,
-        company_name: e.target.value,
-      }))
-    }
-    className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-    placeholder="Empresa"
-  />
-
-  <input
-    value={editingReferenceDraft.contact_name}
-    onChange={(e) =>
-      setEditingReferenceDraft((prev) => ({
-        ...prev,
-        contact_name: e.target.value,
-      }))
-    }
-    className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-    placeholder="Contato"
-  />
-
-  <input
-    value={editingReferenceDraft.phone}
-    onChange={(e) =>
-      setEditingReferenceDraft((prev) => ({
-        ...prev,
-        phone: formatPhone(e.target.value),
-      }))
-    }
-    className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-    placeholder="Telefone"
-  />
-
-  <textarea
-    value={editingReferenceDraft.notes}
-    onChange={(e) =>
-      setEditingReferenceDraft((prev) => ({
-        ...prev,
-        notes: e.target.value,
-      }))
-    }
-    className="mt-3 min-h-[90px] rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
-    placeholder="Observações internas"
-  />
-
-  <div className="mt-4 flex flex-wrap justify-end gap-2">
-    <button
-      type="button"
-      onClick={cancelEditInternalReference}
-      className="rounded-md border border-gray-300 bg-white px-3 py-2 text-[11px] font-bold text-gray-700 transition hover:bg-gray-100"
-    >
-      Cancelar
-    </button>
-
-    <button
-      type="button"
-      onClick={() => saveEditedInternalReference(ref.id)}
-      className="rounded-md bg-black px-3 py-2 text-[11px] font-bold text-white transition hover:bg-gray-800"
-    >
-      Salvar edição
-    </button>
-  </div>
-</>
-  ) : (
-    <>
-      <div className="text-base font-black text-gray-950">
-        {ref.company_name || "Empresa não informada"}
-      </div>
-
-      <div className="mt-2 text-sm font-medium text-gray-800">
-        <strong>Contato:</strong> {ref.contact_name || "—"}
-      </div>
-
-      <div className="text-sm font-medium text-gray-800">
-        <strong>Telefone:</strong> {ref.phone || "—"}
-      </div>
-
-      {ref.notes && (
-        <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 text-xs font-medium text-gray-700">
-          {ref.notes}
+          <textarea
+            value={internalReferenceDraft.notes}
+            onChange={(e) =>
+              setInternalReferenceDraft((prev) => ({
+                ...prev,
+                notes: e.target.value,
+              }))
+            }
+            className="min-h-[78px] rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c] md:col-span-2"
+            placeholder="Observação interna"
+          />
         </div>
-      )}
 
-      <div className="mt-4 flex flex-wrap justify-end gap-2">
-        <button
-          type="button"
-          onClick={() => startEditInternalReference(ref)}
-          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-[11px] font-bold text-gray-700 transition hover:bg-gray-100"
-        >
-          Editar referência
-        </button>
-
-        <button
-          type="button"
-          onClick={() => deleteInternalReference(ref.id)}
-          className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[11px] font-bold text-red-700 transition hover:bg-red-100"
-        >
-          Excluir referência
-        </button>
+        <div className="mt-3 flex justify-end">
+          <button
+            type="button"
+            onClick={saveInternalReference}
+            className="rounded-md bg-black px-4 py-2 text-xs font-bold text-white hover:bg-gray-800"
+          >
+            Salvar referência
+          </button>
+        </div>
       </div>
+    )}
 
-      <div className="mt-3 text-[11px] font-medium text-gray-400">
-        {formatDate(ref.created_at)}
-        {ref.created_by ? ` · ${ref.created_by}` : ""}
-      </div>
-    </>
-  )}
-</div>
-                  ))}
+    {internalReferences.length > 0 ? (
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        {internalReferences.map((ref) => (
+          <div
+            key={ref.id}
+            className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+          >
+            {editingReferenceId === ref.id ? (
+              <>
+                <input
+                  value={editingReferenceDraft.company_name}
+                  onChange={(e) =>
+                    setEditingReferenceDraft((prev) => ({
+                      ...prev,
+                      company_name: e.target.value,
+                    }))
+                  }
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+                  placeholder="Empresa"
+                />
 
-<div className="mt-4 flex flex-wrap justify-end gap-2">
+                <input
+                  value={editingReferenceDraft.contact_name}
+                  onChange={(e) =>
+                    setEditingReferenceDraft((prev) => ({
+                      ...prev,
+                      contact_name: e.target.value,
+                    }))
+                  }
+                  className="mt-3 w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+                  placeholder="Contato"
+                />
 
-  <button
-    type="button"
-    onClick={() => startEditInternalReference(ref)}
-    className="rounded-md border border-gray-300 bg-white px-3 py-2 text-[11px] font-bold text-gray-700 transition hover:bg-gray-100"
-  >
-    Editar referência
-  </button>
+                <input
+                  value={editingReferenceDraft.phone}
+                  onChange={(e) =>
+                    setEditingReferenceDraft((prev) => ({
+                      ...prev,
+                      phone: formatPhone(e.target.value),
+                    }))
+                  }
+                  className="mt-3 w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+                  placeholder="Telefone"
+                />
 
-  <button
-    type="button"
-    onClick={() => deleteInternalReference(ref.id)}
-    className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[11px] font-bold text-red-700 transition hover:bg-red-100"
-  >
-    Excluir referência
-  </button>
+                <textarea
+                  value={editingReferenceDraft.notes}
+                  onChange={(e) =>
+                    setEditingReferenceDraft((prev) => ({
+                      ...prev,
+                      notes: e.target.value,
+                    }))
+                  }
+                  className="mt-3 min-h-[90px] w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+                  placeholder="Observações internas"
+                />
 
-</div>
-                      
-                      <div className="mt-3 text-[11px] font-medium text-gray-400">
-                        {formatDate(ref.created_at)}
-                        {ref.created_by ? ` · ${ref.created_by}` : ""}
-                      </div>
-                    </div>
-                  ))}
+                <div className="mt-4 flex flex-wrap justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={cancelEditInternalReference}
+                    className="rounded-md border border-gray-300 bg-white px-3 py-2 text-[11px] font-bold text-gray-700 transition hover:bg-gray-100"
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => saveEditedInternalReference(ref.id)}
+                    className="rounded-md bg-black px-3 py-2 text-[11px] font-bold text-white transition hover:bg-gray-800"
+                  >
+                    Salvar edição
+                  </button>
                 </div>
-              ) : (
-                <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm font-semibold text-gray-700">
-                  Nenhuma referência interna registrada.
+              </>
+            ) : (
+              <>
+                <div className="text-base font-black text-gray-950">
+                  {ref.company_name || "Empresa não informada"}
                 </div>
-              )}
-            </Section>
+
+                <div className="mt-2 text-sm font-medium text-gray-800">
+                  <strong>Contato:</strong> {ref.contact_name || "—"}
+                </div>
+
+                <div className="text-sm font-medium text-gray-800">
+                  <strong>Telefone:</strong> {ref.phone || "—"}
+                </div>
+
+                {ref.notes && (
+                  <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 text-xs font-medium text-gray-700">
+                    {ref.notes}
+                  </div>
+                )}
+
+                <div className="mt-4 flex flex-wrap justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => startEditInternalReference(ref)}
+                    className="rounded-md border border-gray-300 bg-white px-3 py-2 text-[11px] font-bold text-gray-700 transition hover:bg-gray-100"
+                  >
+                    Editar referência
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => deleteInternalReference(ref.id)}
+                    className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[11px] font-bold text-red-700 transition hover:bg-red-100"
+                  >
+                    Excluir referência
+                  </button>
+                </div>
+
+                <div className="mt-3 text-[11px] font-medium text-gray-400">
+                  {formatDate(ref.created_at)}
+                  {ref.created_by ? ` · ${ref.created_by}` : ""}
+                </div>
+              </>
+            )}
           </div>
+        ))}
+      </div>
+    ) : (
+      <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm font-semibold text-gray-700">
+        Nenhuma referência interna registrada.
+      </div>
+    )}
+  </Section>
+</div>
           
           <Section title="Observações internas">
             <textarea
