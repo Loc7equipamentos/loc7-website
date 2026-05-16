@@ -767,23 +767,73 @@ async function uploadInternalDocument() {
 >
   {editingReferenceId === ref.id ? (
                      
-                      <div className="text-base font-black text-gray-950">
-                        {ref.company_name || "Empresa não informada"}
-                      </div>
+                     <>
+  <input
+    value={editingReferenceDraft.company_name}
+    onChange={(e) =>
+      setEditingReferenceDraft((prev) => ({
+        ...prev,
+        company_name: e.target.value,
+      }))
+    }
+    className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+    placeholder="Empresa"
+  />
 
-                      <div className="mt-2 text-sm font-medium text-gray-800">
-                        <strong>Contato:</strong> {ref.contact_name || "—"}
-                      </div>
+  <input
+    value={editingReferenceDraft.contact_name}
+    onChange={(e) =>
+      setEditingReferenceDraft((prev) => ({
+        ...prev,
+        contact_name: e.target.value,
+      }))
+    }
+    className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+    placeholder="Contato"
+  />
 
-                      <div className="text-sm font-medium text-gray-800">
-                        <strong>Telefone:</strong> {ref.phone || "—"}
-                      </div>
+  <input
+    value={editingReferenceDraft.phone}
+    onChange={(e) =>
+      setEditingReferenceDraft((prev) => ({
+        ...prev,
+        phone: formatPhone(e.target.value),
+      }))
+    }
+    className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+    placeholder="Telefone"
+  />
 
-                      {ref.notes && (
-                        <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 text-xs font-medium text-gray-700">
-                          {ref.notes}
-                        </div>
-                      </div>
+  <textarea
+    value={editingReferenceDraft.notes}
+    onChange={(e) =>
+      setEditingReferenceDraft((prev) => ({
+        ...prev,
+        notes: e.target.value,
+      }))
+    }
+    className="mt-3 min-h-[90px] rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 outline-none focus:border-[#b91c1c]"
+    placeholder="Observações internas"
+  />
+
+  <div className="mt-4 flex flex-wrap justify-end gap-2">
+    <button
+      type="button"
+      onClick={cancelEditInternalReference}
+      className="rounded-md border border-gray-300 bg-white px-3 py-2 text-[11px] font-bold text-gray-700 transition hover:bg-gray-100"
+    >
+      Cancelar
+    </button>
+
+    <button
+      type="button"
+      onClick={() => saveEditedInternalReference(ref.id)}
+      className="rounded-md bg-black px-3 py-2 text-[11px] font-bold text-white transition hover:bg-gray-800"
+    >
+      Salvar edição
+    </button>
+  </div>
+</>
   ) : (
     <>
       <div className="text-base font-black text-gray-950">
