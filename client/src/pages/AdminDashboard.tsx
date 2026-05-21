@@ -1062,7 +1062,7 @@ const deleteSubcategory = async (id: string) => {
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Nome</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Marca</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Subcategoria</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Filtro Visível</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Destaque</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ordem</th>
