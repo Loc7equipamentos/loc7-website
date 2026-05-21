@@ -794,7 +794,7 @@ const deleteSubcategory = async (id: string) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Subcategoria</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Filtro Visível</label>
                   <select
                     value={newProduct.subcategory}
                     onChange={(e) =>
@@ -1463,7 +1463,7 @@ const deleteSubcategory = async (id: string) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Subcategoria</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Filtro Visível</label>
                   <select
                     value={editingProduct.subcategory || ''}
                     onChange={(e) =>
