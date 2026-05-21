@@ -23,6 +23,10 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
+// LEGADO — antigo menu horizontal com categorias + ícones.
+// Mantido temporariamente como referência visual.
+// Não utilizado no fluxo atual (Equipamentos → dropdown).
+
 const submenuCategories = [
   { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
   { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
