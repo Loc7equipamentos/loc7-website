@@ -725,7 +725,7 @@ const deleteSubcategory = async (id: string) => {
       : 'text-gray-500'
   }`}
 >
-  Subcategorias
+  Filtros Visíveis
 </button>
           
         </div>
