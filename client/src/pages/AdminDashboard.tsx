@@ -267,7 +267,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   .from('subcategories')
   .select(`
   *,
-  categories (
+  category:categories (
     id,
     name
   )
