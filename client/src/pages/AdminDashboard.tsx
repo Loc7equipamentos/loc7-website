@@ -1268,7 +1268,7 @@ const deleteSubcategory = async (id: string) => {
           <div className="space-y-6">
             <div className="bg-white p-6 rounded border border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Nova Subcategoria
+                Novo Filtro Visível
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1293,7 +1293,7 @@ const deleteSubcategory = async (id: string) => {
 
                 <input
                   type="text"
-                  placeholder="Nome da subcategoria"
+                  placeholder="Nome do filtro"
                   value={newSubcategory.name}
                   onChange={(e) =>
                     setNewSubcategory((prev) => ({
@@ -1310,7 +1310,7 @@ const deleteSubcategory = async (id: string) => {
                 className="mt-4 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
               >
                 <Plus size={16} />
-                Adicionar Subcategoria
+               Adicionar Filtro
               </button>
             </div>
 
@@ -1320,7 +1320,7 @@ const deleteSubcategory = async (id: string) => {
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">
-                        Subcategoria
+                        Filtro
                       </th>
 
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">
