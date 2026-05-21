@@ -590,7 +590,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
   const addSubcategory = async () => {
   if (!newSubcategory.category_id || !newSubcategory.name.trim()) {
-    setError('Selecione a categoria e informe o nome da subcategoria');
+   setError('Selecione a categoria e informe o nome do filtro');
     return;
   }
 
@@ -619,7 +619,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
     await loadSubcategories();
 
-    alert('Subcategoria adicionada com sucesso!');
+    alert('Filtro adicionado com sucesso!');
  } catch (err) {
   console.error('ERRO SUBCATEGORY:', err);
 
@@ -632,7 +632,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 };
 
 const deleteSubcategory = async (id: string) => {
-  if (!confirm('Tem certeza que deseja deletar esta subcategoria?')) return;
+  if (!confirm('Tem certeza que deseja deletar este filtro?')) return;
 
   try {
     const { error: err } = await supabase
@@ -644,12 +644,12 @@ const deleteSubcategory = async (id: string) => {
 
     await loadSubcategories();
 
-    alert('Subcategoria deletada com sucesso!');
+    alert('Filtro deletado com sucesso!');
   } catch (err) {
     setError(
       err instanceof Error
         ? err.message
-        : 'Erro ao deletar subcategoria'
+        : 'Erro ao deletar filtro'
     );
   }
 };
