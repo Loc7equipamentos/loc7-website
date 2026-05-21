@@ -823,10 +823,10 @@ const deleteSubcategory = async (id: string) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Badge</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tags invisíveis</label>
                   <input
                     type="text"
-                    placeholder="Ex: FULLFRAME"
+                    placeholder="Ex: wireless, fullframe, broadcast"
                     value={newProduct.badge}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, badge: e.target.value }))}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
@@ -1492,7 +1492,7 @@ const deleteSubcategory = async (id: string) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Badge</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tags invisíveis</label>
                   <input
                     type="text"
                     value={editingProduct.badge || ''}
