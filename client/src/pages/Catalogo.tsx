@@ -220,7 +220,7 @@ export default function Catalogo() {
       {uniqueSubcategories.length > 0 && (
         <div>
           <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-  Filtros
+  Refinar Busca
 </h3>
           <div className="space-y-2">
             <button
