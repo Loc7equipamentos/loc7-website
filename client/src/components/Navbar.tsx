@@ -38,18 +38,11 @@ const fallbackCategories = [
   { name: "ÁUDIO", href: "/catalogo/audio" },
   { name: "CÂMERAS", href: "/catalogo/cameras" },
   { name: "COMUNICADORES", href: "/catalogo/comunicadores" },
-  { name: "DIT", href: "/catalogo/dit" },
   { name: "DRONES", href: "/catalogo/drones" },
-  { name: "ENERGIA", href: "/catalogo/energia" },
   { name: "ESTABILIZADORES", href: "/catalogo/estabilizadores" },
-  { name: "ESTRUTURA", href: "/catalogo/estrutura" },
   { name: "FILTROS", href: "/catalogo/filtros" },
   { name: "FOLLOW FOCUS", href: "/catalogo/follow-focus" },
   { name: "ILUMINAÇÃO", href: "/catalogo/iluminacao" },
-  {
-    name: "INFRAESTRUTURA TÉCNICA",
-    href: "/catalogo/infraestrutura-tecnica",
-  },
   { name: "LENTES", href: "/catalogo/lentes" },
   { name: "MAQUINÁRIA", href: "/catalogo/maquinaria" },
   { name: "MATTEBOX", href: "/catalogo/mattebox" },
@@ -59,6 +52,7 @@ const fallbackCategories = [
   { name: "TELEPROMPTER", href: "/catalogo/teleprompter" },
   { name: "TRANSMISSORES", href: "/catalogo/transmissores" },
   { name: "TRIPÉS DE CÂMERA", href: "/catalogo/tripes" },
+  { name: "SUPORTE DE CÂMERA", href: "/catalogo/suporte-de-camera" },
 ];
 
 const navLinks = [
