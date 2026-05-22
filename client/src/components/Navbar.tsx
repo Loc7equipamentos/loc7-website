@@ -31,11 +31,14 @@ const submenuCategories = [
   { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
   { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
   { name: "Iluminação", icon: Zap, href: "/catalogo/iluminacao" },
-  { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
   { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
-  { name: "Movimento", icon: Move, href: "/catalogo/movimento" },
   { name: "Transmissores", icon: Radio, href: "/catalogo/transmissores" },
+  { name: "Estabilizadores", icon: Move, href: "/catalogo/estabilizadores" },
+  { name: "Drones", icon: Move, href: "/catalogo/drones" },
+  { name: "Comunicadores", icon: Radio, href: "/catalogo/comunicadores" },
+  { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
   { name: "Maquinária", icon: Flag, href: "/catalogo/maquinaria" },
+  { name: "Acessórios", icon: Flag, href: "/catalogo" },
 ];
 
 const fallbackCategories = [
@@ -413,6 +416,28 @@ export default function Navbar() {
           </div>
         </div>
 
+      <div className="hidden md:flex w-full justify-center pb-6">
+        <div className="flex items-start justify-center gap-5 lg:gap-6 xl:gap-7">
+          {submenuCategories.map((cat) => {
+            const Icon = cat.icon;
+
+            return (
+              <Link
+                key={cat.name}
+                href={cat.href}
+                className="group flex min-w-[74px] flex-col items-center gap-2 text-white/60 transition-all duration-200 hover:text-white"
+              >
+                <Icon className="h-[16px] w-[16px] transition-transform duration-200 group-hover:scale-110" />
+
+                <span className="text-[10px] font-medium tracking-[0.12em]">
+                  {cat.name}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+        
         {isMobileOpen && (
           <div className="md:hidden bg-gray-950 border-t border-gray-800">
             <div className="flex flex-col">
