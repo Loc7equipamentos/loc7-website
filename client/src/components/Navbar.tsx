@@ -449,7 +449,7 @@ export default function Navbar() {
                         onClick={() => setIsCatalogOpen(!isCatalogOpen)}
                         className="w-full text-left px-4 py-3 text-white hover:bg-gray-900 transition text-sm font-medium"
                       >
-                        {link.name}
+                        {link.name === "Como alugar" ? "Equipamentos" : link.name}
                       </button>
 
                       {isCatalogOpen && (
