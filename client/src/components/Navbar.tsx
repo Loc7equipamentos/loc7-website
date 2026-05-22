@@ -425,11 +425,11 @@ export default function Navbar() {
               <Link
                 key={cat.name}
                 href={cat.href}
-                className="group flex min-w-[74px] flex-col items-center gap-2 text-white/60 transition-all duration-200 hover:text-white"
+                className="group flex min-w-[74px] flex-col items-center gap-2 text-white/80 transition-all duration-200 hover:text-white"
               >
-                <Icon className="h-[20px] w-[20px]transition-transform duration-200 group-hover:scale-110" />
+               <Icon className="h-[22px] w-[22px]transition-transform duration-200 group-hover:scale-110" />
 
-                <span className="text-[12px] font-medium tracking-[0.12em]">
+                <span className="text-[13px] font-medium tracking-[0.12em]">
                   {cat.name}
                 </span>
               </Link>
