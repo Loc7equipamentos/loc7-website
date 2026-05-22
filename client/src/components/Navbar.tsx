@@ -416,8 +416,8 @@ export default function Navbar() {
           </div>
         </div>
 
-      <div className="hidden md:flex w-full justify-center pt-[58px] pb-5">
-        <div className="flex items-start justify-center gap-5 lg:gap-6 xl:gap-7">
+      <div className="hidden md:flex w-full justify-center pt-[62px] pb-7">
+        <div className="flex items-start justify-center gap-6 lg:gap-7 xl:gap-8">
           {submenuCategories.map((cat) => {
             const Icon = cat.icon;
 
@@ -427,9 +427,9 @@ export default function Navbar() {
                 href={cat.href}
                 className="group flex min-w-[74px] flex-col items-center gap-2 text-white/60 transition-all duration-200 hover:text-white"
               >
-                <Icon className="h-[16px] w-[16px] transition-transform duration-200 group-hover:scale-110" />
+                <Icon className="h-[20px] w-[20px]transition-transform duration-200 group-hover:scale-110" />
 
-                <span className="text-[10px] font-medium tracking-[0.12em]">
+                <span className="text-[12px] font-medium tracking-[0.12em]">
                   {cat.name}
                 </span>
               </Link>
