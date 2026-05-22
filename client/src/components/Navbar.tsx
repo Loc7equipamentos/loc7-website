@@ -61,7 +61,7 @@ const fallbackCategories = [
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Equipamentos", href: "/catalogo", hasDropdown: true },
+  { name: "Como alugar", href: "/catalogo", hasDropdown: true },
   { name: "Produção", href: "/producao" },
 ];
 
