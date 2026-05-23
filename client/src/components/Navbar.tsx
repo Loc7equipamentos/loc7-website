@@ -417,7 +417,7 @@ export default function Navbar() {
         </div>
 
       <div className="hidden md:block w-full pt-[76px] pb-8">
-  <div className="mx-auto w-full max-w-[1180px] pl-[180px] pr-6">
+  <div className="mx-auto w-full max-w-[1180px] pl-[120px] pr-6">
     <div className="flex w-full items-start justify-center gap-4 xl:gap-5">
       {submenuCategories.map((cat) => {
         const Icon = cat.icon;
