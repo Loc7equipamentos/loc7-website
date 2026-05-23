@@ -419,22 +419,22 @@ export default function Navbar() {
       <div className="hidden md:flex w-full justify-center pt-[62px] pb-7">
         <div className="flex items-start justify-center gap-6 lg:gap-7 xl:gap-8">
           {submenuCategories.map((cat) => {
-            const Icon = cat.icon;
+  const Icon = cat.icon;
 
-            return (
-              <Link
-                key={cat.name}
-                href={cat.href}
-                className="group flex min-w-[74px] flex-col items-center gap-2 text-white/80 transition-all duration-200 hover:text-white"
-              >
-               <Icon className="h-[22px] w-[22px]transition-transform duration-200 group-hover:scale-110" />
+  return (
+    <Link
+      key={cat.name}
+      href={cat.href}
+      className="group flex min-w-[74px] flex-col items-center gap-2 text-white/80 transition-all duration-200 hover:text-white"
+    >
+      <Icon className="h-[22px] w-[22px] transition-transform duration-200 group-hover:scale-110" />
 
-                <span className="text-[13px] font-medium tracking-[0.12em]">
-                  {cat.name}
-                </span>
-              </Link>
-            );
-          })}
+      <span className="text-[13px] font-medium tracking-[0.12em]">
+        {cat.name}
+      </span>
+    </Link>
+  );
+})}
         </div>
       </div>
         
