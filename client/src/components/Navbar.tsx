@@ -32,7 +32,21 @@ import { supabase } from "@/lib/supabase";
 const submenuCategories = [
   { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
   { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
-  { name: "Iluminação", icon: Zap, href: "/catalogo/iluminacao" },
+  {
+  name: "Iluminação",
+  icon: Zap,
+  href: "/catalogo/iluminacao",
+  children: [
+    {
+      name: "Luzes",
+      href: "/catalogo/iluminacao",
+    },
+    {
+      name: "Modificadores",
+      href: "/catalogo/modificadores",
+    },
+  ],
+},
   { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
   { name: "Transmissores", icon: Radio, href: "/catalogo/transmissores" },
   { name: "Drones", icon: Fan, href: "/catalogo/drones" },
@@ -423,23 +437,41 @@ export default function Navbar() {
      <div className="hidden md:block w-full pt-[76px] pb-8">
   <div className="mx-auto w-full max-w-[1240px] px-6">
     <div className="flex w-full items-start justify-center gap-4 xl:gap-5">
-      {submenuCategories.map((cat) => {
-        const Icon = cat.icon;
+    {submenuCategories.map((cat) => {
+  const Icon = cat.icon;
+  const hasChildren = !!cat.children?.length;
 
-        return (
-          <Link
-            key={cat.name}
-            href={cat.href}
-            className="group flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 hover:scale-[1.035] hover:text-white"
-          >
-            <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
+  return (
+    <div key={cat.name} className="relative group">
+      <Link
+        href={cat.href}
+        className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 group-hover:scale-[1.035] group-hover:text-white"
+      >
+        <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
 
-           <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
-              {cat.name}
-            </span>
-          </Link>
-        );
-      })}
+        <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
+          {cat.name}
+        </span>
+      </Link>
+
+      {hasChildren && (
+        <div className="absolute left-1/2 top-full z-50 hidden -translate-x-1/2 pt-3 group-hover:block">
+          <div className="min-w-[190px] rounded-xl border border-white/10 bg-black/95 p-2 shadow-2xl backdrop-blur-md">
+            {cat.children.map((child) => (
+              <Link
+                key={child.name}
+                href={child.href}
+                className="block rounded-md px-4 py-3 text-center text-[13px] font-medium tracking-[0.08em] text-white/75 transition hover:bg-white/5 hover:text-white"
+              >
+                {child.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+})}
     </div>
   </div>
 </div>
