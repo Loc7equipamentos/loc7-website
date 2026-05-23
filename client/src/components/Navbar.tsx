@@ -33,12 +33,12 @@ const submenuCategories = [
   { name: "Iluminação", icon: Zap, href: "/catalogo/iluminacao" },
   { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
   { name: "Transmissores", icon: Radio, href: "/catalogo/transmissores" },
-  { name: "Drones", icon: Move, href: "/catalogo/drones" },
+  { name: "Drones", icon: Drone, href: "/catalogo/drones" },
   { name: "Estabilizadores", icon: Move, href: "/catalogo/estabilizadores" },
   { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
   { name: "Comunicadores", icon: Radio, href: "/catalogo/comunicadores" },
   { name: "Maquinária", icon: Flag, href: "/catalogo/maquinaria" },
-  { name: "Acessórios", icon: Flag, href: "/catalogo" },
+  { name: "Acessórios", icon: Cog, href: "/catalogo" },
 ];
 
 const fallbackCategories = [
@@ -430,7 +430,7 @@ export default function Navbar() {
           >
             <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
 
-            <span className="block text-[13px] font-medium leading-tight tracking-[0.055em] text-white/82 transition-colors duration-200 group-hover:text-white">
+           <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
               {cat.name}
             </span>
           </Link>
