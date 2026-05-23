@@ -4,70 +4,75 @@
  * Mantém estrutura atual: logo + menu principal + submenu categorias + mobile
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import {
-  Menu,
-  X,
-  Camera,
   Aperture,
-  Zap,
+  Camera,
+  ChevronDown,
+  Cog,
+  Fan,
+  Flag,
+  Menu,
   Mic,
   Monitor,
   Move,
   Radio,
-  Flag,
-  Fan,
-  Cog,
-  User,
   Search,
-  ChevronDown,
+  User,
+  X,
+  Zap,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-// LEGADO — antigo menu horizontal com categorias + ícones.
-// Mantido temporariamente como referência visual.
-// Não utilizado no fluxo atual (Equipamentos → dropdown).
+type SubmenuChild = {
+  name: string;
+  href: string;
+};
 
-const submenuCategories = [
+type SubmenuCategory = {
+  name: string;
+  icon: React.ElementType;
+  href?: string;
+  children?: SubmenuChild[];
+};
+
+const submenuCategories: SubmenuCategory[] = [
   { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
   { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
   {
-  name: "Iluminação",
-  icon: Zap,
-  href: "/catalogo/iluminacao",
-  children: [
-    {
-      name: "Luzes",
-      href: "/catalogo/iluminacao",
-    },
-    {
-      name: "Modificadores",
-      href: "/catalogo/modificadores",
-    },
-  ],
-},
+    name: "Iluminação",
+    icon: Zap,
+    children: [
+      { name: "Luzes", href: "/catalogo/iluminacao" },
+      { name: "Modificadores", href: "/catalogo/modificadores" },
+    ],
+  },
   { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
   { name: "Transmissores", icon: Radio, href: "/catalogo/transmissores" },
   { name: "Drones", icon: Fan, href: "/catalogo/drones" },
-  { name: "Estabilizadores", icon: Move, href: "/catalogo/estabilizadores" },
+  {
+    name: "Estabilizadores",
+    icon: Move,
+    href: "/catalogo/estabilizadores",
+  },
   { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
   { name: "Comunicadores", icon: Radio, href: "/catalogo/comunicadores" },
   { name: "Maquinária", icon: Flag, href: "/catalogo/maquinaria" },
   {
-  name: "Acessórios",
-  icon: Cog,
-  children: [
-    { name: "Tripés de Câmera", href: "/catalogo/tripes" },
-    { name: "Rig", href: "/catalogo/rig" },
-    { name: "Follow Focus", href: "/catalogo/follow-focus" },
-    { name: "Mattebox", href: "/catalogo/mattebox" },
-    { name: "Filtros", href: "/catalogo/filtros" },
-    { name: "Switchers", href: "/catalogo/switchers" },
-    { name: "Teleprompter", href: "/catalogo/teleprompter" },
-    { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
-  ],
-},
+    name: "Acessórios",
+    icon: Cog,
+    children: [
+      { name: "Tripés de Câmera", href: "/catalogo/tripes" },
+      { name: "Rig", href: "/catalogo/rig" },
+      { name: "Follow Focus", href: "/catalogo/follow-focus" },
+      { name: "Mattebox", href: "/catalogo/mattebox" },
+      { name: "Filtros", href: "/catalogo/filtros" },
+      { name: "Switchers", href: "/catalogo/switchers" },
+      { name: "Teleprompter", href: "/catalogo/teleprompter" },
+      { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
+    ],
+  },
 ];
 
 const fallbackCategories = [
@@ -107,9 +112,8 @@ export default function Navbar() {
 
   const searchRef = useRef<HTMLDivElement | null>(null);
 
-  const [dropdownCategories, setDropdownCategories] = useState<
-    Array<{ name: string; href: string }>
-  >(fallbackCategories);
+  const [dropdownCategories, setDropdownCategories] =
+    useState<Array<{ name: string; href: string }>>(fallbackCategories);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
   const handleMobileHomeReload = () => {
@@ -222,29 +226,22 @@ export default function Navbar() {
     const categoryMap: Record<string, string> = {
       camera: "/catalogo/cameras",
       cameras: "/catalogo/cameras",
-
       lente: "/catalogo/lentes",
       lentes: "/catalogo/lentes",
-
       iluminacao: "/catalogo/iluminacao",
       luz: "/catalogo/iluminacao",
       luzes: "/catalogo/iluminacao",
-
       audio: "/catalogo/audio",
       microfone: "/catalogo/audio",
       microfones: "/catalogo/audio",
       mic: "/catalogo/audio",
-
       monitor: "/catalogo/monitores",
       monitores: "/catalogo/monitores",
-
       movimento: "/catalogo/movimento",
       gimbal: "/catalogo/movimento",
       estabilizador: "/catalogo/movimento",
-
       transmissor: "/catalogo/transmissores",
       transmissores: "/catalogo/transmissores",
-
       maquinaria: "/catalogo/maquinaria",
       tripe: "/catalogo/maquinaria",
       tripes: "/catalogo/maquinaria",
@@ -309,10 +306,10 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`relative lg:fixed lg:top-0 lg:left-0 lg:right-0 z-50 overflow-visible transition-all duration-300 ${
+      className={`relative lg:fixed lg:left-0 lg:right-0 lg:top-0 z-50 overflow-visible transition-all duration-300 ${
         isScrolled
-  ? "bg-black shadow-lg shadow-black/30"
-  : "bg-black shadow-[0_18px_35px_rgba(0,0,0,0.45)]"
+          ? "bg-black shadow-lg shadow-black/30"
+          : "bg-black shadow-[0_18px_35px_rgba(0,0,0,0.45)]"
       }`}
     >
       <div className="container md:min-h-[195px]">
@@ -327,18 +324,18 @@ export default function Navbar() {
                 handleMobileHomeReload();
               }
             }}
-            className="relative flex items-center group shrink-0 w-[150px] md:w-[180px] h-[92px] md:h-[72px] overflow-visible"
+            className="relative flex h-[92px] w-[150px] shrink-0 items-center overflow-visible md:h-[72px] md:w-[180px]"
           >
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-              className="absolute left-[-6px] md:left-[-12px] top-[62%] md:top-[108%] -translate-y-1/2 scale-[1.25] md:scale-[1.35] origin-left transition-transform duration-300 "
+              className="absolute left-[-6px] top-[62%] origin-left -translate-y-1/2 scale-[1.25] transition-transform duration-300 md:left-[-12px] md:top-[108%] md:scale-[1.35]"
             />
           </Link>
 
-          <div className="flex flex-col flex-1 relative">
-            <div className="flex items-center justify-center h-20 md:h-[82px] flex-1 md:translate-y-[48px]">
-              <div className="hidden md:flex items-center gap-10 lg:gap-12 justify-center flex-1 relative overflow-visible">
+          <div className="relative flex flex-1 flex-col">
+            <div className="flex h-20 flex-1 items-center justify-center md:h-[82px] md:translate-y-[48px]">
+              <div className="relative hidden flex-1 items-center justify-center gap-10 overflow-visible md:flex lg:gap-12">
                 {navLinks.map((link) => (
                   <div
                     key={link.name}
@@ -352,7 +349,7 @@ export default function Navbar() {
                   >
                     {link.hasDropdown ? (
                       <button
-                        className={`flex items-center gap-1 text-sm font-medium text-white hover:text-gray-300 transition ${
+                        className={`flex items-center gap-1 text-sm font-medium text-white transition hover:text-gray-300 ${
                           location.startsWith("/catalogo")
                             ? "text-gray-300"
                             : ""
@@ -363,7 +360,7 @@ export default function Navbar() {
                     ) : (
                       <Link
                         href={link.href}
-                        className={`text-sm font-medium text-white hover:text-gray-300 transition ${
+                        className={`text-sm font-medium text-white transition hover:text-gray-300 ${
                           location === link.href ? "text-gray-300" : ""
                         }`}
                       >
@@ -372,13 +369,13 @@ export default function Navbar() {
                     )}
 
                     {link.hasDropdown && isCatalogOpen && (
-                      <div className="absolute left-1/2 top-full -translate-x-1/2 mt-0 max-h-[58vh] w-[280px] overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-black/95 py-2 shadow-2xl backdrop-blur-md z-[9999] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                      <div className="absolute left-1/2 top-full z-[9999] mt-0 max-h-[58vh] w-[280px] -translate-x-1/2 overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-black/95 py-2 shadow-2xl backdrop-blur-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                         <div className="flex items-center justify-center gap-1 py-1 text-white/35">
-                          <ChevronDown className="w-3 h-3 animate-bounce" />
+                          <ChevronDown className="h-3 w-3 animate-bounce" />
                         </div>
 
                         {loadingCategories ? (
-                          <div className="px-4 py-3 text-white text-sm text-center">
+                          <div className="px-4 py-3 text-center text-sm text-white">
                             Carregando...
                           </div>
                         ) : (
@@ -430,15 +427,15 @@ export default function Navbar() {
 
               <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 md:flex">
                 <Link href="/admin-panel">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 hover:border-white/25 hover:bg-white/5 transition cursor-pointer">
-                    <User className="w-4 h-4 text-white/45 hover:text-white/70" />
+                  <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-white/10 transition hover:border-white/25 hover:bg-white/5">
+                    <User className="h-4 w-4 text-white/45 hover:text-white/70" />
                   </div>
                 </Link>
               </div>
 
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="md:hidden p-2 text-white translate-x-6 translate-y-[10px]"
+                className="translate-x-6 translate-y-[10px] p-2 text-white md:hidden"
                 aria-label="Abrir menu"
               >
                 {isMobileOpen ? <X size={34} /> : <Menu size={34} />}
@@ -447,63 +444,70 @@ export default function Navbar() {
           </div>
         </div>
 
-     <div className="hidden md:block w-full pt-[76px] pb-8">
-  <div className="mx-auto w-full max-w-[1240px] px-6">
-    <div className="flex w-full items-start justify-center gap-4 xl:gap-5">
-  {submenuCategories.map((cat) => {
-  const Icon = cat.icon;
-  const hasChildren = !!cat.children?.length;
+        <div className="hidden w-full pt-[76px] pb-8 md:block">
+          <div className="mx-auto w-full max-w-[1240px] px-6">
+            <div className="flex w-full items-start justify-center gap-4 xl:gap-5">
+              {submenuCategories.map((cat) => {
+                const Icon = cat.icon;
+                const hasChildren = !!cat.children?.length;
+                const dropdownIsLarge = (cat.children?.length || 0) > 4;
 
-  return (
-    <div key={cat.name} className="relative group">
-      {hasChildren ? (
-        <button
-          type="button"
-          className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 group-hover:scale-[1.035] group-hover:text-white"
-        >
-          <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
+                return (
+                  <div key={cat.name} className="relative group">
+                    {hasChildren ? (
+                      <button
+                        type="button"
+                        className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 group-hover:scale-[1.035] group-hover:text-white"
+                      >
+                        <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
 
-          <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
-            {cat.name}
-          </span>
-        </button>
-      ) : (
-        <Link
-          href={cat.href}
-          className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 hover:scale-[1.035] hover:text-white"
-        >
-          <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
+                        <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
+                          {cat.name}
+                        </span>
+                      </button>
+                    ) : (
+                      <Link
+                        href={cat.href || "/catalogo"}
+                        className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 hover:scale-[1.035] hover:text-white"
+                      >
+                        <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
 
-          <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
-            {cat.name}
-          </span>
-        </Link>
-      )}
+                        <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
+                          {cat.name}
+                        </span>
+                      </Link>
+                    )}
 
-      {hasChildren && (
-        <div className="absolute left-1/2 top-full z-50 hidden -translate-x-1/2 pt-3 group-hover:block">
-          <div className="min-w-[210px] rounded-xl border border-white/10 bg-black/95 p-2 shadow-2xl backdrop-blur-md">
-            {cat.children.map((child) => (
-              <Link
-                key={child.name}
-                href={child.href}
-                className="block rounded-md px-4 py-3 text-center text-[13px] font-medium tracking-[0.08em] text-white/75 transition hover:bg-white/5 hover:text-white"
-              >
-                {child.name}
-              </Link>
-            ))}
+                    {hasChildren && (
+                      <div className="absolute left-1/2 top-full z-50 hidden -translate-x-1/2 pt-3 group-hover:block">
+                        <div
+                          className={`rounded-xl border border-white/10 bg-black/95 p-2 shadow-2xl backdrop-blur-md ${
+                            dropdownIsLarge
+                              ? "grid min-w-[360px] grid-cols-2 gap-1"
+                              : "min-w-[210px]"
+                          }`}
+                        >
+                          {cat.children?.map((child) => (
+                            <Link
+                              key={child.name}
+                              href={child.href}
+                              className="block rounded-md px-4 py-2.5 text-center text-[12px] font-medium tracking-[0.06em] text-white/75 transition hover:bg-white/5 hover:text-white"
+                            >
+                              {child.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-      )}
-    </div>
-  );
-})}
-    </div>
-  </div>
-</div>
-        
+
         {isMobileOpen && (
-          <div className="md:hidden bg-gray-950 border-t border-gray-800">
+          <div className="border-t border-gray-800 bg-gray-950 md:hidden">
             <div className="flex flex-col">
               {navLinks.map((link) => (
                 <div key={link.name}>
@@ -511,9 +515,11 @@ export default function Navbar() {
                     <>
                       <button
                         onClick={() => setIsCatalogOpen(!isCatalogOpen)}
-                        className="w-full text-left px-4 py-3 text-white hover:bg-gray-900 transition text-sm font-medium"
+                        className="w-full px-4 py-3 text-left text-sm font-medium text-white transition hover:bg-gray-900"
                       >
-                        {link.name === "Como alugar" ? "Equipamentos" : link.name}
+                        {link.name === "Como alugar"
+                          ? "Equipamentos"
+                          : link.name}
                       </button>
 
                       {isCatalogOpen && (
@@ -522,7 +528,7 @@ export default function Navbar() {
                             <Link
                               key={cat.name}
                               href={cat.href}
-                              className="block px-4 py-2 text-xs font-medium tracking-wide text-white/80 hover:text-white transition-all duration-200 hover:scale-[1.03]"
+                              className="block px-4 py-2 text-xs font-medium tracking-wide text-white/80 transition-all duration-200 hover:scale-[1.03] hover:text-white"
                             >
                               {cat.name}
                             </Link>
@@ -539,7 +545,7 @@ export default function Navbar() {
                           handleMobileHomeReload();
                         }
                       }}
-                      className="block px-4 py-3 text-white hover:bg-gray-900 transition text-sm font-medium"
+                      className="block px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-900"
                     >
                       {link.name}
                     </Link>
