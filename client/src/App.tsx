@@ -238,7 +238,7 @@ export default function App() {
     <>
       {hasPublicNavbar && <Navbar />}
 
-      <div className={hasPublicNavbar ? "lg:pt-[150px]" : ""}>
+      <div className={hasPublicNavbar ? "lg:pt-[190px]" : ""}>
         <Switch>
           {/* SITE */}
           <Route path="/" component={Home} />
