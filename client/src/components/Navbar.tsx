@@ -33,8 +33,8 @@ const submenuCategories = [
   { name: "Iluminação", icon: Zap, href: "/catalogo/iluminacao" },
   { name: "Monitores", icon: Monitor, href: "/catalogo/monitores" },
   { name: "Transmissores", icon: Radio, href: "/catalogo/transmissores" },
-  { name: "Estabilizadores", icon: Move, href: "/catalogo/estabilizadores" },
   { name: "Drones", icon: Move, href: "/catalogo/drones" },
+  { name: "Estabilizadores", icon: Move, href: "/catalogo/estabilizadores" },
   { name: "Comunicadores", icon: Radio, href: "/catalogo/comunicadores" },
   { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
   { name: "Maquinária", icon: Flag, href: "/catalogo/maquinaria" },
@@ -418,7 +418,7 @@ export default function Navbar() {
 
       <div className="hidden md:block w-full pt-[76px] pb-8">
   <div className="mx-auto w-full max-w-[1180px] pl-[180px] pr-6">
-    <div className="flex w-full items-start justify-center gap-10">
+    <div className="flex w-full items-start justify-center gap-6 xl:gap-7">
       {submenuCategories.map((cat) => {
         const Icon = cat.icon;
 
