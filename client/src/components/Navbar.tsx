@@ -35,8 +35,8 @@ const submenuCategories = [
   { name: "Transmissores", icon: Radio, href: "/catalogo/transmissores" },
   { name: "Drones", icon: Move, href: "/catalogo/drones" },
   { name: "Estabilizadores", icon: Move, href: "/catalogo/estabilizadores" },
-  { name: "Comunicadores", icon: Radio, href: "/catalogo/comunicadores" },
   { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
+  { name: "Comunicadores", icon: Radio, href: "/catalogo/comunicadores" },
   { name: "Maquinária", icon: Flag, href: "/catalogo/maquinaria" },
   { name: "Acessórios", icon: Flag, href: "/catalogo" },
 ];
@@ -418,7 +418,7 @@ export default function Navbar() {
 
       <div className="hidden md:block w-full pt-[76px] pb-8">
   <div className="mx-auto w-full max-w-[1180px] pl-[180px] pr-6">
-    <div className="flex w-full items-start justify-center gap-6 xl:gap-7">
+    <div className="flex w-full items-start justify-center gap-4 xl:gap-5">
       {submenuCategories.map((cat) => {
         const Icon = cat.icon;
 
@@ -426,7 +426,7 @@ export default function Navbar() {
           <Link
             key={cat.name}
             href={cat.href}
-           className="group flex w-[104px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 hover:scale-[1.035] hover:text-white"
+           className="group flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 hover:scale-[1.035] hover:text-white"
           >
             <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
 
