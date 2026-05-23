@@ -283,7 +283,9 @@ export default function Navbar() {
   return (
     <nav
       className={`relative lg:fixed lg:top-0 lg:left-0 lg:right-0 z-50 overflow-visible transition-all duration-300 ${
-        isScrolled ? "bg-black shadow-lg shadow-black/30" : "bg-black"
+        isScrolled
+  ? "bg-black shadow-lg shadow-black/30"
+  : "bg-black shadow-[0_18px_35px_rgba(0,0,0,0.45)]"
       }`}
     >
       <div className="container md:min-h-[195px]">
