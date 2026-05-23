@@ -54,7 +54,20 @@ const submenuCategories = [
   { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
   { name: "Comunicadores", icon: Radio, href: "/catalogo/comunicadores" },
   { name: "Maquinária", icon: Flag, href: "/catalogo/maquinaria" },
-  { name: "Acessórios", icon: Cog, href: "/catalogo" },
+  {
+  name: "Acessórios",
+  icon: Cog,
+  children: [
+    { name: "Tripés de Câmera", href: "/catalogo/tripes" },
+    { name: "Rig", href: "/catalogo/rig" },
+    { name: "Follow Focus", href: "/catalogo/follow-focus" },
+    { name: "Mattebox", href: "/catalogo/mattebox" },
+    { name: "Filtros", href: "/catalogo/filtros" },
+    { name: "Switchers", href: "/catalogo/switchers" },
+    { name: "Teleprompter", href: "/catalogo/teleprompter" },
+    { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
+  ],
+},
 ];
 
 const fallbackCategories = [
@@ -437,26 +450,39 @@ export default function Navbar() {
      <div className="hidden md:block w-full pt-[76px] pb-8">
   <div className="mx-auto w-full max-w-[1240px] px-6">
     <div className="flex w-full items-start justify-center gap-4 xl:gap-5">
-    {submenuCategories.map((cat) => {
+  {submenuCategories.map((cat) => {
   const Icon = cat.icon;
   const hasChildren = !!cat.children?.length;
 
   return (
     <div key={cat.name} className="relative group">
-      <Link
-        href={cat.href}
-        className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 group-hover:scale-[1.035] group-hover:text-white"
-      >
-        <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
+      {hasChildren ? (
+        <button
+          type="button"
+          className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 group-hover:scale-[1.035] group-hover:text-white"
+        >
+          <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
 
-        <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
-          {cat.name}
-        </span>
-      </Link>
+          <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
+            {cat.name}
+          </span>
+        </button>
+      ) : (
+        <Link
+          href={cat.href}
+          className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 hover:scale-[1.035] hover:text-white"
+        >
+          <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
+
+          <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
+            {cat.name}
+          </span>
+        </Link>
+      )}
 
       {hasChildren && (
         <div className="absolute left-1/2 top-full z-50 hidden -translate-x-1/2 pt-3 group-hover:block">
-          <div className="min-w-[190px] rounded-xl border border-white/10 bg-black/95 p-2 shadow-2xl backdrop-blur-md">
+          <div className="min-w-[210px] rounded-xl border border-white/10 bg-black/95 p-2 shadow-2xl backdrop-blur-md">
             {cat.children.map((child) => (
               <Link
                 key={child.name}
