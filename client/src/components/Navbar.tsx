@@ -416,25 +416,27 @@ export default function Navbar() {
           </div>
         </div>
 
-      <div className="hidden md:flex w-full justify-center pt-[62px] pb-7 pl-[190px]">
-  <div className="flex items-start justify-center gap-5 lg:gap-6 xl:gap-7">
-    {submenuCategories.map((cat) => {
-      const Icon = cat.icon;
+      <div className="hidden md:flex w-full justify-center pt-[62px] pb-7">
+  <div className="w-full max-w-[1180px] pl-[120px]">
+    <div className="flex items-start justify-center gap-4 lg:gap-5 xl:gap-6">
+      {submenuCategories.map((cat) => {
+        const Icon = cat.icon;
 
-      return (
-        <Link
-          key={cat.name}
-          href={cat.href}
-          className="group flex w-[92px] flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/82 transition-all duration-200 hover:text-white"
-        >
-          <Icon className="h-[22px] w-[22px] shrink-0 transition-transform duration-200 group-hover:scale-110" />
+        return (
+          <Link
+            key={cat.name}
+            href={cat.href}
+            className="group flex w-[84px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/82 transition-all duration-200 hover:text-white"
+          >
+            <Icon className="h-[22px] w-[22px] shrink-0 transition-transform duration-200 group-hover:scale-110" />
 
-          <span className="block text-[13px] font-medium leading-none tracking-[0.08em]">
-            {cat.name}
-          </span>
-        </Link>
-      );
-    })}
+            <span className="block text-[13px] font-medium leading-tight tracking-[0.06em]">
+              {cat.name}
+            </span>
+          </Link>
+        );
+      })}
+    </div>
   </div>
 </div>
         
