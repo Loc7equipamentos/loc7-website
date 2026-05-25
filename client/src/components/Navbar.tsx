@@ -64,7 +64,7 @@ const submenuCategories: SubmenuCategory[] = [
     icon: Cog,
     children: [
       { name: "Tripés de Câmera", href: "/catalogo/tripes" },
-      { name: "Rig", href: "/catalogo/rig" },
+      { name: "Movimento", href: "/catalogo/movimento" },
       { name: "Follow Focus", href: "/catalogo/follow-focus" },
       { name: "Mattebox", href: "/catalogo/mattebox" },
       { name: "Filtros", href: "/catalogo/filtros" },
