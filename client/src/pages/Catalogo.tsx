@@ -137,9 +137,16 @@ export default function Catalogo() {
   }, []);
 
   const categoryExists =
-    !params.category ||
-    loading ||
-    categoryRows.some((cat) => slugifyPathSegment(cat.name) === params.category);
+  !params.category ||
+  loading ||
+  categoryRows.some((cat) => {
+    const mappedCategoryName = slugToCategoryName[params.category || ""];
+
+    return (
+      slugifyPathSegment(cat.name) === params.category ||
+      normalize(cat.name) === normalize(mappedCategoryName || "")
+    );
+  });
 
   const searchScopedProducts = products.filter((p) => {
     if (!searchQuery.trim()) return true;
