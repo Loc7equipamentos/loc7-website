@@ -46,16 +46,25 @@ export default function Catalogo() {
   const [selectedBrand, setSelectedBrand] = useState("Todas");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  const slugToCategoryName: Record<string, string> = {
-    cameras: "Câmeras",
-    lentes: "Lentes",
-    iluminacao: "Iluminação",
-    audio: "Áudio",
-    monitores: "Monitores",
-    movimento: "Movimento",
-    transmissores: "Transmissores",
-    maquinaria: "Maquinária",
-  };
+ const slugToCategoryName: Record<string, string> = {
+  cameras: "Câmeras",
+  lentes: "Lentes",
+  iluminacao: "Iluminação",
+  audio: "Áudio",
+  monitores: "Monitores",
+  movimento: "Movimento",
+  transmissores: "Transmissores",
+  maquinaria: "Maquinária",
+
+  filtros: "Filtros",
+  mattebox: "Mattebox",
+  switchers: "Switchers",
+  teleprompter: "Teleprompter",
+  "follow-focus": "Follow Focus",
+  tripes: "Tripés de Câmera",
+  "suporte-de-camera": "Suporte de Câmera",
+  modificadores: "Modificadores",
+};
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
