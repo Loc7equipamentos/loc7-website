@@ -416,7 +416,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   setError('Preencha nome, categoria e marca');
   return;
 }
-    }
+  
 
     try {
       const slug = await generateUniqueSlug(newProduct.name);
