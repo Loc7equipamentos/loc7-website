@@ -412,9 +412,10 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   };
 
   const addProduct = async () => {
-    if (!newProduct.name || !newProduct.category || newProduct.price <= 0) {
-      setError('Preencha todos os campos obrigatórios');
-      return;
+   if (!newProduct.name.trim() || !newProduct.category || !newProduct.brand) {
+  setError('Preencha nome, categoria e marca');
+  return;
+}
     }
 
     try {
@@ -426,7 +427,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
           category: newProduct.category,
           subcategory: normalizeSubcategory(newProduct.subcategory) || null,
           brand: newProduct.brand.trim() || null,
-          price: newProduct.price,
+          price: newProduct.price || 0,
           description: newProduct.description,
           specs: newProduct.specs.trim() || null,
           includes: newProduct.includes.trim() || null,
@@ -813,7 +814,7 @@ const deleteSubcategory = async (id: string) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Preço *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Preço</label>
                   <input
                     type="number"
                     placeholder="0.00"
