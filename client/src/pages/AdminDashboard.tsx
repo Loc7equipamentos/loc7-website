@@ -53,6 +53,7 @@ export default function AdminDashboard() {
     image_url: '',
     images: [] as string[],
     brand: '',
+    model: '',
     badge: '',
     catalog_order: null as number | null,
     is_featured: false,
@@ -68,7 +69,15 @@ export default function AdminDashboard() {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
 const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
+const buildProductName = (brand: string, model: string) => {
+  return [brand?.trim(), model?.trim()]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+};
+  
   const formatPrice = (value: number) => {
+    
     return new Intl.NumberFormat('pt-BR').format(value);
   };
 
@@ -749,10 +758,14 @@ const deleteSubcategory = async (id: string) => {
 <select
   value={newProduct.brand}
   onChange={(e) =>
-    setNewProduct((prev) => ({
-      ...prev,
-      brand: e.target.value,
-    }))
+   setNewProduct((prev) => ({
+  ...prev,
+  brand: e.target.value,
+  name: buildProductName(
+    e.target.value,
+    prev.model
+  ),
+}))
   }
   className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
 >
@@ -767,18 +780,47 @@ const deleteSubcategory = async (id: string) => {
                     
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
-                  <input
-                    type="text"
-                    placeholder="Nome do produto"
-                    value={newProduct.name}
-                    onChange={(e) => setNewProduct((prev) => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                  />
-                </div>
+              <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Modelo *
+  </label>
 
-                <div>
+  <input
+    type="text"
+    placeholder="FX3"
+    value={newProduct.model}
+    onChange={(e) =>
+      setNewProduct((prev) => {
+        const model = e.target.value;
+
+        return {
+          ...prev,
+          model,
+          name: buildProductName(prev.brand, model),
+        };
+      })
+    }
+    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+  />
+</div>
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Nome (automático)
+  </label>
+
+  <input
+    type="text"
+    value={newProduct.name}
+    onChange={(e) =>
+      setNewProduct((prev) => ({
+        ...prev,
+        name: e.target.value,
+      }))
+    }
+    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-gray-50 text-gray-900"
+  />
+</div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Categoria *</label>
                   <select
                     value={newProduct.category}
