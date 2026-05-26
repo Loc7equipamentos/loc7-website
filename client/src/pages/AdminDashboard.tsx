@@ -69,15 +69,14 @@ export default function AdminDashboard() {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
 const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
-const buildProductName = (brand: string, model: string) => {
-  return [brand?.trim(), model?.trim()]
-    .filter(Boolean)
-    .join(' ')
-    .trim();
-};
-  
+  const buildProductName = (brand: string, model: string) => {
+    return [brand?.trim(), model?.trim()]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+  };
+
   const formatPrice = (value: number) => {
-    
     return new Intl.NumberFormat('pt-BR').format(value);
   };
 
@@ -421,11 +420,15 @@ const buildProductName = (brand: string, model: string) => {
   };
 
   const addProduct = async () => {
-   if (!newProduct.name.trim() || !newProduct.category || !newProduct.brand) {
-  setError('Preencha nome, categoria e marca');
-  return;
-}
-  
+    if (
+      !newProduct.brand.trim() ||
+      !newProduct.model.trim() ||
+      !newProduct.name.trim() ||
+      !newProduct.category
+    ) {
+      setError('Preencha marca, modelo, nome e categoria');
+      return;
+    }
 
     try {
       const slug = await generateUniqueSlug(newProduct.name);
@@ -463,6 +466,7 @@ const buildProductName = (brand: string, model: string) => {
         image_url: '',
         images: [],
         brand: '',
+        model: '',
         badge: '',
         catalog_order: null,
         is_featured: false,
@@ -753,74 +757,65 @@ const deleteSubcategory = async (id: string) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                 <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Marca *</label>
 
-<select
-  value={newProduct.brand}
-  onChange={(e) =>
-   setNewProduct((prev) => ({
-  ...prev,
-  brand: e.target.value,
-  name: buildProductName(
-    e.target.value,
-    prev.model
-  ),
-}))
-  }
-  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
->
-  <option value="">Selecione uma marca</option>
+                  <select
+                    value={newProduct.brand}
+                    onChange={(e) =>
+                      setNewProduct((prev) => ({
+                        ...prev,
+                        brand: e.target.value,
+                        name: buildProductName(e.target.value, prev.model),
+                      }))
+                    }
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                  >
+                    <option value="">Selecione uma marca</option>
 
-  {brands.map((brand) => (
-    <option key={brand.id} value={brand.name}>
-      {brand.name}
-    </option>
-  ))}
-</select>
-                    
+                    {brands.map((brand) => (
+                      <option key={brand.id} value={brand.name}>
+                        {brand.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
-              <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Modelo *
-  </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Modelo *</label>
+                  <input
+                    type="text"
+                    placeholder="FX3"
+                    value={newProduct.model}
+                    onChange={(e) => {
+                      const model = e.target.value;
 
-  <input
-    type="text"
-    placeholder="FX3"
-    value={newProduct.model}
-    onChange={(e) =>
-      setNewProduct((prev) => {
-        const model = e.target.value;
+                      setNewProduct((prev) => ({
+                        ...prev,
+                        model,
+                        name: buildProductName(prev.brand, model),
+                      }));
+                    }}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                  />
+                </div>
 
-        return {
-          ...prev,
-          model,
-          name: buildProductName(prev.brand, model),
-        };
-      })
-    }
-    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
-  />
-</div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome (automático)</label>
+                  <input
+                    type="text"
+                    placeholder="Nome gerado automaticamente"
+                    value={newProduct.name}
+                    onChange={(e) =>
+                      setNewProduct((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-gray-50 text-gray-900 placeholder:text-gray-400"
+                  />
+                </div>
 
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Nome (automático)
-  </label>
-
-  <input
-    type="text"
-    value={newProduct.name}
-    onChange={(e) =>
-      setNewProduct((prev) => ({
-        ...prev,
-        name: e.target.value,
-      }))
-    
-    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-gray-50 text-gray-900"
-  />
-</div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Categoria *</label>
                   <select
                     value={newProduct.category}
@@ -847,11 +842,11 @@ const deleteSubcategory = async (id: string) => {
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
                   >
                     <option value="">Selecione</option>
-                   {newProductSubcategories.map((subcategory) => (
-  <option key={subcategory} value={subcategory}>
-    {subcategory}
-  </option>
-))}
+                    {newProductSubcategories.map((subcategory) => (
+                      <option key={subcategory} value={subcategory}>
+                        {subcategory}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
