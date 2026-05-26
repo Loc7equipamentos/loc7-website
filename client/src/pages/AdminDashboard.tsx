@@ -817,7 +817,7 @@ const deleteSubcategory = async (id: string) => {
         ...prev,
         name: e.target.value,
       }))
-    }
+    
     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-gray-50 text-gray-900"
   />
 </div>
