@@ -700,16 +700,16 @@ const filteredSubcategories = [...subcategories]
       ? subcat.category?.name === selectedSubcategoryCategoryFilter
       : true
   )
-  .sort((a, b) => {
-    const categoryCompare = (a.category?.name || '').localeCompare(
-      b.category?.name || '',
-      'pt-BR'
-    );
+ .sort((a, b) => {
+  const categoryA = a.category?.name || '';
+  const categoryB = b.category?.name || '';
 
-    if (categoryCompare !== 0) return categoryCompare;
+  if (categoryA !== categoryB) {
+    return categoryA.localeCompare(categoryB, 'pt-BR');
+  }
 
-    return a.name.localeCompare(b.name, 'pt-BR');
-  });
+  return a.name.localeCompare(b.name, 'pt-BR');
+});
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
