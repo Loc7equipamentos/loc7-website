@@ -1539,7 +1539,7 @@ const filteredFilterGroups = [...filterGroups]
 
               <div className="mb-6 max-w-md">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Filtrar visualização por categoria
+                  Configurar categoria
                 </label>
 
                 <select
@@ -1560,7 +1560,7 @@ const filteredFilterGroups = [...filterGroups]
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="rounded border border-gray-200 p-4 bg-gray-50">
                   <h3 className="text-sm font-semibold text-gray-900 mb-4">
-                    Novo Grupo
+                    Novo Filtro
                   </h3>
 
                   <div className="space-y-3">
@@ -1574,7 +1574,7 @@ const filteredFilterGroups = [...filterGroups]
                       }
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                     >
-                      <option value="">Selecione uma categoria</option>
+                      <option value="">Selecione a categoria</option>
 
                       {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>
@@ -1585,7 +1585,7 @@ const filteredFilterGroups = [...filterGroups]
 
                     <input
                       type="text"
-                      placeholder="Nome do grupo. Ex: Função"
+                      placeholder="Ex.: Tela, Marca, Uso"
                       value={newFilterGroup.name}
                       onChange={(e) =>
                         setNewFilterGroup((prev) => ({
@@ -1598,7 +1598,7 @@ const filteredFilterGroups = [...filterGroups]
 
                     <input
                       type="number"
-                      placeholder="Ordem do grupo"
+                      placeholder="Exibição do filtro"
                       value={newFilterGroup.display_order || ''}
                       onChange={(e) =>
                         setNewFilterGroup((prev) => ({
@@ -1620,7 +1620,7 @@ const filteredFilterGroups = [...filterGroups]
 
                 <div className="rounded border border-gray-200 p-4 bg-gray-50">
                   <h3 className="text-sm font-semibold text-gray-900 mb-4">
-                    Nova Opção
+                    Adicionar valores ao filtro
                   </h3>
 
                   <div className="space-y-3">
@@ -1634,7 +1634,7 @@ const filteredFilterGroups = [...filterGroups]
                       }
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                     >
-                      <option value="">Selecione um grupo</option>
+                      <option value="">Escolha o filtro</option>
 
                       {filterGroups
                         .filter((group) =>
@@ -1666,7 +1666,7 @@ const filteredFilterGroups = [...filterGroups]
 
                     <input
                       type="text"
-                      placeholder="Nome da opção. Ex: Grava"
+                      placeholder="Ex.: 19", Atomos, Produção"
                       value={newFilterOption.name}
                       onChange={(e) =>
                         setNewFilterOption((prev) => ({
@@ -1679,7 +1679,7 @@ const filteredFilterGroups = [...filterGroups]
 
                     <input
                       type="number"
-                      placeholder="Ordem da opção"
+                      placeholder="Ordem do valor"
                       value={newFilterOption.display_order || ''}
                       onChange={(e) =>
                         setNewFilterOption((prev) => ({
@@ -1694,7 +1694,7 @@ const filteredFilterGroups = [...filterGroups]
                       onClick={addFilterOption}
                       className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
                     >
-                      <Plus size={16} /> Adicionar Opção
+                      <Plus size={16} /> Adicionar Valor
                     </button>
                   </div>
                 </div>
@@ -1719,7 +1719,7 @@ const filteredFilterGroups = [...filterGroups]
                         </p>
 
                         <h3 className="mt-1 text-sm font-semibold text-gray-900">
-                          {group.display_order ?? 0}. {group.name}
+                          {group.name}
                         </h3>
                       </div>
 
@@ -1753,7 +1753,7 @@ const filteredFilterGroups = [...filterGroups]
                             group.options.map((option) => (
                               <tr key={option.id} className="hover:bg-gray-50">
                                 <td className="px-4 py-3 text-gray-600 w-24">
-                                  {option.display_order ?? 0}
+                                  #{option.display_order ?? 0}
                                 </td>
                                 <td className="px-4 py-3 text-gray-900 font-medium">
                                   {option.name}
