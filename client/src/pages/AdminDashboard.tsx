@@ -1340,7 +1340,7 @@ const filteredSubcategories = [...subcategories]
         e.target.value
       )
     }
-    className="w-full px-3 py-2 text-sm border border-gray-300 rounded"
+    className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded"
   >
     <option value="">
       Todas categorias
