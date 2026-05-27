@@ -1666,7 +1666,7 @@ const filteredFilterGroups = [...filterGroups]
 
                     <input
                       type="text"
-                      placeholder="Ex.: 19", Atomos, Produção"
+                      placeholder={'Ex.: 19", Atomos, Produção'}
                       value={newFilterOption.name}
                       onChange={(e) =>
                         setNewFilterOption((prev) => ({
