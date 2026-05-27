@@ -683,18 +683,16 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 };
 
 
-  const loadFilterArchitecture = async () => {
-    try {
-      const { data: groupsData, error: groupsError } = await supabase
-        .from('filter_groups')
-        .select(`
-          *,
-          category:categories (
-            id,
-            name
-          )
-        `)
-        .order('display_order', { ascending: true });
+ const { data: groupsData, error: groupsError } = await supabase
+.from('filter_groups')
+.select(`
+  *,
+  category:categories!filter_groups_category_id_fkey (
+    id,
+    name
+  )
+`)
+.order('display_order', { ascending: true });
 
       if (groupsError) throw groupsError;
 
