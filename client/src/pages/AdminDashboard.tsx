@@ -25,11 +25,33 @@ type Subcategory = {
   };
 };
 
+type FilterOption = {
+  id: string;
+  group_id: string;
+  name: string;
+  display_order: number | null;
+  is_active?: boolean | null;
+};
+
+type FilterGroup = {
+  id: string;
+  category_id: string;
+  name: string;
+  display_order: number | null;
+  is_active?: boolean | null;
+  category?: {
+    name: string;
+  };
+  options?: FilterOption[];
+};
+
 export default function AdminDashboard() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [filterGroups, setFilterGroups] = useState<FilterGroup[]>([]);
+  const [filterOptions, setFilterOptions] = useState<FilterOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<
@@ -70,6 +92,18 @@ export default function AdminDashboard() {
 const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const [selectedSubcategoryCategoryFilter, setSelectedSubcategoryCategoryFilter] =
   useState('');
+  const [selectedFilterArchitectureCategory, setSelectedFilterArchitectureCategory] =
+    useState('');
+  const [newFilterGroup, setNewFilterGroup] = useState({
+    category_id: '',
+    name: '',
+    display_order: 0,
+  });
+  const [newFilterOption, setNewFilterOption] = useState({
+    group_id: '',
+    name: '',
+    display_order: 0,
+  });
 
   const buildProductName = (brand: string, model: string) => {
     return [brand?.trim(), model?.trim()]
@@ -87,6 +121,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     loadCategories();
     loadBrands();
     loadSubcategories();
+    loadFilterArchitecture();
   }, []);
 
   useEffect(() => {
@@ -647,6 +682,150 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 }
 };
 
+
+  const loadFilterArchitecture = async () => {
+    try {
+      const { data: groupsData, error: groupsError } = await supabase
+        .from('filter_groups')
+        .select(`
+          *,
+          category:categories (
+            id,
+            name
+          )
+        `)
+        .order('display_order', { ascending: true });
+
+      if (groupsError) throw groupsError;
+
+      const { data: optionsData, error: optionsError } = await supabase
+        .from('filter_options')
+        .select('*')
+        .order('display_order', { ascending: true });
+
+      if (optionsError) throw optionsError;
+
+      const groups = ((groupsData as FilterGroup[]) || []).map((group) => ({
+        ...group,
+        options: ((optionsData as FilterOption[]) || [])
+          .filter((option) => option.group_id === group.id)
+          .sort((a, b) => {
+            const orderA = a.display_order ?? 999;
+            const orderB = b.display_order ?? 999;
+
+            if (orderA !== orderB) return orderA - orderB;
+
+            return a.name.localeCompare(b.name, 'pt-BR');
+          }),
+      }));
+
+      setFilterGroups(groups);
+      setFilterOptions((optionsData as FilterOption[]) || []);
+    } catch (err) {
+      console.error('Erro ao carregar arquitetura de filtros:', err);
+    }
+  };
+
+  const addFilterGroup = async () => {
+    if (!newFilterGroup.category_id || !newFilterGroup.name.trim()) {
+      setError('Selecione a categoria e informe o nome do grupo');
+      return;
+    }
+
+    try {
+      const { error: err } = await supabase
+        .from('filter_groups')
+        .insert([
+          {
+            category_id: newFilterGroup.category_id,
+            name: newFilterGroup.name.trim(),
+            display_order: newFilterGroup.display_order || 0,
+          },
+        ]);
+
+      if (err) throw err;
+
+      setNewFilterGroup({
+        category_id: '',
+        name: '',
+        display_order: 0,
+      });
+      setError(null);
+      await loadFilterArchitecture();
+      alert('Grupo de filtro adicionado com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao adicionar grupo');
+    }
+  };
+
+  const addFilterOption = async () => {
+    if (!newFilterOption.group_id || !newFilterOption.name.trim()) {
+      setError('Selecione o grupo e informe o nome da opção');
+      return;
+    }
+
+    try {
+      const { error: err } = await supabase
+        .from('filter_options')
+        .insert([
+          {
+            group_id: newFilterOption.group_id,
+            name: newFilterOption.name.trim(),
+            display_order: newFilterOption.display_order || 0,
+          },
+        ]);
+
+      if (err) throw err;
+
+      setNewFilterOption({
+        group_id: '',
+        name: '',
+        display_order: 0,
+      });
+      setError(null);
+      await loadFilterArchitecture();
+      alert('Opção de filtro adicionada com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao adicionar opção');
+    }
+  };
+
+  const deleteFilterGroup = async (id: string) => {
+    if (!confirm('Tem certeza que deseja deletar este grupo e suas opções?')) return;
+
+    try {
+      const { error: err } = await supabase
+        .from('filter_groups')
+        .delete()
+        .eq('id', id);
+
+      if (err) throw err;
+
+      await loadFilterArchitecture();
+      alert('Grupo deletado com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao deletar grupo');
+    }
+  };
+
+  const deleteFilterOption = async (id: string) => {
+    if (!confirm('Tem certeza que deseja deletar esta opção?')) return;
+
+    try {
+      const { error: err } = await supabase
+        .from('filter_options')
+        .delete()
+        .eq('id', id);
+
+      if (err) throw err;
+
+      await loadFilterArchitecture();
+      alert('Opção deletada com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao deletar opção');
+    }
+  };
+
 const deleteSubcategory = async (id: string) => {
   if (!confirm('Tem certeza que deseja deletar este filtro?')) return;
 
@@ -710,6 +889,28 @@ const filteredSubcategories = [...subcategories]
 
   return a.name.localeCompare(b.name, 'pt-BR');
 });
+
+const filteredFilterGroups = [...filterGroups]
+  .filter((group) =>
+    selectedFilterArchitectureCategory
+      ? group.category?.name === selectedFilterArchitectureCategory
+      : true
+  )
+  .sort((a, b) => {
+    const categoryA = a.category?.name || '';
+    const categoryB = b.category?.name || '';
+
+    if (categoryA !== categoryB) {
+      return categoryA.localeCompare(categoryB, 'pt-BR');
+    }
+
+    const orderA = a.display_order ?? 999;
+    const orderB = b.display_order ?? 999;
+
+    if (orderA !== orderB) return orderA - orderB;
+
+    return a.name.localeCompare(b.name, 'pt-BR');
+  });
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -762,7 +963,7 @@ const filteredSubcategories = [...subcategories]
       : 'text-gray-500'
   }`}
 >
-  Filtros Visíveis
+  Arquitetura de Filtros
 </button>
           
         </div>
@@ -1328,136 +1529,262 @@ const filteredSubcategories = [...subcategories]
         {activeTab === 'subcategories' && (
           <div className="space-y-6">
             <div className="bg-white p-6 rounded border border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Novo Filtro Visível
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                Arquitetura de Filtros
               </h2>
 
-<div className="mb-4 max-w-md">
-  <select
-    value={selectedSubcategoryCategoryFilter}
-    onChange={(e) =>
-      setSelectedSubcategoryCategoryFilter(
-        e.target.value
-      )
-    }
-    className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded"
-  >
-    <option value="">
-      Todas categorias
-    </option>
+              <p className="text-sm text-gray-600 mb-6">
+                Controle os blocos de filtros, opções e ordem oficial por categoria.
+              </p>
 
-    {categories.map((cat) => (
-      <option
-        key={cat.id}
-        value={cat.name}
-      >
-        {cat.name}
-      </option>
-    ))}
-  </select>
-</div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="mb-6 max-w-md">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Filtrar visualização por categoria
+                </label>
+
                 <select
-                  value={newSubcategory.category_id}
-                  onChange={(e) =>
-                    setNewSubcategory((prev) => ({
-                      ...prev,
-                      category_id: e.target.value,
-                    }))
-                  }
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                  value={selectedFilterArchitectureCategory}
+                  onChange={(e) => setSelectedFilterArchitectureCategory(e.target.value)}
+                  className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400"
                 >
-                  <option value="">Selecione uma categoria</option>
+                  <option value="">Todas as categorias</option>
 
                   {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
+                    <option key={cat.id} value={cat.name}>
                       {cat.name}
                     </option>
                   ))}
                 </select>
-
-                <input
-                  type="text"
-                  placeholder="Nome do filtro"
-                  value={newSubcategory.name}
-                  onChange={(e) =>
-                    setNewSubcategory((prev) => ({
-                      ...prev,
-                      name: e.target.value,
-                    }))
-                  }
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                />
               </div>
 
-              <button
-                onClick={addSubcategory}
-                className="mt-4 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
-              >
-                <Plus size={16} />
-               Adicionar Filtro
-              </button>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="rounded border border-gray-200 p-4 bg-gray-50">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4">
+                    Novo Grupo
+                  </h3>
+
+                  <div className="space-y-3">
+                    <select
+                      value={newFilterGroup.category_id}
+                      onChange={(e) =>
+                        setNewFilterGroup((prev) => ({
+                          ...prev,
+                          category_id: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                    >
+                      <option value="">Selecione uma categoria</option>
+
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="text"
+                      placeholder="Nome do grupo. Ex: Função"
+                      value={newFilterGroup.name}
+                      onChange={(e) =>
+                        setNewFilterGroup((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="Ordem do grupo"
+                      value={newFilterGroup.display_order || ''}
+                      onChange={(e) =>
+                        setNewFilterGroup((prev) => ({
+                          ...prev,
+                          display_order: e.target.value ? Number(e.target.value) : 0,
+                        }))
+                      }
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                    />
+
+                    <button
+                      onClick={addFilterGroup}
+                      className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
+                    >
+                      <Plus size={16} /> Adicionar Grupo
+                    </button>
+                  </div>
+                </div>
+
+                <div className="rounded border border-gray-200 p-4 bg-gray-50">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4">
+                    Nova Opção
+                  </h3>
+
+                  <div className="space-y-3">
+                    <select
+                      value={newFilterOption.group_id}
+                      onChange={(e) =>
+                        setNewFilterOption((prev) => ({
+                          ...prev,
+                          group_id: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                    >
+                      <option value="">Selecione um grupo</option>
+
+                      {filterGroups
+                        .filter((group) =>
+                          selectedFilterArchitectureCategory
+                            ? group.category?.name === selectedFilterArchitectureCategory
+                            : true
+                        )
+                        .sort((a, b) => {
+                          const categoryCompare = (a.category?.name || '').localeCompare(
+                            b.category?.name || '',
+                            'pt-BR'
+                          );
+
+                          if (categoryCompare !== 0) return categoryCompare;
+
+                          const orderA = a.display_order ?? 999;
+                          const orderB = b.display_order ?? 999;
+
+                          if (orderA !== orderB) return orderA - orderB;
+
+                          return a.name.localeCompare(b.name, 'pt-BR');
+                        })
+                        .map((group) => (
+                          <option key={group.id} value={group.id}>
+                            {group.category?.name || '-'} / {group.name}
+                          </option>
+                        ))}
+                    </select>
+
+                    <input
+                      type="text"
+                      placeholder="Nome da opção. Ex: Grava"
+                      value={newFilterOption.name}
+                      onChange={(e) =>
+                        setNewFilterOption((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="Ordem da opção"
+                      value={newFilterOption.display_order || ''}
+                      onChange={(e) =>
+                        setNewFilterOption((prev) => ({
+                          ...prev,
+                          display_order: e.target.value ? Number(e.target.value) : 0,
+                        }))
+                      }
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                    />
+
+                    <button
+                      onClick={addFilterOption}
+                      className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
+                    >
+                      <Plus size={16} /> Adicionar Opção
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="bg-white rounded border border-gray-200 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-900">
-                        Filtro
-                      </th>
+            <div className="space-y-6">
+              {filteredFilterGroups.length === 0 ? (
+                <div className="bg-white rounded border border-gray-200 px-4 py-8 text-center text-gray-500 text-sm">
+                  Nenhum grupo de filtro encontrado.
+                </div>
+              ) : (
+                filteredFilterGroups.map((group) => (
+                  <div
+                    key={group.id}
+                    className="bg-white rounded border border-gray-200 overflow-hidden"
+                  >
+                    <div className="flex items-center justify-between gap-4 border-b border-gray-200 bg-gray-50 px-4 py-3">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
+                          {group.category?.name || 'Sem categoria'}
+                        </p>
 
-                      <th className="px-4 py-3 text-left font-semibold text-gray-900">
-                        Categoria
-                      </th>
+                        <h3 className="mt-1 text-sm font-semibold text-gray-900">
+                          {group.display_order ?? 0}. {group.name}
+                        </h3>
+                      </div>
 
-                      <th className="px-4 py-3 text-left font-semibold text-gray-900">
-                        Ações
-                      </th>
-                    </tr>
-                  </thead>
+                      <button
+                        onClick={() => deleteFilterGroup(group.id)}
+                        className="p-1 hover:bg-gray-200 rounded"
+                        title="Deletar grupo"
+                      >
+                        <Trash2 size={16} className="text-gray-600" />
+                      </button>
+                    </div>
 
-                  <tbody className="divide-y divide-gray-200">
-                    {subcategories.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={3}
-                          className="px-4 py-8 text-center text-gray-500"
-                        >
-                          Nenhuma subcategoria cadastrada
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredSubcategories.map((subcat) => (
-                        <tr key={subcat.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-gray-900 font-medium">
-                            {subcat.name}
-                          </td>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-white border-b border-gray-200">
+                          <tr>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                              Ordem
+                            </th>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                              Opção
+                            </th>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-900">
+                              Ações
+                            </th>
+                          </tr>
+                        </thead>
 
-                          <td className="px-4 py-3 text-gray-600">
-                            {subcat.category?.name || '-'}
-                          </td>
-
-                          <td className="px-4 py-3">
-                            <button
-                              onClick={() => deleteSubcategory(subcat.id)}
-                              className="p-1 hover:bg-gray-200 rounded"
-                              title="Deletar"
-                            >
-                              <Trash2
-                                size={16}
-                                className="text-gray-600"
-                              />
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                        <tbody className="divide-y divide-gray-200">
+                          {group.options && group.options.length > 0 ? (
+                            group.options.map((option) => (
+                              <tr key={option.id} className="hover:bg-gray-50">
+                                <td className="px-4 py-3 text-gray-600 w-24">
+                                  {option.display_order ?? 0}
+                                </td>
+                                <td className="px-4 py-3 text-gray-900 font-medium">
+                                  {option.name}
+                                </td>
+                                <td className="px-4 py-3 w-24">
+                                  <button
+                                    onClick={() => deleteFilterOption(option.id)}
+                                    className="p-1 hover:bg-gray-200 rounded"
+                                    title="Deletar opção"
+                                  >
+                                    <Trash2 size={16} className="text-gray-600" />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td
+                                colSpan={3}
+                                className="px-4 py-6 text-center text-gray-500"
+                              >
+                                Nenhuma opção cadastrada neste grupo.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
