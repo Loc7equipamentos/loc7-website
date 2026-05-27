@@ -126,6 +126,19 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     return new Intl.NumberFormat('pt-BR').format(value);
   };
 
+  const normalizeFilterName = (value?: string | null) => {
+    return (value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+  };
+
+  const isBrandFilterGroup = (group?: FilterGroup | null) => {
+    const normalizedName = normalizeFilterName(group?.name);
+    return normalizedName === 'marca' || normalizedName === 'marcas';
+  };
+
   useEffect(() => {
     loadProducts();
     loadCategories();
@@ -241,6 +254,79 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     );
   };
 
+  const getBrandGroupForCategoryName = (categoryName: string) => {
+    if (!categoryName) return null;
+
+    return (
+      filterGroups.find(
+        (group) =>
+          group.category?.name === categoryName && isBrandFilterGroup(group)
+      ) || null
+    );
+  };
+
+  const ensureBrandFilterOptionId = async (categoryName: string, brandName: string) => {
+    const cleanBrandName = brandName.trim();
+    if (!categoryName || !cleanBrandName) return null;
+
+    const brandGroup = getBrandGroupForCategoryName(categoryName);
+    if (!brandGroup) return null;
+
+    const existingOption = (brandGroup.options || []).find(
+      (option) => normalizeFilterName(option.name) === normalizeFilterName(cleanBrandName)
+    );
+
+    if (existingOption) return existingOption.id;
+
+    const nextOrder =
+      Math.max(
+        0,
+        ...(brandGroup.options || []).map((option) => option.display_order ?? 0)
+      ) + 1;
+
+    const { data, error: err } = await supabase
+      .from('filter_options')
+      .insert([
+        {
+          group_id: brandGroup.id,
+          name: cleanBrandName,
+          display_order: nextOrder,
+        },
+      ])
+      .select('id')
+      .single();
+
+    if (err) throw err;
+
+    await loadFilterArchitecture();
+
+    return data?.id || null;
+  };
+
+  const buildProductFilterOptionIdsToSave = async (
+    categoryName: string,
+    brandName: string,
+    optionIds: string[]
+  ) => {
+    const brandGroup = getBrandGroupForCategoryName(categoryName);
+    const brandOptionIds = new Set(
+      (brandGroup?.options || []).map((option) => option.id)
+    );
+
+    const optionIdsWithoutBrand = optionIds.filter(
+      (optionId) => !brandOptionIds.has(optionId)
+    );
+
+    const brandOptionId = await ensureBrandFilterOptionId(categoryName, brandName);
+
+    return Array.from(
+      new Set([
+        ...optionIdsWithoutBrand,
+        ...(brandOptionId ? [brandOptionId] : []),
+      ])
+    );
+  };
+
   const saveProductFilterOptions = async (productId: string, optionIds: string[]) => {
     const { error: deleteError } = await supabase
       .from('product_filter_options')
@@ -294,6 +380,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const renderProductFilterSelector = (
     groups: FilterGroup[],
     selectedIds: string[],
+    selectedBrand: string,
     isEditing: boolean = false
   ) => {
     if (groups.length === 0) {
@@ -314,40 +401,60 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {groups.map((group) => (
-            <div key={group.id} className="rounded border border-gray-200 bg-white p-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 mb-3">
-                {group.name}
-              </p>
+          {groups.map((group) => {
+            const brandGroup = isBrandFilterGroup(group);
 
-              {group.options && group.options.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {group.options.map((option) => {
-                    const checked = selectedIds.includes(option.id);
-
-                    return (
-                      <button
-                        key={option.id}
-                        type="button"
-                        onClick={() => toggleProductFilterOption(option.id, isEditing)}
-                        className={`rounded-full border px-3 py-1.5 text-sm transition ${
-                          checked
-                            ? 'border-gray-900 bg-gray-900 text-white'
-                            : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400'
-                        }`}
-                      >
-                        {option.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  Nenhum valor configurado neste filtro.
+            return (
+              <div key={group.id} className="rounded border border-gray-200 bg-white p-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 mb-3">
+                  {group.name}
                 </p>
-              )}
-            </div>
-          ))}
+
+                {brandGroup ? (
+                  <div className="space-y-2">
+                    {selectedBrand ? (
+                      <span className="inline-flex rounded-full border border-gray-900 bg-gray-900 px-3 py-1.5 text-sm text-white">
+                        {selectedBrand}
+                      </span>
+                    ) : (
+                      <p className="text-sm text-gray-500">
+                        Selecione a marca do produto acima.
+                      </p>
+                    )}
+
+                    <p className="text-xs text-gray-500">
+                      A marca é sincronizada automaticamente pela aba Marcas.
+                    </p>
+                  </div>
+                ) : group.options && group.options.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {group.options.map((option) => {
+                      const checked = selectedIds.includes(option.id);
+
+                      return (
+                        <button
+                          key={option.id}
+                          type="button"
+                          onClick={() => toggleProductFilterOption(option.id, isEditing)}
+                          className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                            checked
+                              ? 'border-gray-900 bg-gray-900 text-white'
+                              : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400'
+                          }`}
+                        >
+                          {option.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    Nenhum valor configurado neste filtro.
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     );
@@ -655,7 +762,13 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       if (err) throw err;
 
       if (insertedProduct?.id) {
-        await saveProductFilterOptions(insertedProduct.id, newProductFilterOptionIds);
+        const optionIdsToSave = await buildProductFilterOptionIdsToSave(
+          newProduct.category,
+          newProduct.brand,
+          newProductFilterOptionIds
+        );
+
+        await saveProductFilterOptions(insertedProduct.id, optionIdsToSave);
       }
 
       setNewProduct({
@@ -717,10 +830,13 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
       if (err) throw err;
 
-      await saveProductFilterOptions(
-        editingProduct.id,
+      const optionIdsToSave = await buildProductFilterOptionIdsToSave(
+        editingProduct.category,
+        editingProduct.brand || '',
         editingProductFilterOptionIds
       );
+
+      await saveProductFilterOptions(editingProduct.id, optionIdsToSave);
 
       setShowEditModal(false);
       setEditingProduct(null);
@@ -1329,7 +1445,8 @@ const filteredFilterGroups = [...filterGroups]
                 {newProduct.category &&
                   renderProductFilterSelector(
                     newProductFilterGroups,
-                    newProductFilterOptionIds
+                    newProductFilterOptionIds,
+                    newProduct.brand
                   )}
 
                 <div>
@@ -2102,6 +2219,7 @@ const filteredFilterGroups = [...filterGroups]
                   renderProductFilterSelector(
                     editingProductFilterGroups,
                     editingProductFilterOptionIds,
+                    editingProduct.brand || '',
                     true
                   )}
 
