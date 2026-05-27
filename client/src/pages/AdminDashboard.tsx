@@ -104,6 +104,9 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     name: '',
     display_order: 0,
   });
+  const [newTreeFilterName, setNewTreeFilterName] = useState('');
+  const [newTreeFilterOrder, setNewTreeFilterOrder] = useState<number | ''>('');
+  const [newFilterValueByGroup, setNewFilterValueByGroup] = useState<Record<string, string>>({});
 
   const buildProductName = (brand: string, model: string) => {
     return [brand?.trim(), model?.trim()]
@@ -826,6 +829,91 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
   };
 
+  const addTreeFilter = async () => {
+    const selectedCategory = categories.find(
+      (cat) => cat.name === selectedFilterArchitectureCategory
+    );
+
+    if (!selectedCategory) {
+      setError('Selecione uma categoria para configurar os filtros');
+      return;
+    }
+
+    if (!newTreeFilterName.trim()) {
+      setError('Informe o nome do filtro');
+      return;
+    }
+
+    const nextOrder =
+      Math.max(
+        0,
+        ...filterGroups
+          .filter((group) => group.category_id === selectedCategory.id)
+          .map((group) => group.display_order ?? 0)
+      ) + 1;
+
+    try {
+      const { error: err } = await supabase
+        .from('filter_groups')
+        .insert([
+          {
+            category_id: selectedCategory.id,
+            name: newTreeFilterName.trim(),
+            display_order:
+              typeof newTreeFilterOrder === 'number' ? newTreeFilterOrder : nextOrder,
+          },
+        ]);
+
+      if (err) throw err;
+
+      setNewTreeFilterName('');
+      setNewTreeFilterOrder('');
+      setError(null);
+      await loadFilterArchitecture();
+      alert('Filtro criado com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao criar filtro');
+    }
+  };
+
+  const addTreeFilterValue = async (group: FilterGroup) => {
+    const value = (newFilterValueByGroup[group.id] || '').trim();
+
+    if (!value) {
+      setError('Informe o valor do filtro');
+      return;
+    }
+
+    const nextOrder =
+      Math.max(
+        0,
+        ...(group.options || []).map((option) => option.display_order ?? 0)
+      ) + 1;
+
+    try {
+      const { error: err } = await supabase
+        .from('filter_options')
+        .insert([
+          {
+            group_id: group.id,
+            name: value,
+            display_order: nextOrder,
+          },
+        ]);
+
+      if (err) throw err;
+
+      setNewFilterValueByGroup((prev) => ({
+        ...prev,
+        [group.id]: '',
+      }));
+      setError(null);
+      await loadFilterArchitecture();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao adicionar valor');
+    }
+  };
+
 const deleteSubcategory = async (id: string) => {
   if (!confirm('Tem certeza que deseja deletar este filtro?')) return;
 
@@ -1530,24 +1618,28 @@ const filteredFilterGroups = [...filterGroups]
           <div className="space-y-6">
             <div className="bg-white p-6 rounded border border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                Arquitetura de Filtros
+                Configurar filtros do catálogo
               </h2>
 
               <p className="text-sm text-gray-600 mb-6">
-                Controle os blocos de filtros, opções e ordem oficial por categoria.
+                Escolha uma categoria e configure os filtros na mesma lógica da árvore oficial.
               </p>
 
-              <div className="mb-6 max-w-md">
+              <div className="max-w-md">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Configurar categoria
+                  Categoria
                 </label>
 
                 <select
                   value={selectedFilterArchitectureCategory}
-                  onChange={(e) => setSelectedFilterArchitectureCategory(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedFilterArchitectureCategory(e.target.value);
+                    setNewTreeFilterName('');
+                    setNewTreeFilterOrder('');
+                  }}
                   className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400"
                 >
-                  <option value="">Todas as categorias</option>
+                  <option value="">Selecione uma categoria</option>
 
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.name}>
@@ -1556,239 +1648,181 @@ const filteredFilterGroups = [...filterGroups]
                   ))}
                 </select>
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="rounded border border-gray-200 p-4 bg-gray-50">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">
-                    Novo Filtro
-                  </h3>
-
-                  <div className="space-y-3">
-                    <select
-                      value={newFilterGroup.category_id}
-                      onChange={(e) =>
-                        setNewFilterGroup((prev) => ({
-                          ...prev,
-                          category_id: e.target.value,
-                        }))
-                      }
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
-                    >
-                      <option value="">Selecione a categoria</option>
-
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                    </select>
-
-                    <input
-                      type="text"
-                      placeholder="Ex.: Tela, Marca, Uso"
-                      value={newFilterGroup.name}
-                      onChange={(e) =>
-                        setNewFilterGroup((prev) => ({
-                          ...prev,
-                          name: e.target.value,
-                        }))
-                      }
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                    />
-
-                    <input
-                      type="number"
-                      placeholder="Exibição do filtro"
-                      value={newFilterGroup.display_order || ''}
-                      onChange={(e) =>
-                        setNewFilterGroup((prev) => ({
-                          ...prev,
-                          display_order: e.target.value ? Number(e.target.value) : 0,
-                        }))
-                      }
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                    />
-
-                    <button
-                      onClick={addFilterGroup}
-                      className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
-                    >
-                      <Plus size={16} /> Adicionar Grupo
-                    </button>
-                  </div>
-                </div>
-
-                <div className="rounded border border-gray-200 p-4 bg-gray-50">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">
-                    Adicionar valores ao filtro
-                  </h3>
-
-                  <div className="space-y-3">
-                    <select
-                      value={newFilterOption.group_id}
-                      onChange={(e) =>
-                        setNewFilterOption((prev) => ({
-                          ...prev,
-                          group_id: e.target.value,
-                        }))
-                      }
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
-                    >
-                      <option value="">Escolha o filtro</option>
-
-                      {filterGroups
-                        .filter((group) =>
-                          selectedFilterArchitectureCategory
-                            ? group.category?.name === selectedFilterArchitectureCategory
-                            : true
-                        )
-                        .sort((a, b) => {
-                          const categoryCompare = (a.category?.name || '').localeCompare(
-                            b.category?.name || '',
-                            'pt-BR'
-                          );
-
-                          if (categoryCompare !== 0) return categoryCompare;
-
-                          const orderA = a.display_order ?? 999;
-                          const orderB = b.display_order ?? 999;
-
-                          if (orderA !== orderB) return orderA - orderB;
-
-                          return a.name.localeCompare(b.name, 'pt-BR');
-                        })
-                        .map((group) => (
-                          <option key={group.id} value={group.id}>
-                            {group.category?.name || '-'} / {group.name}
-                          </option>
-                        ))}
-                    </select>
-
-                    <input
-                      type="text"
-                      placeholder={'Ex.: 19", Atomos, Produção'}
-                      value={newFilterOption.name}
-                      onChange={(e) =>
-                        setNewFilterOption((prev) => ({
-                          ...prev,
-                          name: e.target.value,
-                        }))
-                      }
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                    />
-
-                    <input
-                      type="number"
-                      placeholder="Ordem do valor"
-                      value={newFilterOption.display_order || ''}
-                      onChange={(e) =>
-                        setNewFilterOption((prev) => ({
-                          ...prev,
-                          display_order: e.target.value ? Number(e.target.value) : 0,
-                        }))
-                      }
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                    />
-
-                    <button
-                      onClick={addFilterOption}
-                      className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center gap-2"
-                    >
-                      <Plus size={16} /> Adicionar Valor
-                    </button>
-                  </div>
-                </div>
+            {!selectedFilterArchitectureCategory ? (
+              <div className="bg-white rounded border border-gray-200 px-4 py-10 text-center">
+                <p className="text-sm font-medium text-gray-900">
+                  Selecione uma categoria para configurar seus filtros.
+                </p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Os blocos e valores aparecerão aqui seguindo a ordem da árvore.
+                </p>
               </div>
-            </div>
-
-            <div className="space-y-6">
-              {filteredFilterGroups.length === 0 ? (
-                <div className="bg-white rounded border border-gray-200 px-4 py-8 text-center text-gray-500 text-sm">
-                  Nenhum grupo de filtro encontrado.
-                </div>
-              ) : (
-                filteredFilterGroups.map((group) => (
-                  <div
-                    key={group.id}
-                    className="bg-white rounded border border-gray-200 overflow-hidden"
-                  >
-                    <div className="flex items-center justify-between gap-4 border-b border-gray-200 bg-gray-50 px-4 py-3">
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
-                          {group.category?.name || 'Sem categoria'}
-                        </p>
-
-                        <h3 className="mt-1 text-sm font-semibold text-gray-900">
-                          {group.name}
-                        </h3>
-                      </div>
-
-                      <button
-                        onClick={() => deleteFilterGroup(group.id)}
-                        className="p-1 hover:bg-gray-200 rounded"
-                        title="Deletar grupo"
-                      >
-                        <Trash2 size={16} className="text-gray-600" />
-                      </button>
+            ) : (
+              <>
+                <div className="bg-white p-6 rounded border border-gray-200">
+                  <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
+                        Categoria selecionada
+                      </p>
+                      <h3 className="text-xl font-semibold text-gray-900 mt-1">
+                        {selectedFilterArchitectureCategory}
+                      </h3>
                     </div>
 
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead className="bg-white border-b border-gray-200">
-                          <tr>
-                            <th className="px-4 py-3 text-left font-semibold text-gray-900">
-                              Ordem
-                            </th>
-                            <th className="px-4 py-3 text-left font-semibold text-gray-900">
-                              Opção
-                            </th>
-                            <th className="px-4 py-3 text-left font-semibold text-gray-900">
-                              Ações
-                            </th>
-                          </tr>
-                        </thead>
-
-                        <tbody className="divide-y divide-gray-200">
-                          {group.options && group.options.length > 0 ? (
-                            group.options.map((option) => (
-                              <tr key={option.id} className="hover:bg-gray-50">
-                                <td className="px-4 py-3 text-gray-600 w-24">
-                                  #{option.display_order ?? 0}
-                                </td>
-                                <td className="px-4 py-3 text-gray-900 font-medium">
-                                  {option.name}
-                                </td>
-                                <td className="px-4 py-3 w-24">
-                                  <button
-                                    onClick={() => deleteFilterOption(option.id)}
-                                    className="p-1 hover:bg-gray-200 rounded"
-                                    title="Deletar opção"
-                                  >
-                                    <Trash2 size={16} className="text-gray-600" />
-                                  </button>
-                                </td>
-                              </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td
-                                colSpan={3}
-                                className="px-4 py-6 text-center text-gray-500"
-                              >
-                                Nenhuma opção cadastrada neste grupo.
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                    <div className="text-sm text-gray-500">
+                      {filteredFilterGroups.length} filtro(s) configurado(s)
                     </div>
                   </div>
-                ))
-              )}
-            </div>
+
+                  {filteredFilterGroups.length === 0 ? (
+                    <div className="rounded border border-dashed border-gray-300 p-6 text-center">
+                      <p className="text-sm font-medium text-gray-900">
+                        Nenhum filtro configurado para esta categoria.
+                      </p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Crie o primeiro filtro no bloco abaixo.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {filteredFilterGroups.map((group) => (
+                        <div
+                          key={group.id}
+                          className="rounded border border-gray-200 bg-gray-50 overflow-hidden"
+                        >
+                          <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-gray-200 bg-white">
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-semibold text-gray-500">
+                                  #{group.display_order ?? 0}
+                                </span>
+                                <h4 className="text-sm font-semibold text-gray-900 truncate">
+                                  {group.name}
+                                </h4>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => deleteFilterGroup(group.id)}
+                              className="p-1 hover:bg-gray-100 rounded"
+                              title="Deletar filtro"
+                            >
+                              <Trash2 size={16} className="text-gray-600" />
+                            </button>
+                          </div>
+
+                          <div className="p-4 space-y-4">
+                            {group.options && group.options.length > 0 ? (
+                              <div className="flex flex-wrap gap-2">
+                                {group.options.map((option) => (
+                                  <div
+                                    key={option.id}
+                                    className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-800"
+                                  >
+                                    <span className="text-xs text-gray-400">
+                                      #{option.display_order ?? 0}
+                                    </span>
+                                    <span>{option.name}</span>
+                                    <button
+                                      onClick={() => deleteFilterOption(option.id)}
+                                      className="ml-1 text-gray-400 hover:text-gray-900"
+                                      title="Deletar valor"
+                                    >
+                                      <X size={13} />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-sm text-gray-500">
+                                Nenhum valor cadastrado neste filtro.
+                              </p>
+                            )}
+
+                            <div className="flex flex-col sm:flex-row gap-2">
+                              <input
+                                type="text"
+                                placeholder="Adicionar valor"
+                                value={newFilterValueByGroup[group.id] || ''}
+                                onChange={(e) =>
+                                  setNewFilterValueByGroup((prev) => ({
+                                    ...prev,
+                                    [group.id]: e.target.value,
+                                  }))
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    addTreeFilterValue(group);
+                                  }
+                                }}
+                                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                              />
+
+                              <button
+                                type="button"
+                                onClick={() => addTreeFilterValue(group)}
+                                className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center justify-center gap-2"
+                              >
+                                <Plus size={16} />
+                                Adicionar
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-white p-6 rounded border border-gray-200">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-1">
+                    Criar novo filtro nesta categoria
+                  </h3>
+
+                  <p className="text-sm text-gray-500 mb-4">
+                    Use apenas quando a árvore oficial precisar de um novo bloco de filtro.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-[1fr_160px_auto] gap-3">
+                    <input
+                      type="text"
+                      placeholder="Nome do filtro"
+                      value={newTreeFilterName}
+                      onChange={(e) => setNewTreeFilterName(e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="Ordem"
+                      value={newTreeFilterOrder}
+                      onChange={(e) =>
+                        setNewTreeFilterOrder(
+                          e.target.value ? Number(e.target.value) : ''
+                        )
+                      }
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={addTreeFilter}
+                      className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded flex items-center justify-center gap-2"
+                    >
+                      <Plus size={16} />
+                      Criar filtro
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
-      
+
       {showEditModal && editingProduct && (
         <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded max-w-2xl w-full max-h-[90vh] overflow-y-auto">
