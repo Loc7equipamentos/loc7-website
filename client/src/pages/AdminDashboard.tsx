@@ -682,6 +682,8 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 }
 };
 
+  const loadFilterArchitecture = async () => {
+  try {
 
  const { data: groupsData, error: groupsError } = await supabase
 .from('filter_groups')
