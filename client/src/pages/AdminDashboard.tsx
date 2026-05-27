@@ -68,6 +68,8 @@ export default function AdminDashboard() {
 });
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
 const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
+  const [selectedSubcategoryCategoryFilter, setSelectedSubcategoryCategoryFilter] =
+  useState('');
 
   const buildProductName = (brand: string, model: string) => {
     return [brand?.trim(), model?.trim()]
@@ -692,7 +694,22 @@ const deleteSubcategory = async (id: string) => {
 
   return categoryMatch && brandMatch;
 });
+const filteredSubcategories = [...subcategories]
+  .filter((subcat) =>
+    selectedSubcategoryCategoryFilter
+      ? subcat.category?.name === selectedSubcategoryCategoryFilter
+      : true
+  )
+  .sort((a, b) => {
+    const categoryCompare = (a.category?.name || '').localeCompare(
+      b.category?.name || '',
+      'pt-BR'
+    );
 
+    if (categoryCompare !== 0) return categoryCompare;
+
+    return a.name.localeCompare(b.name, 'pt-BR');
+  });
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -1315,6 +1332,31 @@ const deleteSubcategory = async (id: string) => {
                 Novo Filtro Visível
               </h2>
 
+<div className="mb-4 max-w-md">
+  <select
+    value={selectedSubcategoryCategoryFilter}
+    onChange={(e) =>
+      setSelectedSubcategoryCategoryFilter(
+        e.target.value
+      )
+    }
+    className="w-full px-3 py-2 text-sm border border-gray-300 rounded"
+  >
+    <option value="">
+      Todas categorias
+    </option>
+
+    {categories.map((cat) => (
+      <option
+        key={cat.id}
+        value={cat.name}
+      >
+        {cat.name}
+      </option>
+    ))}
+  </select>
+</div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <select
                   value={newSubcategory.category_id}
@@ -1388,7 +1430,7 @@ const deleteSubcategory = async (id: string) => {
                         </td>
                       </tr>
                     ) : (
-                      subcategories.map((subcat) => (
+                      filteredSubcategories.map((subcat) => (
                         <tr key={subcat.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 text-gray-900 font-medium">
                             {subcat.name}
