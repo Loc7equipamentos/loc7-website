@@ -33,6 +33,11 @@ type FilterOption = {
   is_active?: boolean | null;
 };
 
+type ProductFilterOption = {
+  product_id: string;
+  filter_option_id: string;
+};
+
 type FilterGroup = {
   id: string;
   category_id: string;
@@ -107,6 +112,8 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const [newTreeFilterName, setNewTreeFilterName] = useState('');
   const [newTreeFilterOrder, setNewTreeFilterOrder] = useState<number | ''>('');
   const [newFilterValueByGroup, setNewFilterValueByGroup] = useState<Record<string, string>>({});
+  const [newProductFilterOptionIds, setNewProductFilterOptionIds] = useState<string[]>([]);
+  const [editingProductFilterOptionIds, setEditingProductFilterOptionIds] = useState<string[]>([]);
 
   const buildProductName = (brand: string, model: string) => {
     return [brand?.trim(), model?.trim()]
@@ -129,6 +136,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
   useEffect(() => {
     setNewProduct((prev) => ({ ...prev, subcategory: '' }));
+    setNewProductFilterOptionIds([]);
   }, [newProduct.category]);
 
   const normalizeSubcategory = (value?: string | null) => {
@@ -197,6 +205,153 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const editingProductSubcategories = editingProduct
     ? getSubcategoriesForCategory(editingProduct.category)
     : [];
+
+  const getFilterGroupsForCategoryName = (categoryName: string) => {
+    if (!categoryName) return [];
+
+    return filterGroups
+      .filter((group) => group.category?.name === categoryName)
+      .sort((a, b) => {
+        const orderA = a.display_order ?? 999;
+        const orderB = b.display_order ?? 999;
+
+        if (orderA !== orderB) return orderA - orderB;
+
+        return a.name.localeCompare(b.name, 'pt-BR');
+      });
+  };
+
+  const newProductFilterGroups = getFilterGroupsForCategoryName(newProduct.category);
+  const editingProductFilterGroups = editingProduct
+    ? getFilterGroupsForCategoryName(editingProduct.category)
+    : [];
+
+  const toggleProductFilterOption = (
+    optionId: string,
+    isEditing: boolean = false
+  ) => {
+    const setter = isEditing
+      ? setEditingProductFilterOptionIds
+      : setNewProductFilterOptionIds;
+
+    setter((prev) =>
+      prev.includes(optionId)
+        ? prev.filter((id) => id !== optionId)
+        : [...prev, optionId]
+    );
+  };
+
+  const saveProductFilterOptions = async (productId: string, optionIds: string[]) => {
+    const { error: deleteError } = await supabase
+      .from('product_filter_options')
+      .delete()
+      .eq('product_id', productId);
+
+    if (deleteError) throw deleteError;
+
+    if (optionIds.length === 0) return;
+
+    const rows = optionIds.map((optionId) => ({
+      product_id: productId,
+      filter_option_id: optionId,
+    }));
+
+    const { error: insertError } = await supabase
+      .from('product_filter_options')
+      .insert(rows);
+
+    if (insertError) throw insertError;
+  };
+
+  const loadProductFilterOptions = async (productId: string) => {
+    const { data, error: err } = await supabase
+      .from('product_filter_options')
+      .select('filter_option_id')
+      .eq('product_id', productId);
+
+    if (err) throw err;
+
+    setEditingProductFilterOptionIds(
+      ((data as ProductFilterOption[]) || []).map((item) => item.filter_option_id)
+    );
+  };
+
+  const openEditProduct = async (product: ProductWithImages) => {
+    try {
+      setError(null);
+      setEditingProduct(product);
+      setShowEditModal(true);
+      await loadProductFilterOptions(product.id);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Erro ao carregar filtros relacionados ao produto'
+      );
+    }
+  };
+
+  const renderProductFilterSelector = (
+    groups: FilterGroup[],
+    selectedIds: string[],
+    isEditing: boolean = false
+  ) => {
+    if (groups.length === 0) {
+      return (
+        <div className="md:col-span-2 rounded border border-dashed border-gray-300 bg-gray-50 px-4 py-5 text-sm text-gray-500">
+          Selecione uma categoria com filtros configurados para relacionar este produto à árvore.
+        </div>
+      );
+    }
+
+    return (
+      <div className="md:col-span-2 rounded border border-gray-200 bg-gray-50 p-4">
+        <div className="mb-4">
+          <h3 className="text-sm font-semibold text-gray-900">Filtros relacionados</h3>
+          <p className="mt-1 text-xs text-gray-500">
+            Marque os valores que fazem este produto aparecer nos cruzamentos do catálogo.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {groups.map((group) => (
+            <div key={group.id} className="rounded border border-gray-200 bg-white p-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 mb-3">
+                {group.name}
+              </p>
+
+              {group.options && group.options.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {group.options.map((option) => {
+                    const checked = selectedIds.includes(option.id);
+
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => toggleProductFilterOption(option.id, isEditing)}
+                        className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                          checked
+                            ? 'border-gray-900 bg-gray-900 text-white'
+                            : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400'
+                        }`}
+                      >
+                        {option.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  Nenhum valor configurado neste filtro.
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   const getCombinedImages = (imageUrl?: string | null, images?: string[] | null) => {
     return [imageUrl, ...(images || [])].filter(Boolean) as string[];
@@ -473,27 +628,35 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     try {
       const slug = await generateUniqueSlug(newProduct.name);
 
-      const { error: err } = await supabase.from('products').insert([
-        {
-          name: newProduct.name.trim(),
-          category: newProduct.category,
-          subcategory: normalizeSubcategory(newProduct.subcategory) || null,
-          brand: newProduct.brand.trim() || null,
-          price: newProduct.price || 0,
-          description: newProduct.description,
-          specs: newProduct.specs.trim() || null,
-          includes: newProduct.includes.trim() || null,
-          image_url: newProduct.image_url || null,
-          images: newProduct.images.length > 0 ? newProduct.images : null,
-          badge: newProduct.badge || null,
-          slug,
-          catalog_order: newProduct.catalog_order || null,
-          is_featured: newProduct.is_featured,
-          featured_order: newProduct.is_featured ? newProduct.featured_order : null,
-        },
-      ]);
+      const { data: insertedProduct, error: err } = await supabase
+        .from('products')
+        .insert([
+          {
+            name: newProduct.name.trim(),
+            category: newProduct.category,
+            subcategory: normalizeSubcategory(newProduct.subcategory) || null,
+            brand: newProduct.brand.trim() || null,
+            price: newProduct.price || 0,
+            description: newProduct.description,
+            specs: newProduct.specs.trim() || null,
+            includes: newProduct.includes.trim() || null,
+            image_url: newProduct.image_url || null,
+            images: newProduct.images.length > 0 ? newProduct.images : null,
+            badge: newProduct.badge || null,
+            slug,
+            catalog_order: newProduct.catalog_order || null,
+            is_featured: newProduct.is_featured,
+            featured_order: newProduct.is_featured ? newProduct.featured_order : null,
+          },
+        ])
+        .select('id')
+        .single();
 
       if (err) throw err;
+
+      if (insertedProduct?.id) {
+        await saveProductFilterOptions(insertedProduct.id, newProductFilterOptionIds);
+      }
 
       setNewProduct({
         name: '',
@@ -512,6 +675,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         is_featured: false,
         featured_order: null,
       });
+      setNewProductFilterOptionIds([]);
       setError(null);
       await loadProducts();
       alert('Produto adicionado com sucesso!');
@@ -553,8 +717,14 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
       if (err) throw err;
 
+      await saveProductFilterOptions(
+        editingProduct.id,
+        editingProductFilterOptionIds
+      );
+
       setShowEditModal(false);
       setEditingProduct(null);
+      setEditingProductFilterOptionIds([]);
       await loadProducts();
       alert('Produto atualizado com sucesso!');
     } catch (err) {
@@ -1156,6 +1326,12 @@ const filteredFilterGroups = [...filterGroups]
                   </select>
                 </div>
 
+                {newProduct.category &&
+                  renderProductFilterSelector(
+                    newProductFilterGroups,
+                    newProductFilterOptionIds
+                  )}
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Preço</label>
                   <input
@@ -1453,10 +1629,7 @@ const filteredFilterGroups = [...filterGroups]
                           <td className="px-4 py-3">
                             <div className="flex gap-2">
                               <button
-                                onClick={() => {
-                                  setEditingProduct(product);
-                                  setShowEditModal(true);
-                                }}
+                                onClick={() => openEditProduct(product)}
                                 className="p-1 hover:bg-gray-200 rounded"
                                 title="Editar"
                               >
@@ -1859,11 +2032,12 @@ const filteredFilterGroups = [...filterGroups]
                   <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
                   <select
                     value={editingProduct.category}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setEditingProduct((prev) =>
-                        prev ? { ...prev, category: e.target.value } : prev
-                      )
-                    }
+                        prev ? { ...prev, category: e.target.value, subcategory: '' } : prev
+                      );
+                      setEditingProductFilterOptionIds([]);
+                    }}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   >
                     <option value="">Selecione</option>
@@ -1923,6 +2097,13 @@ const filteredFilterGroups = [...filterGroups]
                     ))}
                   </select>
                 </div>
+
+                {editingProduct.category &&
+                  renderProductFilterSelector(
+                    editingProductFilterGroups,
+                    editingProductFilterOptionIds,
+                    true
+                  )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Preço</label>
@@ -2145,6 +2326,7 @@ const filteredFilterGroups = [...filterGroups]
                   onClick={() => {
                     setShowEditModal(false);
                     setEditingProduct(null);
+                    setEditingProductFilterOptionIds([]);
                   }}
                   className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm font-medium py-2 rounded"
                 >
