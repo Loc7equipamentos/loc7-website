@@ -18,6 +18,11 @@ type Brand = {
   name: string;
 };
 
+type OperationalType = {
+  id: string;
+  name: string;
+};
+
 type Subcategory = {
   id: string;
   name: string;
@@ -52,42 +57,12 @@ type FilterGroup = {
   options?: FilterOption[];
 };
 
-const OPERATIONAL_TYPE_OPTIONS = [
-  'Acessório',
-  'Adaptador',
-  'Bateria',
-  'Câmera',
-  'Computador',
-  'Comunicador',
-  'Conversor',
-  'Drone',
-  'Estabilizador',
-  'Estrutura',
-  'Filtro',
-  'Flash',
-  'Follow Focus',
-  'Gravador',
-  'HD / Cartão',
-  'Iluminação',
-  'Lente',
-  'Maquinária',
-  'Mattebox',
-  'Microfone',
-  'Mixer',
-  'Monitor',
-  'Movimento',
-  'Periférico de Rack',
-  'Smartphone',
-  'Switcher',
-  'Teleprompter',
-  'Transmissor',
-  'Tripé',
-];
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [operationalTypes, setOperationalTypes] = useState<OperationalType[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [filterGroups, setFilterGroups] = useState<FilterGroup[]>([]);
   const [filterOptions, setFilterOptions] = useState<FilterOption[]>([]);
@@ -124,6 +99,7 @@ export default function AdminDashboard() {
 
   const [newCategory, setNewCategory] = useState('');
   const [newBrand, setNewBrand] = useState('');
+  const [newOperationalType, setNewOperationalType] = useState('');
   const [newSubcategory, setNewSubcategory] = useState({
   category_id: '',
   name: '',
@@ -242,6 +218,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     loadProducts();
     loadCategories();
     loadBrands();
+    loadOperationalTypes();
     loadSubcategories();
     loadFilterArchitecture();
   }, []);
@@ -249,6 +226,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   useEffect(() => {
     if (activeTab === 'products' || activeTab === 'brands') {
       loadBrands();
+      loadOperationalTypes();
     }
   }, [activeTab]);
 
@@ -695,6 +673,20 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
   };
 
+  const loadOperationalTypes = async () => {
+    try {
+      const { data, error: err } = await supabase
+        .from('operational_types')
+        .select('*')
+        .order('name');
+
+      if (err) throw err;
+      setOperationalTypes((data as OperationalType[]) || []);
+    } catch (err) {
+      console.error('Erro ao carregar tipos operacionais:', err);
+    }
+  };
+
   const loadSubcategories = async () => {
   try {
    const { data, error: err } = await supabase
@@ -1030,6 +1022,58 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       alert('Categoria deletada com sucesso!');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao deletar categoria');
+    }
+  };
+
+  const addOperationalType = async () => {
+    const cleanTypeName = newOperationalType.trim();
+
+    if (!cleanTypeName) {
+      setError('Digite o nome do tipo operacional');
+      return;
+    }
+
+    try {
+      const { data, error: err } = await supabase
+        .from('operational_types')
+        .insert([{ name: cleanTypeName }])
+        .select('id, name')
+        .single();
+
+      if (err) throw err;
+
+      if (data) {
+        setOperationalTypes((prev) => {
+          const withoutDuplicate = prev.filter(
+            (type) => normalizeFilterName(type.name) !== normalizeFilterName(data.name)
+          );
+
+          return [...withoutDuplicate, data as OperationalType].sort((a, b) =>
+            a.name.localeCompare(b.name, 'pt-BR')
+          );
+        });
+
+        setNewProduct((prev) => ({
+          ...prev,
+          operational_type: data.name,
+        }));
+
+        setEditingProduct((prev) =>
+          prev
+            ? {
+                ...prev,
+                operational_type: data.name,
+              }
+            : prev
+        );
+      }
+
+      setNewOperationalType('');
+      setError(null);
+      await loadOperationalTypes();
+      alert('Tipo operacional adicionado com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao adicionar tipo operacional');
     }
   };
 
@@ -1478,6 +1522,10 @@ const deleteSubcategory = async (id: string) => {
     a.name.localeCompare(b.name, 'pt-BR')
   );
 
+  const sortedOperationalTypes = [...operationalTypes].sort((a, b) =>
+    a.name.localeCompare(b.name, 'pt-BR')
+  );
+
   const filteredProducts = products.filter((product) => {
   const categoryMatch = selectedCategoryFilter
     ? product.category === selectedCategoryFilter
@@ -1679,12 +1727,32 @@ const filteredFilterGroups = [...filterGroups]
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   >
                     <option value="">Selecione</option>
-                    {OPERATIONAL_TYPE_OPTIONS.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
+                    {sortedOperationalTypes.map((type) => (
+                      <option key={type.id} value={type.name}>
+                        {type.name}
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Incluir Tipo Operacional</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Ex: Encoder, Painel LED"
+                      value={newOperationalType}
+                      onChange={(e) => setNewOperationalType(e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={addOperationalType}
+                      className="shrink-0 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded"
+                    >
+                      Incluir
+                    </button>
+                  </div>
                 </div>
 
                 <div>
@@ -1704,6 +1772,26 @@ const filteredFilterGroups = [...filterGroups]
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Incluir Tipo Operacional</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Ex: Encoder, Painel LED"
+                      value={newOperationalType}
+                      onChange={(e) => setNewOperationalType(e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={addOperationalType}
+                      className="shrink-0 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded"
+                    >
+                      Incluir
+                    </button>
+                  </div>
                 </div>
 
                 {newProduct.category &&
@@ -2493,9 +2581,9 @@ const filteredFilterGroups = [...filterGroups]
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   >
                     <option value="">Selecione</option>
-                    {OPERATIONAL_TYPE_OPTIONS.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
+                    {sortedOperationalTypes.map((type) => (
+                      <option key={type.id} value={type.name}>
+                        {type.name}
                       </option>
                     ))}
                   </select>
