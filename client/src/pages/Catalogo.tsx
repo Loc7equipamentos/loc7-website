@@ -370,7 +370,7 @@ export default function Catalogo() {
         </div>
       )}
 
-      {hasDynamicFilters ? (
+      {isCategoryPage && hasDynamicFilters ? (
         <>
           {selectedDynamicFilterCount > 0 && (
             <button
