@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { SlidersHorizontal, ChevronDown, Menu, X } from "lucide-react";
-import { useParams } from "wouter";
+import { useLocation, useParams } from "wouter";
 import ProductCard from "@/components/ProductCard";
 import { supabase, type Product } from "@/lib/supabase";
 
@@ -55,7 +55,12 @@ type ProductFilterOption = {
 
 export default function Catalogo() {
   const params = useParams<{ category?: string }>();
-  const isCategoryPage = !!params.category;
+  const [location] = useLocation();
+
+  const currentPath = location.split("?")[0];
+  const categorySlugFromPath = currentPath.match(/^\/catalogo\/([^/]+)/)?.[1] || "";
+  const activeCategorySlug = params.category || categorySlugFromPath;
+  const isCategoryPage = !!activeCategorySlug;
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -106,10 +111,10 @@ export default function Catalogo() {
   }, []);
 
   useEffect(() => {
-    if (params.category) {
+    if (activeCategorySlug) {
       const categoryName =
-        slugToCategoryName[params.category] ||
-        params.category
+        slugToCategoryName[activeCategorySlug] ||
+        activeCategorySlug
           .split("-")
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(" ");
@@ -124,7 +129,7 @@ export default function Catalogo() {
       setSelectedBrand("Todas");
       setSelectedFilterOptionIds({});
     }
-  }, [params.category]);
+  }, [activeCategorySlug]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -224,13 +229,13 @@ export default function Catalogo() {
   }, []);
 
   const categoryExists =
-    !params.category ||
+    !activeCategorySlug ||
     loading ||
     categoryRows.some((cat) => {
-      const mappedCategoryName = slugToCategoryName[params.category || ""];
+      const mappedCategoryName = slugToCategoryName[activeCategorySlug || ""];
 
       return (
-        slugifyPathSegment(cat.name) === params.category ||
+        slugifyPathSegment(cat.name) === activeCategorySlug ||
         normalize(cat.name) === normalize(mappedCategoryName || "")
       );
     });
