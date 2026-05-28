@@ -4,6 +4,7 @@ import { Product } from "@/lib/supabase";
 
 type ProductWithSpecial = Product & {
   is_featured_special?: boolean | null;
+  display_name?: string | null;
 };
 
 type Props = {
@@ -55,6 +56,8 @@ export default function ProductCard({ product }: Props) {
     return Array.from(new Set(allImages));
   }, [product]);
 
+  const productTitle = product.display_name || product.name;
+
   const primaryImage = gallery[0] || "/placeholder.jpg";
   const hoverImage = gallery[1] || primaryImage;
 
@@ -81,14 +84,14 @@ export default function ProductCard({ product }: Props) {
 
           <img
             src={primaryImage}
-            alt={product.name}
+            alt={productTitle}
             className={`absolute h-[88%] w-[88%] object-contain transition-opacity duration-200 ${
               isHovered ? "opacity-0" : "opacity-100"
             }`}
           />
           <img
             src={hoverImage}
-            alt={product.name}
+            alt={productTitle}
             className={`absolute h-[88%] w-[88%] object-contain transition-opacity duration-200 ${
               isHovered ? "opacity-100" : "opacity-0"
             }`}
@@ -110,7 +113,7 @@ export default function ProductCard({ product }: Props) {
           </div>
 
           <h3 className="line-clamp-2 min-h-[30px] text-[13.5px] font-bold leading-[1.2] tracking-[-0.015em] text-neutral-950 sm:min-h-[34px] sm:text-[14.5px]">
-            {product.name}
+            {productTitle}
           </h3>
 
           {product.price ? (
