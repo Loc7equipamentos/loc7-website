@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { SlidersHorizontal, ChevronDown, Menu, X } from "lucide-react";
-import { useLocation, useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import ProductCard from "@/components/ProductCard";
 import { supabase, type Product } from "@/lib/supabase";
 
@@ -55,11 +55,13 @@ type ProductFilterOption = {
 
 export default function Catalogo() {
   const params = useParams<{ category?: string }>();
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
 
-  const currentPath = location.split("?")[0];
-  const categorySlugFromPath = currentPath.match(/^\/catalogo\/([^/]+)/)?.[1] || "";
-  const activeCategorySlug = params.category || categorySlugFromPath;
+  const pathCategorySlug = location.startsWith("/catalogo/")
+    ? location.replace("/catalogo/", "").split("/")[0]
+    : "";
+
+  const activeCategorySlug = params.category || pathCategorySlug;
   const isCategoryPage = !!activeCategorySlug;
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -356,10 +358,18 @@ export default function Catalogo() {
               <button
                 key={cat}
                 onClick={() => {
-                  setSelectedCategory(cat);
                   setSelectedSubcategory("Todas");
                   setSelectedBrand("Todas");
                   setSelectedFilterOptionIds({});
+
+                  if (cat === "Todos") {
+                    setSelectedCategory("Todos");
+                    setLocation("/catalogo");
+                    return;
+                  }
+
+                  setSelectedCategory(cat);
+                  setLocation(`/catalogo/${slugifyPathSegment(cat)}`);
                 }}
                 className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                   selectedCategory === cat
@@ -589,10 +599,18 @@ export default function Catalogo() {
                       <button
                         key={cat}
                         onClick={() => {
-                          setSelectedCategory(cat);
                           setSelectedSubcategory("Todas");
                           setSelectedBrand("Todas");
                           setSelectedFilterOptionIds({});
+
+                          if (cat === "Todos") {
+                            setSelectedCategory("Todos");
+                            setLocation("/catalogo");
+                            return;
+                          }
+
+                          setSelectedCategory(cat);
+                          setLocation(`/catalogo/${slugifyPathSegment(cat)}`);
                         }}
                         className={`whitespace-nowrap rounded-full border px-4 py-[10px] text-[13px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
                           selectedCategory === cat
