@@ -1279,6 +1279,53 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
   };
 
+
+  const moveFilterOption = async (
+    group: FilterGroup,
+    optionIndex: number,
+    direction: 'up' | 'down'
+  ) => {
+    const options = [...(group.options || [])].sort((a, b) => {
+      const orderA = a.display_order ?? 999;
+      const orderB = b.display_order ?? 999;
+
+      if (orderA !== orderB) return orderA - orderB;
+
+      return a.name.localeCompare(b.name, 'pt-BR');
+    });
+
+    const targetIndex = direction === 'up' ? optionIndex - 1 : optionIndex + 1;
+    const currentOption = options[optionIndex];
+    const targetOption = options[targetIndex];
+
+    if (!currentOption || !targetOption) return;
+
+    const currentOrder = currentOption.display_order ?? optionIndex + 1;
+    const targetOrder = targetOption.display_order ?? targetIndex + 1;
+
+    try {
+      setError(null);
+
+      const [{ error: currentError }, { error: targetError }] = await Promise.all([
+        supabase
+          .from('filter_options')
+          .update({ display_order: targetOrder })
+          .eq('id', currentOption.id),
+        supabase
+          .from('filter_options')
+          .update({ display_order: currentOrder })
+          .eq('id', targetOption.id),
+      ]);
+
+      if (currentError) throw currentError;
+      if (targetError) throw targetError;
+
+      await loadFilterArchitecture();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao reordenar valores do filtro');
+    }
+  };
+
 const deleteSubcategory = async (id: string) => {
   if (!confirm('Tem certeza que deseja deletar este filtro?')) return;
 
@@ -2113,7 +2160,7 @@ const filteredFilterGroups = [...filterGroups]
                           <div className="p-4 space-y-4">
                             {group.options && group.options.length > 0 ? (
                               <div className="flex flex-wrap gap-2">
-                                {group.options.map((option) => (
+                                {group.options.map((option, optionIndex) => (
                                   <div
                                     key={option.id}
                                     className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-800"
@@ -2122,13 +2169,37 @@ const filteredFilterGroups = [...filterGroups]
                                       #{option.display_order ?? 0}
                                     </span>
                                     <span>{option.name}</span>
-                                    <button
-                                      onClick={() => deleteFilterOption(option.id)}
-                                      className="ml-1 text-gray-400 hover:text-gray-900"
-                                      title="Deletar valor"
-                                    >
-                                      <X size={13} />
-                                    </button>
+
+                                    <div className="ml-1 flex items-center gap-0.5">
+                                      <button
+                                        type="button"
+                                        onClick={() => moveFilterOption(group, optionIndex, 'up')}
+                                        disabled={optionIndex === 0}
+                                        className="text-gray-400 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-25"
+                                        title="Mover valor para cima"
+                                      >
+                                        <ArrowUp size={12} />
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        onClick={() => moveFilterOption(group, optionIndex, 'down')}
+                                        disabled={optionIndex === (group.options || []).length - 1}
+                                        className="text-gray-400 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-25"
+                                        title="Mover valor para baixo"
+                                      >
+                                        <ArrowDown size={12} />
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        onClick={() => deleteFilterOption(option.id)}
+                                        className="text-gray-400 hover:text-gray-900"
+                                        title="Deletar valor"
+                                      >
+                                        <X size={13} />
+                                      </button>
+                                    </div>
                                   </div>
                                 ))}
                               </div>
