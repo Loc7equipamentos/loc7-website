@@ -10,6 +10,7 @@ type ProductWithImages = Product & {
   featured_order?: number | null
   brand?: string | null;
   display_name?: string | null;
+  operational_type?: string | null;
 };
 
 type Brand = {
@@ -51,6 +52,38 @@ type FilterGroup = {
   options?: FilterOption[];
 };
 
+const OPERATIONAL_TYPE_OPTIONS = [
+  'Acessório',
+  'Adaptador',
+  'Bateria',
+  'Câmera',
+  'Computador',
+  'Comunicador',
+  'Conversor',
+  'Drone',
+  'Estabilizador',
+  'Estrutura',
+  'Filtro',
+  'Flash',
+  'Follow Focus',
+  'Gravador',
+  'HD / Cartão',
+  'Iluminação',
+  'Lente',
+  'Maquinária',
+  'Mattebox',
+  'Microfone',
+  'Mixer',
+  'Monitor',
+  'Movimento',
+  'Periférico de Rack',
+  'Smartphone',
+  'Switcher',
+  'Teleprompter',
+  'Transmissor',
+  'Tripé',
+];
+
 export default function AdminDashboard() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -73,6 +106,7 @@ export default function AdminDashboard() {
   const [newProduct, setNewProduct] = useState({
     name: '',
     category: '',
+    operational_type: '',
     subcategory: '',
     price: 0,
     description: '',
@@ -163,16 +197,24 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     return prefixByCategory[normalizedCategory] || '';
   };
 
-  const buildProductDisplayName = (categoryName: string, productName: string) => {
+  const buildProductDisplayName = (
+    operationalType: string | null | undefined,
+    categoryName: string,
+    productName: string
+  ) => {
     const cleanProductName = productName.trim();
-    const prefix = getDisplayNamePrefix(categoryName);
+    const cleanOperationalType = operationalType?.trim() || '';
+    const prefix = cleanOperationalType || getDisplayNamePrefix(categoryName);
 
     if (!prefix || !cleanProductName) return cleanProductName;
 
     const normalizedProductName = normalizeFilterName(cleanProductName);
     const normalizedPrefix = normalizeFilterName(prefix);
 
-    if (normalizedProductName === normalizedPrefix || normalizedProductName.startsWith(`${normalizedPrefix} `)) {
+    if (
+      normalizedProductName === normalizedPrefix ||
+      normalizedProductName.startsWith(`${normalizedPrefix} `)
+    ) {
       return cleanProductName;
     }
 
@@ -808,9 +850,10 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       !newProduct.brand.trim() ||
       !newProduct.model.trim() ||
       !newProduct.name.trim() ||
-      !newProduct.category
+      !newProduct.category ||
+      !newProduct.operational_type.trim()
     ) {
-      setError('Preencha marca, modelo, nome e categoria');
+      setError('Preencha marca, modelo, nome, categoria e tipo operacional');
       return;
     }
 
@@ -822,8 +865,13 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         .insert([
           {
             name: newProduct.name.trim(),
-            display_name: buildProductDisplayName(newProduct.category, newProduct.name),
+            display_name: buildProductDisplayName(
+              newProduct.operational_type,
+              newProduct.category,
+              newProduct.name
+            ),
             category: newProduct.category,
+            operational_type: newProduct.operational_type.trim() || null,
             subcategory: normalizeSubcategory(newProduct.subcategory) || null,
             brand: newProduct.brand.trim() || null,
             price: newProduct.price || 0,
@@ -857,6 +905,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       setNewProduct({
         name: '',
         category: '',
+        operational_type: '',
         subcategory: '',
         price: 0,
         description: '',
@@ -891,8 +940,13 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         .from('products')
         .update({
           name: editingProduct.name.trim(),
-          display_name: buildProductDisplayName(editingProduct.category, editingProduct.name),
+          display_name: buildProductDisplayName(
+            editingProduct.operational_type,
+            editingProduct.category,
+            editingProduct.name
+          ),
           category: editingProduct.category,
+          operational_type: editingProduct.operational_type?.trim() || null,
           subcategory: normalizeSubcategory(editingProduct.subcategory) || null,
           brand: editingProduct.brand?.trim() || null,
           price: editingProduct.price,
@@ -1607,6 +1661,27 @@ const filteredFilterGroups = [...filterGroups]
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.name}>
                         {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo Operacional *</label>
+                  <select
+                    value={newProduct.operational_type}
+                    onChange={(e) =>
+                      setNewProduct((prev) => ({
+                        ...prev,
+                        operational_type: e.target.value,
+                      }))
+                    }
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                  >
+                    <option value="">Selecione</option>
+                    {OPERATIONAL_TYPE_OPTIONS.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
                       </option>
                     ))}
                   </select>
@@ -2396,6 +2471,31 @@ const filteredFilterGroups = [...filterGroups]
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.name}>
                         {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo Operacional</label>
+                  <select
+                    value={editingProduct.operational_type || ''}
+                    onChange={(e) =>
+                      setEditingProduct((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              operational_type: e.target.value,
+                            }
+                          : prev
+                      )
+                    }
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                  >
+                    <option value="">Selecione</option>
+                    {OPERATIONAL_TYPE_OPTIONS.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
                       </option>
                     ))}
                   </select>
