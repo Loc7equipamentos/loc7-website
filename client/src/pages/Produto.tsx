@@ -162,17 +162,22 @@ export default function Produto() {
   const currentImage =
     gallery[previewImage ?? selectedImage] || product?.image_url || "";
 
+  const productTitle =
+    (product as Product & { display_name?: string | null })?.display_name ||
+    product?.name ||
+    "";
+
   const reserveLink = product
     ? getWhatsAppLink({
         context: "product_reserve",
-        productName: product.name,
+        productName: productTitle,
       })
     : "#";
 
   const questionLink = product
     ? getWhatsAppLink({
         context: "product_question",
-        productName: product.name,
+        productName: productTitle,
       })
     : "#";
 
@@ -182,8 +187,8 @@ export default function Produto() {
     const productSlug = (product as Product & { slug?: string | null }).slug || slug || "";
     const categorySlug = slugifyPathSegment(product.category) || "catalogo";
     const canonicalUrl = `${OFFICIAL_DOMAIN}/equipamentos/${categorySlug}/${productSlug}`;
-    const pageTitle = `${product.name} para locação em São Paulo | LOC7`;
-    const pageDescription = `Locação de ${product.name} para produções audiovisuais, publicidade, cinema e broadcast em São Paulo. Equipamentos profissionais com suporte técnico especializado.`;
+    const pageTitle = `${productTitle} para locação em São Paulo | LOC7`;
+    const pageDescription = `Locação de ${productTitle} para produções audiovisuais, publicidade, cinema e broadcast em São Paulo. Equipamentos profissionais com suporte técnico especializado.`;
     const ogImage = product.image_url || currentImage || "";
 
     document.title = pageTitle;
@@ -231,7 +236,7 @@ export default function Produto() {
       !hostname.includes("loc7equipamentos.com.br");
 
     setMetaTag("name", "robots", isStaging ? "noindex, nofollow" : "index, follow");
-  }, [product, slug, currentImage]);
+  }, [product, slug, currentImage, productTitle]);
 
   if (loading) {
     return (
@@ -295,7 +300,7 @@ export default function Produto() {
               <span>›</span>
             </>
           ) : null}
-          <span className="text-neutral-900">{product.name}</span>
+          <span className="text-neutral-900">{productTitle}</span>
         </div>
 
         <section className="grid gap-5 lg:grid-cols-[88px_minmax(0,1fr)_360px]">
@@ -318,7 +323,7 @@ export default function Produto() {
                 <div className="aspect-square bg-white p-2">
                   <img
                     src={image}
-                    alt={`${product.name} ${index + 1}`}
+                    alt={`${productTitle} ${index + 1}`}
                     className="h-full w-full object-contain"
                   />
                 </div>
@@ -332,7 +337,7 @@ export default function Produto() {
                 <div className="flex h-[90%] w-[90%] items-center justify-center">
                   <img
                     src={currentImage}
-                    alt={product.name}
+                    alt={productTitle}
                     className="max-h-full max-w-full object-contain"
                   />
                 </div>
@@ -361,7 +366,7 @@ export default function Produto() {
                     <div className="aspect-square bg-white p-2">
                       <img
                         src={image}
-                        alt={`${product.name} ${index + 1}`}
+                        alt={`${productTitle} ${index + 1}`}
                         className="h-full w-full object-contain"
                       />
                     </div>
@@ -373,7 +378,7 @@ export default function Produto() {
 
           <aside className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
             <h1 className="text-3xl font-semibold tracking-[-0.03em] text-neutral-950 sm:text-[2rem]">
-              {product.name}
+              {productTitle}
             </h1>
 
             <div className="mt-2 space-y-2">
@@ -430,7 +435,7 @@ export default function Produto() {
                   <a
                     href={getWhatsAppLink({
                       context: "product_special",
-                      productName: product.name,
+                      productName: productTitle,
                     })}
                     target="_blank"
                     rel="noopener noreferrer"
