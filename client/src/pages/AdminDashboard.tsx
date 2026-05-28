@@ -1401,8 +1401,8 @@ const filteredFilterGroups = [...filterGroups]
                   <label className="block text-sm font-medium text-gray-700 mb-1">Marca *</label>
 
                   <select
-                   key={brands.length}
-                   value={newProduct.brand}
+  key={`brand-select-${brands.map((b) => b.id).join('-')}`}
+  value={newProduct.brand}
                     onChange={(e) =>
                       setNewProduct((prev) => ({
                         ...prev,
