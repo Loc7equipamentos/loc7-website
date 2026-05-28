@@ -114,6 +114,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const [newFilterValueByGroup, setNewFilterValueByGroup] = useState<Record<string, string>>({});
   const [newProductFilterOptionIds, setNewProductFilterOptionIds] = useState<string[]>([]);
   const [editingProductFilterOptionIds, setEditingProductFilterOptionIds] = useState<string[]>([]);
+  const [loadingEditingProductFilters, setLoadingEditingProductFilters] = useState(false);
 
   const buildProductName = (brand: string, model: string) => {
     return [brand?.trim(), model?.trim()]
@@ -327,7 +328,22 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     );
   };
 
+  const fetchProductFilterOptionIds = async (productId: string) => {
+    const { data, error: err } = await supabase
+      .from('product_filter_options')
+      .select('filter_option_id')
+      .eq('product_id', productId);
+
+    if (err) throw err;
+
+    return ((data as ProductFilterOption[]) || [])
+      .map((item) => item.filter_option_id)
+      .filter(Boolean);
+  };
+
   const saveProductFilterOptions = async (productId: string, optionIds: string[]) => {
+    const uniqueOptionIds = Array.from(new Set(optionIds.filter(Boolean)));
+
     const { error: deleteError } = await supabase
       .from('product_filter_options')
       .delete()
@@ -335,9 +351,9 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
     if (deleteError) throw deleteError;
 
-    if (optionIds.length === 0) return;
+    if (uniqueOptionIds.length === 0) return;
 
-    const rows = optionIds.map((optionId) => ({
+    const rows = uniqueOptionIds.map((optionId) => ({
       product_id: productId,
       filter_option_id: optionId,
     }));
@@ -347,33 +363,37 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       .insert(rows);
 
     if (insertError) throw insertError;
+
+    const savedOptionIds = await fetchProductFilterOptionIds(productId);
+
+    if (savedOptionIds.length !== uniqueOptionIds.length) {
+      throw new Error(
+        'Produto salvo, mas os filtros relacionados não foram confirmados no banco. Verifique as policies da tabela product_filter_options.'
+      );
+    }
   };
 
   const loadProductFilterOptions = async (productId: string) => {
-    const { data, error: err } = await supabase
-      .from('product_filter_options')
-      .select('filter_option_id')
-      .eq('product_id', productId);
-
-    if (err) throw err;
-
-    setEditingProductFilterOptionIds(
-      ((data as ProductFilterOption[]) || []).map((item) => item.filter_option_id)
-    );
+    const optionIds = await fetchProductFilterOptionIds(productId);
+    setEditingProductFilterOptionIds(optionIds);
   };
 
   const openEditProduct = async (product: ProductWithImages) => {
     try {
       setError(null);
+      setLoadingEditingProductFilters(true);
+      const optionIds = await fetchProductFilterOptionIds(product.id);
+      setEditingProductFilterOptionIds(optionIds);
       setEditingProduct(product);
       setShowEditModal(true);
-      await loadProductFilterOptions(product.id);
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
           : 'Erro ao carregar filtros relacionados ao produto'
       );
+    } finally {
+      setLoadingEditingProductFilters(false);
     }
   };
 
@@ -2216,12 +2236,18 @@ const filteredFilterGroups = [...filterGroups]
                 </div>
 
                 {editingProduct.category &&
-                  renderProductFilterSelector(
-                    editingProductFilterGroups,
-                    editingProductFilterOptionIds,
-                    editingProduct.brand || '',
-                    true
-                  )}
+                  (loadingEditingProductFilters ? (
+                    <div className="md:col-span-2 rounded border border-gray-200 bg-gray-50 px-4 py-5 text-sm text-gray-500">
+                      Carregando filtros relacionados do produto...
+                    </div>
+                  ) : (
+                    renderProductFilterSelector(
+                      editingProductFilterGroups,
+                      editingProductFilterOptionIds,
+                      editingProduct.brand || '',
+                      true
+                    )
+                  ))}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Preço</label>
