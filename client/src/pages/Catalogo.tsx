@@ -320,7 +320,7 @@ export default function Catalogo() {
   );
 
   const filteredProducts = categoryScopedProducts.filter((p) => {
-    if (hasDynamicFilters) {
+    if (hasDynamicFilters && selectedDynamicFilterCount > 0) {
       const productOptionIds = productFilterOptions[p.id] || [];
 
       return Object.entries(selectedFilterOptionIds).every(([, selectedIds]) => {
