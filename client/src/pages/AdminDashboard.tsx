@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase, type Product, type Category } from '@/lib/supabase';
-import { Trash2, Plus, Edit2, X, Upload, Loader } from 'lucide-react';
+import { Trash2, Plus, Edit2, X, Upload, Loader, ArrowUp, ArrowDown } from 'lucide-react';
 
 type ProductWithImages = Product & {
   images?: string[] | null;
@@ -1245,6 +1245,40 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
   };
 
+
+  const moveFilterGroup = async (groupIndex: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? groupIndex - 1 : groupIndex + 1;
+    const currentGroup = filteredFilterGroups[groupIndex];
+    const targetGroup = filteredFilterGroups[targetIndex];
+
+    if (!currentGroup || !targetGroup) return;
+
+    const currentOrder = currentGroup.display_order ?? groupIndex + 1;
+    const targetOrder = targetGroup.display_order ?? targetIndex + 1;
+
+    try {
+      setError(null);
+
+      const [{ error: currentError }, { error: targetError }] = await Promise.all([
+        supabase
+          .from('filter_groups')
+          .update({ display_order: targetOrder })
+          .eq('id', currentGroup.id),
+        supabase
+          .from('filter_groups')
+          .update({ display_order: currentOrder })
+          .eq('id', targetGroup.id),
+      ]);
+
+      if (currentError) throw currentError;
+      if (targetError) throw targetError;
+
+      await loadFilterArchitecture();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao reordenar filtros');
+    }
+  };
+
 const deleteSubcategory = async (id: string) => {
   if (!confirm('Tem certeza que deseja deletar este filtro?')) return;
 
@@ -2028,7 +2062,7 @@ const filteredFilterGroups = [...filterGroups]
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                      {filteredFilterGroups.map((group) => (
+                      {filteredFilterGroups.map((group, index) => (
                         <div
                           key={group.id}
                           className="rounded border border-gray-200 bg-gray-50 overflow-hidden"
@@ -2045,13 +2079,35 @@ const filteredFilterGroups = [...filterGroups]
                               </div>
                             </div>
 
-                            <button
-                              onClick={() => deleteFilterGroup(group.id)}
-                              className="p-1 hover:bg-gray-100 rounded"
-                              title="Deletar filtro"
-                            >
-                              <Trash2 size={16} className="text-gray-600" />
-                            </button>
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => moveFilterGroup(index, 'up')}
+                                disabled={index === 0}
+                                className="p-1 hover:bg-gray-100 rounded disabled:cursor-not-allowed disabled:opacity-30"
+                                title="Mover filtro para cima"
+                              >
+                                <ArrowUp size={16} className="text-gray-600" />
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => moveFilterGroup(index, 'down')}
+                                disabled={index === filteredFilterGroups.length - 1}
+                                className="p-1 hover:bg-gray-100 rounded disabled:cursor-not-allowed disabled:opacity-30"
+                                title="Mover filtro para baixo"
+                              >
+                                <ArrowDown size={16} className="text-gray-600" />
+                              </button>
+
+                              <button
+                                onClick={() => deleteFilterGroup(group.id)}
+                                className="p-1 hover:bg-gray-100 rounded"
+                                title="Deletar filtro"
+                              >
+                                <Trash2 size={16} className="text-gray-600" />
+                              </button>
+                            </div>
                           </div>
 
                           <div className="p-4 space-y-4">
