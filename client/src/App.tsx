@@ -242,8 +242,8 @@ export default function App() {
         <Switch>
           {/* SITE */}
           <Route path="/" component={Home} />
-          <Route path="/catalogo" component={Catalogo} />
           <Route path="/catalogo/:category" component={Catalogo} />
+          <Route path="/catalogo" component={Catalogo} />
           <Route path="/equipamentos/:category/:slug" component={Produto} />
           <Route path="/equipamentos/:slug" component={Produto} />
           <Route path="/orcamento" component={Orcamento} />
