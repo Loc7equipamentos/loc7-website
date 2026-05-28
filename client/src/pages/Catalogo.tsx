@@ -27,6 +27,32 @@ type Subcategory = {
   category_id: string;
 };
 
+type FilterOption = {
+  id: string;
+  group_id: string;
+  name: string;
+  display_order: number | null;
+  is_active?: boolean | null;
+};
+
+type FilterGroup = {
+  id: string;
+  category_id: string;
+  name: string;
+  display_order: number | null;
+  is_active?: boolean | null;
+  category?: {
+    id: string;
+    name: string;
+  } | null;
+  options?: FilterOption[];
+};
+
+type ProductFilterOption = {
+  product_id: string;
+  filter_option_id: string;
+};
+
 export default function Catalogo() {
   const params = useParams<{ category?: string }>();
   const isCategoryPage = !!params.category;
@@ -37,6 +63,10 @@ export default function Catalogo() {
     { id: string; name: string }[]
   >([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [filterGroups, setFilterGroups] = useState<FilterGroup[]>([]);
+  const [productFilterOptions, setProductFilterOptions] = useState<
+    Record<string, string[]>
+  >({});
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,27 +74,30 @@ export default function Catalogo() {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [selectedSubcategory, setSelectedSubcategory] = useState("Todas");
   const [selectedBrand, setSelectedBrand] = useState("Todas");
+  const [selectedFilterOptionIds, setSelectedFilterOptionIds] = useState<
+    Record<string, string[]>
+  >({});
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
- const slugToCategoryName: Record<string, string> = {
-  cameras: "Câmeras",
-  lentes: "Lentes",
-  iluminacao: "Iluminação",
-  audio: "Áudio",
-  monitores: "Monitores",
-  movimento: "Movimento",
-  transmissores: "Transmissores",
-  maquinaria: "Maquinária",
+  const slugToCategoryName: Record<string, string> = {
+    cameras: "Câmeras",
+    lentes: "Lentes",
+    iluminacao: "Iluminação",
+    audio: "Áudio",
+    monitores: "Monitores",
+    movimento: "Movimento",
+    transmissores: "Transmissores",
+    maquinaria: "Maquinária",
 
-  filtros: "Filtros",
-  mattebox: "Mattebox",
-  switchers: "Switchers",
-  teleprompter: "Teleprompter",
-  "follow-focus": "Follow Focus",
-  tripes: "Tripés de Câmera",
-  "suporte-de-camera": "Suporte de Câmera",
-  modificadores: "Modificadores",
-};
+    filtros: "Filtros",
+    mattebox: "Mattebox",
+    switchers: "Switchers",
+    teleprompter: "Teleprompter",
+    "follow-focus": "Follow Focus",
+    tripes: "Tripés de Câmera",
+    "suporte-de-camera": "Suporte de Câmera",
+    modificadores: "Modificadores",
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -84,10 +117,12 @@ export default function Catalogo() {
       setSelectedCategory(categoryName);
       setSelectedSubcategory("Todas");
       setSelectedBrand("Todas");
+      setSelectedFilterOptionIds({});
     } else {
       setSelectedCategory("Todos");
       setSelectedSubcategory("Todas");
       setSelectedBrand("Todas");
+      setSelectedFilterOptionIds({});
     }
   }, [params.category]);
 
@@ -117,6 +152,42 @@ export default function Catalogo() {
 
         setSubcategories(subcategoriesData || []);
 
+        const { data: filterGroupsData, error: filterGroupsError } = await supabase
+          .from("filter_groups")
+          .select(`
+            *,
+            category:categories!filter_groups_category_id_fkey (
+              id,
+              name
+            )
+          `)
+          .order("display_order", { ascending: true });
+
+        if (filterGroupsError) throw filterGroupsError;
+
+        const { data: filterOptionsData, error: filterOptionsError } = await supabase
+          .from("filter_options")
+          .select("*")
+          .order("display_order", { ascending: true });
+
+        if (filterOptionsError) throw filterOptionsError;
+
+        const groups = ((filterGroupsData as FilterGroup[]) || []).map((group) => ({
+          ...group,
+          options: ((filterOptionsData as FilterOption[]) || [])
+            .filter((option) => option.group_id === group.id)
+            .sort((a, b) => {
+              const orderA = a.display_order ?? 999;
+              const orderB = b.display_order ?? 999;
+
+              if (orderA !== orderB) return orderA - orderB;
+
+              return a.name.localeCompare(b.name, "pt-BR");
+            }),
+        }));
+
+        setFilterGroups(groups);
+
         const { data: productsData, error: prodError } = await supabase
           .from("products")
           .select("*")
@@ -125,6 +196,22 @@ export default function Catalogo() {
         if (prodError) throw prodError;
 
         setProducts(productsData || []);
+
+        const { data: productFilterData, error: productFilterError } = await supabase
+          .from("product_filter_options")
+          .select("product_id, filter_option_id");
+
+        if (productFilterError) throw productFilterError;
+
+        const productFilterMap = ((productFilterData as ProductFilterOption[]) || []).reduce<
+          Record<string, string[]>
+        >((acc, item) => {
+          if (!acc[item.product_id]) acc[item.product_id] = [];
+          acc[item.product_id].push(item.filter_option_id);
+          return acc;
+        }, {});
+
+        setProductFilterOptions(productFilterMap);
       } catch (err) {
         console.error("Erro ao carregar catálogo:", err);
         setError("Erro ao carregar produtos. Tente novamente.");
@@ -137,16 +224,16 @@ export default function Catalogo() {
   }, []);
 
   const categoryExists =
-  !params.category ||
-  loading ||
-  categoryRows.some((cat) => {
-    const mappedCategoryName = slugToCategoryName[params.category || ""];
+    !params.category ||
+    loading ||
+    categoryRows.some((cat) => {
+      const mappedCategoryName = slugToCategoryName[params.category || ""];
 
-    return (
-      slugifyPathSegment(cat.name) === params.category ||
-      normalize(cat.name) === normalize(mappedCategoryName || "")
-    );
-  });
+      return (
+        slugifyPathSegment(cat.name) === params.category ||
+        normalize(cat.name) === normalize(mappedCategoryName || "")
+      );
+    });
 
   const searchScopedProducts = products.filter((p) => {
     if (!searchQuery.trim()) return true;
@@ -174,6 +261,23 @@ export default function Catalogo() {
     (cat) => normalize(cat.name) === normalize(selectedCategory)
   );
 
+  const selectedCategoryFilterGroups =
+    selectedCategory === "Todos" || !selectedCategoryRow
+      ? []
+      : filterGroups
+          .filter((group) => group.category_id === selectedCategoryRow.id)
+          .filter((group) => group.options && group.options.length > 0)
+          .sort((a, b) => {
+            const orderA = a.display_order ?? 999;
+            const orderB = b.display_order ?? 999;
+
+            if (orderA !== orderB) return orderA - orderB;
+
+            return a.name.localeCompare(b.name, "pt-BR");
+          });
+
+  const hasDynamicFilters = selectedCategoryFilterGroups.length > 0;
+
   const uniqueSubcategories =
     selectedCategory === "Todos" || !selectedCategoryRow
       ? []
@@ -184,21 +288,53 @@ export default function Catalogo() {
           .sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   const uniqueBrands = Array.from(
-    new Set(
-      categoryScopedProducts
-        .map((p) => p.brand || "")
-        .filter(Boolean)
-    )
+    new Set(categoryScopedProducts.map((p) => p.brand || "").filter(Boolean))
   ).sort((a, b) => a.localeCompare(b, "pt-BR"));
 
+  const toggleDynamicFilter = (groupId: string, optionId: string) => {
+    setSelectedFilterOptionIds((prev) => {
+      const current = prev[groupId] || [];
+      const nextValues = current.includes(optionId)
+        ? current.filter((id) => id !== optionId)
+        : [...current, optionId];
+
+      const next = { ...prev };
+
+      if (nextValues.length === 0) {
+        delete next[groupId];
+      } else {
+        next[groupId] = nextValues;
+      }
+
+      return next;
+    });
+  };
+
+  const clearDynamicFilters = () => {
+    setSelectedFilterOptionIds({});
+  };
+
+  const selectedDynamicFilterCount = Object.values(selectedFilterOptionIds).reduce(
+    (total, ids) => total + ids.length,
+    0
+  );
+
   const filteredProducts = categoryScopedProducts.filter((p) => {
+    if (hasDynamicFilters) {
+      const productOptionIds = productFilterOptions[p.id] || [];
+
+      return Object.entries(selectedFilterOptionIds).every(([, selectedIds]) => {
+        if (selectedIds.length === 0) return true;
+        return selectedIds.some((optionId) => productOptionIds.includes(optionId));
+      });
+    }
+
     const matchSubcategory =
       selectedSubcategory === "Todas" ||
       normalize(p.subcategory || "") === normalize(selectedSubcategory);
 
     const matchBrand =
-      selectedBrand === "Todas" ||
-      normalize(p.brand || "") === normalize(selectedBrand);
+      selectedBrand === "Todas" || normalize(p.brand || "") === normalize(selectedBrand);
 
     return matchSubcategory && matchBrand;
   });
@@ -218,6 +354,7 @@ export default function Catalogo() {
                   setSelectedCategory(cat);
                   setSelectedSubcategory("Todas");
                   setSelectedBrand("Todas");
+                  setSelectedFilterOptionIds({});
                 }}
                 className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                   selectedCategory === cat
@@ -233,81 +370,133 @@ export default function Catalogo() {
         </div>
       )}
 
-      {uniqueSubcategories.length > 0 && (
-        <div>
-          <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-  Refinar Busca
-</h3>
-          <div className="space-y-2">
+      {hasDynamicFilters ? (
+        <>
+          {selectedDynamicFilterCount > 0 && (
             <button
-              onClick={() => {
-                setSelectedSubcategory("Todas");
-                setSelectedBrand("Todas");
-              }}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                selectedSubcategory === "Todas"
-                  ? "bg-neutral-900 text-white"
-                  : "text-neutral-700 hover:bg-neutral-100"
-              }`}
+              onClick={clearDynamicFilters}
+              className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-left text-sm font-medium text-neutral-700 transition hover:border-neutral-400"
             >
-              <span>Todas</span>
-              <ChevronDown className="h-4 w-4 opacity-60" />
+              Limpar filtros ({selectedDynamicFilterCount})
             </button>
+          )}
 
-            {uniqueSubcategories.map((subcat) => (
+          {selectedCategoryFilterGroups.map((group) => (
+            <div key={group.id}>
+              <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                {group.name}
+              </h3>
+
+              <div className="space-y-2">
+                {(group.options || []).map((option) => {
+                  const active = (selectedFilterOptionIds[group.id] || []).includes(option.id);
+
+                  return (
+                    <button
+                      key={option.id}
+                      onClick={() => toggleDynamicFilter(group.id, option.id)}
+                      className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                        active
+                          ? "bg-neutral-900 text-white"
+                          : "text-neutral-700 hover:bg-neutral-100"
+                      }`}
+                    >
+                      <span
+                        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                          active
+                            ? "border-white bg-white text-neutral-900"
+                            : "border-neutral-300 bg-white"
+                        }`}
+                      >
+                        {active ? "✓" : ""}
+                      </span>
+                      <span>{option.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </>
+      ) : (
+        <>
+          {uniqueSubcategories.length > 0 && (
+            <div>
+              <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                Refinar Busca
+              </h3>
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    setSelectedSubcategory("Todas");
+                    setSelectedBrand("Todas");
+                  }}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                    selectedSubcategory === "Todas"
+                      ? "bg-neutral-900 text-white"
+                      : "text-neutral-700 hover:bg-neutral-100"
+                  }`}
+                >
+                  <span>Todas</span>
+                  <ChevronDown className="h-4 w-4 opacity-60" />
+                </button>
+
+                {uniqueSubcategories.map((subcat) => (
+                  <button
+                    key={subcat}
+                    onClick={() => {
+                      setSelectedSubcategory(subcat);
+                      setSelectedBrand("Todas");
+                    }}
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                      selectedSubcategory === subcat
+                        ? "bg-neutral-900 text-white"
+                        : "text-neutral-700 hover:bg-neutral-100"
+                    }`}
+                  >
+                    <span>{subcat}</span>
+                    <ChevronDown className="h-4 w-4 opacity-60" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div>
+            <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+              Marca
+            </h3>
+            <div className="space-y-2">
               <button
-                key={subcat}
-                onClick={() => {
-                  setSelectedSubcategory(subcat);
-                  setSelectedBrand("Todas");
-                }}
+                onClick={() => setSelectedBrand("Todas")}
                 className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                  selectedSubcategory === subcat
+                  selectedBrand === "Todas"
                     ? "bg-neutral-900 text-white"
                     : "text-neutral-700 hover:bg-neutral-100"
                 }`}
               >
-                <span>{subcat}</span>
+                <span>Todas</span>
                 <ChevronDown className="h-4 w-4 opacity-60" />
               </button>
-            ))}
+
+              {uniqueBrands.map((brand) => (
+                <button
+                  key={brand}
+                  onClick={() => setSelectedBrand(brand)}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                    selectedBrand === brand
+                      ? "bg-neutral-900 text-white"
+                      : "text-neutral-700 hover:bg-neutral-100"
+                  }`}
+                >
+                  <span>{brand}</span>
+                  <ChevronDown className="h-4 w-4 opacity-60" />
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </>
       )}
-
-      <div>
-        <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-          Marca
-        </h3>
-        <div className="space-y-2">
-          <button
-            onClick={() => setSelectedBrand("Todas")}
-            className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-              selectedBrand === "Todas"
-                ? "bg-neutral-900 text-white"
-                : "text-neutral-700 hover:bg-neutral-100"
-            }`}
-          >
-            <span>Todas</span>
-            <ChevronDown className="h-4 w-4 opacity-60" />
-          </button>
-
-          {uniqueBrands.map((brand) => (
-            <button
-              key={brand}
-              onClick={() => setSelectedBrand(brand)}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                selectedBrand === brand
-                  ? "bg-neutral-900 text-white"
-                  : "text-neutral-700 hover:bg-neutral-100"
-              }`}
-            >
-              <span>{brand}</span>
-              <ChevronDown className="h-4 w-4 opacity-60" />
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 
@@ -398,6 +587,7 @@ export default function Catalogo() {
                           setSelectedCategory(cat);
                           setSelectedSubcategory("Todas");
                           setSelectedBrand("Todas");
+                          setSelectedFilterOptionIds({});
                         }}
                         className={`whitespace-nowrap rounded-full border px-4 py-[10px] text-[13px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
                           selectedCategory === cat
