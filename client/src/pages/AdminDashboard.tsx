@@ -9,6 +9,7 @@ type ProductWithImages = Product & {
   is_featured?: boolean | null;
   featured_order?: number | null
   brand?: string | null;
+  display_name?: string | null;
 };
 
 type Brand = {
@@ -121,6 +122,61 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       .filter(Boolean)
       .join(' ')
       .trim();
+  };
+
+  const getDisplayNamePrefix = (categoryName: string) => {
+    const normalizedCategory = normalizeFilterName(categoryName);
+
+    const prefixByCategory: Record<string, string> = {
+      adaptadores: 'Adaptador',
+      acessorios: 'Acessório',
+      audio: 'Áudio',
+      baterias: 'Bateria',
+      cameras: 'Câmera',
+      computadores: 'Computador',
+      'computadores e tablets': 'Computador / Tablet',
+      comunicadores: 'Comunicador',
+      conversores: 'Conversor',
+      'conversores e distribuidores': 'Conversor',
+      drones: 'Drone',
+      estabilizadores: 'Estabilizador',
+      estrutura: 'Estrutura',
+      filtros: 'Filtro',
+      flash: 'Flash',
+      'follow focus': 'Follow Focus',
+      gravadores: 'Gravador',
+      'hds e cartoes': 'HD / Cartão',
+      lentes: 'Lente',
+      iluminacao: 'Iluminação',
+      maquinaria: 'Maquinária',
+      mattebox: 'Mattebox',
+      monitores: 'Monitor',
+      movimento: 'Movimento',
+      'perifericos de rack': 'Periférico de Rack',
+      smartphones: 'Smartphone',
+      switchers: 'Switcher',
+      teleprompter: 'Teleprompter',
+      transmissores: 'Transmissor',
+      tripes: 'Tripé',
+    };
+
+    return prefixByCategory[normalizedCategory] || '';
+  };
+
+  const buildProductDisplayName = (categoryName: string, productName: string) => {
+    const cleanProductName = productName.trim();
+    const prefix = getDisplayNamePrefix(categoryName);
+
+    if (!prefix || !cleanProductName) return cleanProductName;
+
+    const normalizedProductName = normalizeFilterName(cleanProductName);
+    const normalizedPrefix = normalizeFilterName(prefix);
+
+    if (normalizedProductName === normalizedPrefix || normalizedProductName.startsWith(`${normalizedPrefix} `)) {
+      return cleanProductName;
+    }
+
+    return `${prefix} ${cleanProductName}`.trim();
   };
 
   const formatPrice = (value: number) => {
@@ -766,6 +822,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         .insert([
           {
             name: newProduct.name.trim(),
+            display_name: buildProductDisplayName(newProduct.category, newProduct.name),
             category: newProduct.category,
             subcategory: normalizeSubcategory(newProduct.subcategory) || null,
             brand: newProduct.brand.trim() || null,
@@ -834,6 +891,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         .from('products')
         .update({
           name: editingProduct.name.trim(),
+          display_name: buildProductDisplayName(editingProduct.category, editingProduct.name),
           category: editingProduct.category,
           subcategory: normalizeSubcategory(editingProduct.subcategory) || null,
           brand: editingProduct.brand?.trim() || null,
@@ -1848,7 +1906,7 @@ const filteredFilterGroups = [...filterGroups]
                       filteredProducts.map((product) => (
                         <tr key={product.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 text-gray-900 font-medium">
-                            {product.name}
+                            {product.display_name || product.name}
                           </td>
                           <td className="px-4 py-3 text-gray-600">
                             {product.brand || '-'}
