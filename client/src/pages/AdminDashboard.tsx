@@ -149,6 +149,12 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   }, []);
 
   useEffect(() => {
+    if (activeTab === 'products' || activeTab === 'brands') {
+      loadBrands();
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
     setNewProduct((prev) => ({ ...prev, subcategory: '' }));
     setNewProductFilterOptionIds([]);
   }, [newProduct.category]);
@@ -916,15 +922,34 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   };
 
   const addBrand = async () => {
-    if (!newBrand.trim()) {
+    const cleanBrandName = newBrand.trim();
+
+    if (!cleanBrandName) {
       setError('Digite o nome da marca');
       return;
     }
 
     try {
-      const { error: err } = await supabase.from('brands').insert([{ name: newBrand.trim() }]);
+      const { data, error: err } = await supabase
+        .from('brands')
+        .insert([{ name: cleanBrandName }])
+        .select('id, name')
+        .single();
 
       if (err) throw err;
+
+      if (data) {
+        setBrands((prev) => {
+          const withoutDuplicate = prev.filter(
+            (brand) => normalizeFilterName(brand.name) !== normalizeFilterName(data.name)
+          );
+
+          return [...withoutDuplicate, data as Brand].sort((a, b) =>
+            a.name.localeCompare(b.name, 'pt-BR')
+          );
+        });
+      }
+
       setNewBrand('');
       setError(null);
       await loadBrands();
@@ -1256,6 +1281,10 @@ const deleteSubcategory = async (id: string) => {
     ? getCombinedImages(editingProduct.image_url, editingProduct.images)
     : [];
 
+  const sortedBrands = [...brands].sort((a, b) =>
+    a.name.localeCompare(b.name, 'pt-BR')
+  );
+
   const filteredProducts = products.filter((product) => {
   const categoryMatch = selectedCategoryFilter
     ? product.category === selectedCategoryFilter
@@ -1385,7 +1414,7 @@ const filteredFilterGroups = [...filterGroups]
                   >
                     <option value="">Selecione uma marca</option>
 
-                    {brands.map((brand) => (
+                    {sortedBrands.map((brand) => (
                       <option key={brand.id} value={brand.name}>
                         {brand.name}
                       </option>
@@ -1703,7 +1732,7 @@ const filteredFilterGroups = [...filterGroups]
     >
       <option value="">Todas as marcas</option>
 
-      {brands.map((brand) => (
+      {sortedBrands.map((brand) => (
         <option key={brand.id} value={brand.name}>
           {brand.name}
         </option>
@@ -1902,7 +1931,7 @@ const filteredFilterGroups = [...filterGroups]
                         </td>
                       </tr>
                     ) : (
-                      brands.map((brand) => (
+                      sortedBrands.map((brand) => (
                         <tr key={brand.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 text-gray-900 font-medium">{brand.name}</td>
                           <td className="px-4 py-3">
@@ -2207,7 +2236,7 @@ const filteredFilterGroups = [...filterGroups]
 >
   <option value="">Selecione uma marca</option>
 
-  {brands.map((brand) => (
+  {sortedBrands.map((brand) => (
     <option key={brand.id} value={brand.name}>
       {brand.name}
     </option>
