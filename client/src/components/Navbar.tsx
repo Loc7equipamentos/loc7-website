@@ -380,13 +380,16 @@ export default function Navbar() {
                           </div>
                         ) : (
                           dropdownCategories.map((cat) => (
-                            <Link
+                            <button
                               key={cat.name}
-                              href={cat.href}
-                              className="block px-4 py-2 text-center text-xs font-medium tracking-wide text-white/70 transition-all duration-150 hover:scale-[1.05] hover:text-white"
+                              type="button"
+                              onClick={() => {
+                                window.location.href = cat.href;
+                              }}
+                              className="block w-full px-4 py-2 text-center text-xs font-medium tracking-wide text-white/70 transition-all duration-150 hover:scale-[1.05] hover:text-white"
                             >
                               {cat.name}
-                            </Link>
+                            </button>
                           ))
                         )}
                       </div>
@@ -466,8 +469,11 @@ export default function Navbar() {
                         </span>
                       </button>
                     ) : (
-                      <Link
-                        href={cat.href || "/catalogo"}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          window.location.href = cat.href || "/catalogo";
+                        }}
                         className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 hover:scale-[1.035] hover:text-white"
                       >
                         <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
@@ -475,7 +481,7 @@ export default function Navbar() {
                         <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
                           {cat.name}
                         </span>
-                      </Link>
+                      </button>
                     )}
 
                     {hasChildren && (
@@ -488,13 +494,16 @@ export default function Navbar() {
                           }`}
                         >
                           {cat.children?.map((child) => (
-                            <Link
+                            <button
                               key={child.name}
-                              href={child.href}
-                              className="block rounded-md px-4 py-2.5 text-center text-[12px] font-medium tracking-[0.06em] text-white/75 transition hover:bg-white/5 hover:text-white"
+                              type="button"
+                              onClick={() => {
+                                window.location.href = child.href;
+                              }}
+                              className="block w-full rounded-md px-4 py-2.5 text-center text-[12px] font-medium tracking-[0.06em] text-white/75 transition hover:bg-white/5 hover:text-white"
                             >
                               {child.name}
-                            </Link>
+                            </button>
                           ))}
                         </div>
                       </div>
@@ -525,13 +534,16 @@ export default function Navbar() {
                       {isCatalogOpen && (
                         <div className="bg-black pl-4">
                           {dropdownCategories.map((cat) => (
-                            <Link
+                            <button
                               key={cat.name}
-                              href={cat.href}
-                              className="block px-4 py-2 text-xs font-medium tracking-wide text-white/80 transition-all duration-200 hover:scale-[1.03] hover:text-white"
+                              type="button"
+                              onClick={() => {
+                                window.location.href = cat.href;
+                              }}
+                              className="block w-full px-4 py-2 text-left text-xs font-medium tracking-wide text-white/80 transition-all duration-200 hover:scale-[1.03] hover:text-white"
                             >
                               {cat.name}
-                            </Link>
+                            </button>
                           ))}
                         </div>
                       )}
