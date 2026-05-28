@@ -1372,7 +1372,8 @@ const filteredFilterGroups = [...filterGroups]
                   <label className="block text-sm font-medium text-gray-700 mb-1">Marca *</label>
 
                   <select
-                    value={newProduct.brand}
+                   key={brands.length}
+                   value={newProduct.brand}
                     onChange={(e) =>
                       setNewProduct((prev) => ({
                         ...prev,
@@ -2190,6 +2191,7 @@ const filteredFilterGroups = [...filterGroups]
                  <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
 
 <select
+  key={`edit-brand-${brands.length}`}
   value={editingProduct.brand || ''}
   onChange={(e) =>
     setEditingProduct((prev) =>
