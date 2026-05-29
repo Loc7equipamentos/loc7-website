@@ -76,7 +76,7 @@ const submenuCategories: SubmenuCategory[] = [
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Como alugar", href: "/catalogo" },
+  { name: "Como alugar", href: "#" },
   { name: "Produção", href: "/producao" },
 ];
 
