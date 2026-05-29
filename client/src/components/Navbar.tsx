@@ -9,7 +9,6 @@ import { Link, useLocation } from "wouter";
 import {
   Aperture,
   Camera,
-  ChevronDown,
   Cog,
   Fan,
   Flag,
@@ -75,30 +74,9 @@ const submenuCategories: SubmenuCategory[] = [
   },
 ];
 
-const fallbackCategories = [
-  { name: "ÁUDIO", href: "/catalogo/audio" },
-  { name: "CÂMERAS", href: "/catalogo/cameras" },
-  { name: "COMUNICADORES", href: "/catalogo/comunicadores" },
-  { name: "DRONES", href: "/catalogo/drones" },
-  { name: "ESTABILIZADORES", href: "/catalogo/estabilizadores" },
-  { name: "FILTROS", href: "/catalogo/filtros" },
-  { name: "FOLLOW FOCUS", href: "/catalogo/follow-focus" },
-  { name: "ILUMINAÇÃO", href: "/catalogo/iluminacao" },
-  { name: "LENTES", href: "/catalogo/lentes" },
-  { name: "MAQUINÁRIA", href: "/catalogo/maquinaria" },
-  { name: "MATTEBOX", href: "/catalogo/mattebox" },
-  { name: "MONITORES", href: "/catalogo/monitores" },
-  { name: "MOVIMENTO", href: "/catalogo/movimento" },
-  { name: "SWITCHERS", href: "/catalogo/switchers" },
-  { name: "TELEPROMPTER", href: "/catalogo/teleprompter" },
-  { name: "TRANSMISSORES", href: "/catalogo/transmissores" },
-  { name: "TRIPÉS DE CÂMERA", href: "/catalogo/tripes" },
-  { name: "SUPORTE DE CÂMERA", href: "/catalogo/suporte-de-camera" },
-];
-
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Como alugar", href: "/catalogo", hasDropdown: true },
+  { name: "Como alugar", href: "/catalogo" },
   { name: "Produção", href: "/producao" },
 ];
 
@@ -107,14 +85,9 @@ export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [location] = useLocation();
 
   const searchRef = useRef<HTMLDivElement | null>(null);
-
-  const [dropdownCategories, setDropdownCategories] =
-    useState<Array<{ name: string; href: string }>>(fallbackCategories);
-  const [loadingCategories, setLoadingCategories] = useState(true);
 
   const handleMobileHomeReload = () => {
     const isMobile = window.innerWidth < 768;
@@ -128,62 +101,6 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        setLoadingCategories(true);
-
-        const { data, error } = await supabase
-          .from("categories")
-          .select("name, slug")
-          .order("name");
-
-        if (error) {
-          console.warn("[DEBUG] Erro ao carregar categorias:", error);
-          setDropdownCategories(fallbackCategories);
-        } else if (data && data.length > 0) {
-          const categories = data
-            .filter(
-              (cat: { name?: string | null; slug?: string | null }) =>
-                !!cat.name?.trim() && !!cat.slug?.trim()
-            )
-            .map((cat: { name: string; slug: string }) => ({
-              name: cat.name.toUpperCase(),
-              href: `/catalogo/${cat.slug}`,
-            }));
-
-          setDropdownCategories(
-            categories.length > 0 ? categories : fallbackCategories
-          );
-        } else {
-          setDropdownCategories(fallbackCategories);
-        }
-      } catch (err) {
-        console.error("[DEBUG] Erro ao carregar categorias:", err);
-        setDropdownCategories(fallbackCategories);
-      } finally {
-        setLoadingCategories(false);
-      }
-    };
-
-    loadCategories();
-
-    const subscription = supabase
-      .channel("categories-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "categories" },
-        () => {
-          loadCategories();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
 
     window.addEventListener("scroll", handleScroll);
@@ -192,7 +109,6 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsMobileOpen(false);
-    setIsCatalogOpen(false);
     setIsSearchOpen(false);
   }, [location]);
 
@@ -337,64 +253,15 @@ export default function Navbar() {
             <div className="flex h-20 flex-1 items-center justify-center md:h-[82px] md:translate-y-[48px]">
               <div className="relative hidden flex-1 items-center justify-center gap-10 overflow-visible md:flex lg:gap-12">
                 {navLinks.map((link) => (
-                  <div
+                  <Link
                     key={link.name}
-                    className="relative group whitespace-nowrap overflow-visible pointer-events-auto"
-                    onMouseEnter={() =>
-                      link.hasDropdown && setIsCatalogOpen(true)
-                    }
-                    onMouseLeave={() =>
-                      link.hasDropdown && setIsCatalogOpen(false)
-                    }
+                    href={link.href}
+                    className={`text-sm font-medium text-white transition hover:text-gray-300 ${
+                      location === link.href ? "text-gray-300" : ""
+                    }`}
                   >
-                    {link.hasDropdown ? (
-                      <button
-                        className={`flex items-center gap-1 text-sm font-medium text-white transition hover:text-gray-300 ${
-                          location.startsWith("/catalogo")
-                            ? "text-gray-300"
-                            : ""
-                        }`}
-                      >
-                        {link.name}
-                      </button>
-                    ) : (
-                      <Link
-                        href={link.href}
-                        className={`text-sm font-medium text-white transition hover:text-gray-300 ${
-                          location === link.href ? "text-gray-300" : ""
-                        }`}
-                      >
-                        {link.name}
-                      </Link>
-                    )}
-
-                    {link.hasDropdown && isCatalogOpen && (
-                      <div className="absolute left-1/2 top-full z-[9999] mt-0 max-h-[58vh] w-[280px] -translate-x-1/2 overflow-y-auto overscroll-contain rounded-xl border border-white/10 bg-black/95 py-2 shadow-2xl backdrop-blur-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                        <div className="flex items-center justify-center gap-1 py-1 text-white/35">
-                          <ChevronDown className="h-3 w-3 animate-bounce" />
-                        </div>
-
-                        {loadingCategories ? (
-                          <div className="px-4 py-3 text-center text-sm text-white">
-                            Carregando...
-                          </div>
-                        ) : (
-                          dropdownCategories.map((cat) => (
-                            <button
-                              key={cat.name}
-                              type="button"
-                              onClick={() => {
-                                window.location.href = cat.href;
-                              }}
-                              className="block w-full px-4 py-2 text-center text-xs font-medium tracking-wide text-white/70 transition-all duration-150 hover:scale-[1.05] hover:text-white"
-                            >
-                              {cat.name}
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    )}
-                  </div>
+                    {link.name}
+                  </Link>
                 ))}
 
                 <div ref={searchRef} className="ml-6 hidden items-center md:flex">
@@ -519,50 +386,19 @@ export default function Navbar() {
           <div className="border-t border-gray-800 bg-gray-950 md:hidden">
             <div className="flex flex-col">
               {navLinks.map((link) => (
-                <div key={link.name}>
-                  {link.hasDropdown ? (
-                    <>
-                      <button
-                        onClick={() => setIsCatalogOpen(!isCatalogOpen)}
-                        className="w-full px-4 py-3 text-left text-sm font-medium text-white transition hover:bg-gray-900"
-                      >
-                        {link.name === "Como alugar"
-                          ? "Equipamentos"
-                          : link.name}
-                      </button>
-
-                      {isCatalogOpen && (
-                        <div className="bg-black pl-4">
-                          {dropdownCategories.map((cat) => (
-                            <button
-                              key={cat.name}
-                              type="button"
-                              onClick={() => {
-                                window.location.href = cat.href;
-                              }}
-                              className="block w-full px-4 py-2 text-left text-xs font-medium tracking-wide text-white/80 transition-all duration-200 hover:scale-[1.03] hover:text-white"
-                            >
-                              {cat.name}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <Link
-                      href={link.href}
-                      onClick={(event) => {
-                        if (link.href === "/") {
-                          event.preventDefault();
-                          handleMobileHomeReload();
-                        }
-                      }}
-                      className="block px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-900"
-                    >
-                      {link.name}
-                    </Link>
-                  )}
-                </div>
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={(event) => {
+                    if (link.href === "/") {
+                      event.preventDefault();
+                      handleMobileHomeReload();
+                    }
+                  }}
+                  className="block px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-900"
+                >
+                  {link.name}
+                </Link>
               ))}
             </div>
           </div>
