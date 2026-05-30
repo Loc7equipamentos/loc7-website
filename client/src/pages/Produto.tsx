@@ -244,14 +244,14 @@ export default function Produto() {
         <div className="mx-auto max-w-[1240px] px-4 pb-10 sm:px-6 lg:px-8">
           <div className="mb-3 h-4 w-64 animate-pulse rounded bg-neutral-200" />
 
-          <div className="grid gap-5 lg:grid-cols-[88px_minmax(0,1fr)_360px]">
+          <div className="grid gap-5 lg:grid-cols-[88px_minmax(0,1fr)_330px]">
             <div className="hidden lg:flex lg:flex-col lg:gap-2">
               {Array.from({ length: 5 }).map((_, index) => (
                 <div key={index} className="aspect-square animate-pulse rounded-xl bg-neutral-200" />
               ))}
             </div>
 
-            <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5">
+            <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 lg:p-3">
               <div className="h-[320px] animate-pulse rounded-xl bg-neutral-100 sm:h-[380px] lg:h-[440px]" />
             </div>
 
@@ -303,7 +303,7 @@ export default function Produto() {
           <span className="text-neutral-900">{productTitle}</span>
         </div>
 
-        <section className="grid gap-5 lg:grid-cols-[88px_minmax(0,1fr)_360px]">
+        <section className="grid gap-5 lg:grid-cols-[88px_minmax(0,1fr)_330px] lg:gap-4">
           <aside className="hidden lg:flex lg:flex-col lg:gap-2">
             {gallery.map((image, index) => (
               <button
@@ -331,8 +331,8 @@ export default function Produto() {
             ))}
           </aside>
 
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5">
-            <div className="flex h-[320px] w-full items-center justify-center overflow-hidden rounded-xl bg-white sm:h-[380px] lg:h-[440px]">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 lg:p-3">
+            <div className="flex h-[320px] w-full items-center justify-center overflow-hidden rounded-xl bg-white sm:h-[380px] lg:h-[390px]">
               {currentImage ? (
                 <div className="flex h-[90%] w-[90%] items-center justify-center">
                   <img
@@ -376,8 +376,8 @@ export default function Produto() {
             )}
           </div>
 
-          <aside className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
-            <h1 className="text-3xl font-semibold tracking-[-0.03em] text-neutral-950 sm:text-[2rem]">
+          <aside className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 lg:p-4">
+            <h1 className="text-3xl font-semibold tracking-[-0.03em] text-neutral-950 sm:text-[2rem] lg:text-[1.85rem]">
               {productTitle}
             </h1>
 
@@ -387,12 +387,12 @@ export default function Produto() {
               </p>
             </div>
 
-            <div className="mt-5 space-y-3">
+            <div className="mt-5 space-y-3 lg:mt-4 lg:space-y-2">
               <a
                 href={reserveLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center rounded-lg bg-neutral-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+                className="flex w-full items-center justify-center rounded-lg bg-neutral-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800 lg:py-2.5"
               >
                 Consultar disponibilidade
               </a>
@@ -401,7 +401,7 @@ export default function Produto() {
                 href={questionLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex w-full items-start gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-neutral-300 hover:bg-neutral-100"
+                className="group flex w-full items-start gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-neutral-300 hover:bg-neutral-100 lg:gap-2.5 lg:px-3 lg:py-2.5"
               >
                 <div className="mt-[2px] flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-white shadow-sm transition group-hover:bg-neutral-800">
                   💬
@@ -419,7 +419,7 @@ export default function Produto() {
             </div>
 
             {product.price ? (
-              <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4">
+              <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4 lg:mt-4 lg:px-3.5 lg:py-3.5">
                 <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                   Diária
                 </span>
@@ -445,7 +445,7 @@ export default function Produto() {
                   </a>
                 )}
 
-                <div className="mt-4 flex flex-col gap-1.5 text-[12px]">
+                <div className="mt-4 flex flex-col gap-1.5 text-[12px] lg:mt-3">
                   <div className="flex items-center gap-2 text-neutral-800">
                     <span className="h-1.5 w-1.5 rounded-full bg-neutral-800" />
                     <span>Liberação ágil de equipamentos</span>
@@ -463,7 +463,7 @@ export default function Produto() {
                 </div>
               </div>
             ) : (
-              <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4">
+              <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4 lg:mt-4 lg:px-3.5 lg:py-3.5">
                 <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                   Diária
                 </span>
@@ -477,9 +477,9 @@ export default function Produto() {
 
         {(includes.length > 0 || detailHighlights.length > 0) && (
           <>
-            <section className="mt-6 hidden gap-6 lg:flex lg:items-start">
+            <section className="mt-5 hidden gap-5 lg:flex lg:items-start">
               {includes.length > 0 && (
-                <div className="flex-1 rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
+                <div className="flex-1 rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 lg:p-5">
                   <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                     O que acompanha
                   </h2>
@@ -496,7 +496,7 @@ export default function Produto() {
               )}
 
               {detailHighlights.length > 0 && (
-                <div className="flex-1 rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
+                <div className="flex-1 rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 lg:p-5">
                   <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                     Specs
                   </h2>
