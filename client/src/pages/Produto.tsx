@@ -334,11 +334,11 @@ export default function Produto() {
           <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 lg:p-3">
             <div className="flex h-[320px] w-full items-center justify-center overflow-hidden rounded-xl bg-white sm:h-[380px] lg:h-[390px]">
               {currentImage ? (
-                <div className="flex h-[90%] w-[90%] items-center justify-center">
+                <div className="flex h-[96%] w-[96%] items-center justify-center">
                   <img
                     src={currentImage}
                     alt={productTitle}
-                    className="max-h-full max-w-full object-contain"
+                    className="h-full w-full object-contain"
                   />
                 </div>
               ) : (
