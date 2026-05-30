@@ -248,7 +248,7 @@ useEffect(() => {
         <div className="mx-auto max-w-[1240px] px-4 pb-10 sm:px-6 lg:px-8">
           <div className="mb-3 h-4 w-64 animate-pulse rounded bg-neutral-200" />
 
-          <div className="grid gap-5 lg:grid-cols-[88px_minmax(520px,620px)_330px] lg:justify-center">
+          <div className="grid gap-5 lg:grid-cols-[88px_560px_330px] lg:justify-center">
             <div className="hidden lg:flex lg:flex-col lg:gap-2">
               {Array.from({ length: 5 }).map((_, index) => (
                 <div key={index} className="aspect-square animate-pulse rounded-xl bg-neutral-200" />
@@ -256,7 +256,7 @@ useEffect(() => {
             </div>
 
             <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 lg:p-3">
-              <div className="h-[320px] animate-pulse rounded-xl bg-neutral-100 sm:h-[380px] lg:h-[440px]" />
+              <div className="h-[320px] animate-pulse rounded-xl bg-neutral-100 sm:h-[380px] lg:h-[560px]" />
             </div>
 
             <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6">
@@ -307,7 +307,7 @@ useEffect(() => {
           <span className="text-neutral-900">{productTitle}</span>
         </div>
 
-        <section className="grid gap-5 lg:grid-cols-[88px_minmax(520px,620px)_330px] lg:justify-center lg:gap-4">
+        <section className="grid gap-5 lg:grid-cols-[88px_560px_330px] lg:justify-center lg:gap-4">
           <aside className="hidden lg:flex lg:flex-col lg:gap-2">
             {gallery.map((image, index) => (
               <button
@@ -336,7 +336,7 @@ useEffect(() => {
           </aside>
 
           <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 lg:p-3">
-            <div className="flex h-[320px] w-full items-center justify-center overflow-hidden rounded-xl bg-white sm:h-[380px] lg:h-[390px]">
+            <div className="flex h-[320px] w-full items-center justify-center overflow-hidden rounded-xl bg-white sm:h-[380px] lg:h-[560px]">
               {currentImage ? (
                 <div className="flex h-[96%] w-[96%] items-center justify-center">
                   <img
