@@ -307,7 +307,7 @@ useEffect(() => {
           <span className="text-neutral-900">{productTitle}</span>
         </div>
 
-        <section className="grid gap-5 lg:grid-cols-[88px_minmax(560px,720px)_330px] lg:justify-center lg:gap-4">
+        <section className="grid gap-5 lg:grid-cols-[88px_minmax(520px,620px)_330px] lg:justify-center lg:gap-4">
           <aside className="hidden lg:flex lg:flex-col lg:gap-2">
             {gallery.map((image, index) => (
               <button
