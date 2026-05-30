@@ -248,7 +248,7 @@ useEffect(() => {
         <div className="mx-auto max-w-[1240px] px-4 pb-10 sm:px-6 lg:px-8">
           <div className="mb-3 h-4 w-64 animate-pulse rounded bg-neutral-200" />
 
-          <div className="grid gap-5 lg:grid-cols-[88px_minmax(560px,720px)_330px] lg:justify-center">
+          <div className="grid gap-5 lg:grid-cols-[88px_minmax(520px,620px)_330px] lg:justify-center">
             <div className="hidden lg:flex lg:flex-col lg:gap-2">
               {Array.from({ length: 5 }).map((_, index) => (
                 <div key={index} className="aspect-square animate-pulse rounded-xl bg-neutral-200" />
