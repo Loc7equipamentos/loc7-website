@@ -80,6 +80,10 @@ export default function Produto() {
   const [mobileTab, setMobileTab] = useState<"includes" | "specs">("includes");
   const [showAllSpecs, setShowAllSpecs] = useState(false);
 
+useEffect(() => {
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+}, [slug]);
+  
   useEffect(() => {
     const loadProduct = async () => {
       if (!slug) {
