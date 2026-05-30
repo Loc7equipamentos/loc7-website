@@ -214,6 +214,10 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     return normalizedName === 'marca' || normalizedName === 'marcas';
   };
 
+  const isVisibleCategoryFilterGroup = (group?: FilterGroup | null) => {
+    return normalizeFilterName(group?.name) === 'categoria';
+  };
+
   useEffect(() => {
     loadProducts();
     loadCategories();
@@ -278,7 +282,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     return candidate;
   };
 
-  const getSubcategoriesForCategory = (categoryName: string) => {
+  const getLegacySubcategoriesForCategory = (categoryName: string) => {
   if (!categoryName) return [];
 
   const selectedCategory = categories.find(
@@ -295,13 +299,6 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     .sort((a, b) => a.localeCompare(b, 'pt-BR'));
 };
 
-
-
-  const newProductSubcategories = getSubcategoriesForCategory(newProduct.category);
-  const editingProductSubcategories = editingProduct
-    ? getSubcategoriesForCategory(editingProduct.category)
-    : [];
-
   const getFilterGroupsForCategoryName = (categoryName: string) => {
     if (!categoryName) return [];
 
@@ -316,6 +313,30 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         return a.name.localeCompare(b.name, 'pt-BR');
       });
   };
+
+  const getVisibleFilterOptionsForCategory = (categoryName: string) => {
+    if (!categoryName) return [];
+
+    const categoryGroup = getFilterGroupsForCategoryName(categoryName).find(
+      (group) => isVisibleCategoryFilterGroup(group)
+    );
+
+    const architectureOptions = (categoryGroup?.options || [])
+      .map((option) => option.name)
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+    if (architectureOptions.length > 0) {
+      return architectureOptions;
+    }
+
+    return getLegacySubcategoriesForCategory(categoryName);
+  };
+
+  const newProductVisibleFilters = getVisibleFilterOptionsForCategory(newProduct.category);
+  const editingProductVisibleFilters = editingProduct
+    ? getVisibleFilterOptionsForCategory(editingProduct.category)
+    : [];
 
   const newProductFilterGroups = getFilterGroupsForCategoryName(newProduct.category);
   const editingProductFilterGroups = editingProduct
@@ -335,6 +356,54 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         ? prev.filter((id) => id !== optionId)
         : [...prev, optionId]
     );
+  };
+
+  const toggleVisibleCategoryFilterOption = (
+    group: FilterGroup,
+    option: FilterOption,
+    isEditing: boolean = false
+  ) => {
+    const groupOptionIds = new Set((group.options || []).map((item) => item.id));
+    const setter = isEditing
+      ? setEditingProductFilterOptionIds
+      : setNewProductFilterOptionIds;
+
+    setter((prev) => {
+      const alreadySelected = prev.includes(option.id);
+      const withoutSameGroup = prev.filter((id) => !groupOptionIds.has(id));
+
+      return alreadySelected ? withoutSameGroup : [...withoutSameGroup, option.id];
+    });
+
+    if (isEditing) {
+      setEditingProduct((prev) =>
+        prev
+          ? {
+              ...prev,
+              subcategory: editingProductFilterOptionIds.includes(option.id) ? '' : option.name,
+            }
+          : prev
+      );
+      return;
+    }
+
+    setNewProduct((prev) => ({
+      ...prev,
+      subcategory: newProductFilterOptionIds.includes(option.id) ? '' : option.name,
+    }));
+  };
+
+  const handleProductFilterOptionToggle = (
+    group: FilterGroup,
+    option: FilterOption,
+    isEditing: boolean = false
+  ) => {
+    if (isVisibleCategoryFilterGroup(group)) {
+      toggleVisibleCategoryFilterOption(group, option, isEditing);
+      return;
+    }
+
+    toggleProductFilterOption(option.id, isEditing);
   };
 
   const getBrandGroupForCategoryName = (categoryName: string) => {
@@ -537,7 +606,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
                         <button
                           key={option.id}
                           type="button"
-                          onClick={() => toggleProductFilterOption(option.id, isEditing)}
+                          onClick={() => handleProductFilterOptionToggle(group, option, isEditing)}
                           className={`rounded-full border px-3 py-1.5 text-sm transition ${
                             checked
                               ? 'border-gray-900 bg-gray-900 text-white'
@@ -1851,32 +1920,12 @@ const filteredFilterGroups = [...filterGroups]
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
                   >
                     <option value="">Selecione</option>
-                    {newProductSubcategories.map((subcategory) => (
+                    {newProductVisibleFilters.map((subcategory) => (
                       <option key={subcategory} value={subcategory}>
                         {subcategory}
                       </option>
                     ))}
                   </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Incluir Tipo Operacional</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Ex: Encoder, Painel LED"
-                      value={newOperationalType}
-                      onChange={(e) => setNewOperationalType(e.target.value)}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                    />
-                    <button
-                      type="button"
-                      onClick={addOperationalType}
-                      className="shrink-0 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded"
-                    >
-                      Incluir
-                    </button>
-                  </div>
                 </div>
 
                 {newProduct.category &&
@@ -2716,7 +2765,7 @@ const filteredFilterGroups = [...filterGroups]
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
                   >
                     <option value="">Selecione</option>
-                    {editingProductSubcategories.map((subcat) => (
+                    {editingProductVisibleFilters.map((subcat) => (
                       <option key={subcat} value={subcat}>
                         {subcat}
                       </option>
