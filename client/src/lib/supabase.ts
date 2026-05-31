@@ -27,6 +27,9 @@ export interface Product {
   is_featured?: boolean | null;
   featured_order?: number | null;
   is_featured_special?: boolean | null;
+  internal_code?: string | null;
+  fiscal_description?: string | null;
+  ncm?: string | null;
   created_at?: string;
   updated_at?: string;
 }
