@@ -57,6 +57,55 @@ type FilterGroup = {
   options?: FilterOption[];
 };
 
+type ProductFiscalProfile = {
+  id?: string;
+  product_id?: string;
+  fiscal_code: string;
+  fiscal_description: string;
+  ncm: string;
+  ncm_source: string;
+  ncm_source_url: string;
+  ncm_basis: string;
+  ncm_confidence: string;
+  fiscal_status: string;
+  notes: string;
+  auto_generated?: boolean;
+  reviewed?: boolean;
+  reviewed_at?: string | null;
+};
+
+const getEmptyFiscalProfile = (): ProductFiscalProfile => ({
+  fiscal_code: '',
+  fiscal_description: '',
+  ncm: '',
+  ncm_source: '',
+  ncm_source_url: '',
+  ncm_basis: '',
+  ncm_confidence: 'pending',
+  fiscal_status: 'pending',
+  notes: '',
+  auto_generated: false,
+  reviewed: false,
+  reviewed_at: null,
+});
+
+const normalizeFiscalProfile = (data: Partial<ProductFiscalProfile> | null): ProductFiscalProfile => ({
+  ...getEmptyFiscalProfile(),
+  ...(data || {}),
+  fiscal_code: data?.fiscal_code || '',
+  fiscal_description: data?.fiscal_description || '',
+  ncm: data?.ncm || '',
+  ncm_source: data?.ncm_source || '',
+  ncm_source_url: data?.ncm_source_url || '',
+  ncm_basis: data?.ncm_basis || '',
+  ncm_confidence: data?.ncm_confidence || 'pending',
+  fiscal_status: data?.fiscal_status || 'pending',
+  notes: data?.notes || '',
+  auto_generated: data?.auto_generated || false,
+  reviewed: data?.reviewed || false,
+  reviewed_at: data?.reviewed_at || null,
+});
+
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
@@ -126,6 +175,9 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const [newProductFilterOptionIds, setNewProductFilterOptionIds] = useState<string[]>([]);
   const [editingProductFilterOptionIds, setEditingProductFilterOptionIds] = useState<string[]>([]);
   const [loadingEditingProductFilters, setLoadingEditingProductFilters] = useState(false);
+  const [editingFiscalProfile, setEditingFiscalProfile] = useState<ProductFiscalProfile>(getEmptyFiscalProfile());
+  const [loadingEditingFiscalProfile, setLoadingEditingFiscalProfile] = useState(false);
+  const [savingFiscalProfile, setSavingFiscalProfile] = useState(false);
 
   const buildProductName = (brand: string, model: string) => {
     return [brand?.trim(), model?.trim()]
@@ -529,22 +581,67 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     setEditingProductFilterOptionIds(optionIds);
   };
 
+  const fetchProductFiscalProfile = async (productId: string) => {
+    const { data, error: err } = await supabase
+      .from('product_fiscal_profiles')
+      .select('*')
+      .eq('product_id', productId)
+      .maybeSingle();
+
+    if (err) throw err;
+
+    return normalizeFiscalProfile((data as ProductFiscalProfile | null) || null);
+  };
+
+  const saveProductFiscalProfile = async (productId: string) => {
+    const payload = {
+      product_id: productId,
+      fiscal_code: editingFiscalProfile.fiscal_code.trim() || null,
+      fiscal_description: editingFiscalProfile.fiscal_description.trim() || null,
+      ncm: editingFiscalProfile.ncm.trim() || null,
+      ncm_source: editingFiscalProfile.ncm_source.trim() || null,
+      ncm_source_url: editingFiscalProfile.ncm_source_url.trim() || null,
+      ncm_basis: editingFiscalProfile.ncm_basis.trim() || null,
+      ncm_confidence: editingFiscalProfile.ncm_confidence || 'pending',
+      fiscal_status: editingFiscalProfile.fiscal_status || 'pending',
+      notes: editingFiscalProfile.notes.trim() || null,
+      auto_generated: editingFiscalProfile.auto_generated || false,
+      reviewed: editingFiscalProfile.reviewed || false,
+      reviewed_at: editingFiscalProfile.reviewed ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error: err } = await supabase
+      .from('product_fiscal_profiles')
+      .upsert(payload, { onConflict: 'product_id' });
+
+    if (err) throw err;
+  };
+
   const openEditProduct = async (product: ProductWithImages) => {
     try {
       setError(null);
       setLoadingEditingProductFilters(true);
-      const optionIds = await fetchProductFilterOptionIds(product.id);
+      setLoadingEditingFiscalProfile(true);
+
+      const [optionIds, fiscalProfile] = await Promise.all([
+        fetchProductFilterOptionIds(product.id),
+        fetchProductFiscalProfile(product.id),
+      ]);
+
       setEditingProductFilterOptionIds(optionIds);
+      setEditingFiscalProfile(fiscalProfile);
       setEditingProduct(product);
       setShowEditModal(true);
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : 'Erro ao carregar filtros relacionados ao produto'
+          : 'Erro ao carregar dados relacionados ao produto'
       );
     } finally {
       setLoadingEditingProductFilters(false);
+      setLoadingEditingFiscalProfile(false);
     }
   };
 
@@ -1122,12 +1219,18 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
       await saveProductFilterOptions(editingProduct.id, optionIdsToSave);
 
+      setSavingFiscalProfile(true);
+      await saveProductFiscalProfile(editingProduct.id);
+      setSavingFiscalProfile(false);
+
       setShowEditModal(false);
       setEditingProduct(null);
       setEditingProductFilterOptionIds([]);
+      setEditingFiscalProfile(getEmptyFiscalProfile());
       await loadProducts();
       alert('Produto atualizado com sucesso!');
     } catch (err) {
+      setSavingFiscalProfile(false);
       setError(err instanceof Error ? err.message : 'Erro ao atualizar produto');
     }
   };
@@ -2654,6 +2757,7 @@ const filteredFilterGroups = [...filterGroups]
                 onClick={() => {
                   setShowEditModal(false);
                   setEditingProduct(null);
+                  setEditingFiscalProfile(getEmptyFiscalProfile());
                 }}
                 className="p-1 hover:bg-gray-100 rounded"
               >
@@ -2872,6 +2976,191 @@ const filteredFilterGroups = [...filterGroups]
                   />
                 </div>
 
+                <div className="md:col-span-2 border-t border-gray-200 pt-5">
+                  <div className="mb-4 rounded border border-amber-200 bg-amber-50 px-4 py-3">
+                    <h3 className="text-sm font-semibold text-gray-900">Fiscal / Remessa</h3>
+                    <p className="mt-1 text-xs leading-5 text-gray-600">
+                      Dados internos para emissão de nota de remessa. Não aparecem no catálogo público.
+                    </p>
+                  </div>
+
+                  {loadingEditingFiscalProfile ? (
+                    <div className="rounded border border-gray-200 bg-gray-50 px-4 py-5 text-sm text-gray-500">
+                      Carregando dados fiscais do produto...
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Código fiscal interno</label>
+                        <input
+                          type="text"
+                          placeholder="Ex: CAM-SON-FX6"
+                          value={editingFiscalProfile.fiscal_code}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              fiscal_code: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">NCM</label>
+                        <input
+                          type="text"
+                          placeholder="Ex: 8525.89.29"
+                          value={editingFiscalProfile.ncm}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              ncm: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Descrição fiscal</label>
+                        <input
+                          type="text"
+                          placeholder="Ex: Câmera Sony FX6"
+                          value={editingFiscalProfile.fiscal_description}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              fiscal_description: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Fonte do NCM</label>
+                        <input
+                          type="text"
+                          placeholder="Ex: Receita Federal / TIPI / Classif"
+                          value={editingFiscalProfile.ncm_source}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              ncm_source: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">URL da fonte</label>
+                        <input
+                          type="url"
+                          placeholder="https://..."
+                          value={editingFiscalProfile.ncm_source_url}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              ncm_source_url: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Confiança da classificação</label>
+                        <select
+                          value={editingFiscalProfile.ncm_confidence}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              ncm_confidence: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                        >
+                          <option value="pending">Pendente</option>
+                          <option value="low">Baixa</option>
+                          <option value="medium">Média</option>
+                          <option value="high">Alta</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Status fiscal</label>
+                        <select
+                          value={editingFiscalProfile.fiscal_status}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              fiscal_status: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                        >
+                          <option value="pending">Pendente</option>
+                          <option value="suggested">Sugerido</option>
+                          <option value="reviewed">Revisado</option>
+                          <option value="approved">Aprovado</option>
+                        </select>
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Base da classificação</label>
+                        <textarea
+                          placeholder="Descreva o raciocínio usado para o NCM, fonte consultada ou regra interna LOC7."
+                          value={editingFiscalProfile.ncm_basis}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              ncm_basis: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                          rows={3}
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Observações internas</label>
+                        <textarea
+                          placeholder="Observações fiscais, dúvidas, pendências ou validações futuras."
+                          value={editingFiscalProfile.notes}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              notes: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                          rows={2}
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={editingFiscalProfile.reviewed || false}
+                            onChange={(e) =>
+                              setEditingFiscalProfile((prev) => ({
+                                ...prev,
+                                reviewed: e.target.checked,
+                                fiscal_status: e.target.checked ? 'reviewed' : prev.fiscal_status,
+                              }))
+                            }
+                            className="w-4 h-4 border border-gray-300 rounded"
+                          />
+                          <span className="text-sm font-medium text-gray-700">Marcar como revisado</span>
+                        </label>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="md:col-span-2 border-t border-gray-200 pt-4">
                   <div className="flex items-center gap-4">
                     <label className="flex items-center gap-2">
@@ -2999,9 +3288,10 @@ const filteredFilterGroups = [...filterGroups]
               <div className="flex gap-3 pt-4 border-t border-gray-200">
                 <button
                   type="submit"
-                  className="flex-1 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 rounded"
+                  disabled={savingFiscalProfile}
+                  className="flex-1 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 rounded disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Salvar
+                  {savingFiscalProfile ? 'Salvando...' : 'Salvar'}
                 </button>
                 <button
                   type="button"
@@ -3009,6 +3299,7 @@ const filteredFilterGroups = [...filterGroups]
                     setShowEditModal(false);
                     setEditingProduct(null);
                     setEditingProductFilterOptionIds([]);
+                    setEditingFiscalProfile(getEmptyFiscalProfile());
                   }}
                   className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm font-medium py-2 rounded"
                 >
