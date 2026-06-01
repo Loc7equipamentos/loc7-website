@@ -5,6 +5,7 @@ import { Trash2, Plus, Edit2, X, Upload, Loader, ArrowUp, ArrowDown } from 'luci
 type ProductWithImages = Product & {
   images?: string[] | null;
   includes?: string | null;
+  technical_specs?: string | null;
   catalog_order?: number | null;
   is_featured?: boolean | null;
   featured_order?: number | null
@@ -135,6 +136,7 @@ export default function AdminDashboard() {
     price: 0,
     description: '',
     specs: '',
+    technical_specs: '',
     includes: '',
     image_url: '',
     images: [] as string[],
@@ -1120,6 +1122,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
             price: newProduct.price || 0,
             description: newProduct.description,
             specs: newProduct.specs.trim() || null,
+            technical_specs: newProduct.technical_specs.trim() || null,
             includes: newProduct.includes.trim() || null,
             image_url: newProduct.image_url || null,
             images: newProduct.images.length > 0 ? newProduct.images : null,
@@ -1153,6 +1156,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         price: 0,
         description: '',
         specs: '',
+        technical_specs: '',
         includes: '',
         image_url: '',
         images: [],
@@ -1195,6 +1199,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
           price: editingProduct.price,
           description: editingProduct.description,
           specs: editingProduct.specs?.trim() || null,
+          technical_specs: editingProduct.technical_specs?.trim() || null,
           includes: editingProduct.includes?.trim() || null,
           image_url: editingProduct.image_url || null,
           images:
@@ -2084,16 +2089,35 @@ const filteredFilterGroups = [...filterGroups]
 
 <div className="md:col-span-2">
   <label className="block text-sm font-medium text-gray-700 mb-1">
-    Specs
+    Principais Recursos
   </label>
 
   <textarea
-    placeholder="Uma spec por linha"
+    placeholder="Um recurso por linha"
     value={newProduct.specs}
     onChange={(e) =>
       setNewProduct((prev) => ({
         ...prev,
         specs: e.target.value,
+      }))
+    }
+    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+    rows={4}
+  />
+</div>
+
+<div className="md:col-span-2">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Especificações Técnicas
+  </label>
+
+  <textarea
+    placeholder="Uma especificação por linha"
+    value={newProduct.technical_specs}
+    onChange={(e) =>
+      setNewProduct((prev) => ({
+        ...prev,
+        technical_specs: e.target.value,
       }))
     }
     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
@@ -2942,7 +2966,7 @@ const filteredFilterGroups = [...filterGroups]
 
 <div className="md:col-span-2">
   <label className="block text-sm font-medium text-gray-700 mb-1">
-    Specs
+    Principais Recursos
   </label>
 
   <textarea
@@ -2953,6 +2977,28 @@ const filteredFilterGroups = [...filterGroups]
           ? {
               ...prev,
               specs: e.target.value,
+            }
+          : prev
+      )
+    }
+    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+    rows={4}
+  />
+</div>
+
+<div className="md:col-span-2">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Especificações Técnicas
+  </label>
+
+  <textarea
+    value={editingProduct.technical_specs || ''}
+    onChange={(e) =>
+      setEditingProduct((prev) =>
+        prev
+          ? {
+              ...prev,
+              technical_specs: e.target.value,
             }
           : prev
       )
