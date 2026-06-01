@@ -74,6 +74,29 @@ const submenuCategories: SubmenuCategory[] = [
   },
 ];
 
+
+const mobileEquipmentLinks: SubmenuChild[] = [
+  { name: "Câmeras", href: "/catalogo/cameras" },
+  { name: "Lentes", href: "/catalogo/lentes" },
+  { name: "Iluminação", href: "/catalogo/iluminacao" },
+  { name: "Monitores", href: "/catalogo/monitores" },
+  { name: "Transmissores", href: "/catalogo/transmissores" },
+  { name: "Drones", href: "/catalogo/drones" },
+  { name: "Estabilizadores", href: "/catalogo/estabilizadores" },
+  { name: "Áudio", href: "/catalogo/audio" },
+  { name: "Comunicadores", href: "/catalogo/comunicadores" },
+  { name: "Maquinária", href: "/catalogo/maquinaria" },
+  { name: "Acessórios", href: "/catalogo/acessorios" },
+  { name: "Tripés de Câmera", href: "/catalogo/tripes" },
+  { name: "Movimento", href: "/catalogo/movimento" },
+  { name: "Follow Focus", href: "/catalogo/follow-focus" },
+  { name: "Mattebox", href: "/catalogo/mattebox" },
+  { name: "Filtros", href: "/catalogo/filtros" },
+  { name: "Switchers", href: "/catalogo/switchers" },
+  { name: "Teleprompter", href: "/catalogo/teleprompter" },
+  { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
+];
+
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Como alugar", href: "#" },
@@ -417,49 +440,18 @@ export default function Navbar() {
 
               {isMobileEquipmentOpen && (
                 <div className="border-y border-white/5 bg-black/35 py-2">
-                  {submenuCategories.map((cat) => {
-                    const Icon = cat.icon;
-                    const hasChildren = !!cat.children?.length;
-
-                    return (
-                      <div key={cat.name}>
-                        {cat.href ? (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              window.location.href = cat.href || "/catalogo";
-                            }}
-                            className="flex w-full items-center gap-3 px-6 py-2.5 text-left text-sm font-medium text-white/85 transition hover:bg-white/5 hover:text-white"
-                          >
-                            <Icon className="h-4 w-4 text-white/55" />
-                            <span>{cat.name}</span>
-                          </button>
-                        ) : (
-                          <div className="flex w-full items-center gap-3 px-6 pb-1 pt-3 text-left text-[11px] font-semibold uppercase tracking-[0.14em] text-white/45">
-                            <Icon className="h-4 w-4 text-white/35" />
-                            <span>{cat.name}</span>
-                          </div>
-                        )}
-
-                        {hasChildren && (
-                          <div className="pb-1">
-                            {cat.children?.map((child) => (
-                              <button
-                                key={child.name}
-                                type="button"
-                                onClick={() => {
-                                  window.location.href = child.href;
-                                }}
-                                className="block w-full px-12 py-2 text-left text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white"
-                              >
-                                {child.name}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                  {mobileEquipmentLinks.map((item) => (
+                    <button
+                      key={item.name}
+                      type="button"
+                      onClick={() => {
+                        window.location.href = item.href;
+                      }}
+                      className="block w-full px-6 py-2.5 text-left text-sm font-medium text-white/85 transition hover:bg-white/5 hover:text-white"
+                    >
+                      {item.name}
+                    </button>
+                  ))}
                 </div>
               )}
 
