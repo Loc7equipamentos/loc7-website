@@ -1236,7 +1236,10 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       alert('Produto atualizado com sucesso!');
     } catch (err) {
       setSavingFiscalProfile(false);
-      setError(err instanceof Error ? err.message : 'Erro ao atualizar produto');
+      const message = err instanceof Error ? err.message : 'Erro ao atualizar produto';
+      console.error('Erro ao atualizar produto:', err);
+      setError(message);
+      alert(message);
     }
   };
 
@@ -2789,7 +2792,7 @@ const filteredFilterGroups = [...filterGroups]
               </button>
             </div>
 
-            <form onSubmit={updateProduct} className="p-6 space-y-4">
+            <form noValidate onSubmit={updateProduct} className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
@@ -3103,7 +3106,7 @@ const filteredFilterGroups = [...filterGroups]
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">URL da fonte</label>
                         <input
-                          type="url"
+                          type="text"
                           placeholder="https://..."
                           value={editingFiscalProfile.ncm_source_url}
                           onChange={(e) =>
