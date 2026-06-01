@@ -77,8 +77,9 @@ export default function Produto() {
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [previewImage, setPreviewImage] = useState<number | null>(null);
-  const [mobileTab, setMobileTab] = useState<"includes" | "specs">("includes");
-  const [showAllSpecs, setShowAllSpecs] = useState(false);
+  const [mobileTab, setMobileTab] = useState<"overview" | "technical" | "includes">("overview");
+  const [desktopDetailTab, setDesktopDetailTab] = useState<"technical" | "includes">("technical");
+  const [showAllOverview, setShowAllOverview] = useState(false);
 
 useEffect(() => {
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -113,7 +114,7 @@ useEffect(() => {
         setProduct(data);
         setSelectedImage(0);
         setPreviewImage(null);
-        setShowAllSpecs(false);
+        setShowAllOverview(false);
       } catch (err) {
         console.error("Erro ao carregar produto:", err);
         setError("Erro ao carregar produto.");
@@ -139,29 +140,50 @@ useEffect(() => {
 
   const includes = useMemo(() => (product ? parseIncludes(product.includes) : []), [product]);
 
-  const highlights = useMemo(
+  const overviewItems = useMemo(
     () => (product ? parseHighlights((product as Product & { specs?: string | null }).specs) : []),
     [product]
   );
 
-  const detailHighlights = useMemo(
-    () => [product?.badge, ...highlights].filter(Boolean) as string[],
-    [product?.badge, highlights]
+  const technicalSpecs = useMemo(
+    () =>
+      product
+        ? parseHighlights(
+            (product as Product & { technical_specs?: string | null }).technical_specs
+          )
+        : [],
+    [product]
   );
 
-  const visibleSpecs = showAllSpecs ? detailHighlights : detailHighlights.slice(0, 8);
-  const hasMoreSpecs = detailHighlights.length > 8;
+  const visibleOverview = showAllOverview ? overviewItems : overviewItems.slice(0, 8);
+  const hasMoreOverview = overviewItems.length > 8;
 
   useEffect(() => {
-    if (includes.length > 0) {
-      setMobileTab("includes");
+    if (overviewItems.length > 0) {
+      setMobileTab("overview");
       return;
     }
 
-    if (detailHighlights.length > 0) {
-      setMobileTab("specs");
+    if (technicalSpecs.length > 0) {
+      setMobileTab("technical");
+      return;
     }
-  }, [detailHighlights.length, includes.length]);
+
+    if (includes.length > 0) {
+      setMobileTab("includes");
+    }
+  }, [overviewItems.length, technicalSpecs.length, includes.length]);
+
+  useEffect(() => {
+    if (technicalSpecs.length > 0) {
+      setDesktopDetailTab("technical");
+      return;
+    }
+
+    if (includes.length > 0) {
+      setDesktopDetailTab("includes");
+    }
+  }, [technicalSpecs.length, includes.length]);
 
   const currentImage =
     gallery[previewImage ?? selectedImage] || product?.image_url || "";
@@ -479,94 +501,217 @@ useEffect(() => {
           </aside>
         </section>
 
-        {(includes.length > 0 || detailHighlights.length > 0) && (
+        {(overviewItems.length > 0 || technicalSpecs.length > 0 || includes.length > 0) && (
           <>
-            <section className="mt-5 hidden gap-5 lg:flex lg:items-start">
-              {includes.length > 0 && (
-                <div className="flex-1 rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 lg:p-5">
+            <section className="mt-5 hidden gap-5 lg:grid lg:grid-cols-2 lg:items-start">
+              {overviewItems.length > 0 && (
+                <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 lg:p-5">
                   <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                    O que acompanha
+                    Visão Geral
                   </h2>
 
                   <ul className="space-y-3 text-sm text-neutral-800">
-                    {includes.map((item, index) => (
+                    {visibleOverview.map((item, index) => (
                       <li key={index} className="flex items-start gap-3">
                         <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
                         <span>{item}</span>
                       </li>
                     ))}
                   </ul>
+
+                  {hasMoreOverview && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllOverview((prev) => !prev)}
+                      className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-900 underline underline-offset-4"
+                    >
+                      {showAllOverview ? "Ver menos" : "Ver mais"}
+                    </button>
+                  )}
                 </div>
               )}
 
-              {detailHighlights.length > 0 && (
-                <div className="flex-1 rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 lg:p-5">
-                  <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                    Specs
-                  </h2>
+              {(technicalSpecs.length > 0 || includes.length > 0) && (
+                <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 lg:p-5">
+                  {technicalSpecs.length > 0 && includes.length > 0 ? (
+                    <div className="mb-5 flex items-center gap-6 border-b border-neutral-200 pb-3">
+                      <button
+                        type="button"
+                        onClick={() => setDesktopDetailTab("technical")}
+                        className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
+                          desktopDetailTab === "technical"
+                            ? "text-neutral-950"
+                            : "text-neutral-400"
+                        }`}
+                      >
+                        Especificações Técnicas
 
-                  <ul className="space-y-3 text-sm text-neutral-800">
-                    {visibleSpecs.map((item, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                        {desktopDetailTab === "technical" && (
+                          <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
+                        )}
+                      </button>
 
-                  {hasMoreSpecs && (
-                    <button
-                      type="button"
-                      onClick={() => setShowAllSpecs((prev) => !prev)}
-                      className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-900 underline underline-offset-4"
-                    >
-                      {showAllSpecs ? "Ver menos" : "Ver mais"}
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => setDesktopDetailTab("includes")}
+                        className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
+                          desktopDetailTab === "includes"
+                            ? "text-neutral-950"
+                            : "text-neutral-400"
+                        }`}
+                      >
+                        O que acompanha
+
+                        {desktopDetailTab === "includes" && (
+                          <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                      {technicalSpecs.length > 0 ? "Especificações Técnicas" : "O que acompanha"}
+                    </h2>
                   )}
+
+                  {technicalSpecs.length > 0 &&
+                    (desktopDetailTab === "technical" || includes.length === 0) && (
+                      <ul className="space-y-3 text-sm text-neutral-800">
+                        {technicalSpecs.map((item, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                  {includes.length > 0 &&
+                    (desktopDetailTab === "includes" || technicalSpecs.length === 0) && (
+                      <ul className="space-y-3 text-sm text-neutral-800">
+                        {includes.map((item, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                 </div>
               )}
             </section>
 
             <section className="mt-6 lg:hidden">
               <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-                {includes.length > 0 && detailHighlights.length > 0 && (
-                  <div className="mb-5 flex items-center gap-6 border-b border-neutral-200 pb-3">
-                    <button
-                      onClick={() => setMobileTab("includes")}
-                      className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
-                        mobileTab === "includes"
-                          ? "text-neutral-950"
-                          : "text-neutral-400"
-                      }`}
-                    >
-                      O que acompanha
+                {[overviewItems.length, technicalSpecs.length, includes.length].filter(Boolean)
+                  .length > 1 && (
+                  <div className="mb-5 flex flex-wrap items-center gap-5 border-b border-neutral-200 pb-3">
+                    {overviewItems.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setMobileTab("overview")}
+                        className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
+                          mobileTab === "overview" ? "text-neutral-950" : "text-neutral-400"
+                        }`}
+                      >
+                        Visão Geral
 
-                      {mobileTab === "includes" && (
-                        <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
-                      )}
-                    </button>
+                        {mobileTab === "overview" && (
+                          <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
+                        )}
+                      </button>
+                    )}
 
-                    <button
-                      onClick={() => setMobileTab("specs")}
-                      className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
-                        mobileTab === "specs"
-                          ? "text-neutral-950"
-                          : "text-neutral-400"
-                      }`}
-                    >
-                      Specs
+                    {technicalSpecs.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setMobileTab("technical")}
+                        className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
+                          mobileTab === "technical" ? "text-neutral-950" : "text-neutral-400"
+                        }`}
+                      >
+                        Especificações Técnicas
 
-                      {mobileTab === "specs" && (
-                        <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
-                      )}
-                    </button>
+                        {mobileTab === "technical" && (
+                          <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
+                        )}
+                      </button>
+                    )}
+
+                    {includes.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setMobileTab("includes")}
+                        className={`relative pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
+                          mobileTab === "includes" ? "text-neutral-950" : "text-neutral-400"
+                        }`}
+                      >
+                        O que acompanha
+
+                        {mobileTab === "includes" && (
+                          <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
+                        )}
+                      </button>
+                    )}
                   </div>
                 )}
 
-                {includes.length > 0 &&
-                  (mobileTab === "includes" || detailHighlights.length === 0) && (
+                {overviewItems.length > 0 &&
+                  (mobileTab === "overview" ||
+                    (technicalSpecs.length === 0 && includes.length === 0)) && (
                     <>
-                      {detailHighlights.length === 0 && (
+                      {technicalSpecs.length === 0 && includes.length === 0 && (
+                        <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                          Visão Geral
+                        </h2>
+                      )}
+
+                      <ul className="space-y-3 text-sm text-neutral-800">
+                        {visibleOverview.map((item, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {hasMoreOverview && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAllOverview((prev) => !prev)}
+                          className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-900 underline underline-offset-4"
+                        >
+                          {showAllOverview ? "Ver menos" : "Ver mais"}
+                        </button>
+                      )}
+                    </>
+                  )}
+
+                {technicalSpecs.length > 0 &&
+                  (mobileTab === "technical" ||
+                    (overviewItems.length === 0 && includes.length === 0)) && (
+                    <>
+                      {overviewItems.length === 0 && includes.length === 0 && (
+                        <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                          Especificações Técnicas
+                        </h2>
+                      )}
+
+                      <ul className="space-y-3 text-sm text-neutral-800">
+                        {technicalSpecs.map((item, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+
+                {includes.length > 0 &&
+                  (mobileTab === "includes" ||
+                    (overviewItems.length === 0 && technicalSpecs.length === 0)) && (
+                    <>
+                      {overviewItems.length === 0 && technicalSpecs.length === 0 && (
                         <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                           O que acompanha
                         </h2>
@@ -580,36 +725,6 @@ useEffect(() => {
                           </li>
                         ))}
                       </ul>
-                    </>
-                  )}
-
-                {detailHighlights.length > 0 &&
-                  (mobileTab === "specs" || includes.length === 0) && (
-                    <>
-                      {includes.length === 0 && (
-                        <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                          Specs
-                        </h2>
-                      )}
-
-                      <ul className="space-y-3 text-sm text-neutral-800">
-                        {visibleSpecs.map((item, index) => (
-                          <li key={index} className="flex items-start gap-3">
-                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      {hasMoreSpecs && (
-                        <button
-                          type="button"
-                          onClick={() => setShowAllSpecs((prev) => !prev)}
-                          className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-900 underline underline-offset-4"
-                        >
-                          {showAllSpecs ? "Ver menos" : "Ver mais"}
-                        </button>
-                      )}
                     </>
                   )}
               </div>
