@@ -140,10 +140,11 @@ useEffect(() => {
 
   const includes = useMemo(() => (product ? parseIncludes(product.includes) : []), [product]);
 
-  const overviewItems = useMemo(
-    () => (product ? parseHighlights((product as Product & { specs?: string | null }).specs) : []),
-    [product]
-  );
+  const highlightsText = useMemo(() => {
+    return (product ? ((product as Product & { specs?: string | null }).specs || "").trim() : "");
+  }, [product]);
+
+  const hasMoreHighlights = highlightsText.length > 700;
 
   const technicalSpecs = useMemo(
     () =>
@@ -155,11 +156,8 @@ useEffect(() => {
     [product]
   );
 
-  const visibleOverview = showAllOverview ? overviewItems : overviewItems.slice(0, 8);
-  const hasMoreOverview = overviewItems.length > 8;
-
   useEffect(() => {
-    if (overviewItems.length > 0) {
+    if (highlightsText.length > 0) {
       setMobileTab("overview");
       return;
     }
@@ -172,7 +170,7 @@ useEffect(() => {
     if (includes.length > 0) {
       setMobileTab("includes");
     }
-  }, [overviewItems.length, technicalSpecs.length, includes.length]);
+  }, [highlightsText.length, technicalSpecs.length, includes.length]);
 
   useEffect(() => {
     if (technicalSpecs.length > 0) {
@@ -501,25 +499,24 @@ useEffect(() => {
           </aside>
         </section>
 
-        {(overviewItems.length > 0 || technicalSpecs.length > 0 || includes.length > 0) && (
+        {(highlightsText.length > 0 || technicalSpecs.length > 0 || includes.length > 0) && (
           <>
             <section className="mt-5 hidden gap-5 lg:grid lg:grid-cols-2 lg:items-start">
-              {overviewItems.length > 0 && (
+              {highlightsText.length > 0 && (
                 <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 lg:p-5">
                   <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                    Visão Geral
+                    Highlights
                   </h2>
 
-                  <ul className="space-y-3 text-sm text-neutral-800">
-                    {visibleOverview.map((item, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div
+                    className={`whitespace-pre-line text-sm leading-7 text-neutral-800 ${
+                      showAllOverview ? "" : "max-h-[336px] overflow-hidden"
+                    }`}
+                  >
+                    {highlightsText}
+                  </div>
 
-                  {hasMoreOverview && (
+                  {hasMoreHighlights && (
                     <button
                       type="button"
                       onClick={() => setShowAllOverview((prev) => !prev)}
@@ -602,10 +599,10 @@ useEffect(() => {
 
             <section className="mt-6 lg:hidden">
               <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-                {[overviewItems.length, technicalSpecs.length, includes.length].filter(Boolean)
+                {[highlightsText.length, technicalSpecs.length, includes.length].filter(Boolean)
                   .length > 1 && (
                   <div className="mb-5 flex flex-wrap items-center gap-5 border-b border-neutral-200 pb-3">
-                    {overviewItems.length > 0 && (
+                    {highlightsText.length > 0 && (
                       <button
                         type="button"
                         onClick={() => setMobileTab("overview")}
@@ -613,7 +610,7 @@ useEffect(() => {
                           mobileTab === "overview" ? "text-neutral-950" : "text-neutral-400"
                         }`}
                       >
-                        Visão Geral
+                        Highlights
 
                         {mobileTab === "overview" && (
                           <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
@@ -629,7 +626,7 @@ useEffect(() => {
                           mobileTab === "technical" ? "text-neutral-950" : "text-neutral-400"
                         }`}
                       >
-                        Especificações Técnicas
+                        Specs
 
                         {mobileTab === "technical" && (
                           <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
@@ -645,7 +642,7 @@ useEffect(() => {
                           mobileTab === "includes" ? "text-neutral-950" : "text-neutral-400"
                         }`}
                       >
-                        O que acompanha
+                        Kit
 
                         {mobileTab === "includes" && (
                           <span className="absolute bottom-[-13px] left-0 h-[1px] w-full bg-neutral-950" />
@@ -655,26 +652,25 @@ useEffect(() => {
                   </div>
                 )}
 
-                {overviewItems.length > 0 &&
+                {highlightsText.length > 0 &&
                   (mobileTab === "overview" ||
                     (technicalSpecs.length === 0 && includes.length === 0)) && (
                     <>
                       {technicalSpecs.length === 0 && includes.length === 0 && (
                         <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                          Visão Geral
+                          Highlights
                         </h2>
                       )}
 
-                      <ul className="space-y-3 text-sm text-neutral-800">
-                        {visibleOverview.map((item, index) => (
-                          <li key={index} className="flex items-start gap-3">
-                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-900" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <div
+                        className={`whitespace-pre-line text-sm leading-7 text-neutral-800 ${
+                          showAllOverview ? "" : "max-h-[336px] overflow-hidden"
+                        }`}
+                      >
+                        {highlightsText}
+                      </div>
 
-                      {hasMoreOverview && (
+                      {hasMoreHighlights && (
                         <button
                           type="button"
                           onClick={() => setShowAllOverview((prev) => !prev)}
@@ -688,11 +684,11 @@ useEffect(() => {
 
                 {technicalSpecs.length > 0 &&
                   (mobileTab === "technical" ||
-                    (overviewItems.length === 0 && includes.length === 0)) && (
+                    (highlightsText.length === 0 && includes.length === 0)) && (
                     <>
-                      {overviewItems.length === 0 && includes.length === 0 && (
+                      {highlightsText.length === 0 && includes.length === 0 && (
                         <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                          Especificações Técnicas
+                          Specs
                         </h2>
                       )}
 
@@ -709,11 +705,11 @@ useEffect(() => {
 
                 {includes.length > 0 &&
                   (mobileTab === "includes" ||
-                    (overviewItems.length === 0 && technicalSpecs.length === 0)) && (
+                    (highlightsText.length === 0 && technicalSpecs.length === 0)) && (
                     <>
-                      {overviewItems.length === 0 && technicalSpecs.length === 0 && (
+                      {highlightsText.length === 0 && technicalSpecs.length === 0 && (
                         <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                          O que acompanha
+                          Kit
                         </h2>
                       )}
 
