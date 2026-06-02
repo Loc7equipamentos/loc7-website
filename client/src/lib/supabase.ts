@@ -17,7 +17,37 @@ export interface Product {
   brand?: string | null;
   price: number | null;
   description?: string | null;
+
+  /**
+   * LEGADO LOC7
+   * Data: 2026-06-02
+   *
+   * Histórico:
+   * Este campo foi utilizado originalmente para armazenar
+   * os "Principais Recursos" exibidos como microdots na
+   * página de produto.
+   *
+   * Motivo da substituição:
+   * A estrutura foi substituída pelo campo `highlights`,
+   * permitindo conteúdo expandido com aplicações,
+   * diferenciais, contexto de uso, SEO e suporte a
+   * "Ler mais / Ler menos".
+   *
+   * Status:
+   * LEGADO - NÃO UTILIZAR EM NOVOS CADASTROS.
+   *
+   * Mantido apenas para preservação de dados antigos e
+   * compatibilidade durante a migração do catálogo.
+   */
   specs?: string | null;
+
+  /**
+   * HIGHLIGHTS
+   * Campo oficial da LOC7 para conteúdo expandido.
+   * Utilizado na aba "Highlights" da página de produto.
+   */
+  highlights?: string | null;
+
   image_url?: string | null;
   images?: string[] | string | null;
   includes?: string[] | string | null;
