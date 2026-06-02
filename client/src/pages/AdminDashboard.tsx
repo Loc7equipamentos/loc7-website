@@ -2089,11 +2089,11 @@ const filteredFilterGroups = [...filterGroups]
 
 <div className="md:col-span-2">
   <label className="block text-sm font-medium text-gray-700 mb-1">
-    Principais Recursos
+    Highlights
   </label>
 
   <textarea
-    placeholder="Um recurso por linha"
+    placeholder="Aplicações, benefícios, diferenciais e contexto de uso do equipamento."
     value={newProduct.specs}
     onChange={(e) =>
       setNewProduct((prev) => ({
@@ -2966,7 +2966,7 @@ const filteredFilterGroups = [...filterGroups]
 
 <div className="md:col-span-2">
   <label className="block text-sm font-medium text-gray-700 mb-1">
-    Principais Recursos
+    Highlights
   </label>
 
   <textarea
