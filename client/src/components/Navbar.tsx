@@ -99,7 +99,7 @@ const mobileEquipmentLinks: SubmenuChild[] = [
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Como alugar", href: "/#como-alugar" },
+  { name: "Como alugar", href: "/" },
   { name: "Produção", href: "/producao" },
 ];
 
@@ -118,10 +118,25 @@ export default function Navbar() {
     setIsMobileEquipmentOpen(false);
   };
 
+  const clearUrlHash = () => {
+    if (window.location.hash) {
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${window.location.search}`
+      );
+    }
+  };
+
   const scrollToHomeTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
+    clearUrlHash();
+
+    window.requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
     });
   };
 
@@ -130,17 +145,30 @@ export default function Navbar() {
 
     if (!section) return;
 
-    section.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
+    clearUrlHash();
+
+    const nav = document.querySelector("nav");
+    const navHeight = nav?.getBoundingClientRect().height || 0;
+    const headerOffset =
+      window.innerWidth >= 1024 ? navHeight + 18 : window.innerWidth >= 768 ? 210 : 92;
+    const sectionTop =
+      section.getBoundingClientRect().top + window.scrollY - headerOffset;
+
+    window.requestAnimationFrame(() => {
+      window.scrollTo({
+        top: Math.max(sectionTop, 0),
+        left: 0,
+        behavior: "smooth",
+      });
     });
   };
 
   const handleHomeNavigation = (event?: React.MouseEvent) => {
+    event?.preventDefault();
     closeMobileMenu();
+    sessionStorage.removeItem("loc7-scroll-target");
 
     if (location === "/") {
-      event?.preventDefault();
       scrollToHomeTop();
       return;
     }
@@ -157,7 +185,8 @@ export default function Navbar() {
       return;
     }
 
-    window.location.href = "/#como-alugar";
+    sessionStorage.setItem("loc7-scroll-target", "como-alugar");
+    window.location.href = "/";
   };
 
   useEffect(() => {
@@ -172,10 +201,16 @@ export default function Navbar() {
     setIsMobileEquipmentOpen(false);
     setIsSearchOpen(false);
 
-    if (location === "/" && window.location.hash === "#como-alugar") {
+    if (location !== "/") return;
+
+    const pendingScrollTarget = sessionStorage.getItem("loc7-scroll-target");
+
+    if (pendingScrollTarget === "como-alugar") {
+      sessionStorage.removeItem("loc7-scroll-target");
+
       window.setTimeout(() => {
         scrollToComoAlugar();
-      }, 80);
+      }, 140);
     }
   }, [location]);
 
