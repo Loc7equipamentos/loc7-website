@@ -130,9 +130,13 @@ export default function Navbar() {
 
     if (!section) return;
 
-    section.scrollIntoView({
+    const headerOffset = window.innerWidth >= 768 ? 230 : 92;
+    const sectionTop =
+      section.getBoundingClientRect().top + window.scrollY - headerOffset;
+
+    window.scrollTo({
+      top: Math.max(sectionTop, 0),
       behavior: "smooth",
-      block: "start",
     });
   };
 
