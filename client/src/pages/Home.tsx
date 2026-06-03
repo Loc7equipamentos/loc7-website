@@ -726,7 +726,7 @@ export default function Home() {
               <div className="lg:hidden">
                 <div
                   ref={howToMobileScrollRef}
-                  className="-mx-4 mt-2 flex touch-pan-x snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-smooth px-4 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  className="-mx-4 mt-2 flex gap-4 overflow-x-auto pb-5 snap-x snap-mandatory px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                   {[
                     {
@@ -762,7 +762,7 @@ export default function Home() {
                   ].map((step, index) => (
                     <div
                       key={step.number}
-                      className={`snap-start min-h-[250px] w-[76vw] min-w-[76vw] shrink-0 overflow-hidden rounded-2xl border border-black/[0.04] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-all duration-700 ease-out sm:w-[54vw] sm:min-w-[54vw] ${step.className} ${
+                      className={`snap-start min-h-[250px] min-w-[88%] shrink-0 overflow-hidden rounded-2xl border border-black/[0.04] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-all duration-700 ease-out ${step.className} ${
                         isVisible["como-alugar"]
                           ? "opacity-100 translate-x-0"
                           : "opacity-0 translate-x-[-40px]"
