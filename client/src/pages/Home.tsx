@@ -543,6 +543,125 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===== COMO ALUGAR ===== */}
+      <section
+        id="como-alugar"
+        ref={setSectionRef("como-alugar")}
+        className="bg-[oklch(0.95_0_0)] pb-10 pt-2 md:pb-14 md:pt-4"
+      >
+        <div className="container">
+          <div
+            className={`grid gap-5 lg:grid-cols-[0.9fr_1.35fr] lg:items-stretch transition-all duration-700 ease-out ${
+              isVisible["como-alugar"]
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
+          >
+            <div className="relative overflow-hidden rounded-2xl bg-neutral-950 p-7 text-white shadow-[0_24px_70px_rgba(0,0,0,0.22)] md:p-9 lg:p-10">
+              <div className="absolute right-0 top-0 h-40 w-40 translate-x-1/3 -translate-y-1/3 rounded-full bg-red-700/20 blur-3xl" />
+              <div className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-red-700/80 via-white/20 to-transparent" />
+
+              <div className="relative z-10 flex h-full flex-col justify-between gap-8">
+                <div>
+                  <div className="mb-5 flex items-center gap-3">
+                    <span className="text-[12px] font-medium uppercase tracking-[0.22em] text-white/70">
+                      COMO ALUGAR
+                    </span>
+                    <div className="h-[1px] flex-1 bg-white/15" />
+                  </div>
+
+                  <h2 className="max-w-[560px] text-[28px] font-semibold leading-[1.05] tracking-[-0.035em] text-white md:text-[38px] lg:text-[42px]">
+                    Alugar equipamentos na LOC7 é prático, ágil e sem burocracia.
+                  </h2>
+
+                  <p className="mt-5 max-w-[520px] text-[15px] leading-7 text-white/72 md:text-[16px]">
+                    Escolha os equipamentos que precisa, solicite um orçamento e nossa equipe auxiliará em todas as etapas do processo.
+                  </p>
+
+                  <p className="mt-5 text-[13px] font-medium uppercase tracking-[0.2em] text-white/50">
+                    Funciona assim:
+                  </p>
+                </div>
+
+                <Link
+                  href="/orcamento"
+                  className="inline-flex w-fit items-center justify-center rounded-lg bg-white px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-black transition-all duration-300 hover:bg-red-700 hover:text-white"
+                >
+                  Solicitar orçamento
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                {
+                  number: "01",
+                  title: "Escolha os equipamentos",
+                  text: "Navegue pelo catálogo e selecione os equipamentos desejados.",
+                },
+                {
+                  number: "02",
+                  title: "Solicite um orçamento",
+                  text: "Nossa equipe verificará a disponibilidade e enviará uma proposta personalizada.",
+                },
+                {
+                  number: "03",
+                  title: "Cadastro e aprovação",
+                  text: "Na primeira locação, realizamos um cadastro simples e de fácil preenchimento.",
+                  cta: "Inicie seu cadastro",
+                  href: "/cadastro-locacao",
+                },
+                {
+                  number: "04",
+                  title: "Retirada na LOC7",
+                  text: "Após a aprovação, tudo estará disponível para retirada na data combinada.",
+                },
+              ].map((step, index) => (
+                <div
+                  key={step.number}
+                  className={`group relative min-h-[220px] overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-6 shadow-[0_16px_46px_rgba(0,0,0,0.08)] transition-all duration-500 ease-out hover:-translate-y-[3px] hover:shadow-[0_22px_60px_rgba(0,0,0,0.12)] ${
+                    isVisible["como-alugar"]
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-6"
+                  }`}
+                  style={{ transitionDelay: `${index * 0.08}s` }}
+                >
+                  <span className="absolute right-5 top-3 text-[64px] font-semibold leading-none tracking-[-0.08em] text-black/[0.05] transition-colors duration-300 group-hover:text-red-700/10 md:text-[78px]">
+                    {step.number}
+                  </span>
+
+                  <div className="relative z-10 flex h-full flex-col justify-between gap-8">
+                    <div>
+                      <span className="text-[12px] font-semibold uppercase tracking-[0.2em] text-red-700">
+                        {step.number}
+                      </span>
+
+                      <h3 className="mt-5 max-w-[220px] text-[20px] font-semibold leading-[1.08] tracking-[-0.035em] text-neutral-950">
+                        {step.title}
+                      </h3>
+
+                      <p className="mt-4 max-w-[250px] text-[14px] leading-6 text-neutral-600">
+                        {step.text}
+                      </p>
+                    </div>
+
+                    {step.href && step.cta && (
+                      <Link
+                        href={step.href}
+                        className="inline-flex w-fit items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-700 transition-all duration-300 hover:gap-3 hover:text-red-800"
+                      >
+                        {step.cta}
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ===== TRABALHOS REALIZADOS ===== */}
       <section
         id="trabalhos-realizados"
