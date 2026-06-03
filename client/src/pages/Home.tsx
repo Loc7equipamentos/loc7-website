@@ -325,7 +325,10 @@ export default function Home() {
     Array<{ value: string; label: string }>
   >([{ value: "todas", label: "Todas" }]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [howToMobileStep, setHowToMobileStep] = useState(0);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+  const howToTouchStartX = useRef<number | null>(null);
+  const howToTouchEndX = useRef<number | null>(null);
 
   const heroSlidesContent = [
     {
@@ -442,6 +445,36 @@ export default function Home() {
 
   const setSectionRef = (id: string) => (el: HTMLElement | null) => {
     sectionRefs.current[id] = el;
+  };
+
+  const goToHowToMobileStep = (nextStep: number) => {
+    setHowToMobileStep(Math.min(3, Math.max(0, nextStep)));
+  };
+
+  const handleHowToTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    howToTouchStartX.current = event.touches[0].clientX;
+    howToTouchEndX.current = null;
+  };
+
+  const handleHowToTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    howToTouchEndX.current = event.touches[0].clientX;
+  };
+
+  const handleHowToTouchEnd = () => {
+    if (howToTouchStartX.current === null || howToTouchEndX.current === null) {
+      return;
+    }
+
+    const swipeDistance = howToTouchStartX.current - howToTouchEndX.current;
+
+    if (Math.abs(swipeDistance) > 36) {
+      goToHowToMobileStep(
+        howToMobileStep + (swipeDistance > 0 ? 1 : -1)
+      );
+    }
+
+    howToTouchStartX.current = null;
+    howToTouchEndX.current = null;
   };
 
   return (
@@ -706,90 +739,114 @@ export default function Home() {
 
               {/* CARDS MOBILE */}
               <div className="lg:hidden">
-                <div className="-mx-4 mt-2 flex touch-pan-x snap-x snap-mandatory gap-4 overflow-x-scroll overscroll-x-contain scroll-smooth px-4 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                  {[
-                    {
-                      number: "01",
-                      title: "Escolha os equipamentos",
-                      text: "Navegue pelo catálogo e selecione os equipamentos desejados.",
-                      className: "bg-white text-neutral-950",
-                      numberClass: "text-red-700/35",
-                    },
-                    {
-                      number: "02",
-                      title: "Solicite um orçamento",
-                      text: "Nossa equipe verificará a disponibilidade e enviará uma proposta personalizada.",
-                      className: "bg-neutral-100 text-neutral-950",
-                      numberClass: "text-red-700/55",
-                    },
-                    {
-                      number: "03",
-                      title: "Cadastro e aprovação",
-                      text: "Na primeira locação, realizamos um cadastro simples e de fácil preenchimento.",
-                      cta: "Inicie seu cadastro",
-                      href: "/cadastro-locacao",
-                      className: "bg-neutral-200 text-neutral-950",
-                      numberClass: "text-red-700/75",
-                    },
-                    {
-                      number: "04",
-                      title: "Retirada na LOC7",
-                      text: "Após a aprovação, os equipamentos ficam disponíveis para retirada na data combinada.",
-                      className: "bg-neutral-950 text-white",
-                      numberClass: "text-red-700",
-                    },
-                  ].map((step) => (
-                    <div
-                      key={step.number}
-                      className={`min-h-[250px] w-[76vw] min-w-[76vw] shrink-0 snap-center overflow-hidden rounded-2xl border border-black/[0.04] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] sm:w-[54vw] sm:min-w-[54vw] ${step.className}`}
-                    >
-                      <div className="flex items-start justify-between gap-5">
-                        <span
-                          className={`text-[52px] font-semibold leading-none tracking-[-0.08em] ${step.numberClass}`}
-                        >
-                          {step.number}
-                        </span>
-                        <ArrowRight
-                          className={`mt-2 h-5 w-5 ${
-                            step.number === "04" ? "text-white" : "text-black"
-                          }`}
-                        />
-                      </div>
-
-                      <div className="mt-6 h-[1px] w-10 bg-black/15" />
-
-                      <h3 className="mt-6 max-w-[230px] text-[22px] font-semibold leading-[1.08] tracking-[-0.04em]">
-                        {step.title}
-                      </h3>
-
-                      <p
-                        className={`mt-4 max-w-[260px] text-[15px] leading-6 ${
-                          step.number === "04"
-                            ? "text-white/78"
-                            : "text-neutral-650"
-                        }`}
+                <div
+                  className="-mx-4 mt-2 overflow-hidden px-4 pb-5"
+                  onTouchStart={handleHowToTouchStart}
+                  onTouchMove={handleHowToTouchMove}
+                  onTouchEnd={handleHowToTouchEnd}
+                >
+                  <div
+                    className="flex gap-4 transition-transform duration-300 ease-out"
+                    style={{
+                      transform: `translateX(calc(-${howToMobileStep} * (76vw + 1rem)))`,
+                    }}
+                  >
+                    {[
+                      {
+                        number: "01",
+                        title: "Escolha os equipamentos",
+                        text: "Navegue pelo catálogo e selecione os equipamentos desejados.",
+                        className: "bg-white text-neutral-950",
+                        numberClass: "text-red-700/35",
+                      },
+                      {
+                        number: "02",
+                        title: "Solicite um orçamento",
+                        text: "Nossa equipe verificará a disponibilidade e enviará uma proposta personalizada.",
+                        className: "bg-neutral-100 text-neutral-950",
+                        numberClass: "text-red-700/55",
+                      },
+                      {
+                        number: "03",
+                        title: "Cadastro e aprovação",
+                        text: "Na primeira locação, realizamos um cadastro simples e de fácil preenchimento.",
+                        cta: "Inicie seu cadastro",
+                        href: "/cadastro-locacao",
+                        className: "bg-neutral-200 text-neutral-950",
+                        numberClass: "text-red-700/75",
+                      },
+                      {
+                        number: "04",
+                        title: "Retirada na LOC7",
+                        text: "Após a aprovação, os equipamentos ficam disponíveis para retirada na data combinada.",
+                        className: "bg-neutral-950 text-white",
+                        numberClass: "text-red-700",
+                      },
+                    ].map((step) => (
+                      <div
+                        key={step.number}
+                        className={`min-h-[250px] w-[76vw] min-w-[76vw] shrink-0 select-none overflow-hidden rounded-2xl border border-black/[0.04] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] ${step.className}`}
                       >
-                        {step.text}
-                      </p>
+                        <div className="flex items-start justify-between gap-5">
+                          <span
+                            className={`text-[52px] font-semibold leading-none tracking-[-0.08em] ${step.numberClass}`}
+                          >
+                            {step.number}
+                          </span>
+                          <ArrowRight
+                            className={`mt-2 h-5 w-5 ${
+                              step.number === "04" ? "text-white" : "text-black"
+                            }`}
+                          />
+                        </div>
 
-                      {step.href && step.cta && (
-                        <Link
-                          href={step.href}
-                          className="mt-5 inline-flex w-fit items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-700 transition-all duration-300 hover:gap-3 hover:text-red-800"
+                        <div className="mt-6 h-[1px] w-10 bg-black/15" />
+
+                        <h3 className="mt-6 max-w-[230px] text-[22px] font-semibold leading-[1.08] tracking-[-0.04em]">
+                          {step.title}
+                        </h3>
+
+                        <p
+                          className={`mt-4 max-w-[260px] text-[15px] leading-6 ${
+                            step.number === "04"
+                              ? "text-white/78"
+                              : "text-neutral-650"
+                          }`}
                         >
-                          {step.cta}
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </Link>
-                      )}
-                    </div>
-                  ))}
+                          {step.text}
+                        </p>
+
+                        {step.href && step.cta && (
+                          <Link
+                            href={step.href}
+                            className="mt-5 inline-flex w-fit items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-700 transition-all duration-300 hover:gap-3 hover:text-red-800"
+                          >
+                            {step.cta}
+                            <ArrowRight className="h-3.5 w-3.5" />
+                          </Link>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="mt-1 flex justify-center gap-3">
-                  <span className="h-3 w-3 rounded-full bg-red-700/25" />
-                  <span className="h-3 w-3 rounded-full bg-red-700/45" />
-                  <span className="h-3 w-3 rounded-full bg-red-700/70" />
-                  <span className="h-3 w-3 rounded-full bg-red-700" />
+                  {[
+                    "bg-red-700/25",
+                    "bg-red-700/45",
+                    "bg-red-700/70",
+                    "bg-red-700",
+                  ].map((dotClass, index) => (
+                    <button
+                      key={dotClass}
+                      type="button"
+                      aria-label={`Ver etapa ${index + 1}`}
+                      onClick={() => goToHowToMobileStep(index)}
+                      className={`h-3 w-3 rounded-full transition-all duration-300 ${dotClass} ${
+                        howToMobileStep === index ? "scale-125 ring-2 ring-red-700/20" : ""
+                      }`}
+                    />
+                  ))}
                 </div>
 
                 <p className="mt-4 text-center text-[13px] text-neutral-500">
