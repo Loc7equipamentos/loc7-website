@@ -2409,15 +2409,20 @@ const filteredFilterGroups = [...filterGroups]
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tags invisíveis</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: wireless, fullframe, broadcast"
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tags SEO invisíveis
+                  </label>
+                  <textarea
+                    rows={5}
+                    placeholder={`Digite uma intenção de busca por linha.\nEx: lente Sony 14mm\nlente ultra grande angular Sony\nlente para Sony FX3\nlente para astrofotografia`}
                     value={newProduct.badge}
                     onChange={(e) => setNewProduct((prev) => ({ ...prev, badge: e.target.value }))}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Uma palavra-chave ou frase por linha. Campo interno preparado para SEO/JSON-LD.
+                  </p>
                 </div>
 
                 <div>
@@ -3315,18 +3320,24 @@ const filteredFilterGroups = [...filterGroups]
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tags invisíveis</label>
-                  <input
-                    type="text"
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tags SEO invisíveis
+                  </label>
+                  <textarea
+                    rows={5}
+                    placeholder={`Digite uma intenção de busca por linha.\nEx: lente Sony 14mm\nlente ultra grande angular Sony\nlente para Sony FX3\nlente para astrofotografia`}
                     value={editingProduct.badge || ''}
                     onChange={(e) =>
                       setEditingProduct((prev) =>
                         prev ? { ...prev, badge: e.target.value } : prev
                       )
                     }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Uma palavra-chave ou frase por linha. Campo interno preparado para SEO/JSON-LD.
+                  </p>
                 </div>
 
                 <div>
