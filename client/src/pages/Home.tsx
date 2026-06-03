@@ -573,7 +573,7 @@ export default function Home() {
 
                 <div className="mt-8 h-[1px] w-10 bg-black/20" />
 
-                <p className="mt-8 max-w-[390px] text-[16px] font-medium leading-7 text-neutral-800">
+                <p className="mt-8 max-w-[390px] text-[16px] font-semibold leading-7 text-neutral-900">
                   Na LOC7, alugar equipamentos é rápido, seguro e sem complicação.
                 </p>
 
@@ -727,24 +727,24 @@ export default function Home() {
                   ].map((step) => (
                     <div
                       key={step.number}
-                      className={`min-h-[260px] min-w-[74%] snap-center overflow-hidden rounded-2xl border border-black/[0.04] p-6 shadow-[0_18px_50px_rgba(0,0,0,0.08)] sm:min-w-[54%] ${step.className}`}
+                      className={`min-h-[250px] w-[76vw] min-w-[76vw] max-w-[300px] snap-start overflow-hidden rounded-2xl border border-black/[0.04] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] sm:w-[54vw] sm:min-w-[54vw] sm:max-w-[340px] ${step.className}`}
                     >
                       <div className="flex items-start justify-between gap-5">
                         <span
-                          className={`text-[58px] font-semibold leading-none tracking-[-0.08em] ${step.numberClass}`}
+                          className={`text-[52px] font-semibold leading-none tracking-[-0.08em] ${step.numberClass}`}
                         >
                           {step.number}
                         </span>
                         <ArrowRight
-                          className={`mt-2 h-6 w-6 ${
+                          className={`mt-2 h-5 w-5 ${
                             step.number === "04" ? "text-white" : "text-black"
                           }`}
                         />
                       </div>
 
-                      <div className="mt-8 h-[1px] w-10 bg-black/15" />
+                      <div className="mt-6 h-[1px] w-10 bg-black/15" />
 
-                      <h3 className="mt-8 max-w-[240px] text-[24px] font-semibold leading-[1.08] tracking-[-0.04em]">
+                      <h3 className="mt-6 max-w-[230px] text-[22px] font-semibold leading-[1.08] tracking-[-0.04em]">
                         {step.title}
                       </h3>
 
