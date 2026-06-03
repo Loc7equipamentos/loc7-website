@@ -85,9 +85,9 @@ export default function AdminCadastros() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#f3f4f6] px-4 py-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
+    <div className="h-screen overflow-hidden bg-[#f3f4f6] px-4 py-6">
+      <div className="mx-auto flex h-full max-w-7xl flex-col overflow-hidden">
+        <div className="mb-6 shrink-0">
           <p className="text-xs text-gray-500 tracking-widest uppercase">
             LOC7 OPERAÇÕES
           </p>
@@ -101,8 +101,8 @@ export default function AdminCadastros() {
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div className="shrink-0 border-b px-6 py-4">
             <p className="text-sm font-semibold text-gray-900">
               Cadastros recebidos
             </p>
@@ -112,7 +112,7 @@ export default function AdminCadastros() {
             </p>
           </div>
 
-          <div className="px-6 py-4 border-b bg-gray-50">
+          <div className="shrink-0 border-b bg-gray-50 px-6 py-4">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
               <label className="md:col-span-2">
                 <span className="mb-1 block text-[11px] font-black uppercase tracking-wide text-gray-600">
@@ -184,9 +184,9 @@ export default function AdminCadastros() {
             </div>
           </div>
 
-          <div className="h-[calc(100vh-360px)] min-h-[420px] overflow-auto">
+          <div className="min-h-0 flex-1 overflow-auto">
             <table className="min-w-[1380px] w-full text-sm">
-              <thead className="bg-gray-50 border-b text-xs uppercase text-gray-500 tracking-wide">
+              <thead className="sticky top-0 z-20 border-b bg-gray-50 text-xs uppercase tracking-wide text-gray-500 shadow-[0_1px_0_rgba(0,0,0,0.08)]">
                 <tr>
                   <th className="text-left px-6 py-3 w-[150px]">
                     ID
