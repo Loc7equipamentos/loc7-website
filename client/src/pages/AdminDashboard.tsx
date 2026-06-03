@@ -12,6 +12,7 @@ type ProductWithImages = Product & {
   brand?: string | null;
   display_name?: string | null;
   operational_type?: string | null;
+  ncm?: string | null;
 };
 
 type Brand = {
@@ -144,6 +145,7 @@ export default function AdminDashboard() {
     model: '',
     badge: '',
     catalog_order: null as number | null,
+    ncm: '',
     is_featured: false,
     featured_order: null as number | null,
   });
@@ -620,6 +622,35 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     if (err) throw err;
   };
 
+  const saveNewProductFiscalProfile = async (productId: string, ncm: string) => {
+    const cleanNcm = ncm.trim();
+
+    if (!cleanNcm) return;
+
+    const payload = {
+      product_id: productId,
+      fiscal_code: null,
+      fiscal_description: null,
+      ncm: cleanNcm,
+      ncm_source: null,
+      ncm_source_url: null,
+      ncm_basis: null,
+      ncm_confidence: 'pending',
+      fiscal_status: 'pending',
+      notes: null,
+      auto_generated: false,
+      reviewed: false,
+      reviewed_at: null,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error: err } = await supabase
+      .from('product_fiscal_profiles')
+      .upsert(payload, { onConflict: 'product_id' });
+
+    if (err) throw err;
+  };
+
   const openEditProduct = async (product: ProductWithImages) => {
     try {
       setError(null);
@@ -800,7 +831,37 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
       if (err) throw err;
 
-      const sortedProducts = ((data as ProductWithImages[]) || []).sort((a, b) => {
+      const productRows = ((data as ProductWithImages[]) || []);
+      const productIds = productRows.map((product) => product.id).filter(Boolean);
+
+      let ncmByProductId: Record<string, string> = {};
+
+      if (productIds.length > 0) {
+        const { data: fiscalData, error: fiscalError } = await supabase
+          .from('product_fiscal_profiles')
+          .select('product_id, ncm')
+          .in('product_id', productIds);
+
+        if (fiscalError) throw fiscalError;
+
+        ncmByProductId = ((fiscalData || []) as Array<{ product_id: string; ncm: string | null }>).reduce(
+          (acc, item) => {
+            if (item.product_id) {
+              acc[item.product_id] = item.ncm || '';
+            }
+
+            return acc;
+          },
+          {} as Record<string, string>
+        );
+      }
+
+      const productsWithNcm = productRows.map((product) => ({
+        ...product,
+        ncm: ncmByProductId[product.id] || '',
+      }));
+
+      const sortedProducts = productsWithNcm.sort((a, b) => {
         if (a.is_featured && !b.is_featured) return -1;
         if (!a.is_featured && b.is_featured) return 1;
         if (a.is_featured && b.is_featured) {
@@ -1146,6 +1207,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         );
 
         await saveProductFilterOptions(insertedProduct.id, optionIdsToSave);
+        await saveNewProductFiscalProfile(insertedProduct.id, newProduct.ncm);
       }
 
       setNewProduct({
@@ -1164,6 +1226,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         model: '',
         badge: '',
         catalog_order: null,
+        ncm: '',
         is_featured: false,
         featured_order: null,
       });
@@ -2086,6 +2149,25 @@ const filteredFilterGroups = [...filterGroups]
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">NCM</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: 8525.89.29"
+                    value={newProduct.ncm}
+                    onChange={(e) =>
+                      setNewProduct((prev) => ({
+                        ...prev,
+                        ncm: e.target.value,
+                      }))
+                    }
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Uso interno. Não aparece no catálogo público.
+                  </p>
+                </div>
+
 
 <div className="md:col-span-2">
   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -2312,6 +2394,7 @@ const filteredFilterGroups = [...filterGroups]
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Nome</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Marca</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">NCM</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Filtro Visível</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Destaque</th>
@@ -2322,7 +2405,7 @@ const filteredFilterGroups = [...filterGroups]
                   <tbody className="divide-y divide-gray-200">
                     {filteredProducts.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={9} className="px-4 py-8 text-center text-gray-500">
                           Nenhum produto cadastrado
                         </td>
                       </tr>
@@ -2337,6 +2420,9 @@ const filteredFilterGroups = [...filterGroups]
                           </td>
                           <td className="px-4 py-3 text-gray-600">
                             {product.category}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                            {product.ncm || '—'}
                           </td>
                           <td className="px-4 py-3 text-gray-600">
                             {product.subcategory || '-'}
