@@ -547,7 +547,7 @@ export default function Home() {
       <section
         id="como-alugar"
         ref={setSectionRef("como-alugar")}
-        className="bg-[oklch(0.95_0_0)] pb-10 pt-2 md:pb-12 md:pt-3"
+        className="bg-[oklch(0.95_0_0)] pb-10 pt-2 md:pb-14 md:pt-4"
       >
         <div className="container">
           <div
@@ -557,10 +557,10 @@ export default function Home() {
                 : "opacity-0 translate-y-8"
             }`}
           >
-            <div className="grid gap-8 lg:grid-cols-[0.72fr_42px_1.28fr] lg:items-start lg:gap-6">
+            <div className="grid gap-8 lg:grid-cols-[0.72fr_42px_1.28fr] lg:items-start">
               {/* TEXTO */}
               <div className="pt-2 lg:pt-7">
-                <div className="mb-8 flex items-center gap-3">
+                <div className="mb-6 flex items-center gap-3">
                   <span className="text-[12px] font-semibold uppercase tracking-[0.24em] text-red-700">
                     COMO ALUGAR
                   </span>
@@ -571,20 +571,20 @@ export default function Home() {
                   Locação simples, ágil e sem burocracia.
                 </h2>
 
-                <div className="mt-8 h-[1px] w-10 bg-black/20" />
+                <div className="mt-6 h-[1px] w-10 bg-black/20" />
 
-                <p className="mt-8 max-w-[390px] text-[16px] font-semibold leading-7 text-neutral-900">
+                <p className="mt-6 max-w-[390px] text-[16px] font-semibold leading-7 text-neutral-900">
                   Na LOC7, alugar equipamentos é rápido, seguro e sem complicação.
                 </p>
 
-                <p className="mt-7 text-[17px] font-semibold leading-7 text-neutral-900">
+                <p className="mt-5 text-[17px] font-semibold leading-7 text-neutral-900">
                   Funciona assim:
                 </p>
               </div>
 
               {/* TIMELINE DESKTOP */}
               <div className="relative hidden h-full min-h-[380px] justify-center lg:flex">
-                <div className="absolute left-1/2 top-10 h-[306px] w-[1px] -translate-x-1/2 bg-black/12" />
+                <div className="absolute left-1/2 top-10 h-[315px] w-[1px] -translate-x-1/2 bg-black/12" />
                 {[
                   "bg-red-700/25",
                   "bg-red-700/45",
@@ -594,7 +594,7 @@ export default function Home() {
                   <span
                     key={dotClass}
                     className={`absolute left-1/2 h-5 w-5 -translate-x-1/2 rounded-full shadow-[0_8px_22px_rgba(185,28,28,0.16)] ${dotClass}`}
-                    style={{ top: `${40 + index * 92}px` }}
+                    style={{ top: `${40 + index * 94}px` }}
                   />
                 ))}
               </div>
@@ -639,17 +639,17 @@ export default function Home() {
                 ].map((step, index) => (
                   <div
                     key={step.number}
-                    className={`group relative overflow-hidden rounded-2xl border border-black/[0.04] px-7 py-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-all duration-500 ease-out hover:-translate-y-[2px] hover:shadow-[0_24px_60px_rgba(0,0,0,0.12)] ${step.className} ${
+                    className={`group relative overflow-hidden rounded-2xl border border-black/[0.04] px-8 py-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-all duration-500 ease-out hover:-translate-y-[2px] hover:shadow-[0_24px_60px_rgba(0,0,0,0.12)] ${step.className} ${
                       isVisible["como-alugar"]
                         ? "opacity-100 translate-y-0"
                         : "opacity-0 translate-y-5"
                     }`}
                     style={{ transitionDelay: `${index * 0.08}s` }}
                   >
-                    <div className="grid grid-cols-[105px_1fr_28px] items-center gap-5">
-                      <div className="flex items-center gap-6">
+                    <div className="grid grid-cols-[120px_1fr_32px] items-center gap-6">
+                      <div className="flex items-center gap-7">
                         <span
-                          className={`text-[50px] font-semibold leading-none tracking-[-0.08em] ${step.numberClass}`}
+                          className={`text-[52px] font-semibold leading-none tracking-[-0.08em] ${step.numberClass}`}
                         >
                           {step.number}
                         </span>
@@ -657,12 +657,12 @@ export default function Home() {
                       </div>
 
                       <div>
-                        <h3 className="text-[19px] font-semibold leading-[1.12] tracking-[-0.035em]">
+                        <h3 className="text-[20px] font-semibold leading-[1.12] tracking-[-0.035em]">
                           {step.title}
                         </h3>
 
                         <p
-                          className={`mt-1.5 max-w-[520px] text-[14.5px] leading-[1.45] ${
+                          className={`mt-1.5 max-w-[520px] text-[14.5px] leading-6 ${
                             step.number === "04"
                               ? "text-white/78"
                               : "text-neutral-650"
@@ -674,7 +674,7 @@ export default function Home() {
                         {step.href && step.cta && (
                           <Link
                             href={step.href}
-                            className="mt-2.5 inline-flex w-fit items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-700 transition-all duration-300 hover:gap-3 hover:text-red-800"
+                            className="mt-2 inline-flex w-fit items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-700 transition-all duration-300 hover:gap-3 hover:text-red-800"
                           >
                             {step.cta}
                             <ArrowRight className="h-3.5 w-3.5" />
@@ -785,7 +785,7 @@ export default function Home() {
             </div>
 
             {/* CTA FINAL */}
-            <div className="mt-7 overflow-hidden rounded-2xl bg-black px-6 py-6 text-white shadow-[0_22px_60px_rgba(0,0,0,0.16)] md:mt-8 md:px-10 md:py-6">
+            <div className="mt-8 overflow-hidden rounded-2xl bg-black px-6 py-6 text-white shadow-[0_22px_60px_rgba(0,0,0,0.16)] md:mt-10 md:px-10 md:py-7">
               <div className="flex flex-col items-center justify-center gap-5 text-center md:flex-row md:gap-8">
                 <p className="text-[18px] leading-7 text-white/90 md:text-[20px]">
                   Fale com nosso time e alugue com agilidade.
