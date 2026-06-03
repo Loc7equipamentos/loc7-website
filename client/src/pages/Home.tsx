@@ -762,7 +762,7 @@ export default function Home() {
                   ].map((step, index) => (
                     <div
                       key={step.number}
-                      className={`snap-start min-h-[250px] min-w-[88%] shrink-0 overflow-hidden rounded-2xl border border-black/[0.04] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-all duration-700 ease-out ${step.className} ${
+                      className={`snap-start min-h-[250px] w-[76vw] min-w-[76vw] shrink-0 overflow-hidden rounded-2xl border border-black/[0.04] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-all duration-700 ease-out ${step.className} ${
                         isVisible["como-alugar"]
                           ? "opacity-100 translate-x-0"
                           : "opacity-0 translate-x-[-40px]"
