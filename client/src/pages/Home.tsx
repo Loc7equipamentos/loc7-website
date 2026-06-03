@@ -573,7 +573,7 @@ export default function Home() {
 
                 <div className="mt-8 h-[1px] w-10 bg-black/20" />
 
-                <p className="mt-8 max-w-[390px] text-[16px] leading-7 text-neutral-700">
+                <p className="mt-8 max-w-[390px] text-[16px] font-medium leading-7 text-neutral-800">
                   Na LOC7, alugar equipamentos é rápido, seguro e sem complicação.
                 </p>
 
@@ -727,7 +727,7 @@ export default function Home() {
                   ].map((step) => (
                     <div
                       key={step.number}
-                      className={`min-h-[260px] min-w-[82%] snap-center overflow-hidden rounded-2xl border border-black/[0.04] p-6 shadow-[0_18px_50px_rgba(0,0,0,0.08)] sm:min-w-[58%] ${step.className}`}
+                      className={`min-h-[260px] min-w-[74%] snap-center overflow-hidden rounded-2xl border border-black/[0.04] p-6 shadow-[0_18px_50px_rgba(0,0,0,0.08)] sm:min-w-[54%] ${step.className}`}
                     >
                       <div className="flex items-start justify-between gap-5">
                         <span
@@ -736,7 +736,7 @@ export default function Home() {
                           {step.number}
                         </span>
                         <ArrowRight
-                          className={`mt-2 h-6 w-6 rotate-90 ${
+                          className={`mt-2 h-6 w-6 ${
                             step.number === "04" ? "text-white" : "text-black"
                           }`}
                         />
