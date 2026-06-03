@@ -692,7 +692,7 @@ export default function Home() {
 
               {/* CARDS MOBILE */}
               <div className="lg:hidden">
-                <div className="mt-2 flex gap-4 overflow-x-auto pb-5 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="-mx-4 mt-2 flex touch-pan-x snap-x snap-mandatory gap-4 overflow-x-scroll overscroll-x-contain scroll-smooth px-4 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {[
                     {
                       number: "01",
@@ -727,7 +727,7 @@ export default function Home() {
                   ].map((step) => (
                     <div
                       key={step.number}
-                      className={`min-h-[250px] w-[76vw] min-w-[76vw] max-w-[300px] snap-start overflow-hidden rounded-2xl border border-black/[0.04] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] sm:w-[54vw] sm:min-w-[54vw] sm:max-w-[340px] ${step.className}`}
+                      className={`min-h-[250px] w-[76vw] min-w-[76vw] shrink-0 snap-center overflow-hidden rounded-2xl border border-black/[0.04] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] sm:w-[54vw] sm:min-w-[54vw] ${step.className}`}
                     >
                       <div className="flex items-start justify-between gap-5">
                         <span
