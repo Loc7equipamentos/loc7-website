@@ -570,7 +570,7 @@ export default function Home() {
                     <div className="h-[1px] flex-1 bg-white/15" />
                   </div>
 
-                  <h2 className="max-w-[560px] text-[28px] font-semibold leading-[1.05] tracking-[-0.035em] text-white md:text-[38px] lg:text-[42px]">
+                  <h2 className="max-w-[560px] text-[24px] font-semibold leading-[1.08] tracking-[-0.03em] text-white md:text-[30px] lg:text-[34px]">
                     Alugar equipamentos na LOC7 é prático, ágil e sem burocracia.
                   </h2>
 
@@ -585,14 +585,14 @@ export default function Home() {
 
                 <Link
                   href="/orcamento"
-                  className="inline-flex w-fit items-center justify-center rounded-lg bg-white px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-black transition-all duration-300 hover:bg-red-700 hover:text-white"
+                  className="hidden w-fit items-center justify-center rounded-lg bg-white px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-black transition-all duration-300 hover:bg-red-700 hover:text-white lg:inline-flex"
                 >
                   Solicitar orçamento
                 </Link>
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-2 lg:overflow-visible lg:pb-0">
               {[
                 {
                   number: "01",
@@ -619,7 +619,7 @@ export default function Home() {
               ].map((step, index) => (
                 <div
                   key={step.number}
-                  className={`group relative min-h-[220px] overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-6 shadow-[0_16px_46px_rgba(0,0,0,0.08)] transition-all duration-500 ease-out hover:-translate-y-[3px] hover:shadow-[0_22px_60px_rgba(0,0,0,0.12)] ${
+                  className={`group relative min-h-[220px] min-w-[82%] snap-start overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-6 shadow-[0_16px_46px_rgba(0,0,0,0.08)] transition-all duration-500 ease-out hover:-translate-y-[3px] hover:shadow-[0_22px_60px_rgba(0,0,0,0.12)] sm:min-w-[58%] lg:min-w-0 ${
                     isVisible["como-alugar"]
                       ? "opacity-100 translate-y-0"
                       : "opacity-0 translate-y-6"
@@ -657,6 +657,15 @@ export default function Home() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-6 flex justify-center lg:hidden">
+              <Link
+                href="/orcamento"
+                className="inline-flex w-full max-w-[320px] items-center justify-center rounded-lg bg-neutral-950 px-6 py-3.5 text-[12px] font-semibold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-red-700"
+              >
+                Solicitar orçamento
+              </Link>
             </div>
           </div>
         </div>
