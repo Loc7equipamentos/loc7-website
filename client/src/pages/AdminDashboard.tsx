@@ -158,6 +158,8 @@ export default function AdminDashboard() {
   const [newCategory, setNewCategory] = useState('');
   const [newBrand, setNewBrand] = useState('');
   const [newOperationalType, setNewOperationalType] = useState('');
+  const [newVisibleFilterName, setNewVisibleFilterName] = useState('');
+  const [editingVisibleFilterName, setEditingVisibleFilterName] = useState('');
   const [newSubcategory, setNewSubcategory] = useState({
   category_id: '',
   name: '',
@@ -1486,6 +1488,107 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
   };
 
+  const addVisibleFilterOption = async (categoryName: string, value: string, isEditing: boolean = false) => {
+    const cleanValue = value.trim();
+
+    if (!categoryName) {
+      setError('Selecione a categoria antes de incluir um filtro visível');
+      return;
+    }
+
+    if (!cleanValue) {
+      setError('Digite o nome do filtro visível');
+      return;
+    }
+
+    const selectedCategory = categories.find((cat) => cat.name === categoryName);
+
+    if (!selectedCategory) {
+      setError('Categoria não encontrada para criar o filtro visível');
+      return;
+    }
+
+    try {
+      let visibleGroup = getFilterGroupsForCategoryName(categoryName).find((group) =>
+        isVisibleCategoryFilterGroup(group)
+      );
+
+      if (!visibleGroup) {
+        const nextGroupOrder =
+          Math.max(
+            0,
+            ...filterGroups
+              .filter((group) => group.category_id === selectedCategory.id)
+              .map((group) => group.display_order ?? 0)
+          ) + 1;
+
+        const { data: createdGroup, error: groupError } = await supabase
+          .from('filter_groups')
+          .insert([
+            {
+              category_id: selectedCategory.id,
+              name: 'Categoria',
+              display_order: nextGroupOrder,
+            },
+          ])
+          .select('id, category_id, name, display_order')
+          .single();
+
+        if (groupError) throw groupError;
+
+        visibleGroup = createdGroup as FilterGroup;
+      }
+
+      const existingOption = (visibleGroup.options || []).find(
+        (option) => normalizeFilterName(option.name) === normalizeFilterName(cleanValue)
+      );
+
+      if (!existingOption) {
+        const nextOptionOrder =
+          Math.max(
+            0,
+            ...(visibleGroup.options || []).map((option) => option.display_order ?? 0)
+          ) + 1;
+
+        const { error: optionError } = await supabase
+          .from('filter_options')
+          .insert([
+            {
+              group_id: visibleGroup.id,
+              name: cleanValue,
+              display_order: nextOptionOrder,
+            },
+          ]);
+
+        if (optionError) throw optionError;
+      }
+
+      if (isEditing) {
+        setEditingProduct((prev) =>
+          prev
+            ? {
+                ...prev,
+                subcategory: cleanValue,
+              }
+            : prev
+        );
+        setEditingVisibleFilterName('');
+      } else {
+        setNewProduct((prev) => ({
+          ...prev,
+          subcategory: cleanValue,
+        }));
+        setNewVisibleFilterName('');
+      }
+
+      setError(null);
+      await loadFilterArchitecture();
+      alert('Filtro visível adicionado com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao adicionar filtro visível');
+    }
+  };
+
   const addBrand = async () => {
     const cleanBrandName = newBrand.trim();
 
@@ -2183,8 +2286,30 @@ const filteredFilterGroups = [...filterGroups]
                   </select>
 
                   <p className="mt-1 text-xs text-gray-500">
-                    Classificação pública controlada pela Arquitetura de Filtros.
+                    Tipo público exibido no card e na página do produto.
                   </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Incluir Filtro Visível</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Ex: Refletor, Mirrorless, Cinema"
+                      value={newVisibleFilterName}
+                      onChange={(e) => setNewVisibleFilterName(e.target.value)}
+                      disabled={!newProduct.category}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400 disabled:bg-gray-50 disabled:text-gray-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => addVisibleFilterOption(newProduct.category, newVisibleFilterName)}
+                      disabled={!newProduct.category}
+                      className="shrink-0 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 text-white text-sm font-medium py-2 px-4 rounded"
+                    >
+                      Incluir
+                    </button>
+                  </div>
                 </div>
 
                 <div className="md:col-span-2 rounded border border-amber-200 bg-amber-50/60 p-4">
@@ -3136,8 +3261,30 @@ const filteredFilterGroups = [...filterGroups]
                   </select>
 
                   <p className="mt-1 text-xs text-gray-500">
-                    Classificação pública controlada pela Arquitetura de Filtros.
+                    Tipo público exibido no card e na página do produto.
                   </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Incluir Filtro Visível</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Ex: Refletor, Mirrorless, Cinema"
+                      value={editingVisibleFilterName}
+                      onChange={(e) => setEditingVisibleFilterName(e.target.value)}
+                      disabled={!editingProduct.category}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400 disabled:bg-gray-50 disabled:text-gray-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => addVisibleFilterOption(editingProduct.category, editingVisibleFilterName, true)}
+                      disabled={!editingProduct.category}
+                      className="shrink-0 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 text-white text-sm font-medium py-2 px-4 rounded"
+                    >
+                      Incluir
+                    </button>
+                  </div>
                 </div>
 
                 {editingProduct.category &&
