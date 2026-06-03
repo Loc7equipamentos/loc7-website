@@ -2166,21 +2166,27 @@ const filteredFilterGroups = [...filterGroups]
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Filtro Visível</label>
-                  <select
+                  <input
+                    type="text"
+                    list="new-product-visible-filters"
+                    placeholder="Ex: Refletor LED, Mirrorless, Cinema"
                     value={newProduct.subcategory}
                     onChange={(e) =>
                       setNewProduct((prev) => ({ ...prev, subcategory: e.target.value }))
                     }
                     disabled={!newProduct.category}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
-                  >
-                    <option value="">Selecione</option>
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400 disabled:bg-gray-50 disabled:text-gray-500"
+                  />
+
+                  <datalist id="new-product-visible-filters">
                     {newProductVisibleFilters.map((subcategory) => (
-                      <option key={subcategory} value={subcategory}>
-                        {subcategory}
-                      </option>
+                      <option key={subcategory} value={subcategory} />
                     ))}
-                  </select>
+                  </datalist>
+
+                  <p className="mt-1 text-xs text-gray-500">
+                    Você pode escolher uma opção existente ou digitar uma nova classificação pública.
+                  </p>
                 </div>
 
                 <div className="md:col-span-2 rounded border border-amber-200 bg-amber-50/60 p-4">
@@ -3113,7 +3119,10 @@ const filteredFilterGroups = [...filterGroups]
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Filtro Visível</label>
-                  <select
+                  <input
+                    type="text"
+                    list="edit-product-visible-filters"
+                    placeholder="Ex: Refletor LED, Mirrorless, Cinema"
                     value={editingProduct.subcategory || ''}
                     onChange={(e) =>
                       setEditingProduct((prev) =>
@@ -3121,15 +3130,18 @@ const filteredFilterGroups = [...filterGroups]
                       )
                     }
                     disabled={!editingProduct.category}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
-                  >
-                    <option value="">Selecione</option>
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400 disabled:bg-gray-50 disabled:text-gray-500"
+                  />
+
+                  <datalist id="edit-product-visible-filters">
                     {editingProductVisibleFilters.map((subcat) => (
-                      <option key={subcat} value={subcat}>
-                        {subcat}
-                      </option>
+                      <option key={subcat} value={subcat} />
                     ))}
-                  </select>
+                  </datalist>
+
+                  <p className="mt-1 text-xs text-gray-500">
+                    Você pode escolher uma opção existente ou digitar uma nova classificação pública.
+                  </p>
                 </div>
 
                 {editingProduct.category &&
