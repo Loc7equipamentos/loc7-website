@@ -99,7 +99,7 @@ const mobileEquipmentLinks: SubmenuChild[] = [
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Como alugar", href: "/" },
+  { name: "Como alugar", href: "/#como-alugar" },
   { name: "Produção", href: "/producao" },
 ];
 
@@ -118,25 +118,10 @@ export default function Navbar() {
     setIsMobileEquipmentOpen(false);
   };
 
-  const clearUrlHash = () => {
-    if (window.location.hash) {
-      window.history.replaceState(
-        null,
-        "",
-        `${window.location.pathname}${window.location.search}`
-      );
-    }
-  };
-
   const scrollToHomeTop = () => {
-    clearUrlHash();
-
-    window.requestAnimationFrame(() => {
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: "smooth",
-      });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
   };
 
@@ -145,30 +130,17 @@ export default function Navbar() {
 
     if (!section) return;
 
-    clearUrlHash();
-
-    const nav = document.querySelector("nav");
-    const navHeight = nav?.getBoundingClientRect().height || 0;
-    const headerOffset =
-      window.innerWidth >= 1024 ? navHeight + 18 : window.innerWidth >= 768 ? 210 : 92;
-    const sectionTop =
-      section.getBoundingClientRect().top + window.scrollY - headerOffset;
-
-    window.requestAnimationFrame(() => {
-      window.scrollTo({
-        top: Math.max(sectionTop, 0),
-        left: 0,
-        behavior: "smooth",
-      });
+    section.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
     });
   };
 
   const handleHomeNavigation = (event?: React.MouseEvent) => {
-    event?.preventDefault();
     closeMobileMenu();
-    sessionStorage.removeItem("loc7-scroll-target");
 
     if (location === "/") {
+      event?.preventDefault();
       scrollToHomeTop();
       return;
     }
@@ -185,8 +157,7 @@ export default function Navbar() {
       return;
     }
 
-    sessionStorage.setItem("loc7-scroll-target", "como-alugar");
-    window.location.href = "/";
+    window.location.href = "/#como-alugar";
   };
 
   useEffect(() => {
@@ -201,16 +172,10 @@ export default function Navbar() {
     setIsMobileEquipmentOpen(false);
     setIsSearchOpen(false);
 
-    if (location !== "/") return;
-
-    const pendingScrollTarget = sessionStorage.getItem("loc7-scroll-target");
-
-    if (pendingScrollTarget === "como-alugar") {
-      sessionStorage.removeItem("loc7-scroll-target");
-
+    if (location === "/" && window.location.hash === "#como-alugar") {
       window.setTimeout(() => {
         scrollToComoAlugar();
-      }, 140);
+      }, 80);
     }
   }, [location]);
 
