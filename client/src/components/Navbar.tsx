@@ -99,7 +99,7 @@ const mobileEquipmentLinks: SubmenuChild[] = [
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Como alugar", href: "#" },
+  { name: "Como alugar", href: "/#como-alugar" },
   { name: "Produção", href: "/producao" },
 ];
 
@@ -113,15 +113,51 @@ export default function Navbar() {
 
   const searchRef = useRef<HTMLDivElement | null>(null);
 
-  const handleMobileHomeReload = () => {
-    const isMobile = window.innerWidth < 768;
+  const closeMobileMenu = () => {
+    setIsMobileOpen(false);
+    setIsMobileEquipmentOpen(false);
+  };
 
-    if (isMobile && location === "/") {
-      window.location.reload();
+  const scrollToHomeTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollToComoAlugar = () => {
+    const section = document.getElementById("como-alugar");
+
+    if (!section) return;
+
+    section.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const handleHomeNavigation = (event?: React.MouseEvent) => {
+    closeMobileMenu();
+
+    if (location === "/") {
+      event?.preventDefault();
+      scrollToHomeTop();
       return;
     }
 
     window.location.href = "/";
+  };
+
+  const handleComoAlugarNavigation = (event?: React.MouseEvent) => {
+    event?.preventDefault();
+    closeMobileMenu();
+
+    if (location === "/") {
+      scrollToComoAlugar();
+      return;
+    }
+
+    window.location.href = "/#como-alugar";
   };
 
   useEffect(() => {
@@ -135,6 +171,12 @@ export default function Navbar() {
     setIsMobileOpen(false);
     setIsMobileEquipmentOpen(false);
     setIsSearchOpen(false);
+
+    if (location === "/" && window.location.hash === "#como-alugar") {
+      window.setTimeout(() => {
+        scrollToComoAlugar();
+      }, 80);
+    }
   }, [location]);
 
   useEffect(() => {
@@ -257,14 +299,7 @@ export default function Navbar() {
         <div className="flex items-stretch justify-between overflow-visible">
           <Link
             href="/"
-            onClick={(event) => {
-              const isMobile = window.innerWidth < 768;
-
-              if (isMobile) {
-                event.preventDefault();
-                handleMobileHomeReload();
-              }
-            }}
+            onClick={handleHomeNavigation}
             className="relative flex h-[92px] w-[150px] shrink-0 items-center overflow-visible md:h-[72px] md:w-[180px]"
           >
             <img
@@ -282,8 +317,13 @@ export default function Navbar() {
                     key={link.name}
                     href={link.href}
                     onClick={(event) => {
-                      if (link.href === "#") {
-                        event.preventDefault();
+                      if (link.name === "Home") {
+                        handleHomeNavigation(event);
+                        return;
+                      }
+
+                      if (link.name === "Como alugar") {
+                        handleComoAlugarNavigation(event);
                       }
                     }}
                     className={`text-sm font-medium text-white transition hover:text-gray-300 ${
@@ -417,7 +457,7 @@ export default function Navbar() {
             <div className="flex flex-col">
               <button
                 type="button"
-                onClick={handleMobileHomeReload}
+                onClick={handleHomeNavigation}
                 className="block w-full px-4 py-3 text-left text-sm font-medium text-white transition hover:bg-gray-900"
               >
                 Home
@@ -454,6 +494,14 @@ export default function Navbar() {
                   ))}
                 </div>
               )}
+
+              <button
+                type="button"
+                onClick={handleComoAlugarNavigation}
+                className="block w-full px-4 py-3 text-left text-sm font-medium text-white transition hover:bg-gray-900"
+              >
+                Como alugar
+              </button>
 
               <Link
                 href="/producao"
