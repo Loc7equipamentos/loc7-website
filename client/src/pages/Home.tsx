@@ -688,6 +688,20 @@ export default function Home() {
                     </div>
                   </div>
                 ))}
+
+                <div className="mt-1 flex items-center justify-between gap-5 rounded-2xl bg-black px-7 py-4 text-white shadow-[0_18px_48px_rgba(0,0,0,0.14)]">
+                  <p className="text-[16px] font-medium leading-6 text-white/90">
+                    Fale com nosso time e alugue com agilidade.
+                  </p>
+
+                  <Link
+                    href="/orcamento"
+                    className="inline-flex shrink-0 items-center justify-center gap-3 rounded-lg border border-white/45 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
+                  >
+                    Solicitar orçamento
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
 
               {/* CARDS MOBILE */}
@@ -784,8 +798,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* CTA FINAL */}
-            <div className="mt-4 overflow-hidden rounded-2xl bg-black px-6 py-4 text-white shadow-[0_22px_60px_rgba(0,0,0,0.16)] md:mt-6 md:px-10 md:py-5">
+            {/* CTA FINAL MOBILE */}
+            <div className="mt-4 overflow-hidden rounded-2xl bg-black px-6 py-4 text-white shadow-[0_22px_60px_rgba(0,0,0,0.16)] md:mt-6 md:px-10 md:py-5 lg:hidden">
               <div className="flex flex-col items-center justify-center gap-3 text-center md:flex-row md:gap-6">
                 <p className="text-[17px] leading-7 text-white/90 md:text-[18px]">
                   Fale com nosso time e alugue com agilidade.
