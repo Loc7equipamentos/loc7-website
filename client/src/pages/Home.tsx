@@ -785,9 +785,9 @@ export default function Home() {
             </div>
 
             {/* CTA FINAL */}
-            <div className="mt-8 overflow-hidden rounded-2xl bg-black px-6 py-6 text-white shadow-[0_22px_60px_rgba(0,0,0,0.16)] md:mt-10 md:px-10 md:py-7">
-              <div className="flex flex-col items-center justify-center gap-5 text-center md:flex-row md:gap-8">
-                <p className="text-[18px] leading-7 text-white/90 md:text-[20px]">
+            <div className="mt-4 overflow-hidden rounded-2xl bg-black px-6 py-4 text-white shadow-[0_22px_60px_rgba(0,0,0,0.16)] md:mt-6 md:px-10 md:py-5">
+              <div className="flex flex-col items-center justify-center gap-3 text-center md:flex-row md:gap-6">
+                <p className="text-[17px] leading-7 text-white/90 md:text-[18px]">
                   Fale com nosso time e alugue com agilidade.
                 </p>
 
