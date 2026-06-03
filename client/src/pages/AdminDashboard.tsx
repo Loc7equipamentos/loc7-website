@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase, type Product, type Category } from '@/lib/supabase';
 import { Trash2, Plus, Edit2, X, Upload, Loader, ArrowUp, ArrowDown } from 'lucide-react';
 
@@ -12,7 +12,9 @@ type ProductWithImages = Product & {
   brand?: string | null;
   display_name?: string | null;
   operational_type?: string | null;
-  ncm?: string | null;
+  fiscal_ncm?: string | null;
+  fiscal_status?: string | null;
+  ncm_confidence?: string | null;
 };
 
 type Brand = {
@@ -145,10 +147,13 @@ export default function AdminDashboard() {
     model: '',
     badge: '',
     catalog_order: null as number | null,
-    ncm: '',
     is_featured: false,
     featured_order: null as number | null,
   });
+
+  const [newProductFiscalProfile, setNewProductFiscalProfile] = useState<ProductFiscalProfile>(getEmptyFiscalProfile());
+  const newProductNcmInputRef = useRef<HTMLInputElement | null>(null);
+  const editingNcmInputRef = useRef<HTMLInputElement | null>(null);
 
   const [newCategory, setNewCategory] = useState('');
   const [newBrand, setNewBrand] = useState('');
@@ -597,21 +602,36 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     return normalizeFiscalProfile((data as ProductFiscalProfile | null) || null);
   };
 
-  const saveProductFiscalProfile = async (productId: string) => {
+  const hasFiscalProfileData = (profile: ProductFiscalProfile) => {
+    return Boolean(
+      profile.fiscal_code.trim() ||
+        profile.fiscal_description.trim() ||
+        profile.ncm.trim() ||
+        profile.ncm_source.trim() ||
+        profile.ncm_source_url.trim() ||
+        profile.ncm_basis.trim() ||
+        profile.notes.trim() ||
+        profile.fiscal_status !== 'pending' ||
+        profile.ncm_confidence !== 'pending' ||
+        profile.reviewed
+    );
+  };
+
+  const saveFiscalProfile = async (productId: string, profile: ProductFiscalProfile) => {
     const payload = {
       product_id: productId,
-      fiscal_code: editingFiscalProfile.fiscal_code.trim() || null,
-      fiscal_description: editingFiscalProfile.fiscal_description.trim() || null,
-      ncm: editingFiscalProfile.ncm.trim() || null,
-      ncm_source: editingFiscalProfile.ncm_source.trim() || null,
-      ncm_source_url: editingFiscalProfile.ncm_source_url.trim() || null,
-      ncm_basis: editingFiscalProfile.ncm_basis.trim() || null,
-      ncm_confidence: editingFiscalProfile.ncm_confidence || 'pending',
-      fiscal_status: editingFiscalProfile.fiscal_status || 'pending',
-      notes: editingFiscalProfile.notes.trim() || null,
-      auto_generated: editingFiscalProfile.auto_generated || false,
-      reviewed: editingFiscalProfile.reviewed || false,
-      reviewed_at: editingFiscalProfile.reviewed ? new Date().toISOString() : null,
+      fiscal_code: profile.fiscal_code.trim() || null,
+      fiscal_description: profile.fiscal_description.trim() || null,
+      ncm: profile.ncm.trim() || null,
+      ncm_source: profile.ncm_source.trim() || null,
+      ncm_source_url: profile.ncm_source_url.trim() || null,
+      ncm_basis: profile.ncm_basis.trim() || null,
+      ncm_confidence: profile.ncm_confidence || 'pending',
+      fiscal_status: profile.fiscal_status || 'pending',
+      notes: profile.notes.trim() || null,
+      auto_generated: profile.auto_generated || false,
+      reviewed: profile.reviewed || false,
+      reviewed_at: profile.reviewed ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),
     };
 
@@ -622,33 +642,95 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     if (err) throw err;
   };
 
-  const saveNewProductFiscalProfile = async (productId: string, ncm: string) => {
-    const cleanNcm = ncm.trim();
+  const saveProductFiscalProfile = async (productId: string) => {
+    await saveFiscalProfile(productId, editingFiscalProfile);
+  };
 
-    if (!cleanNcm) return;
+  const buildNcmResearchText = (source: {
+    name?: string | null;
+    brand?: string | null;
+    model?: string | null;
+    category?: string | null;
+    operational_type?: string | null;
+    subcategory?: string | null;
+    specs?: string | null;
+    technical_specs?: string | null;
+    includes?: string | null;
+  }) => {
+    return [
+      source.brand,
+      source.model,
+      source.name,
+      source.category,
+      source.operational_type,
+      source.subcategory,
+      source.specs,
+      source.technical_specs,
+      source.includes,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
 
-    const payload = {
-      product_id: productId,
-      fiscal_code: null,
-      fiscal_description: null,
-      ncm: cleanNcm,
-      ncm_source: null,
-      ncm_source_url: null,
-      ncm_basis: null,
+  const openNcmResearch = (researchText: string) => {
+    const query = `NCM ${researchText} classificação fiscal Receita Federal Classif Siscomex`;
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank', 'noopener,noreferrer');
+  };
+
+  const suggestNcmForNewProduct = () => {
+    const researchText = buildNcmResearchText(newProduct);
+
+    if (!researchText) {
+      alert('Preencha pelo menos marca, modelo, categoria ou tipo operacional antes de sugerir o NCM.');
+      return;
+    }
+
+    setNewProductFiscalProfile((prev) => ({
+      ...prev,
+      fiscal_description:
+        prev.fiscal_description ||
+        buildProductDisplayName(newProduct.operational_type, newProduct.category, newProduct.name || buildProductName(newProduct.brand, newProduct.model)),
+      ncm_source: prev.ncm_source || 'Pesquisa assistida - Classif/Siscomex',
+      ncm_basis: `Pesquisa assistida gerada a partir dos dados do produto: ${researchText}`,
       ncm_confidence: 'pending',
-      fiscal_status: 'pending',
-      notes: null,
-      auto_generated: false,
+      fiscal_status: 'suggested',
+      auto_generated: true,
       reviewed: false,
       reviewed_at: null,
-      updated_at: new Date().toISOString(),
-    };
+    }));
 
-    const { error: err } = await supabase
-      .from('product_fiscal_profiles')
-      .upsert(payload, { onConflict: 'product_id' });
+    openNcmResearch(researchText);
+    setTimeout(() => newProductNcmInputRef.current?.focus(), 100);
+  };
 
-    if (err) throw err;
+  const suggestNcmForEditingProduct = () => {
+    if (!editingProduct) return;
+
+    const researchText = buildNcmResearchText(editingProduct);
+
+    if (!researchText) {
+      alert('Preencha os dados do produto antes de sugerir o NCM.');
+      return;
+    }
+
+    setEditingFiscalProfile((prev) => ({
+      ...prev,
+      fiscal_description:
+        prev.fiscal_description ||
+        buildProductDisplayName(editingProduct.operational_type, editingProduct.category, editingProduct.name),
+      ncm_source: prev.ncm_source || 'Pesquisa assistida - Classif/Siscomex',
+      ncm_basis: `Pesquisa assistida gerada a partir dos dados do produto: ${researchText}`,
+      ncm_confidence: 'pending',
+      fiscal_status: 'suggested',
+      auto_generated: true,
+      reviewed: false,
+      reviewed_at: null,
+    }));
+
+    openNcmResearch(researchText);
+    setTimeout(() => editingNcmInputRef.current?.focus(), 100);
   };
 
   const openEditProduct = async (product: ProductWithImages) => {
@@ -831,37 +913,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
       if (err) throw err;
 
-      const productRows = ((data as ProductWithImages[]) || []);
-      const productIds = productRows.map((product) => product.id).filter(Boolean);
-
-      let ncmByProductId: Record<string, string> = {};
-
-      if (productIds.length > 0) {
-        const { data: fiscalData, error: fiscalError } = await supabase
-          .from('product_fiscal_profiles')
-          .select('product_id, ncm')
-          .in('product_id', productIds);
-
-        if (fiscalError) throw fiscalError;
-
-        ncmByProductId = ((fiscalData || []) as Array<{ product_id: string; ncm: string | null }>).reduce(
-          (acc, item) => {
-            if (item.product_id) {
-              acc[item.product_id] = item.ncm || '';
-            }
-
-            return acc;
-          },
-          {} as Record<string, string>
-        );
-      }
-
-      const productsWithNcm = productRows.map((product) => ({
-        ...product,
-        ncm: ncmByProductId[product.id] || '',
-      }));
-
-      const sortedProducts = productsWithNcm.sort((a, b) => {
+      const sortedProducts = ((data as ProductWithImages[]) || []).sort((a, b) => {
         if (a.is_featured && !b.is_featured) return -1;
         if (!a.is_featured && b.is_featured) return 1;
         if (a.is_featured && b.is_featured) {
@@ -872,7 +924,36 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         return 0;
       });
 
-      setProducts(sortedProducts);
+      const productIds = sortedProducts.map((product) => product.id).filter(Boolean);
+      let fiscalProfilesByProductId = new Map<string, ProductFiscalProfile>();
+
+      if (productIds.length > 0) {
+        const { data: fiscalProfilesData, error: fiscalProfilesError } = await supabase
+          .from('product_fiscal_profiles')
+          .select('product_id, ncm, fiscal_status, ncm_confidence')
+          .in('product_id', productIds);
+
+        if (!fiscalProfilesError && fiscalProfilesData) {
+          fiscalProfilesByProductId = new Map(
+            (fiscalProfilesData as ProductFiscalProfile[])
+              .filter((profile) => profile.product_id)
+              .map((profile) => [profile.product_id as string, profile])
+          );
+        }
+      }
+
+      setProducts(
+        sortedProducts.map((product) => {
+          const fiscalProfile = fiscalProfilesByProductId.get(product.id);
+
+          return {
+            ...product,
+            fiscal_ncm: fiscalProfile?.ncm || null,
+            fiscal_status: fiscalProfile?.fiscal_status || null,
+            ncm_confidence: fiscalProfile?.ncm_confidence || null,
+          };
+        })
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar produtos');
     } finally {
@@ -1207,7 +1288,10 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         );
 
         await saveProductFilterOptions(insertedProduct.id, optionIdsToSave);
-        await saveNewProductFiscalProfile(insertedProduct.id, newProduct.ncm);
+
+        if (hasFiscalProfileData(newProductFiscalProfile)) {
+          await saveFiscalProfile(insertedProduct.id, newProductFiscalProfile);
+        }
       }
 
       setNewProduct({
@@ -1226,11 +1310,11 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         model: '',
         badge: '',
         catalog_order: null,
-        ncm: '',
         is_featured: false,
         featured_order: null,
       });
       setNewProductFilterOptionIds([]);
+      setNewProductFiscalProfile(getEmptyFiscalProfile());
       setError(null);
       await loadProducts();
       alert('Produto adicionado com sucesso!');
@@ -2099,6 +2183,80 @@ const filteredFilterGroups = [...filterGroups]
                   </select>
                 </div>
 
+                <div className="md:col-span-2 rounded border border-amber-200 bg-amber-50/60 p-4">
+                  <div className="mb-3 flex flex-col gap-1 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900">NCM / Fiscal interno</h3>
+                      <p className="mt-1 text-xs leading-5 text-gray-600">
+                        Campo interno do admin. Não aparece no site público.
+                      </p>
+                    </div>
+
+                    <div className="flex shrink-0 flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={suggestNcmForNewProduct}
+                        className="rounded bg-gray-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-gray-800"
+                      >
+                        Sugerir NCM
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => newProductNcmInputRef.current?.focus()}
+                        className="rounded border border-gray-300 bg-white px-3 py-2 text-xs font-semibold text-gray-800 transition hover:bg-gray-50"
+                      >
+                        Inserir manualmente
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">NCM</label>
+                      <input
+                        ref={newProductNcmInputRef}
+                        type="text"
+                        placeholder="Ex: 8525.89.29"
+                        value={newProductFiscalProfile.ncm}
+                        onChange={(e) =>
+                          setNewProductFiscalProfile((prev) => ({
+                            ...prev,
+                            ncm: e.target.value,
+                            fiscal_status: e.target.value.trim() ? prev.fiscal_status : 'pending',
+                          }))
+                        }
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                      <select
+                        value={newProductFiscalProfile.fiscal_status}
+                        onChange={(e) =>
+                          setNewProductFiscalProfile((prev) => ({
+                            ...prev,
+                            fiscal_status: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                      >
+                        <option value="pending">Pendente</option>
+                        <option value="suggested">Sugerido</option>
+                        <option value="reviewed">Revisado</option>
+                        <option value="approved">Aprovado</option>
+                      </select>
+                    </div>
+
+                    {newProductFiscalProfile.ncm_basis && (
+                      <div className="md:col-span-2 rounded border border-amber-200 bg-white px-3 py-2 text-xs leading-5 text-gray-600">
+                        {newProductFiscalProfile.ncm_basis}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 {newProduct.category &&
                   renderProductFilterSelector(
                     newProductFilterGroups,
@@ -2147,25 +2305,6 @@ const filteredFilterGroups = [...filterGroups]
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">NCM</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: 8525.89.29"
-                    value={newProduct.ncm}
-                    onChange={(e) =>
-                      setNewProduct((prev) => ({
-                        ...prev,
-                        ncm: e.target.value,
-                      }))
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                  />
-                  <p className="mt-1 text-xs text-gray-500">
-                    Uso interno. Não aparece no catálogo público.
-                  </p>
                 </div>
 
 
@@ -2394,8 +2533,8 @@ const filteredFilterGroups = [...filterGroups]
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Nome</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Marca</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-900">NCM</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Filtro Visível</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">NCM</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Destaque</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ordem</th>
@@ -2421,11 +2560,17 @@ const filteredFilterGroups = [...filterGroups]
                           <td className="px-4 py-3 text-gray-600">
                             {product.category}
                           </td>
-                          <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                            {product.ncm || '—'}
-                          </td>
                           <td className="px-4 py-3 text-gray-600">
                             {product.subcategory || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-700">
+                            {product.fiscal_ncm ? (
+                              <span className="whitespace-nowrap rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800">
+                                {product.fiscal_ncm}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400">—</span>
+                            )}
                           </td>
                           <td className="px-4 py-3 text-gray-900">
                             R$ {formatPrice(product.price)}
@@ -3139,8 +3284,18 @@ const filteredFilterGroups = [...filterGroups]
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">NCM</label>
+                        <div className="mb-1 flex items-center justify-between gap-2">
+                          <label className="block text-sm font-medium text-gray-700">NCM</label>
+                          <button
+                            type="button"
+                            onClick={suggestNcmForEditingProduct}
+                            className="rounded bg-gray-900 px-2.5 py-1.5 text-[11px] font-semibold text-white transition hover:bg-gray-800"
+                          >
+                            Sugerir NCM
+                          </button>
+                        </div>
                         <input
+                          ref={editingNcmInputRef}
                           type="text"
                           placeholder="Ex: 8525.89.29"
                           value={editingFiscalProfile.ncm}
@@ -3148,6 +3303,7 @@ const filteredFilterGroups = [...filterGroups]
                             setEditingFiscalProfile((prev) => ({
                               ...prev,
                               ncm: e.target.value,
+                              fiscal_status: e.target.value.trim() ? prev.fiscal_status : 'pending',
                             }))
                           }
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
