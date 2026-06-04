@@ -687,9 +687,9 @@ export default function Catalogo() {
 
               <div className="flex flex-1 justify-start">
                 <div className="max-w-[620px]">
-                  <h1 className="font-sans text-[36px] font-normal uppercase leading-[1.02] tracking-[-0.04em] text-neutral-950">
-                    {activeCategorySeo ? activeCategorySeo.title : "Monte seu setup."}
-                  </h1>
+                 <h1 className="font-sans text-[36px] font-normal leading-[1.02] tracking-[-0.04em] text-neutral-950">
+  {isCategoryPage ? selectedCategory : "Monte seu setup."}
+</h1>
 
                   <p className="mt-2 text-[15px] font-medium leading-relaxed text-neutral-700">
                     {activeCategorySeo?.description
@@ -707,9 +707,9 @@ export default function Catalogo() {
                 01 / CATÁLOGO
               </span>
 
-              <h1 className="mt-2 text-[32px] font-bold leading-[0.95] tracking-[-0.04em] text-neutral-950">
-                {activeCategorySeo ? activeCategorySeo.title : "Monte seu setup."}
-              </h1>
+              <h1 className="mt-2 text-[32px] font-semibold leading-[0.95] tracking-[-0.04em] text-neutral-950">
+  {isCategoryPage ? selectedCategory : "Monte seu setup."}
+</h1>
 
               <p className="mt-3 max-w-[360px] text-[14px] font-medium leading-relaxed text-neutral-700">
                 {activeCategorySeo?.description
