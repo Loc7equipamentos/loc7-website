@@ -59,9 +59,9 @@ type CategoryWithSeo = Category & {
   seo_title?: string | null;
   seo_description?: string | null;
   seo_applications?: string | null;
+  seo_brands?: string | null;
   seo_meta_description?: string | null;
 };
-
 export default function Catalogo() {
   const params = useParams<{ category?: string }>();
   const [location, setLocation] = useLocation();
@@ -148,7 +148,7 @@ export default function Catalogo() {
 
         const { data: categoriesData, error: catError } = await supabase
           .from("categories")
-          .select("id, name, seo_title, seo_description, seo_applications, seo_meta_description")
+         .select("id, name, seo_title, seo_description, seo_applications, seo_brands, seo_meta_description")
           .order("name");
 
         if (catError) throw catError;
@@ -359,6 +359,7 @@ export default function Catalogo() {
           title: selectedCategoryRow.seo_title?.trim() || selectedCategoryRow.name,
           description: selectedCategoryRow.seo_description?.trim() || "",
           applications: selectedCategoryRow.seo_applications?.trim() || "",
+          brands: selectedCategoryRow.seo_brands?.trim() || "",
           metaDescription:
             selectedCategoryRow.seo_meta_description?.trim() ||
             selectedCategoryRow.seo_description?.trim() ||
@@ -703,11 +704,11 @@ export default function Catalogo() {
                         : "Busque o que precisar, quando precisar."}
                   </p>
 
-                  {isCategoryPage && uniqueBrands.length > 0 && (
-                    <p className="mt-3 text-[13px] leading-relaxed text-neutral-500">
-                      {uniqueBrands.join(" • ")}
-                    </p>
-                  )}
+                {isCategoryPage && activeCategorySeo?.brands && (
+  <p className="mt-3 max-w-[360px] text-[12px] leading-relaxed text-neutral-500">
+    {activeCategorySeo.brands}
+  </p>
+)}
                 </div>
               </div>
             </div>
@@ -729,11 +730,11 @@ export default function Catalogo() {
                     : "Busque o que precisar, quando precisar."}
               </p>
 
-              {isCategoryPage && uniqueBrands.length > 0 && (
-                <p className="mt-3 max-w-[360px] text-[12px] leading-relaxed text-neutral-500">
-                  {uniqueBrands.join(" • ")}
-                </p>
-              )}
+             {isCategoryPage && activeCategorySeo?.brands && (
+  <p className="mt-3 text-[13px] leading-relaxed text-neutral-500">
+    {activeCategorySeo.brands}
+  </p>
+)}
             </div>
 
             {!isCategoryPage && (
