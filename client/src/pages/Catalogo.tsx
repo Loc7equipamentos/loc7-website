@@ -53,6 +53,45 @@ type ProductFilterOption = {
   filter_option_id: string;
 };
 
+const OFFICIAL_DOMAIN = "https://www.loc7equipamentos.com.br";
+
+type CategorySeoContent = {
+  title: string;
+  description: string;
+  metaDescription: string;
+};
+
+const categorySeoContent: Record<string, CategorySeoContent> = {
+  cameras: {
+    title: "Aluguel de Câmeras Profissionais em São Paulo",
+    description:
+      "Locação de câmeras Sony, RED, Blackmagic, Canon e Panasonic para cinema, broadcast, publicidade, documentários, eventos corporativos e transmissões ao vivo.",
+    metaDescription:
+      "Aluguel de câmeras profissionais em São Paulo. Sony, RED, Blackmagic, Canon e Panasonic para cinema, publicidade, eventos e broadcast.",
+  },
+  lentes: {
+    title: "Aluguel de Lentes para Cinema e Fotografia em São Paulo",
+    description:
+      "Locação de lentes Sony, Canon, Cooke, Zeiss, Leica, Atlas, DZO e Angenieux para cinema, publicidade, documentários, streaming e fotografia profissional.",
+    metaDescription:
+      "Aluguel de lentes para cinema e fotografia em São Paulo. Lentes Sony, Canon, Cooke, Zeiss, Leica, Atlas e DZO.",
+  },
+  iluminacao: {
+    title: "Aluguel de Iluminação Profissional em São Paulo",
+    description:
+      "Refletores LED, painéis LED, tubos RGB, Fresnéis, HMI e acessórios para cinema, televisão, publicidade, eventos e transmissões ao vivo.",
+    metaDescription:
+      "Locação de iluminação profissional em São Paulo. Refletores LED, painéis, tubos RGB, Fresnéis e HMI para cinema e eventos.",
+  },
+  audio: {
+    title: "Aluguel de Equipamentos de Áudio Profissional em São Paulo",
+    description:
+      "Microfones, gravadores, mixers, sistemas sem fio, IFB e soluções completas de áudio para cinema, televisão, eventos e produções corporativas.",
+    metaDescription:
+      "Aluguel de equipamentos de áudio profissional em São Paulo. Microfones, gravadores, mixers e sistemas sem fio.",
+  },
+};
+
 export default function Catalogo() {
   const params = useParams<{ category?: string }>();
   const [location, setLocation] = useLocation();
@@ -346,6 +385,115 @@ export default function Catalogo() {
     return matchSubcategory && matchBrand;
   });
 
+  const activeCategorySeo = isCategoryPage
+    ? categorySeoContent[activeCategorySlug || ""]
+    : null;
+
+  useEffect(() => {
+    const setMetaTag = (
+      key: "name" | "property",
+      value: string,
+      content: string
+    ) => {
+      let tag = document.head.querySelector(
+        `meta[${key}="${value}"]`
+      ) as HTMLMetaElement | null;
+
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute(key, value);
+        document.head.appendChild(tag);
+      }
+
+      tag.setAttribute("content", content);
+    };
+
+    const canonicalPath = activeCategorySlug
+      ? `/catalogo/${activeCategorySlug}`
+      : "/catalogo";
+    const canonicalUrl = `${OFFICIAL_DOMAIN}${canonicalPath}`;
+    const pageTitle = activeCategorySeo
+      ? `${activeCategorySeo.title} | LOC7`
+      : "Catálogo de Equipamentos para Locação | LOC7";
+    const pageDescription = activeCategorySeo
+      ? activeCategorySeo.metaDescription
+      : "Catálogo de equipamentos audiovisuais para locação em São Paulo. Câmeras, lentes, iluminação, áudio, monitores e acessórios profissionais.";
+
+    document.title = pageTitle;
+
+    setMetaTag("name", "description", pageDescription);
+    setMetaTag("property", "og:title", pageTitle);
+    setMetaTag("property", "og:description", pageDescription);
+    setMetaTag("property", "og:url", canonicalUrl);
+    setMetaTag("property", "og:type", "website");
+
+    let canonical = document.head.querySelector(
+      'link[rel="canonical"]'
+    ) as HTMLLinkElement | null;
+
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+
+    canonical.setAttribute("href", canonicalUrl);
+
+    if (activeCategorySeo) {
+      const collectionJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: activeCategorySeo.title,
+        description: activeCategorySeo.description,
+        url: canonicalUrl,
+        mainEntity: {
+          "@type": "ItemList",
+          name: selectedCategory,
+          numberOfItems: filteredProducts.length,
+          itemListElement: filteredProducts.slice(0, 24).map((product, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: product.name,
+            url: `${OFFICIAL_DOMAIN}/equipamentos/${slugifyPathSegment(
+              product.category
+            )}/${(product as Product & { slug?: string | null }).slug || ""}`,
+          })),
+        },
+      };
+
+      let collectionSchema = document.head.querySelector(
+        'script[data-loc7-schema="category"]'
+      ) as HTMLScriptElement | null;
+
+      if (!collectionSchema) {
+        collectionSchema = document.createElement("script");
+        collectionSchema.type = "application/ld+json";
+        collectionSchema.setAttribute("data-loc7-schema", "category");
+        document.head.appendChild(collectionSchema);
+      }
+
+      collectionSchema.textContent = JSON.stringify(collectionJsonLd);
+    } else {
+      const collectionSchema = document.head.querySelector(
+        'script[data-loc7-schema="category"]'
+      );
+
+      collectionSchema?.remove();
+    }
+
+    const hostname = window.location.hostname;
+    const isStaging =
+      hostname.includes("loc7.com.br") &&
+      !hostname.includes("loc7equipamentos.com.br");
+
+    setMetaTag("name", "robots", isStaging ? "noindex, nofollow" : "index, follow");
+  }, [
+    activeCategorySeo,
+    activeCategorySlug,
+    filteredProducts,
+    selectedCategory,
+  ]);
+
   const SidebarFilters = () => (
     <div className="space-y-8">
       {!isCategoryPage && (
@@ -563,13 +711,15 @@ export default function Catalogo() {
               <div className="flex flex-1 justify-start">
                 <div className="max-w-[620px]">
                   <h1 className="font-sans text-[36px] font-normal uppercase leading-[1.02] tracking-[-0.04em] text-neutral-950">
-                    Monte seu setup.
+                    {activeCategorySeo ? activeCategorySeo.title : "Monte seu setup."}
                   </h1>
 
                   <p className="mt-2 text-[15px] font-medium leading-relaxed text-neutral-700">
-                    {searchQuery
-                      ? `Resultado da busca por "${searchQuery}".`
-                      : "Busque o que precisar, quando precisar."}
+                    {activeCategorySeo
+                      ? activeCategorySeo.description
+                      : searchQuery
+                        ? `Resultado da busca por "${searchQuery}".`
+                        : "Busque o que precisar, quando precisar."}
                   </p>
                 </div>
               </div>
@@ -581,13 +731,15 @@ export default function Catalogo() {
               </span>
 
               <h1 className="mt-2 text-[32px] font-bold leading-[0.95] tracking-[-0.04em] text-neutral-950">
-                Monte seu setup.
+                {activeCategorySeo ? activeCategorySeo.title : "Monte seu setup."}
               </h1>
 
-              <p className="mt-3 max-w-[320px] text-[14px] font-medium leading-relaxed text-neutral-700">
-                {searchQuery
-                  ? `Resultado da busca por "${searchQuery}".`
-                  : "Busque o que precisar, quando precisar."}
+              <p className="mt-3 max-w-[360px] text-[14px] font-medium leading-relaxed text-neutral-700">
+                {activeCategorySeo
+                  ? activeCategorySeo.description
+                  : searchQuery
+                    ? `Resultado da busca por "${searchQuery}".`
+                    : "Busque o que precisar, quando precisar."}
               </p>
             </div>
 
