@@ -15,6 +15,7 @@ type ProductWithImages = Product & {
   fiscal_ncm?: string | null;
   fiscal_status?: string | null;
   ncm_confidence?: string | null;
+  seo_tags?: string | null;
 };
 
 type Brand = {
@@ -145,6 +146,7 @@ export default function AdminDashboard() {
     images: [] as string[],
     brand: '',
     model: '',
+    seo_tags: '',
     badge: '',
     catalog_order: null as number | null,
     is_featured: false,
@@ -270,6 +272,24 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
       .trim();
+  };
+
+  const countSeoTags = (value?: string | null) => {
+    return (value || '')
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .slice(0, 20)
+      .length;
+  };
+
+  const normalizeSeoTags = (value?: string | null) => {
+    return (value || '')
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .slice(0, 20)
+      .join('\n');
   };
 
   const isBrandFilterGroup = (group?: FilterGroup | null) => {
@@ -1270,6 +1290,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
             includes: newProduct.includes.trim() || null,
             image_url: newProduct.image_url || null,
             images: newProduct.images.length > 0 ? newProduct.images : null,
+            seo_tags: normalizeSeoTags(newProduct.seo_tags) || null,
             badge: newProduct.badge || null,
             slug,
             catalog_order: newProduct.catalog_order || null,
@@ -1310,6 +1331,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         images: [],
         brand: '',
         model: '',
+        seo_tags: '',
         badge: '',
         catalog_order: null,
         is_featured: false,
@@ -1355,6 +1377,11 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
             editingProduct.images && editingProduct.images.length > 0
               ? editingProduct.images
               : null,
+          seo_tags: normalizeSeoTags(
+            (editingProduct as ProductWithImages).seo_tags ||
+              editingProduct.badge ||
+              ''
+          ) || null,
           badge: editingProduct.badge || null,
           slug,
           catalog_order: editingProduct.catalog_order || null,
@@ -2416,8 +2443,8 @@ const filteredFilterGroups = [...filterGroups]
                   <textarea
                     rows={5}
                     placeholder={`Digite uma intenção de busca por linha.\nEx: lente Sony 14mm\nlente ultra grande angular Sony\nlente para Sony FX3\nlente para astrofotografia`}
-                    value={newProduct.badge}
-                    onChange={(e) => setNewProduct((prev) => ({ ...prev, badge: e.target.value }))}
+                    value={newProduct.seo_tags}
+                    onChange={(e) => setNewProduct((prev) => ({ ...prev, seo_tags: e.target.value }))}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
                   <p className="mt-1 text-xs text-gray-500">
@@ -2668,6 +2695,7 @@ const filteredFilterGroups = [...filterGroups]
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Marca</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Filtro Visível</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">SEO</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">NCM</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Destaque</th>
@@ -2678,7 +2706,7 @@ const filteredFilterGroups = [...filterGroups]
                   <tbody className="divide-y divide-gray-200">
                     {filteredProducts.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={10} className="px-4 py-8 text-center text-gray-500">
                           Nenhum produto cadastrado
                         </td>
                       </tr>
@@ -2696,6 +2724,15 @@ const filteredFilterGroups = [...filterGroups]
                           </td>
                           <td className="px-4 py-3 text-gray-600">
                             {product.subcategory || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-700">
+                            {countSeoTags((product as ProductWithImages).seo_tags || product.badge || '') > 0 ? (
+                              <span className="whitespace-nowrap rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+                                {countSeoTags((product as ProductWithImages).seo_tags || product.badge || '')} tags
+                              </span>
+                            ) : (
+                              <span className="text-gray-400">—</span>
+                            )}
                           </td>
                           <td className="px-4 py-3 text-gray-700">
                             {product.fiscal_ncm ? (
@@ -3327,10 +3364,10 @@ const filteredFilterGroups = [...filterGroups]
                   <textarea
                     rows={5}
                     placeholder={`Digite uma intenção de busca por linha.\nEx: lente Sony 14mm\nlente ultra grande angular Sony\nlente para Sony FX3\nlente para astrofotografia`}
-                    value={editingProduct.badge || ''}
+                    value={(editingProduct as ProductWithImages).seo_tags || editingProduct.badge || ''}
                     onChange={(e) =>
                       setEditingProduct((prev) =>
-                        prev ? { ...prev, badge: e.target.value } : prev
+                        prev ? { ...prev, seo_tags: e.target.value } : prev
                       )
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
