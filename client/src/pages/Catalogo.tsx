@@ -687,7 +687,7 @@ export default function Catalogo() {
 
               <div className="flex flex-1 justify-start">
                 <div className="max-w-[620px]">
-                 <h1 className="text-[30px] font-semibold leading-tight text-neutral-950">
+                 <h1 className="text-[26px] font-semibold leading-tight text-neutral-950">
   {isCategoryPage ? selectedCategory : "Monte seu setup."}
 </h1>
 
