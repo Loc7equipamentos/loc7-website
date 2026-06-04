@@ -69,6 +69,10 @@ export interface Category {
   name: string;
   slug?: string | null;
   icon?: string | null;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  seo_applications?: string | null;
+  seo_meta_description?: string | null;
   created_at?: string;
   updated_at?: string;
 }
