@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { SlidersHorizontal, ChevronDown, Menu, X } from "lucide-react";
 import { useParams, useLocation } from "wouter";
 import ProductCard from "@/components/ProductCard";
-import { supabase, type Product } from "@/lib/supabase";
+import { supabase, type Product, type Category } from "@/lib/supabase";
 
 const normalize = (text: string): string =>
   text
@@ -55,41 +55,11 @@ type ProductFilterOption = {
 
 const OFFICIAL_DOMAIN = "https://www.loc7equipamentos.com.br";
 
-type CategorySeoContent = {
-  title: string;
-  description: string;
-  metaDescription: string;
-};
-
-const categorySeoContent: Record<string, CategorySeoContent> = {
-  cameras: {
-    title: "Aluguel de Câmeras Profissionais em São Paulo",
-    description:
-      "Locação de câmeras Sony, RED, Blackmagic, Canon e Panasonic para cinema, broadcast, publicidade, documentários, eventos corporativos e transmissões ao vivo.",
-    metaDescription:
-      "Aluguel de câmeras profissionais em São Paulo. Sony, RED, Blackmagic, Canon e Panasonic para cinema, publicidade, eventos e broadcast.",
-  },
-  lentes: {
-    title: "Aluguel de Lentes para Cinema e Fotografia em São Paulo",
-    description:
-      "Locação de lentes Sony, Canon, Cooke, Zeiss, Leica, Atlas, DZO e Angenieux para cinema, publicidade, documentários, streaming e fotografia profissional.",
-    metaDescription:
-      "Aluguel de lentes para cinema e fotografia em São Paulo. Lentes Sony, Canon, Cooke, Zeiss, Leica, Atlas e DZO.",
-  },
-  iluminacao: {
-    title: "Aluguel de Iluminação Profissional em São Paulo",
-    description:
-      "Refletores LED, painéis LED, tubos RGB, Fresnéis, HMI e acessórios para cinema, televisão, publicidade, eventos e transmissões ao vivo.",
-    metaDescription:
-      "Locação de iluminação profissional em São Paulo. Refletores LED, painéis, tubos RGB, Fresnéis e HMI para cinema e eventos.",
-  },
-  audio: {
-    title: "Aluguel de Equipamentos de Áudio Profissional em São Paulo",
-    description:
-      "Microfones, gravadores, mixers, sistemas sem fio, IFB e soluções completas de áudio para cinema, televisão, eventos e produções corporativas.",
-    metaDescription:
-      "Aluguel de equipamentos de áudio profissional em São Paulo. Microfones, gravadores, mixers e sistemas sem fio.",
-  },
+type CategoryWithSeo = Category & {
+  seo_title?: string | null;
+  seo_description?: string | null;
+  seo_applications?: string | null;
+  seo_meta_description?: string | null;
 };
 
 export default function Catalogo() {
@@ -105,9 +75,7 @@ export default function Catalogo() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
-  const [categoryRows, setCategoryRows] = useState<
-    { id: string; name: string }[]
-  >([]);
+  const [categoryRows, setCategoryRows] = useState<CategoryWithSeo[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [filterGroups, setFilterGroups] = useState<FilterGroup[]>([]);
   const [productFilterOptions, setProductFilterOptions] = useState<
@@ -180,14 +148,14 @@ export default function Catalogo() {
 
         const { data: categoriesData, error: catError } = await supabase
           .from("categories")
-          .select("id, name")
+          .select("id, name, seo_title, seo_description, seo_applications, seo_meta_description")
           .order("name");
 
         if (catError) throw catError;
 
         const categoryNames = categoriesData?.map((c) => c.name) || [];
         setCategories(["Todos", ...categoryNames]);
-        setCategoryRows(categoriesData || []);
+        setCategoryRows((categoriesData as CategoryWithSeo[]) || []);
 
         const { data: subcategoriesData, error: subError } = await supabase
           .from("subcategories")
@@ -385,9 +353,18 @@ export default function Catalogo() {
     return matchSubcategory && matchBrand;
   });
 
-  const activeCategorySeo = isCategoryPage
-    ? categorySeoContent[activeCategorySlug || ""]
-    : null;
+  const activeCategorySeo =
+    isCategoryPage && selectedCategoryRow
+      ? {
+          title: selectedCategoryRow.seo_title?.trim() || selectedCategoryRow.name,
+          description: selectedCategoryRow.seo_description?.trim() || "",
+          applications: selectedCategoryRow.seo_applications?.trim() || "",
+          metaDescription:
+            selectedCategoryRow.seo_meta_description?.trim() ||
+            selectedCategoryRow.seo_description?.trim() ||
+            `Catálogo de ${selectedCategoryRow.name.toLowerCase()} para locação profissional em São Paulo.`,
+        }
+      : null;
 
   useEffect(() => {
     const setMetaTag = (
@@ -715,7 +692,7 @@ export default function Catalogo() {
                   </h1>
 
                   <p className="mt-2 text-[15px] font-medium leading-relaxed text-neutral-700">
-                    {activeCategorySeo
+                    {activeCategorySeo?.description
                       ? activeCategorySeo.description
                       : searchQuery
                         ? `Resultado da busca por "${searchQuery}".`
@@ -735,7 +712,7 @@ export default function Catalogo() {
               </h1>
 
               <p className="mt-3 max-w-[360px] text-[14px] font-medium leading-relaxed text-neutral-700">
-                {activeCategorySeo
+                {activeCategorySeo?.description
                   ? activeCategorySeo.description
                   : searchQuery
                     ? `Resultado da busca por "${searchQuery}".`
