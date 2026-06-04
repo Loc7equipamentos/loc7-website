@@ -27,6 +27,7 @@ type CategoryWithSeo = Category & {
   seo_title?: string | null;
   seo_description?: string | null;
   seo_applications?: string | null;
+  seo_brands?: string | null;
   seo_meta_description?: string | null;
 };
 
@@ -1473,13 +1474,14 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   };
 
   const openCategorySeoEditor = (category: CategoryWithSeo) => {
-    setEditingCategory({
-      ...category,
-      seo_title: category.seo_title || '',
-      seo_description: category.seo_description || '',
-      seo_applications: category.seo_applications || '',
-      seo_meta_description: category.seo_meta_description || '',
-    });
+  setEditingCategory({
+  ...category,
+  seo_title: category.seo_title || '',
+  seo_description: category.seo_description || '',
+  seo_applications: category.seo_applications || '',
+  seo_brands: category.seo_brands || '',
+  seo_meta_description: category.seo_meta_description || '',
+});
     setShowCategorySeoModal(true);
   };
 
@@ -1492,10 +1494,11 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       const { error: err } = await supabase
         .from('categories')
         .update({
-          seo_title: editingCategory.seo_title?.trim() || null,
-          seo_description: editingCategory.seo_description?.trim() || null,
-          seo_applications: editingCategory.seo_applications?.trim() || null,
-          seo_meta_description: editingCategory.seo_meta_description?.trim() || null,
+  seo_title: editingCategory.seo_title?.trim() || null,
+  seo_description: editingCategory.seo_description?.trim() || null,
+  seo_applications: editingCategory.seo_applications?.trim() || null,
+  seo_brands: editingCategory.seo_brands?.trim() || null,
+  seo_meta_description: editingCategory.seo_meta_description?.trim() || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', editingCategory.id);
@@ -3009,6 +3012,33 @@ const filteredFilterGroups = [...filterGroups]
                   </p>
                 </div>
 
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Marcas
+  </label>
+
+  <textarea
+    rows={2}
+    value={editingCategory.seo_brands || ''}
+    onChange={(e) =>
+      setEditingCategory((prev) =>
+        prev
+          ? {
+              ...prev,
+              seo_brands: e.target.value,
+            }
+          : prev
+      )
+    }
+    placeholder="Sony • ARRI • RED • Blackmagic • Canon • Nikon • Fujifilm"
+    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+  />
+
+  <p className="mt-1 text-xs text-gray-500">
+    Marcas estratégicas exibidas na página da categoria.
+  </p>
+</div>
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
                   <textarea
