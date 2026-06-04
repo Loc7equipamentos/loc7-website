@@ -244,10 +244,39 @@ useEffect(() => {
     const productSlug = (product as Product & { slug?: string | null }).slug || slug || "";
     const categorySlug = slugifyPathSegment(product.category) || "catalogo";
     const canonicalUrl = `${OFFICIAL_DOMAIN}/equipamentos/${categorySlug}/${productSlug}`;
-    const pageTitle = `${productTitle} para locação em São Paulo | LOC7`;
-    const pageDescription = `Locação de ${productTitle} para produções audiovisuais, publicidade, cinema e broadcast em São Paulo. Equipamentos profissionais com suporte técnico especializado.`;
-    const ogImage = product.image_url || currentImage || "";
-    const keywordContent = seoTags.join(", ");
+    const automaticSeoTags = [
+  productTitle,
+  (product as Product & { brand?: string | null }).brand,
+  product.category,
+  product.subcategory,
+]
+  .filter((item): item is string => typeof item === "string" && item.trim() !== "")
+  .map((item) => item.trim());
+
+const finalSeoTags = Array.from(
+  new Set([...automaticSeoTags, ...seoTags])
+).slice(0, 20);
+
+const titleTags = finalSeoTags
+  .filter((tag) => tag !== productTitle)
+  .slice(0, 2)
+  .join(" ");
+
+const descriptionTags = finalSeoTags
+  .filter((tag) => tag !== productTitle)
+  .slice(0, 5)
+  .join(", ");
+
+const pageTitle = titleTags
+  ? `${productTitle} ${titleTags} para Locação | LOC7`
+  : `${productTitle} para Locação | LOC7`;
+
+const pageDescription = descriptionTags
+  ? `Locação de ${productTitle} para cinema, publicidade, audiovisual e broadcast em São Paulo. ${descriptionTags}. Suporte técnico especializado LOC7.`
+  : `Locação de ${productTitle} para produções audiovisuais, publicidade, cinema e broadcast em São Paulo. Equipamentos profissionais com suporte técnico especializado.`;
+
+const ogImage = product.image_url || currentImage || "";
+const keywordContent = finalSeoTags.join(", ");
 
     document.title = pageTitle;
 
@@ -304,7 +333,7 @@ useEffect(() => {
             name: (product as Product & { brand?: string | null }).brand,
           }
         : undefined,
-      keywords: seoTags.length > 0 ? seoTags.join(", ") : undefined,
+     keywords: finalSeoTags.length > 0 ? finalSeoTags.join(", ") : undefined,
       url: canonicalUrl,
       offers: product.price
         ? {
