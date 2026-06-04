@@ -683,13 +683,17 @@ export default function Catalogo() {
                 <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
                   01 / CATÁLOGO
                 </span>
+
+                {isCategoryPage && (
+                  <h1 className="mt-5 text-[26px] font-semibold leading-tight text-neutral-950">
+                    {selectedCategory}
+                  </h1>
+                )}
               </div>
 
               <div className="flex flex-1 justify-start">
                 <div className="max-w-[620px]">
-                 <h1 className="text-[26px] font-semibold leading-tight text-neutral-950">
-  {isCategoryPage ? selectedCategory : "Monte seu setup."}
-</h1>
+                  <div className="h-[32px]" aria-hidden="true" />
 
                   <p className="mt-2 text-[15px] font-medium leading-relaxed text-neutral-700">
                     {activeCategorySeo?.description
@@ -698,6 +702,12 @@ export default function Catalogo() {
                         ? `Resultado da busca por "${searchQuery}".`
                         : "Busque o que precisar, quando precisar."}
                   </p>
+
+                  {isCategoryPage && uniqueBrands.length > 0 && (
+                    <p className="mt-3 text-[13px] leading-relaxed text-neutral-500">
+                      {uniqueBrands.join(" • ")}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -718,6 +728,12 @@ export default function Catalogo() {
                     ? `Resultado da busca por "${searchQuery}".`
                     : "Busque o que precisar, quando precisar."}
               </p>
+
+              {isCategoryPage && uniqueBrands.length > 0 && (
+                <p className="mt-3 max-w-[360px] text-[12px] leading-relaxed text-neutral-500">
+                  {uniqueBrands.join(" • ")}
+                </p>
+              )}
             </div>
 
             {!isCategoryPage && (
