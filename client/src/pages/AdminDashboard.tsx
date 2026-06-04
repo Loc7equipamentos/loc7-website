@@ -23,6 +23,13 @@ type Brand = {
   name: string;
 };
 
+type CategoryWithSeo = Category & {
+  seo_title?: string | null;
+  seo_description?: string | null;
+  seo_applications?: string | null;
+  seo_meta_description?: string | null;
+};
+
 type OperationalType = {
   id: string;
   name: string;
@@ -114,7 +121,7 @@ const normalizeFiscalProfile = (data: Partial<ProductFiscalProfile> | null): Pro
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState<ProductWithImages[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<CategoryWithSeo[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [operationalTypes, setOperationalTypes] = useState<OperationalType[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -158,6 +165,8 @@ export default function AdminDashboard() {
   const editingNcmInputRef = useRef<HTMLInputElement | null>(null);
 
   const [newCategory, setNewCategory] = useState('');
+  const [editingCategory, setEditingCategory] = useState<CategoryWithSeo | null>(null);
+  const [showCategorySeoModal, setShowCategorySeoModal] = useState(false);
   const [newBrand, setNewBrand] = useState('');
   const [newOperationalType, setNewOperationalType] = useState('');
   const [newVisibleFilterName, setNewVisibleFilterName] = useState('');
@@ -988,7 +997,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       const { data, error: err } = await supabase.from('categories').select('*').order('name');
 
       if (err) throw err;
-      setCategories(data || []);
+      setCategories((data as CategoryWithSeo[]) || []);
     } catch (err) {
       console.error('Erro ao carregar categorias:', err);
     }
@@ -1460,6 +1469,46 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       alert('Categoria deletada com sucesso!');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao deletar categoria');
+    }
+  };
+
+  const openCategorySeoEditor = (category: CategoryWithSeo) => {
+    setEditingCategory({
+      ...category,
+      seo_title: category.seo_title || '',
+      seo_description: category.seo_description || '',
+      seo_applications: category.seo_applications || '',
+      seo_meta_description: category.seo_meta_description || '',
+    });
+    setShowCategorySeoModal(true);
+  };
+
+  const updateCategorySeo = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!editingCategory) return;
+
+    try {
+      const { error: err } = await supabase
+        .from('categories')
+        .update({
+          seo_title: editingCategory.seo_title?.trim() || null,
+          seo_description: editingCategory.seo_description?.trim() || null,
+          seo_applications: editingCategory.seo_applications?.trim() || null,
+          seo_meta_description: editingCategory.seo_meta_description?.trim() || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', editingCategory.id);
+
+      if (err) throw err;
+
+      setShowCategorySeoModal(false);
+      setEditingCategory(null);
+      setError(null);
+      await loadCategories();
+      alert('SEO da categoria atualizado com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao atualizar SEO da categoria');
     }
   };
 
@@ -2819,35 +2868,184 @@ const filteredFilterGroups = [...filterGroups]
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">SEO Editorial</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ações</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {categories.length === 0 ? (
                       <tr>
-                        <td colSpan={2} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={3} className="px-4 py-8 text-center text-gray-500">
                           Nenhuma categoria cadastrada
                         </td>
                       </tr>
                     ) : (
-                      categories.map((cat) => (
-                        <tr key={cat.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-gray-900 font-medium">{cat.name}</td>
-                          <td className="px-4 py-3">
-                            <button
-                              onClick={() => deleteCategory(cat.id)}
-                              className="p-1 hover:bg-gray-200 rounded"
-                              title="Deletar"
-                            >
-                              <Trash2 size={16} className="text-gray-600" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))
+                      categories.map((cat) => {
+                        const hasCategorySeo = Boolean(
+                          cat.seo_title?.trim() &&
+                            cat.seo_description?.trim() &&
+                            cat.seo_applications?.trim() &&
+                            cat.seo_meta_description?.trim()
+                        );
+
+                        return (
+                          <tr key={cat.id} className="hover:bg-gray-50">
+                            <td className="px-4 py-3 text-gray-900 font-medium">{cat.name}</td>
+                            <td className="px-4 py-3">
+                              {hasCategorySeo ? (
+                                <span className="inline-flex rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">
+                                  Completo
+                                </span>
+                              ) : (
+                                <span className="text-gray-400">—</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => openCategorySeoEditor(cat)}
+                                  className="p-1 hover:bg-gray-200 rounded"
+                                  title="Editar SEO da categoria"
+                                >
+                                  <Edit2 size={16} className="text-gray-600" />
+                                </button>
+
+                                <button
+                                  onClick={() => deleteCategory(cat.id)}
+                                  className="p-1 hover:bg-gray-200 rounded"
+                                  title="Deletar"
+                                >
+                                  <Trash2 size={16} className="text-gray-600" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
                     )}
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+
+        {showCategorySeoModal && editingCategory && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">SEO da Categoria</h2>
+                  <p className="text-sm text-gray-500 mt-1">{editingCategory.name}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCategorySeoModal(false);
+                    setEditingCategory(null);
+                  }}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <X size={20} className="text-gray-500" />
+                </button>
+              </div>
+
+              <form onSubmit={updateCategorySeo} className="p-6 space-y-5">
+                <div className="rounded border border-gray-200 bg-gray-50 px-4 py-3">
+                  <p className="text-sm font-medium text-gray-900">Template editorial LOC7</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Estes campos alimentam a página da categoria, meta description, Open Graph e JSON-LD. Use texto editorial, discreto e sem excesso promocional.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">SEO Title</label>
+                  <input
+                    type="text"
+                    value={editingCategory.seo_title || ''}
+                    onChange={(e) =>
+                      setEditingCategory((prev) =>
+                        prev ? { ...prev, seo_title: e.target.value } : prev
+                      )
+                    }
+                    placeholder="Ex: Câmeras"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Título editorial exibido na categoria e usado como base semântica.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Descrição Editorial</label>
+                  <textarea
+                    rows={5}
+                    value={editingCategory.seo_description || ''}
+                    onChange={(e) =>
+                      setEditingCategory((prev) =>
+                        prev ? { ...prev, seo_description: e.target.value } : prev
+                      )
+                    }
+                    placeholder="Locação de câmeras profissionais para cinema, broadcast, fotografia..."
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Aplicações</label>
+                  <textarea
+                    rows={3}
+                    value={editingCategory.seo_applications || ''}
+                    onChange={(e) =>
+                      setEditingCategory((prev) =>
+                        prev ? { ...prev, seo_applications: e.target.value } : prev
+                      )
+                    }
+                    placeholder="Cinema • Fotografia • Broadcast • Publicidade • Streaming"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Use microdots para manter leitura editorial e discreta.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
+                  <textarea
+                    rows={3}
+                    value={editingCategory.seo_meta_description || ''}
+                    onChange={(e) =>
+                      setEditingCategory((prev) =>
+                        prev ? { ...prev, seo_meta_description: e.target.value } : prev
+                      )
+                    }
+                    placeholder="Resumo para Google e compartilhamento. Ideal entre 140 e 160 caracteres."
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Campo interno. Não aparece no layout da categoria como texto visível.
+                  </p>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCategorySeoModal(false);
+                      setEditingCategory(null);
+                    }}
+                    className="px-4 py-2 text-sm font-medium border border-gray-300 rounded hover:bg-gray-50 text-gray-700"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 text-sm font-medium bg-gray-900 hover:bg-gray-800 text-white rounded"
+                  >
+                    Salvar SEO
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
