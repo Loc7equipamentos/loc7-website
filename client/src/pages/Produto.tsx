@@ -57,6 +57,32 @@ function parseHighlights(description: unknown): string[] {
     .filter(Boolean);
 }
 
+function parseSeoTags(tags: unknown): string[] {
+  if (Array.isArray(tags)) {
+    return Array.from(
+      new Set(
+        tags
+          .filter((item): item is string => typeof item === "string")
+          .map((item) => item.trim())
+          .filter(Boolean)
+      )
+    ).slice(0, 20);
+  }
+
+  if (typeof tags === "string") {
+    return Array.from(
+      new Set(
+        tags
+          .split(/\n|,/)
+          .map((item) => item.trim())
+          .filter(Boolean)
+      )
+    ).slice(0, 20);
+  }
+
+  return [];
+}
+
 function slugifyPathSegment(value?: string | null): string {
   return (value || "")
     .toLowerCase()
@@ -156,6 +182,13 @@ useEffect(() => {
     [product]
   );
 
+
+  const seoTags = useMemo(() => {
+    return product
+      ? parseSeoTags((product as Product & { seo_tags?: string | string[] | null }).seo_tags)
+      : [];
+  }, [product]);
+
   useEffect(() => {
     if (highlightsText.length > 0) {
       setMobileTab("overview");
@@ -214,6 +247,7 @@ useEffect(() => {
     const pageTitle = `${productTitle} para locação em São Paulo | LOC7`;
     const pageDescription = `Locação de ${productTitle} para produções audiovisuais, publicidade, cinema e broadcast em São Paulo. Equipamentos profissionais com suporte técnico especializado.`;
     const ogImage = product.image_url || currentImage || "";
+    const keywordContent = seoTags.join(", ");
 
     document.title = pageTitle;
 
@@ -236,6 +270,9 @@ useEffect(() => {
     };
 
     setMetaTag("name", "description", pageDescription);
+    if (keywordContent) {
+      setMetaTag("name", "keywords", keywordContent);
+    }
     setMetaTag("property", "og:title", pageTitle);
     setMetaTag("property", "og:description", pageDescription);
     setMetaTag("property", "og:image", ogImage);
@@ -254,13 +291,52 @@ useEffect(() => {
 
     canonical.setAttribute("href", canonicalUrl);
 
+    const productJsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: productTitle,
+      description: pageDescription,
+      image: gallery.length > 0 ? gallery : ogImage ? [ogImage] : undefined,
+      category: [product.category, product.subcategory].filter(Boolean).join(" / ") || undefined,
+      brand: (product as Product & { brand?: string | null }).brand
+        ? {
+            "@type": "Brand",
+            name: (product as Product & { brand?: string | null }).brand,
+          }
+        : undefined,
+      keywords: seoTags.length > 0 ? seoTags.join(", ") : undefined,
+      url: canonicalUrl,
+      offers: product.price
+        ? {
+            "@type": "Offer",
+            price: Number(product.price),
+            priceCurrency: "BRL",
+            availability: "https://schema.org/InStock",
+            url: canonicalUrl,
+          }
+        : undefined,
+    };
+
+    let productSchema = document.head.querySelector(
+      'script[data-loc7-schema="product"]'
+    ) as HTMLScriptElement | null;
+
+    if (!productSchema) {
+      productSchema = document.createElement("script");
+      productSchema.type = "application/ld+json";
+      productSchema.setAttribute("data-loc7-schema", "product");
+      document.head.appendChild(productSchema);
+    }
+
+    productSchema.textContent = JSON.stringify(productJsonLd);
+
     const hostname = window.location.hostname;
     const isStaging =
       hostname.includes("loc7.com.br") &&
       !hostname.includes("loc7equipamentos.com.br");
 
     setMetaTag("name", "robots", isStaging ? "noindex, nofollow" : "index, follow");
-  }, [product, slug, currentImage, productTitle]);
+  }, [product, slug, currentImage, productTitle, gallery, seoTags]);
 
   if (loading) {
     return (
