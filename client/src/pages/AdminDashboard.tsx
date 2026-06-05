@@ -345,6 +345,219 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       .filter(Boolean);
   };
 
+  const getSeoSourceText = (source: {
+    name?: string | null;
+    brand?: string | null;
+    category?: string | null;
+    operational_type?: string | null;
+    subcategory?: string | null;
+    specs?: string | null;
+    technical_specs?: string | null;
+  }, selectedFilters: string[]) => {
+    return [
+      source.name,
+      source.brand,
+      source.category,
+      source.operational_type,
+      source.subcategory,
+      source.specs,
+      source.technical_specs,
+      ...selectedFilters,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  const buildSemanticSeoTagsFromText = (sourceText: string, categoryName?: string | null) => {
+    const normalizedText = normalizeFilterName(sourceText);
+    const normalizedCategory = normalizeFilterName(categoryName);
+    const suggestions: string[] = [];
+
+    const hasAny = (terms: string[]) =>
+      terms.some((term) => normalizedText.includes(normalizeFilterName(term)));
+
+    const addIf = (condition: boolean, tags: string[]) => {
+      if (condition) suggestions.push(...tags);
+    };
+
+    addIf(hasAny(['netflix approved', 'netflix']), [
+      'produção Netflix',
+      'séries e streaming',
+      'produção audiovisual premium',
+    ]);
+
+    addIf(hasAny(['cinealta']), [
+      'workflow CineAlta',
+      'cinema digital premium',
+    ]);
+
+    addIf(hasAny(['full frame', 'full-frame', 'sensor full frame']), [
+      'captação full frame',
+      'câmera full frame para cinema',
+      'workflow cinema digital',
+    ]);
+
+    addIf(hasAny(['super35', 'super 35', 'super-35', 's35']), [
+      'captação Super 35',
+      'câmera Super 35 para cinema',
+    ]);
+
+    addIf(hasAny(['8k']), [
+      'produção cinematográfica 8K',
+      'captura em alta resolução',
+    ]);
+
+    addIf(hasAny(['6k']), [
+      'produção cinematográfica 6K',
+      'captura alta resolução cinema',
+    ]);
+
+    addIf(hasAny(['4k', 'uhd']), [
+      'produção 4K profissional',
+      'captação 4K para eventos',
+    ]);
+
+    addIf(hasAny(['pl mount', 'pl-mount', 'montagem pl', 'mount pl', ' pl ']), [
+      'lentes PL mount',
+      'set de cinema profissional',
+      'produção de longa metragem',
+    ]);
+
+    addIf(hasAny(['e-mount', 'e mount', 'montagem e', 'sony e']), [
+      'setup Sony E-Mount',
+      'lentes Sony E-Mount',
+    ]);
+
+    addIf(hasAny(['b4', '2/3']), [
+      'lente B4 broadcast',
+      'câmera ENG profissional',
+    ]);
+
+    addIf(hasAny(['raw', 'x-ocn', 'xocn']), [
+      'workflow RAW cinema',
+      'pós-produção avançada',
+    ]);
+
+    addIf(hasAny(['hdr']), [
+      'workflow HDR',
+      'captação cinematográfica HDR',
+    ]);
+
+    addIf(hasAny(['dual base iso', 'baixa luz', 'low light', 'pouca luz']), [
+      'gravação em baixa luz',
+      'câmera para ambiente com pouca luz',
+    ]);
+
+    addIf(hasAny(['s-log3', 'slog3', 'log']), [
+      'workflow de color grading',
+      'produção com latitude de imagem',
+    ]);
+
+    addIf(hasAny(['slow motion', '120fps', '180fps', '240fps', 'alta velocidade']), [
+      'câmera para slow motion',
+      'captação em alta velocidade',
+    ]);
+
+    addIf(hasAny(['nd variável', 'nd eletronico', 'nd eletrônico', 'filtros nd', 'nd interno']), [
+      'filmagem externa profissional',
+      'controle de exposição em set',
+    ]);
+
+    addIf(hasAny(['12g-sdi', 'sdi', 'timecode', 'genlock', 'multicâmera', 'multicamera']), [
+      'produção multicâmera',
+      'operação técnica broadcast',
+    ]);
+
+    addIf(hasAny(['broadcast', 'eng', 'jornalismo', 'televisão', 'tv']), [
+      'câmera para televisão',
+      'câmera para jornalismo',
+      'cobertura ao vivo',
+    ]);
+
+    addIf(hasAny(['streaming', 'live', 'transmissão', 'transmissao']), [
+      'câmera para streaming profissional',
+      'transmissão ao vivo profissional',
+    ]);
+
+    addIf(hasAny(['documentário', 'documentario']), [
+      'câmera para documentário',
+      'produção documental profissional',
+    ]);
+
+    addIf(hasAny(['publicidade', 'comercial', 'corporativo', 'institucional']), [
+      'câmera para publicidade',
+      'produção corporativa premium',
+    ]);
+
+    addIf(hasAny(['gimbal', 'drone', 'compacto', 'leve']), [
+      'câmera para gimbal',
+      'produção ágil com câmera compacta',
+    ]);
+
+    addIf(hasAny(['rgb']), [
+      'iluminação RGB para set',
+      'luz criativa para audiovisual',
+    ]);
+
+    addIf(hasAny(['bicolor', 'bi-color']), [
+      'luz bicolor para filmagem',
+      'iluminação para entrevista',
+    ]);
+
+    addIf(hasAny(['daylight', '5600k']), [
+      'luz daylight para cinema',
+      'iluminação principal para set',
+    ]);
+
+    addIf(hasAny(['monitor', 'video assist', 'vídeo assist']), [
+      'vídeo assist profissional',
+      'monitoramento de direção',
+    ]);
+
+    addIf(hasAny(['transmissor', 'wireless video', 'sem fio']), [
+      'vídeo sem fio para set',
+      'transmissão de imagem no set',
+    ]);
+
+    addIf(hasAny(['switcher', 'atem', 'multicam', 'multicamera']), [
+      'switcher para live streaming',
+      'operação multicâmera ao vivo',
+    ]);
+
+    addIf(hasAny(['intercom', 'comunicador', 'solidcom']), [
+      'comunicação de equipe em set',
+      'intercom para produção ao vivo',
+    ]);
+
+    addIf(hasAny(['mattebox', 'matte box']), [
+      'mattebox para lente cinema',
+      'controle de flare em set',
+    ]);
+
+    addIf(hasAny(['follow focus', 'foco']), [
+      'controle de foco profissional',
+      'acessório para assistente de câmera',
+    ]);
+
+    addIf(hasAny(['tripé', 'tripe', 'cabeça fluida', 'bowl']), [
+      'tripé profissional para câmera',
+      'suporte estável para filmagem',
+    ]);
+
+    addIf(hasAny(['filtro', 'black mist', 'glimmerglass', 'polarizador', 'nd variável']), [
+      'filtro para look cinematográfico',
+      'controle de imagem em set',
+    ]);
+
+    if (normalizedCategory === 'cameras' || normalizedCategory === 'cameras') {
+      suggestions.push('locação de câmera profissional');
+    }
+
+    return uniqueSeoLines(suggestions).slice(0, 8);
+  };
+
   const buildAutomaticSeoTags = (
     source: {
       name?: string | null;
@@ -352,45 +565,52 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       category?: string | null;
       operational_type?: string | null;
       subcategory?: string | null;
+      specs?: string | null;
+      technical_specs?: string | null;
     },
     optionIds: string[]
   ) => {
-   const name = source.name?.trim() || '';
-const brand = source.brand?.trim() || '';
-const model = (source as { model?: string | null }).model?.trim() || '';
-const category = source.category?.trim() || '';
-const operationalType = source.operational_type?.trim() || '';
-const subcategory = source.subcategory?.trim() || '';
+    const name = source.name?.trim() || '';
+    const brand = source.brand?.trim() || '';
+    const model = (source as { model?: string | null }).model?.trim() || '';
+    const category = source.category?.trim() || '';
+    const operationalType = source.operational_type?.trim() || '';
+    const subcategory = source.subcategory?.trim() || '';
+
     const selectedFilters = getSelectedFilterNames(optionIds).filter(
       (filter) => normalizeFilterName(filter) !== normalizeFilterName(brand)
     );
-   const productWithoutBrand = stripBrandFromName(name, brand);
-const productReference =
-  name ||
-  buildProductName(brand, model) ||
-  [brand, productWithoutBrand].filter(Boolean).join(' ');
+
+    const productWithoutBrand = stripBrandFromName(name, brand);
+    const productReference =
+      name ||
+      buildProductName(brand, model) ||
+      [brand, productWithoutBrand].filter(Boolean).join(' ');
+
     const prefixedProduct = buildProductDisplayName(
       operationalType,
       category,
       productReference
     );
 
+    const sourceText = getSeoSourceText(source, selectedFilters);
+    const semanticTags = buildSemanticSeoTagsFromText(sourceText, category);
+    const primaryFilters = selectedFilters.slice(0, 4);
+
     return uniqueSeoLines([
       productReference,
       prefixedProduct,
       productReference ? `Locação ${productReference}` : '',
       productReference ? `Aluguel ${productReference}` : '',
-      productReference && operationalType ? `${productReference} ${operationalType}` : '',
       productReference && subcategory ? `${productReference} ${subcategory}` : '',
-      productReference && category ? `${productReference} ${category}` : '',
-      operationalType && brand ? `${operationalType} ${brand}` : '',
-      category && brand ? `${category} ${brand}` : '',
+      ...semanticTags,
       productReference ? `${productReference} São Paulo` : '',
-      productReference ? `Locadora ${productReference}` : '',
       productReference ? `${productReference} para produtoras` : '',
-      ...selectedFilters.map((filter) =>
+      ...primaryFilters.map((filter) =>
         productReference ? `${productReference} ${filter}` : filter
       ),
+      operationalType && brand ? `${operationalType} ${brand}` : '',
+      category && brand ? `${category} ${brand}` : '',
     ]).slice(0, 12);
   };
 
@@ -401,6 +621,8 @@ const productReference =
       category?: string | null;
       operational_type?: string | null;
       subcategory?: string | null;
+      specs?: string | null;
+      technical_specs?: string | null;
     },
     optionIds: string[],
     automaticTags: string[]
@@ -454,6 +676,12 @@ ${source.subcategory || '-'}
 Filtros e atributos já informados:
 ${selectedFilters.length > 0 ? selectedFilters.join(', ') : '-'}
 
+Highlights:
+${source.specs || '-'}
+
+Especificações técnicas:
+${source.technical_specs || '-'}
+
 Tags automáticas já geradas:
 ${automaticTags.length > 0 ? automaticTags.join('\n') : '-'}
 
@@ -467,6 +695,8 @@ Gere somente tags complementares, diferentes das automáticas, focadas no compor
       category?: string | null;
       operational_type?: string | null;
       subcategory?: string | null;
+      specs?: string | null;
+      technical_specs?: string | null;
     } | null,
     optionIds: string[],
     isEditing: boolean = false
