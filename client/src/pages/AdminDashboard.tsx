@@ -302,6 +302,199 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       .join('\n');
   };
 
+
+  const uniqueSeoLines = (items: Array<string | null | undefined>) => {
+    const seen = new Set<string>();
+
+    return items
+      .map((item) => (item || '').trim())
+      .filter(Boolean)
+      .filter((item) => {
+        const key = normalizeFilterName(item);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+  };
+
+  const stripBrandFromName = (name: string, brand: string) => {
+    const cleanName = name.trim();
+    const cleanBrand = brand.trim();
+
+    if (!cleanName || !cleanBrand) return cleanName;
+
+    const normalizedName = normalizeFilterName(cleanName);
+    const normalizedBrand = normalizeFilterName(cleanBrand);
+
+    if (normalizedName === normalizedBrand) return '';
+
+    if (normalizedName.startsWith(`${normalizedBrand} `)) {
+      return cleanName.slice(cleanBrand.length).trim();
+    }
+
+    return cleanName;
+  };
+
+  const getSelectedFilterNames = (optionIds: string[]) => {
+    const selectedIds = new Set(optionIds);
+
+    return filterGroups
+      .flatMap((group) => group.options || [])
+      .filter((option) => selectedIds.has(option.id))
+      .map((option) => option.name)
+      .filter(Boolean);
+  };
+
+  const buildAutomaticSeoTags = (
+    source: {
+      name?: string | null;
+      brand?: string | null;
+      category?: string | null;
+      operational_type?: string | null;
+      subcategory?: string | null;
+    },
+    optionIds: string[]
+  ) => {
+    const name = source.name?.trim() || '';
+    const brand = source.brand?.trim() || '';
+    const category = source.category?.trim() || '';
+    const operationalType = source.operational_type?.trim() || '';
+    const subcategory = source.subcategory?.trim() || '';
+    const selectedFilters = getSelectedFilterNames(optionIds).filter(
+      (filter) => normalizeFilterName(filter) !== normalizeFilterName(brand)
+    );
+    const productWithoutBrand = stripBrandFromName(name, brand);
+    const productReference = name || [brand, productWithoutBrand].filter(Boolean).join(' ');
+    const prefixedProduct = buildProductDisplayName(
+      operationalType,
+      category,
+      productReference
+    );
+
+    return uniqueSeoLines([
+      productReference,
+      prefixedProduct,
+      productReference ? `Locação ${productReference}` : '',
+      productReference ? `Aluguel ${productReference}` : '',
+      productReference && operationalType ? `${productReference} ${operationalType}` : '',
+      productReference && subcategory ? `${productReference} ${subcategory}` : '',
+      productReference && category ? `${productReference} ${category}` : '',
+      operationalType && brand ? `${operationalType} ${brand}` : '',
+      category && brand ? `${category} ${brand}` : '',
+      productReference ? `${productReference} São Paulo` : '',
+      productReference ? `Locadora ${productReference}` : '',
+      productReference ? `${productReference} para produtoras` : '',
+      ...selectedFilters.map((filter) =>
+        productReference ? `${productReference} ${filter}` : filter
+      ),
+    ]).slice(0, 12);
+  };
+
+  const buildChatGptSeoPrompt = (
+    source: {
+      name?: string | null;
+      brand?: string | null;
+      category?: string | null;
+      operational_type?: string | null;
+      subcategory?: string | null;
+    },
+    optionIds: string[],
+    automaticTags: string[]
+  ) => {
+    const selectedFilters = getSelectedFilterNames(optionIds);
+
+    return `Você é especialista em SEO para locação de equipamentos audiovisuais profissionais no Brasil.
+
+Gere até 8 tags/frases SEO curtas para o produto abaixo, focadas em intenção real de busca no Google.
+
+Analise o comportamento de busca específico desse tipo de produto:
+- Se for câmera, pense em produtoras, DOPs, operadores, broadcast, cinema, streaming, eventos, publicidade e corporativo.
+- Se for lente, pense em mount, look, kit de lentes, cinema, publicidade, DOP, assistente de câmera e compatibilidade com câmeras.
+- Se for iluminação, pense em tipo de luz, potência, set, entrevistas, publicidade, cinema, estúdio e produção corporativa.
+- Se for áudio, pense em captação, microfone, gravador, lapela, eventos, entrevistas, podcast, cinema e broadcast.
+- Se for monitor, transmissor, switcher ou comunicador, pense em vídeo assist, direção, multicâmera, live, streaming, broadcast, eventos e operação técnica.
+- Se for maquinária, tripé, suporte, mattebox, follow focus ou filtro, pense em set de filmagem, câmera, lente, grip, AC, DOP, compatibilidade e uso profissional.
+
+Regras:
+- Não repita marca, modelo, categoria ou especificações já informadas.
+- Não invente características técnicas.
+- Não use frases genéricas demais.
+- Não use frases longas.
+- Priorize termos que alguém realmente pesquisaria no Google.
+- Priorize locação, aluguel, produção audiovisual, cinema, publicidade, broadcast, streaming, eventos e produção corporativa quando fizer sentido.
+- Retorne somente uma lista, uma sugestão por linha, sem explicações.
+
+Produto:
+${source.name || '-'}
+
+Marca:
+${source.brand || '-'}
+
+Categoria:
+${source.category || '-'}
+
+Tipo operacional:
+${source.operational_type || '-'}
+
+Filtro visível / família:
+${source.subcategory || '-'}
+
+Filtros e atributos já informados:
+${selectedFilters.length > 0 ? selectedFilters.join(', ') : '-'}
+
+Tags automáticas já geradas:
+${automaticTags.length > 0 ? automaticTags.join('\n') : '-'}
+
+Gere somente as tags complementares, evitando repetir as tags automáticas.`;
+  };
+
+  const generateSeoTagsAndOpenChatGpt = async (
+    source: {
+      name?: string | null;
+      brand?: string | null;
+      category?: string | null;
+      operational_type?: string | null;
+      subcategory?: string | null;
+    } | null,
+    optionIds: string[],
+    isEditing: boolean = false
+  ) => {
+    if (!source) return;
+
+    const automaticTags = buildAutomaticSeoTags(source, optionIds);
+    const currentManualTags = normalizeSeoTags(
+      isEditing
+        ? (editingProduct as ProductWithImages | null)?.seo_tags || ''
+        : newProduct.seo_tags
+    )
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    const mergedTags = uniqueSeoLines([...automaticTags, ...currentManualTags])
+      .slice(0, 20)
+      .join('\n');
+
+    if (isEditing) {
+      setEditingProduct((prev) =>
+        prev ? { ...prev, seo_tags: mergedTags } : prev
+      );
+    } else {
+      setNewProduct((prev) => ({ ...prev, seo_tags: mergedTags }));
+    }
+
+    const prompt = buildChatGptSeoPrompt(source, optionIds, automaticTags);
+
+    try {
+      await navigator.clipboard.writeText(prompt);
+      window.open('https://chatgpt.com', '_blank', 'noopener,noreferrer');
+      alert('Tags automáticas geradas. Prompt copiado. Cole no ChatGPT para gerar até 8 sugestões complementares.');
+    } catch {
+      window.open('https://chatgpt.com', '_blank', 'noopener,noreferrer');
+      alert('Tags automáticas geradas. Não foi possível copiar o prompt automaticamente.');
+    }
+  };
+
   const isBrandFilterGroup = (group?: FilterGroup | null) => {
     const normalizedName = normalizeFilterName(group?.name);
     return normalizedName === 'marca' || normalizedName === 'marcas';
@@ -2489,18 +2682,42 @@ const filteredFilterGroups = [...filterGroups]
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tags SEO invisíveis
-                  </label>
+                  <div className="mb-1 flex items-center justify-between gap-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Tags SEO invisíveis
+                    </label>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        generateSeoTagsAndOpenChatGpt(
+                          newProduct,
+                          newProductFilterOptionIds,
+                          false
+                        )
+                      }
+                      className="rounded border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:border-gray-500 hover:text-gray-900"
+                    >
+                      Gerar sugestões no ChatGPT
+                    </button>
+                  </div>
+
                   <textarea
                     rows={5}
-                    placeholder={`Digite uma intenção de busca por linha.\nEx: lente Sony 14mm\nlente ultra grande angular Sony\nlente para Sony FX3\nlente para astrofotografia`}
+                    placeholder={`Digite uma intenção de busca por linha.
+Ex: lente Sony 14mm
+lente ultra grande angular Sony
+lente para Sony FX3
+lente para astrofotografia`}
                     value={newProduct.seo_tags}
-                    onChange={(e) => setNewProduct((prev) => ({ ...prev, seo_tags: e.target.value }))}
+                    onChange={(e) =>
+                      setNewProduct((prev) => ({ ...prev, seo_tags: e.target.value }))
+                    }
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
+
                   <p className="mt-1 text-xs text-gray-500">
-                    Uma palavra-chave ou frase por linha. Campo interno preparado para SEO/JSON-LD.
+                    Uma palavra-chave ou frase por linha. O botão gera até 12 tags automáticas e copia um prompt para até 8 sugestões complementares no ChatGPT.
                   </p>
                 </div>
 
@@ -3586,12 +3803,33 @@ const filteredFilterGroups = [...filterGroups]
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tags SEO invisíveis
-                  </label>
+                  <div className="mb-1 flex items-center justify-between gap-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Tags SEO invisíveis
+                    </label>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        generateSeoTagsAndOpenChatGpt(
+                          editingProduct,
+                          editingProductFilterOptionIds,
+                          true
+                        )
+                      }
+                      className="rounded border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:border-gray-500 hover:text-gray-900"
+                    >
+                      Gerar sugestões no ChatGPT
+                    </button>
+                  </div>
+
                   <textarea
                     rows={5}
-                    placeholder={`Digite uma intenção de busca por linha.\nEx: lente Sony 14mm\nlente ultra grande angular Sony\nlente para Sony FX3\nlente para astrofotografia`}
+                    placeholder={`Digite uma intenção de busca por linha.
+Ex: lente Sony 14mm
+lente ultra grande angular Sony
+lente para Sony FX3
+lente para astrofotografia`}
                     value={(editingProduct as ProductWithImages).seo_tags || editingProduct.badge || ''}
                     onChange={(e) =>
                       setEditingProduct((prev) =>
@@ -3600,8 +3838,9 @@ const filteredFilterGroups = [...filterGroups]
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                   />
+
                   <p className="mt-1 text-xs text-gray-500">
-                    Uma palavra-chave ou frase por linha. Campo interno preparado para SEO/JSON-LD.
+                    Uma palavra-chave ou frase por linha. O botão gera até 12 tags automáticas e copia um prompt para até 8 sugestões complementares no ChatGPT.
                   </p>
                 </div>
 
