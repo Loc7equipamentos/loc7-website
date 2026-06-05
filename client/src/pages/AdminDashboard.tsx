@@ -355,16 +355,20 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     },
     optionIds: string[]
   ) => {
-    const name = source.name?.trim() || '';
-    const brand = source.brand?.trim() || '';
-    const category = source.category?.trim() || '';
-    const operationalType = source.operational_type?.trim() || '';
-    const subcategory = source.subcategory?.trim() || '';
+   const name = source.name?.trim() || '';
+const brand = source.brand?.trim() || '';
+const model = (source as { model?: string | null }).model?.trim() || '';
+const category = source.category?.trim() || '';
+const operationalType = source.operational_type?.trim() || '';
+const subcategory = source.subcategory?.trim() || '';
     const selectedFilters = getSelectedFilterNames(optionIds).filter(
       (filter) => normalizeFilterName(filter) !== normalizeFilterName(brand)
     );
-    const productWithoutBrand = stripBrandFromName(name, brand);
-    const productReference = name || [brand, productWithoutBrand].filter(Boolean).join(' ');
+   const productWithoutBrand = stripBrandFromName(name, brand);
+const productReference =
+  name ||
+  buildProductName(brand, model) ||
+  [brand, productWithoutBrand].filter(Boolean).join(' ');
     const prefixedProduct = buildProductDisplayName(
       operationalType,
       category,
