@@ -407,26 +407,34 @@ const productReference =
   ) => {
     const selectedFilters = getSelectedFilterNames(optionIds);
 
-    return `Você é especialista em SEO para locação de equipamentos audiovisuais profissionais no Brasil.
+    return `Você é especialista em SEO para locação de equipamentos audiovisuais profissionais no Brasil, com foco em intenção real de busca no Google e comportamento de clientes profissionais do mercado audiovisual.
 
-Gere até 8 tags/frases SEO curtas para o produto abaixo, focadas em intenção real de busca no Google.
+Gere até 8 tags/frases SEO curtas para o produto abaixo.
 
-Analise o comportamento de busca específico desse tipo de produto:
-- Se for câmera, pense em produtoras, DOPs, operadores, broadcast, cinema, streaming, eventos, publicidade e corporativo.
-- Se for lente, pense em mount, look, kit de lentes, cinema, publicidade, DOP, assistente de câmera e compatibilidade com câmeras.
-- Se for iluminação, pense em tipo de luz, potência, set, entrevistas, publicidade, cinema, estúdio e produção corporativa.
-- Se for áudio, pense em captação, microfone, gravador, lapela, eventos, entrevistas, podcast, cinema e broadcast.
-- Se for monitor, transmissor, switcher ou comunicador, pense em vídeo assist, direção, multicâmera, live, streaming, broadcast, eventos e operação técnica.
-- Se for maquinária, tripé, suporte, mattebox, follow focus ou filtro, pense em set de filmagem, câmera, lente, grip, AC, DOP, compatibilidade e uso profissional.
+O objetivo NÃO é repetir nome, marca, modelo, categoria ou ficha técnica.
+O objetivo é sugerir buscas complementares que uma pessoa real faria para encontrar esse tipo de equipamento para locação.
 
-Regras:
-- Não repita marca, modelo, categoria ou especificações já informadas.
+Analise o comportamento de busca específico deste produto antes de responder:
+- Se for câmera, pense em produtoras, DOPs, operadores, broadcast, cinema, streaming, eventos, publicidade, documentário, institucional e corporativo.
+- Se for câmera cinema high-end, pense em cinema digital, publicidade premium, séries, longas, workflow profissional, PL mount, full frame, 6K/8K, CineAlta, Netflix approved quando fizer sentido e somente se já estiver coerente com o produto.
+- Se for câmera broadcast/ENG, pense em televisão, jornalismo, eventos, streaming, multicâmera, cobertura ao vivo, igrejas e produção corporativa.
+- Se for mirrorless/câmera compacta, pense em gimbal, conteúdo premium, publicidade leve, filmmaker, documentário, entrevistas, streaming e produção ágil.
+- Se for lente, pense em mount, look, kit de lentes, prime, zoom, macro, cinema, publicidade, DOP, assistente de câmera, compatibilidade com câmeras e cobertura de sensor.
+- Se for iluminação, pense em tipo de luz, potência, set, entrevista, publicidade, cinema, estúdio, luz principal, recorte, RGB, bicolor, daylight e produção corporativa.
+- Se for áudio, pense em captação, microfone, gravador, lapela, evento, entrevista, podcast, cinema, broadcast, monitoramento e operação técnica.
+- Se for monitor, transmissor, switcher ou comunicador, pense em vídeo assist, direção, multicâmera, live, streaming, broadcast, eventos, set, operação técnica e confiabilidade.
+- Se for maquinária, tripé, suporte, mattebox, follow focus ou filtro, pense em set de filmagem, câmera, lente, grip, AC, DOP, compatibilidade, montagem, controle de câmera e uso profissional.
+
+Regras obrigatórias:
+- Não repita marca, modelo, categoria, tipo operacional ou especificações já informadas.
+- Não repita nenhuma das tags automáticas já geradas.
 - Não invente características técnicas.
-- Não use frases genéricas demais.
+- Não use frases genéricas demais, como equipamento profissional ou audiovisual profissional isoladamente.
 - Não use frases longas.
+- Priorize frases com intenção de compra/locação, aplicação prática, tipo de produção ou perfil de cliente.
 - Priorize termos que alguém realmente pesquisaria no Google.
-- Priorize locação, aluguel, produção audiovisual, cinema, publicidade, broadcast, streaming, eventos e produção corporativa quando fizer sentido.
-- Retorne somente uma lista, uma sugestão por linha, sem explicações.
+- Use linguagem natural de busca, sem exagero publicitário.
+- Retorne somente uma lista, uma sugestão por linha, sem numeração e sem explicações.
 
 Produto:
 ${source.name || '-'}
@@ -449,7 +457,7 @@ ${selectedFilters.length > 0 ? selectedFilters.join(', ') : '-'}
 Tags automáticas já geradas:
 ${automaticTags.length > 0 ? automaticTags.join('\n') : '-'}
 
-Gere somente as tags complementares, evitando repetir as tags automáticas.`;
+Gere somente tags complementares, diferentes das automáticas, focadas no comportamento real de busca deste tipo de produto.`;
   };
 
   const generateSeoTagsAndOpenChatGpt = async (
