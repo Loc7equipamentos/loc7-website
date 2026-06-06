@@ -345,6 +345,86 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       .filter(Boolean);
   };
 
+  const isLensCategory = (categoryName?: string | null) => {
+    return normalizeFilterName(categoryName) === 'lentes';
+  };
+
+  const isMountFilterGroup = (group?: FilterGroup | null) => {
+    const normalizedName = normalizeFilterName(group?.name);
+    return normalizedName === 'mount' || normalizedName === 'montagem';
+  };
+
+  const normalizeLensMountLabel = (value?: string | null) => {
+    const cleanValue = (value || '').trim();
+    const normalizedValue = normalizeFilterName(cleanValue)
+      .replace(/-mount/g, '')
+      .replace(/ mount/g, '')
+      .replace(/montagem /g, '')
+      .trim();
+
+    const labelByMount: Record<string, string> = {
+      pl: 'PL',
+      ef: 'EF',
+      rf: 'RF',
+      e: 'E',
+      l: 'L',
+      lpl: 'LPL',
+      b4: 'B4',
+      mft: 'MFT',
+      microfourthirds: 'MFT',
+      'micro 4/3': 'MFT',
+    };
+
+    return labelByMount[normalizedValue] || cleanValue.replace(/\s*[-/]?\s*mount$/i, '').trim();
+  };
+
+  const getLensMountNames = (optionIds: string[]) => {
+    const selectedIds = new Set(optionIds);
+
+    return uniqueSeoLines(
+      filterGroups
+        .filter((group) => isMountFilterGroup(group))
+        .flatMap((group) => group.options || [])
+        .filter((option) => selectedIds.has(option.id))
+        .map((option) => normalizeLensMountLabel(option.name))
+    );
+  };
+
+  const buildLensMountDisplay = (optionIds: string[]) => {
+    const mountNames = getLensMountNames(optionIds);
+
+    if (mountNames.length === 0) return '';
+
+    return `${mountNames.join(' / ')} Mount`;
+  };
+
+  const getPublicSubcategoryForProduct = (
+    source: {
+      category?: string | null;
+      subcategory?: string | null;
+    },
+    optionIds: string[]
+  ) => {
+    if (isLensCategory(source.category)) {
+      const mountDisplay = buildLensMountDisplay(optionIds);
+      if (mountDisplay) return mountDisplay;
+    }
+
+    return normalizeSubcategory(source.subcategory) || '';
+  };
+
+  const buildLensMountSeoTags = (productReference: string, optionIds: string[]) => {
+    const mountNames = getLensMountNames(optionIds);
+
+    if (!productReference || mountNames.length === 0) return [];
+
+    return mountNames.flatMap((mountName) => [
+      `Locação ${productReference} ${mountName} Mount`,
+      `Aluguel ${productReference} ${mountName} Mount`,
+      `${productReference} ${mountName} Mount`,
+    ]);
+  };
+
   const getSeoSourceText = (source: {
     name?: string | null;
     brand?: string | null;
@@ -575,7 +655,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     const model = (source as { model?: string | null }).model?.trim() || '';
     const category = source.category?.trim() || '';
     const operationalType = source.operational_type?.trim() || '';
-    const subcategory = source.subcategory?.trim() || '';
+    const publicSubcategory = getPublicSubcategoryForProduct(source, optionIds);
 
     const selectedFilters = getSelectedFilterNames(optionIds).filter(
       (filter) => normalizeFilterName(filter) !== normalizeFilterName(brand)
@@ -593,16 +673,25 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       productReference
     );
 
-    const sourceText = getSeoSourceText(source, selectedFilters);
+    const sourceForSeo = {
+      ...source,
+      subcategory: publicSubcategory || source.subcategory,
+    };
+
+    const sourceText = getSeoSourceText(sourceForSeo, selectedFilters);
     const semanticTags = buildSemanticSeoTagsFromText(sourceText, category);
     const primaryFilters = selectedFilters.slice(0, 4);
+    const lensMountSeoTags = isLensCategory(category)
+      ? buildLensMountSeoTags(productReference, optionIds)
+      : [];
 
     return uniqueSeoLines([
       productReference,
       prefixedProduct,
       productReference ? `Locação ${productReference}` : '',
       productReference ? `Aluguel ${productReference}` : '',
-      productReference && subcategory ? `${productReference} ${subcategory}` : '',
+      productReference && publicSubcategory ? `${productReference} ${publicSubcategory}` : '',
+      ...lensMountSeoTags,
       ...semanticTags,
       productReference ? `${productReference} São Paulo` : '',
       productReference ? `${productReference} para produtoras` : '',
@@ -816,7 +905,12 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
   ) => {
     if (!source) return;
 
-    const automaticTags = buildAutomaticSeoTags(source, optionIds);
+    const sourceForSeo = {
+      ...source,
+      subcategory: getPublicSubcategoryForProduct(source, optionIds) || source.subcategory,
+    };
+
+    const automaticTags = buildAutomaticSeoTags(sourceForSeo, optionIds);
     const currentManualTags = normalizeSeoTags(
       isEditing
         ? (editingProduct as ProductWithImages | null)?.seo_tags || ''
@@ -838,7 +932,7 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
       setNewProduct((prev) => ({ ...prev, seo_tags: mergedTags }));
     }
 
-    const prompt = buildChatGptSeoPrompt(source, optionIds, automaticTags);
+    const prompt = buildChatGptSeoPrompt(sourceForSeo, optionIds, automaticTags);
 
     try {
       await navigator.clipboard.writeText(prompt);
@@ -1826,6 +1920,10 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
 
     try {
       const slug = await generateUniqueSlug(newProduct.name);
+      const publicSubcategory = getPublicSubcategoryForProduct(
+        newProduct,
+        newProductFilterOptionIds
+      );
 
       const { data: insertedProduct, error: err } = await supabase
         .from('products')
@@ -1839,7 +1937,7 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
             ),
             category: newProduct.category,
             operational_type: newProduct.operational_type.trim() || null,
-            subcategory: normalizeSubcategory(newProduct.subcategory) || null,
+            subcategory: publicSubcategory || null,
             brand: newProduct.brand.trim() || null,
             price: newProduct.price || 0,
             description: newProduct.description,
@@ -1911,6 +2009,10 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
 
     try {
       const slug = await generateUniqueSlug(editingProduct.name, editingProduct.id);
+      const publicSubcategory = getPublicSubcategoryForProduct(
+        editingProduct,
+        editingProductFilterOptionIds
+      );
 
       const { error: err } = await supabase
         .from('products')
@@ -1923,7 +2025,7 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
           ),
           category: editingProduct.category,
           operational_type: editingProduct.operational_type?.trim() || null,
-          subcategory: normalizeSubcategory(editingProduct.subcategory) || null,
+          subcategory: publicSubcategory || null,
           brand: editingProduct.brand?.trim() || null,
           price: editingProduct.price,
           description: editingProduct.description,
@@ -2905,6 +3007,12 @@ const filteredFilterGroups = [...filterGroups]
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
                   >
                     <option value="">Selecione</option>
+                    {newProduct.subcategory &&
+                      !newProductVisibleFilters.includes(newProduct.subcategory) && (
+                        <option value={newProduct.subcategory}>
+                          {newProduct.subcategory}
+                        </option>
+                      )}
                     {newProductVisibleFilters.map((subcategory) => (
                       <option key={subcategory} value={subcategory}>
                         {subcategory}
@@ -4095,6 +4203,12 @@ lente para astrofotografia`}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 disabled:bg-gray-50 disabled:text-gray-500"
                   >
                     <option value="">Selecione</option>
+                    {editingProduct.subcategory &&
+                      !editingProductVisibleFilters.includes(editingProduct.subcategory) && (
+                        <option value={editingProduct.subcategory}>
+                          {editingProduct.subcategory}
+                        </option>
+                      )}
                     {editingProductVisibleFilters.map((subcategory) => (
                       <option key={subcategory} value={subcategory}>
                         {subcategory}
