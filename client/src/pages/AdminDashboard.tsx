@@ -614,6 +614,123 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     ]).slice(0, 12);
   };
 
+  const getCategorySpecificSeoBrief = (categoryName?: string | null) => {
+    const normalizedCategory = normalizeFilterName(categoryName);
+
+    const briefs: Record<string, string> = {
+      cameras: `Categoria: CÂMERAS.
+Comportamento real de busca: produtoras, DOPs, operadores de câmera, emissoras, eventos, streaming, publicidade, documentários, conteúdo corporativo e igrejas.
+Não pense primeiro em ficha técnica. Pense em aplicação de produção, tipo de set e perfil de cliente.
+Se for cinema/high-end, priorize cinema digital, publicidade premium, séries, longas, workflow profissional, full frame, PL mount, RAW, CineAlta e Netflix approved somente quando os dados do produto indicarem isso.
+Se for broadcast/ENG, priorize televisão, jornalismo, multicâmera, transmissão ao vivo, cobertura de eventos, igrejas, congressos e produção corporativa.
+Se for mirrorless/compacta, priorize gimbal, filmmaker, documentário, entrevistas, streaming leve, conteúdo premium e produção ágil.
+Boas respostas parecem: câmera para documentário, câmera para publicidade, câmera para transmissão ao vivo, câmera para produtoras, captação multicâmera, câmera para eventos corporativos.`,
+
+      lentes: `Categoria: LENTES.
+Comportamento real de busca: DOP, diretor de fotografia, assistente de câmera, produtoras, publicidade, cinema, séries, videoclipes e compatibilidade com câmeras.
+Não foque só em milímetros, T-stop ou mount. Pense em look, linguagem visual, kit de lentes, prime/zoom, cobertura de sensor, publicidade e cinema.
+Se houver PL, prime, T1.5, full frame ou cinema lens, priorize look cinematográfico, kit prime cinema, lente para publicidade, lente para cinema digital, direção de fotografia e produção premium.
+Boas respostas parecem: kit de lentes prime cinema, lente para look cinematográfico, lente para publicidade premium, lente PL para cinema, lente para direção de fotografia.`,
+
+      iluminacao: `Categoria: ILUMINAÇÃO.
+Comportamento real de busca: entrevistas, publicidade, cinema, estúdio, videocast, podcast, cursos online, conteúdo corporativo, eventos e set de filmagem.
+Não foque só em watts, CRI, RGB ou temperatura de cor. Pense no uso da luz: key light, luz de recorte, luz criativa, setup de entrevista, estúdio, publicidade, cinema e produção corporativa.
+Se houver RGB, COB, bicolor ou daylight, traduza em aplicação prática.
+Boas respostas parecem: luz para entrevista corporativa, iluminação para videocast, luz para publicidade, iluminação para set de cinema, luz para estúdio de gravação.`,
+
+      audio: `Categoria: ÁUDIO.
+Comportamento real de busca: entrevistas, lapela, captação de voz, eventos, podcast, documentário, vídeo corporativo, reportagem, cinema e broadcast.
+Não foque em frequência, RF ou ficha técnica. Pense em problema de captação: voz limpa, entrevista, depoimento, apresentador, evento e conteúdo institucional.
+Se for lapela, priorize entrevista, vídeo corporativo, evento, documentário, reportagem e depoimento.
+Boas respostas parecem: microfone para entrevista, lapela para vídeo corporativo, áudio para eventos, captação de depoimentos, microfone para documentário.`,
+
+      monitores: `Categoria: MONITORES.
+Comportamento real de busca: vídeo assist, direção, foco, operador de câmera, DOP, cliente no set, monitoramento de imagem, produção multicâmera e set profissional.
+Não foque só em polegadas, brilho ou SDI. Pense em quem usa o monitor e para quê.
+Boas respostas parecem: monitor para diretor, vídeo assist profissional, monitor para foco, monitoramento de imagem no set, monitor para produção multicâmera.`,
+
+      transmissores: `Categoria: TRANSMISSORES.
+Comportamento real de busca: vídeo sem fio, direção, monitoramento remoto, multicâmera, streaming, broadcast, eventos, set de filmagem e video assist.
+Não foque só em alcance, latência ou resolução. Pense em fluxo de produção e monitoramento.
+Boas respostas parecem: transmissão de vídeo sem fio, monitoramento remoto no set, vídeo assist sem fio, produção multicâmera, transmissão para direção.`,
+
+      comunicadores: `Categoria: COMUNICADORES.
+Comportamento real de busca: intercom, coordenação de equipe, multicâmera, live, broadcast, eventos, switcher, direção, operação técnica e comunicação de set.
+Não foque só em número de headsets ou bateria. Pense em coordenação de produção.
+Boas respostas parecem: intercom sem fio para eventos, comunicação de equipe técnica, coordenação multicâmera, comunicação para transmissão ao vivo, intercom para set de filmagem.`,
+
+      'tripes de camera': `Categoria: TRIPÉS DE CÂMERA.
+Comportamento real de busca: operador de câmera, cabeça fluida, broadcast, documentário, eventos, entrevistas, set profissional e suporte estável de câmera.
+Não confundir com tripé de iluminação/C-Stand. Aqui o foco é câmera.
+Boas respostas parecem: tripé profissional para câmera, cabeça fluida para filmagem, tripé para broadcast, suporte de câmera para eventos, tripé para entrevistas.`,
+
+      tripes: `Categoria: TRIPÉS DE CÂMERA.
+Comportamento real de busca: operador de câmera, cabeça fluida, broadcast, documentário, eventos, entrevistas, set profissional e suporte estável de câmera.
+Não confundir com tripé de iluminação/C-Stand. Aqui o foco é câmera.
+Boas respostas parecem: tripé profissional para câmera, cabeça fluida para filmagem, tripé para broadcast, suporte de câmera para eventos, tripé para entrevistas.`,
+
+      maquinaria: `Categoria: MAQUINÁRIA / GRIP.
+Comportamento real de busca: grip, estrutura de set, montagem de iluminação, suporte para modificadores, butterfly, bandeiras, rebatedores, tubos, garras, segurança e operação de set.
+Muito importante: no Brasil, C-Stand também é chamado de Tripé Century. Não tratar como tripé de câmera.
+Não foque no nome do acessório. Foque no uso em set.
+Boas respostas parecem: grip para iluminação, tripé century para set, suporte para refletor, estrutura para filmagem, montagem de luz em set, suporte para modificadores.`,
+
+      maquinária: `Categoria: MAQUINÁRIA / GRIP.
+Comportamento real de busca: grip, estrutura de set, montagem de iluminação, suporte para modificadores, butterfly, bandeiras, rebatedores, tubos, garras, segurança e operação de set.
+Muito importante: no Brasil, C-Stand também é chamado de Tripé Century. Não tratar como tripé de câmera.
+Não foque no nome do acessório. Foque no uso em set.
+Boas respostas parecem: grip para iluminação, tripé century para set, suporte para refletor, estrutura para filmagem, montagem de luz em set, suporte para modificadores.`,
+
+      mattebox: `Categoria: MATTEBOX.
+Comportamento real de busca: controle de flare, filtros 4x5.6, filtros ND, polarizador, câmera cinema, mattebox clip-on, configuração de câmera, assistente de câmera e DOP.
+Não foque só no modelo. Pense em controle de imagem e compatibilidade com lentes/filtros.
+Boas respostas parecem: mattebox para lente cinema, controle de flare em set, suporte para filtros 4x5.6, mattebox para câmera cinema, filtros ND em mattebox.`,
+
+      'follow focus': `Categoria: FOLLOW FOCUS.
+Comportamento real de busca: foco remoto, wireless focus, assistente de câmera, 1º AC, cinema, publicidade, gimbal, controle de foco e precisão no set.
+Não foque só no modelo. Pense na função operacional.
+Boas respostas parecem: foco remoto para cinema, wireless follow focus, controle de foco para gimbal, acessório para assistente de câmera, foco preciso em set.`,
+
+      drones: `Categoria: DRONES.
+Comportamento real de busca: filmagem aérea, cinema, publicidade, institucional, eventos, captação premium, drone profissional e produção audiovisual.
+Não foque só em modelo ou autonomia. Pense em imagem aérea e tipo de produção.
+Boas respostas parecem: filmagem aérea profissional, drone para publicidade, captação aérea para cinema, drone para eventos, imagem aérea para vídeo institucional.`,
+
+      movimento: `Categoria: MOVIMENTO.
+Comportamento real de busca: travelling, dolly, slider, movimento de câmera, publicidade, cinema, videoclipe, set de filmagem e direção de fotografia.
+Não foque só no equipamento. Pense no efeito visual que ele entrega.
+Boas respostas parecem: travelling para cinema, movimento de câmera profissional, dolly para publicidade, slider para set de filmagem, movimento cinematográfico.`,
+
+      switchers: `Categoria: SWITCHERS.
+Comportamento real de busca: live streaming, transmissão ao vivo, multicâmera, eventos, igrejas, cursos online, corporativo, palestras, congressos e operação de vídeo.
+Não foque só em HDMI/SDI ou ISO. Pense em produção ao vivo.
+Boas respostas parecem: switcher para live streaming, transmissão multicâmera, switcher para igreja, produção ao vivo corporativa, gravação multicâmera de eventos.`,
+
+      teleprompter: `Categoria: TELEPROMPTER.
+Comportamento real de busca: apresentador, vídeo institucional, curso online, treinamento, lives, entrevistas, política, executivos, gravação corporativa e leitura natural.
+Não foque só em tamanho ou tablet. Pense em apresentação diante da câmera.
+Boas respostas parecem: teleprompter para vídeo corporativo, prompter para apresentador, gravação de curso online, leitura de roteiro para câmera, teleprompter para entrevistas.`,
+
+      estabilizadores: `Categoria: ESTABILIZADORES.
+Comportamento real de busca: gimbal, câmera em movimento, filmagem dinâmica, run and gun, publicidade, eventos, casamento, conteúdo premium, videoclipe e movimento fluido.
+Não foque só em carga útil ou modelo. Pense no resultado visual.
+Boas respostas parecem: gimbal para câmera profissional, filmagem com movimento fluido, estabilizador para publicidade, gimbal para eventos, câmera em movimento para videoclipe.`,
+
+      filtros: `Categoria: FILTROS.
+Comportamento real de busca: ND, polarizador, pro mist, glimmerglass, black mist, look cinematográfico, controle de reflexo, exposição, mattebox e lente.
+Não foque só em medida. Pense em efeito visual e controle de imagem.
+Boas respostas parecem: filtro ND para filmagem, filtro para look cinematográfico, polarizador para vídeo, controle de reflexo em set, filtro diffusion para cinema.`,
+
+      flash: `Categoria: FLASH.
+Comportamento real de busca: fotografia profissional, publicidade, retrato, still, moda, eventos, estúdio e luz fotográfica.
+Não foque só em potência. Pense em aplicação fotográfica.
+Boas respostas parecem: flash para ensaio fotográfico, iluminação para still, flash para publicidade, luz para fotografia de produto, flash para estúdio.`,
+    };
+
+    return briefs[normalizedCategory] || `Categoria não mapeada especificamente.
+Analise o produto pelo uso profissional real no mercado audiovisual: quem aluga, para qual produção, em qual situação de set, evento, estúdio ou operação técnica.`;
+  };
+
   const buildChatGptSeoPrompt = (
     source: {
       name?: string | null;
@@ -628,26 +745,21 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     automaticTags: string[]
   ) => {
     const selectedFilters = getSelectedFilterNames(optionIds);
+    const categoryBrief = getCategorySpecificSeoBrief(source.category);
 
     return `Você é especialista em SEO para locação de equipamentos audiovisuais profissionais no Brasil, com foco em intenção real de busca no Google e comportamento de clientes profissionais do mercado audiovisual.
 
 Gere até 8 tags/frases SEO curtas para o produto abaixo.
 
-O objetivo NÃO é repetir nome, marca, modelo, categoria ou ficha técnica.
+O objetivo NÃO é repetir nome, marca, modelo, categoria, tipo operacional, filtros ou ficha técnica.
 O objetivo é sugerir buscas complementares que uma pessoa real faria para encontrar esse tipo de equipamento para locação.
 
-Analise o comportamento de busca específico deste produto antes de responder:
-- Se for câmera, pense em produtoras, DOPs, operadores, broadcast, cinema, streaming, eventos, publicidade, documentário, institucional e corporativo.
-- Se for câmera cinema high-end, pense em cinema digital, publicidade premium, séries, longas, workflow profissional, PL mount, full frame, 6K/8K, CineAlta, Netflix approved quando fizer sentido e somente se já estiver coerente com o produto.
-- Se for câmera broadcast/ENG, pense em televisão, jornalismo, eventos, streaming, multicâmera, cobertura ao vivo, igrejas e produção corporativa.
-- Se for mirrorless/câmera compacta, pense em gimbal, conteúdo premium, publicidade leve, filmmaker, documentário, entrevistas, streaming e produção ágil.
-- Se for lente, pense em mount, look, kit de lentes, prime, zoom, macro, cinema, publicidade, DOP, assistente de câmera, compatibilidade com câmeras e cobertura de sensor.
-- Se for iluminação, pense em tipo de luz, potência, set, entrevista, publicidade, cinema, estúdio, luz principal, recorte, RGB, bicolor, daylight e produção corporativa.
-- Se for áudio, pense em captação, microfone, gravador, lapela, evento, entrevista, podcast, cinema, broadcast, monitoramento e operação técnica.
-- Se for monitor, transmissor, switcher ou comunicador, pense em vídeo assist, direção, multicâmera, live, streaming, broadcast, eventos, set, operação técnica e confiabilidade.
-- Se for maquinária, tripé, suporte, mattebox, follow focus ou filtro, pense em set de filmagem, câmera, lente, grip, AC, DOP, compatibilidade, montagem, controle de câmera e uso profissional.
+Use a categoria do produto como regra principal de comportamento de busca. Não use um raciocínio genérico.
+
+${categoryBrief}
 
 Regras obrigatórias:
+- Gere somente tags complementares às tags automáticas já geradas.
 - Não repita marca, modelo, categoria, tipo operacional ou especificações já informadas.
 - Não repita nenhuma das tags automáticas já geradas.
 - Não invente características técnicas.
@@ -656,6 +768,7 @@ Regras obrigatórias:
 - Priorize frases com intenção de compra/locação, aplicação prática, tipo de produção ou perfil de cliente.
 - Priorize termos que alguém realmente pesquisaria no Google.
 - Use linguagem natural de busca, sem exagero publicitário.
+- Use português do Brasil.
 - Retorne somente uma lista, uma sugestão por linha, sem numeração e sem explicações.
 
 Produto:
@@ -685,7 +798,7 @@ ${source.technical_specs || '-'}
 Tags automáticas já geradas:
 ${automaticTags.length > 0 ? automaticTags.join('\n') : '-'}
 
-Gere somente tags complementares, diferentes das automáticas, focadas no comportamento real de busca deste tipo de produto.`;
+Gere somente as 8 melhores tags complementares, diferentes das automáticas, focadas no comportamento real de busca desta categoria.`;
   };
 
   const generateSeoTagsAndOpenChatGpt = async (
