@@ -1,6 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase, type Product, type Category } from '@/lib/supabase';
 import { Trash2, Plus, Edit2, X, Upload, Loader, ArrowUp, ArrowDown } from 'lucide-react';
+import {
+  normalizeFilterName,
+  buildProductName,
+  stripBrandFromName,
+  buildProductDisplayName,
+  isLensCategory,
+  normalizeLensMountLabel,
+} from '@/lib/admin/product-utils';
 
 type ProductWithImages = Product & {
   images?: string[] | null;
@@ -202,86 +210,8 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const [loadingEditingFiscalProfile, setLoadingEditingFiscalProfile] = useState(false);
   const [savingFiscalProfile, setSavingFiscalProfile] = useState(false);
 
-  const buildProductName = (brand: string, model: string) => {
-    return [brand?.trim(), model?.trim()]
-      .filter(Boolean)
-      .join(' ')
-      .trim();
-  };
-
-  const getDisplayNamePrefix = (categoryName: string) => {
-    const normalizedCategory = normalizeFilterName(categoryName);
-
-    const prefixByCategory: Record<string, string> = {
-      adaptadores: 'Adaptador',
-      acessorios: 'Acessório',
-      audio: 'Áudio',
-      baterias: 'Bateria',
-      cameras: 'Câmera',
-      computadores: 'Computador',
-      'computadores e tablets': 'Computador / Tablet',
-      comunicadores: 'Comunicador',
-      conversores: 'Conversor',
-      'conversores e distribuidores': 'Conversor',
-      drones: 'Drone',
-      estabilizadores: 'Estabilizador',
-      estrutura: 'Estrutura',
-      filtros: 'Filtro',
-      flash: 'Flash',
-      'follow focus': 'Follow Focus',
-      gravadores: 'Gravador',
-      'hds e cartoes': 'HD / Cartão',
-      lentes: 'Lente',
-      iluminacao: 'Iluminação',
-      maquinaria: 'Maquinária',
-      mattebox: 'Mattebox',
-      monitores: 'Monitor',
-      movimento: 'Movimento',
-      'perifericos de rack': 'Periférico de Rack',
-      smartphones: 'Smartphone',
-      switchers: 'Switcher',
-      teleprompter: 'Teleprompter',
-      transmissores: 'Transmissor',
-      tripes: 'Tripé',
-    };
-
-    return prefixByCategory[normalizedCategory] || '';
-  };
-
-  const buildProductDisplayName = (
-    operationalType: string | null | undefined,
-    categoryName: string,
-    productName: string
-  ) => {
-    const cleanProductName = productName.trim();
-    const cleanOperationalType = operationalType?.trim() || '';
-    const prefix = cleanOperationalType || getDisplayNamePrefix(categoryName);
-
-    if (!prefix || !cleanProductName) return cleanProductName;
-
-    const normalizedProductName = normalizeFilterName(cleanProductName);
-    const normalizedPrefix = normalizeFilterName(prefix);
-
-    if (
-      normalizedProductName === normalizedPrefix ||
-      normalizedProductName.startsWith(`${normalizedPrefix} `)
-    ) {
-      return cleanProductName;
-    }
-
-    return `${prefix} ${cleanProductName}`.trim();
-  };
-
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR').format(value);
-  };
-
-  const normalizeFilterName = (value?: string | null) => {
-    return (value || '')
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .trim();
   };
 
   const countSeoTags = (value?: string | null) => {
@@ -317,24 +247,6 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       });
   };
 
-  const stripBrandFromName = (name: string, brand: string) => {
-    const cleanName = name.trim();
-    const cleanBrand = brand.trim();
-
-    if (!cleanName || !cleanBrand) return cleanName;
-
-    const normalizedName = normalizeFilterName(cleanName);
-    const normalizedBrand = normalizeFilterName(cleanBrand);
-
-    if (normalizedName === normalizedBrand) return '';
-
-    if (normalizedName.startsWith(`${normalizedBrand} `)) {
-      return cleanName.slice(cleanBrand.length).trim();
-    }
-
-    return cleanName;
-  };
-
   const getSelectedFilterNames = (optionIds: string[]) => {
     const selectedIds = new Set(optionIds);
 
@@ -345,37 +257,9 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       .filter(Boolean);
   };
 
-  const isLensCategory = (categoryName?: string | null) => {
-    return normalizeFilterName(categoryName) === 'lentes';
-  };
-
   const isMountFilterGroup = (group?: FilterGroup | null) => {
     const normalizedName = normalizeFilterName(group?.name);
     return normalizedName === 'mount' || normalizedName === 'montagem';
-  };
-
-  const normalizeLensMountLabel = (value?: string | null) => {
-    const cleanValue = (value || '').trim();
-    const normalizedValue = normalizeFilterName(cleanValue)
-      .replace(/-mount/g, '')
-      .replace(/ mount/g, '')
-      .replace(/montagem /g, '')
-      .trim();
-
-    const labelByMount: Record<string, string> = {
-      pl: 'PL',
-      ef: 'EF',
-      rf: 'RF',
-      e: 'E',
-      l: 'L',
-      lpl: 'LPL',
-      b4: 'B4',
-      mft: 'MFT',
-      microfourthirds: 'MFT',
-      'micro 4/3': 'MFT',
-    };
-
-    return labelByMount[normalizedValue] || cleanValue.replace(/\s*[-/]?\s*mount$/i, '').trim();
   };
 
   const getLensMountNames = (optionIds: string[]) => {
