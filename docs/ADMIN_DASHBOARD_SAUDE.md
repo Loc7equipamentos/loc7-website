@@ -261,3 +261,251 @@ Sem reescrita.
 Sem perda de funcionalidades.
 
 Sem retrabalho.
+
+# Atualização Junho/2026
+
+(conteúdo que te enviei)
+
+# ADMIN DASHBOARD — SAÚDE ESTRUTURAL
+
+## Objetivo
+
+Reduzir responsabilidades do arquivo:
+
+```text
+client/src/pages/AdminDashboard.tsx
+```
+
+sem alterar comportamento, sem refatoração agressiva e sem risco operacional.
+
+---
+
+# Regras da Fase de Saúde
+
+* Não reescrever o AdminDashboard.
+* Não trocar arquitetura.
+* Não alterar fluxo de negócio.
+* Não alterar Supabase.
+* Não alterar catálogo.
+* Não alterar filtros validados.
+* Não alterar mounts.
+* Não alterar SEO validado.
+* Uma extração por vez.
+* Um arquivo por vez.
+* Um commit por vez.
+* Uma validação Vercel por vez.
+
+---
+
+# Estado Inicial
+
+AdminDashboard:
+
+```text
+~4742 linhas
+```
+
+Responsabilidades acumuladas:
+
+* Produtos
+* SEO
+* Fiscal
+* Filtros
+* Categorias
+* Subcategorias
+* Marcas
+* Uploads
+* Destaques
+* Relacionamentos produto/filtro
+
+Diagnóstico:
+
+Arquivo funcional.
+
+Não estava quebrado.
+
+Problema principal era acúmulo de responsabilidades.
+
+---
+
+# Extrações Concluídas
+
+## Fase 1 — Product Utils
+
+Arquivo criado:
+
+```text
+client/src/lib/admin/product-utils.ts
+```
+
+Funções extraídas:
+
+* normalizeFilterName
+* buildProductName
+* stripBrandFromName
+* getDisplayNamePrefix
+* buildProductDisplayName
+* isLensCategory
+* normalizeLensMountLabel
+
+Status:
+
+✅ Validado
+✅ Deploy validado
+
+---
+
+## Fase 2 — SEO Utils
+
+Arquivo criado:
+
+```text
+client/src/lib/admin/seo-utils.ts
+```
+
+Responsabilidades movidas:
+
+* normalização SEO
+* geração SEO automática
+* tags semânticas
+* prompts ChatGPT
+* helpers de SEO
+
+Status:
+
+✅ Validado
+✅ Deploy validado
+
+---
+
+## Fase 3 — Fiscal Utils
+
+Arquivo criado:
+
+```text
+client/src/lib/admin/fiscal-utils.ts
+```
+
+Responsabilidades movidas:
+
+* ProductFiscalProfile
+* NCM
+* pesquisa fiscal
+* sugestões NCM
+* persistência fiscal
+* normalização fiscal
+
+Status:
+
+✅ Validado
+✅ Deploy validado
+
+---
+
+## Fase 4 — Filter Utils
+
+Arquivo criado:
+
+```text
+client/src/lib/admin/filter-utils.ts
+```
+
+Responsabilidades movidas:
+
+* sortFilterOptionsByDisplayOrder
+* moveFilterGroupOrder
+* moveFilterOptionOrder
+
+Status:
+
+✅ Validado
+✅ Deploy validado
+
+---
+
+# Estado Atual
+
+Arquivos auxiliares existentes:
+
+```text
+client/src/lib/admin/product-utils.ts
+client/src/lib/admin/seo-utils.ts
+client/src/lib/admin/fiscal-utils.ts
+client/src/lib/admin/filter-utils.ts
+```
+
+Todos integrados ao:
+
+```text
+client/src/pages/AdminDashboard.tsx
+```
+
+Todos validados em produção.
+
+---
+
+# Decisão Estratégica Importante
+
+Não continuar extrações em sequência sem auditoria.
+
+Após quatro extrações consecutivas:
+
+```text
+product-utils
+seo-utils
+fiscal-utils
+filter-utils
+```
+
+o projeto entra em fase de estabilização.
+
+Objetivo:
+
+* revisar comportamento
+* validar painel
+* validar catálogo
+* validar filtros
+* validar SEO
+* validar mounts
+
+antes de novas remoções.
+
+---
+
+# Pendências Futuras (não iniciadas)
+
+Possíveis extrações futuras:
+
+1. upload-utils
+2. category-utils
+3. brand-utils
+4. filter-architecture-utils
+
+Status:
+
+🚫 NÃO INICIADAS
+
+Nenhuma autorizada até nova auditoria.
+
+---
+
+# Situação Atual do Projeto
+
+AdminDashboard saudável.
+
+Sem regressões conhecidas.
+
+SEO preservado.
+
+Fiscal preservado.
+
+Arquitetura de filtros preservada.
+
+Estratégia de múltiplos mounts preservada.
+
+Projeto apto para continuar evolução sem retrabalho.
+
+Data da atualização:
+
+Junho/2026
+
