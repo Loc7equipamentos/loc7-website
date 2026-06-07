@@ -27,6 +27,11 @@ import {
   openNcmResearch,
   buildSuggestedFiscalProfile,
 } from '@/lib/admin/fiscal-utils';
+import {
+  sortFilterOptionsByDisplayOrder,
+  moveFilterGroupOrder,
+  moveFilterOptionOrder,
+} from '@/lib/admin/filter-utils';
 
 type ProductWithImages = Product & {
   images?: string[] | null;
@@ -1822,16 +1827,11 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
 
       const groups = ((groupsData as FilterGroup[]) || []).map((group) => ({
         ...group,
-        options: ((optionsData as FilterOption[]) || [])
-          .filter((option) => option.group_id === group.id)
-          .sort((a, b) => {
-            const orderA = a.display_order ?? 999;
-            const orderB = b.display_order ?? 999;
-
-            if (orderA !== orderB) return orderA - orderB;
-
-            return a.name.localeCompare(b.name, 'pt-BR');
-          }),
+        options: sortFilterOptionsByDisplayOrder(
+          ((optionsData as FilterOption[]) || []).filter(
+            (option) => option.group_id === group.id
+          )
+        ),
       }));
 
       setFilterGroups(groups);
@@ -2028,32 +2028,9 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
 
 
   const moveFilterGroup = async (groupIndex: number, direction: 'up' | 'down') => {
-    const targetIndex = direction === 'up' ? groupIndex - 1 : groupIndex + 1;
-    const currentGroup = filteredFilterGroups[groupIndex];
-    const targetGroup = filteredFilterGroups[targetIndex];
-
-    if (!currentGroup || !targetGroup) return;
-
-    const currentOrder = currentGroup.display_order ?? groupIndex + 1;
-    const targetOrder = targetGroup.display_order ?? targetIndex + 1;
-
     try {
       setError(null);
-
-      const [{ error: currentError }, { error: targetError }] = await Promise.all([
-        supabase
-          .from('filter_groups')
-          .update({ display_order: targetOrder })
-          .eq('id', currentGroup.id),
-        supabase
-          .from('filter_groups')
-          .update({ display_order: currentOrder })
-          .eq('id', targetGroup.id),
-      ]);
-
-      if (currentError) throw currentError;
-      if (targetError) throw targetError;
-
+      await moveFilterGroupOrder(filteredFilterGroups, groupIndex, direction);
       await loadFilterArchitecture();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao reordenar filtros');
@@ -2066,41 +2043,9 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
     optionIndex: number,
     direction: 'up' | 'down'
   ) => {
-    const options = [...(group.options || [])].sort((a, b) => {
-      const orderA = a.display_order ?? 999;
-      const orderB = b.display_order ?? 999;
-
-      if (orderA !== orderB) return orderA - orderB;
-
-      return a.name.localeCompare(b.name, 'pt-BR');
-    });
-
-    const targetIndex = direction === 'up' ? optionIndex - 1 : optionIndex + 1;
-    const currentOption = options[optionIndex];
-    const targetOption = options[targetIndex];
-
-    if (!currentOption || !targetOption) return;
-
-    const currentOrder = currentOption.display_order ?? optionIndex + 1;
-    const targetOrder = targetOption.display_order ?? targetIndex + 1;
-
     try {
       setError(null);
-
-      const [{ error: currentError }, { error: targetError }] = await Promise.all([
-        supabase
-          .from('filter_options')
-          .update({ display_order: targetOrder })
-          .eq('id', currentOption.id),
-        supabase
-          .from('filter_options')
-          .update({ display_order: currentOrder })
-          .eq('id', targetOption.id),
-      ]);
-
-      if (currentError) throw currentError;
-      if (targetError) throw targetError;
-
+      await moveFilterOptionOrder(group, optionIndex, direction);
       await loadFilterArchitecture();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao reordenar valores do filtro');
