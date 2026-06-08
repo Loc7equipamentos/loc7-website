@@ -333,25 +333,45 @@ export default function Catalogo() {
     0
   );
 
-  const filteredProducts = categoryScopedProducts.filter((p) => {
-    if (hasDynamicFilters && selectedDynamicFilterCount > 0) {
-      const productOptionIds = productFilterOptions[p.id] || [];
+  const filteredProducts = categoryScopedProducts
+    .filter((p) => {
+      if (hasDynamicFilters && selectedDynamicFilterCount > 0) {
+        const productOptionIds = productFilterOptions[p.id] || [];
 
-      return Object.entries(selectedFilterOptionIds).every(([, selectedIds]) => {
-        if (selectedIds.length === 0) return true;
-        return selectedIds.some((optionId) => productOptionIds.includes(optionId));
-      });
-    }
+        return Object.entries(selectedFilterOptionIds).every(([, selectedIds]) => {
+          if (selectedIds.length === 0) return true;
+          return selectedIds.some((optionId) => productOptionIds.includes(optionId));
+        });
+      }
 
-    const matchSubcategory =
-      selectedSubcategory === "Todas" ||
-      normalize(p.subcategory || "") === normalize(selectedSubcategory);
+      const matchSubcategory =
+        selectedSubcategory === "Todas" ||
+        normalize(p.subcategory || "") === normalize(selectedSubcategory);
 
-    const matchBrand =
-      selectedBrand === "Todas" || normalize(p.brand || "") === normalize(selectedBrand);
+      const matchBrand =
+        selectedBrand === "Todas" || normalize(p.brand || "") === normalize(selectedBrand);
 
-    return matchSubcategory && matchBrand;
-  });
+      return matchSubcategory && matchBrand;
+    })
+    .sort((a, b) => {
+      if (!isCategoryPage || selectedCategory === "Todos") {
+        return normalize(a.name || "").localeCompare(normalize(b.name || ""), "pt-BR");
+      }
+
+      const orderA =
+        typeof (a as Product & { catalog_order?: number | null }).catalog_order === "number"
+          ? (a as Product & { catalog_order?: number | null }).catalog_order
+          : Number.POSITIVE_INFINITY;
+
+      const orderB =
+        typeof (b as Product & { catalog_order?: number | null }).catalog_order === "number"
+          ? (b as Product & { catalog_order?: number | null }).catalog_order
+          : Number.POSITIVE_INFINITY;
+
+      if (orderA !== orderB) return orderA - orderB;
+
+      return normalize(a.name || "").localeCompare(normalize(b.name || ""), "pt-BR");
+    });
 
   const activeCategorySeo =
     isCategoryPage && selectedCategoryRow
