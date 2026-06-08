@@ -2814,11 +2814,11 @@ lente para astrofotografia`}
                               <span className="text-gray-400">—</span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-gray-900">
-                            {product.featured_order !== null && product.featured_order !== undefined
-                              ? product.featured_order
-                              : '—'}
-                          </td>
+                         <td className="px-4 py-3 text-gray-900">
+  {product.catalog_order !== null && product.catalog_order !== undefined
+    ? product.catalog_order
+    : '—'}
+</td>
                           <td className="px-4 py-3">
                             <div className="flex gap-2">
                               <button
