@@ -59,19 +59,20 @@ const submenuCategories: SubmenuCategory[] = [
   { name: "Comunicadores", icon: Radio, href: "/catalogo/comunicadores" },
   { name: "Maquinária", icon: Flag, href: "/catalogo/maquinaria" },
   {
-    name: "Acessórios",
-    icon: Cog,
-    children: [
-      { name: "Tripés de Câmera", href: "/catalogo/tripes" },
-      { name: "Movimento", href: "/catalogo/movimento" },
-      { name: "Follow Focus", href: "/catalogo/follow-focus" },
-      { name: "Mattebox", href: "/catalogo/mattebox" },
-      { name: "Filtros", href: "/catalogo/filtros" },
-      { name: "Switchers", href: "/catalogo/switchers" },
-      { name: "Teleprompter", href: "/catalogo/teleprompter" },
-      { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
-    ],
-  },
+  name: "Acessórios",
+  icon: Cog,
+  children: [
+    { name: "Flash", href: "/catalogo/flash" },
+    { name: "Tripés de Câmera", href: "/catalogo/tripes" },
+    { name: "Movimento", href: "/catalogo/movimento" },
+    { name: "Follow Focus", href: "/catalogo/follow-focus" },
+    { name: "Mattebox", href: "/catalogo/mattebox" },
+    { name: "Filtros", href: "/catalogo/filtros" },
+    { name: "Switchers", href: "/catalogo/switchers" },
+    { name: "Teleprompter", href: "/catalogo/teleprompter" },
+    { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
+  ],
+},
 ];
 
 
@@ -86,6 +87,7 @@ const mobileEquipmentLinks: SubmenuChild[] = [
   { name: "Áudio", href: "/catalogo/audio" },
   { name: "Comunicadores", href: "/catalogo/comunicadores" },
   { name: "Maquinária", href: "/catalogo/maquinaria" },
+  { name: "Flash", href: "/catalogo/flash" },
   { name: "Acessórios", href: "/catalogo/acessorios" },
   { name: "Tripés de Câmera", href: "/catalogo/tripes" },
   { name: "Movimento", href: "/catalogo/movimento" },
