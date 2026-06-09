@@ -7,6 +7,9 @@ export type ProductFiscalProfile = {
   fiscal_code: string;
   fiscal_description: string;
   ncm: string;
+  gtin: string;
+  weight_kg: number | null;
+  asset_value: number | null;
   ncm_source: string;
   ncm_source_url: string;
   ncm_basis: string;
@@ -22,6 +25,9 @@ export const getEmptyFiscalProfile = (): ProductFiscalProfile => ({
   fiscal_code: '',
   fiscal_description: '',
   ncm: '',
+  gtin: '',
+  weight_kg: null,
+  asset_value: null,
   ncm_source: '',
   ncm_source_url: '',
   ncm_basis: '',
@@ -41,6 +47,9 @@ export const normalizeFiscalProfile = (
   fiscal_code: data?.fiscal_code || '',
   fiscal_description: data?.fiscal_description || '',
   ncm: data?.ncm || '',
+  gtin: data?.gtin || '',
+  weight_kg: data?.weight_kg ?? null,
+  asset_value: data?.asset_value ?? null,
   ncm_source: data?.ncm_source || '',
   ncm_source_url: data?.ncm_source_url || '',
   ncm_basis: data?.ncm_basis || '',
@@ -69,6 +78,9 @@ export const hasFiscalProfileData = (profile: ProductFiscalProfile) => {
     profile.fiscal_code.trim() ||
       profile.fiscal_description.trim() ||
       profile.ncm.trim() ||
+      profile.gtin.trim() ||
+      profile.weight_kg !== null ||
+      profile.asset_value !== null ||
       profile.ncm_source.trim() ||
       profile.ncm_source_url.trim() ||
       profile.ncm_basis.trim() ||
@@ -88,6 +100,9 @@ export const saveFiscalProfile = async (
     fiscal_code: profile.fiscal_code.trim() || null,
     fiscal_description: profile.fiscal_description.trim() || null,
     ncm: profile.ncm.trim() || null,
+    gtin: profile.gtin.trim() || null,
+    weight_kg: profile.weight_kg,
+    asset_value: profile.asset_value,
     ncm_source: profile.ncm_source.trim() || null,
     ncm_source_url: profile.ncm_source_url.trim() || null,
     ncm_basis: profile.ncm_basis.trim() || null,
