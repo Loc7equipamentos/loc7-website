@@ -3721,7 +3721,7 @@ lente para astrofotografia`}
                   />
                 </div>
 
-                <div className="md:col-span-2 border-t border-gray-200 pt-5">
+                               <div className="md:col-span-2 border-t border-gray-200 pt-5">
                   <div className="mb-4 rounded border border-amber-200 bg-amber-50 px-4 py-3">
                     <h3 className="text-sm font-semibold text-gray-900">Fiscal / Remessa</h3>
                     <p className="mt-1 text-xs leading-5 text-gray-600">
@@ -3772,6 +3772,56 @@ lente para astrofotografia`}
                               ...prev,
                               ncm: e.target.value,
                               fiscal_status: e.target.value.trim() ? prev.fiscal_status : 'pending',
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">GTIN / EAN</label>
+                        <input
+                          type="text"
+                          placeholder="Ex: 7891234567890"
+                          value={editingFiscalProfile.gtin}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              gtin: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
+                        <input
+                          type="number"
+                          step="0.001"
+                          placeholder="Ex: 2.350"
+                          value={editingFiscalProfile.weight_kg ?? ''}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              weight_kg: e.target.value ? Number(e.target.value) : null,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Valor Patrimonial (R$)</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          placeholder="Ex: 35000"
+                          value={editingFiscalProfile.asset_value ?? ''}
+                          onChange={(e) =>
+                            setEditingFiscalProfile((prev) => ({
+                              ...prev,
+                              asset_value: e.target.value ? Number(e.target.value) : null,
                             }))
                           }
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
