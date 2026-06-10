@@ -465,59 +465,53 @@ export default function Home() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
       {/* ===== HERO SECTION ===== */}
-      <section className="relative h-[250px] overflow-hidden bg-black md:h-[460px] lg:h-[500px]">
-       {/* DESKTOP VIDEO */}
-<video
-  autoPlay
-  muted
-  loop
-  playsInline
-  preload="auto"
-  className="absolute inset-y-0 right-0 hidden h-full w-[72%] object-cover object-center md:block"
->
-  <source
-    src="/videos/loc7-hero-drone-v1.mp4"
-    type="video/mp4"
-  />
-</video>
+<section className="relative h-[360px] overflow-hidden bg-black md:h-[460px] lg:h-[500px]">
+  {/* DESKTOP VIDEO FULL */}
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="auto"
+    className="absolute inset-0 hidden h-full w-full object-cover object-center md:block"
+  >
+    <source src="/videos/loc7-hero-drone-v1.mp4" type="video/mp4" />
+  </video>
 
-{/* MOBILE VIDEO */}
-<video
-  autoPlay
-  muted
-  loop
-  playsInline
-  preload="auto"
-  className="absolute inset-0 block h-full w-full object-cover md:hidden"
->
-  <source
-    src="/videos/loc7-hero-mobi_vert-v1.mp4"
-    type="video/mp4"
-  />
-</video>
+  {/* MOBILE VIDEO */}
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="auto"
+    className="absolute inset-0 block h-full w-full object-cover object-center md:hidden"
+  >
+    <source src="/videos/loc7-hero-mobi_vert-v1.mp4" type="video/mp4" />
+  </video>
 
-{/* OVERLAY MOBILE */}
-<div className="absolute inset-0 bg-black/55 md:hidden" />
+  {/* OVERLAY GERAL */}
+  <div className="absolute inset-0 bg-black/35" />
 
-{/* OVERLAY DESKTOP */}
-<div className="absolute inset-0 hidden bg-black/15 md:block" />
+  {/* GRADIENT DESKTOP — invade o vídeo, sem corte reto */}
+  <div className="absolute inset-y-0 left-0 hidden w-[70%] bg-gradient-to-r from-black via-black/80 to-transparent md:block" />
 
-        {/* GRADIENT DESKTOP */}
-        <div className="absolute inset-y-0 left-0 hidden w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent md:block" />
+  {/* GRADIENT MOBILE — protege texto */}
+  <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/40 md:hidden" />
 
-        {/* CONTENT */}
-        <div className="container relative z-10 flex h-full items-start pt-[28px] md:pt-32 lg:pt-36">
-          <div className="max-w-[560px]">
-            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
-              LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
-            </p>
+  {/* CONTENT */}
+  <div className="container relative z-10 flex h-full items-start pt-[42px] md:pt-32 lg:pt-36">
+    <div className="max-w-[560px]">
+      <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
+        LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
+      </p>
 
-            <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
-              CINE · FOTO · BROADCAST
-            </h1>
-          </div>
-        </div>
-      </section>
+      <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
+        CINE · FOTO · BROADCAST
+      </h1>
+    </div>
+  </div>
+</section>
 
       {/* ===== DESTAQUES ===== */}
       <section className="bg-[oklch(0.95_0_0)] py-10 md:py-12">
