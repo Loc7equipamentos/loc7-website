@@ -488,7 +488,7 @@ export default function Home() {
   loop
   playsInline
   preload="auto"
-  className="absolute inset-0 block h-full w-full object-cover md:hidden"
+  className="absolute inset-0 block h-full w-full object-cover object-top md:hidden"
 >
   <source
     src="/videos/loc7-hero-mobi_vert-v1.mp4"
@@ -500,10 +500,10 @@ export default function Home() {
 <div className="absolute inset-0 bg-black/55 md:hidden" />
 
 {/* OVERLAY DESKTOP */}
-<div className="absolute inset-0 hidden bg-black/15 md:block" />
+<div className="absolute inset-0 hidden bg-black/35 md:block" />
 
         {/* GRADIENT DESKTOP */}
-        <div className="absolute inset-y-0 left-0 hidden w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent md:block" />
+        <div className="absolute inset-y-0 left-0 hidden w-[58%] bg-gradient-to-r from-black/85 via-black/45 to-transparent md:block" />
 
         {/* CONTENT */}
         <div className="container relative z-10 flex h-full items-start pt-[28px] md:pt-32 lg:pt-36">
