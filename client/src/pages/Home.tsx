@@ -465,7 +465,7 @@ export default function Home() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
       {/* ===== HERO SECTION ===== */}
-<section className="relative h-[360px] overflow-hidden bg-black md:h-[560px] lg:h-[600px]">
+<section className="relative h-[360px] overflow-hidden bg-black md:h-[500px] lg:h-[560px]">
   {/* DESKTOP VIDEO FULL */}
   <video
     autoPlay
