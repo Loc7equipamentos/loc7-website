@@ -514,16 +514,16 @@ export default function Home() {
 </section>
 
       {/* ===== DESTAQUES ===== */}
-      <section className="bg-[oklch(0.95_0_0)] py-10 md:py-12">
+      <section className="bg-black py-10 md:py-12">
         <div className="container">
           {/* Título */}
           <div className="mb-6 md:mb-8">
             <div className="flex items-center gap-3">
-              <span className="text-[13px] uppercase tracking-[0.2em] text-black/80 font-medium">
+              <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
                 EQUIPAMENTOS EM DESTAQUE
               </span>
 
-              <div className="h-[1px] flex-1 bg-black/15" />
+              <div className="h-[1px] flex-1 bg-white/15" />
             </div>
 
             <div className="mt-2 h-[2px] w-10 bg-red-700" />
@@ -573,7 +573,7 @@ export default function Home() {
                   behavior: "auto",
                 });
               }}
-              className="inline-flex items-center justify-center border border-black/70 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+             className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
             >
               Ver catálogo completo
             </Link>
