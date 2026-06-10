@@ -466,15 +466,41 @@ export default function Home() {
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
       {/* ===== HERO SECTION ===== */}
       <section className="relative h-[185px] overflow-hidden bg-black md:h-[460px] lg:h-[500px]">
-        {/* DESKTOP IMAGE */}
-        <img
-          src={HERO_IMAGE}
-          alt="Loc7 Equipamentos Audiovisuais"
-          className="absolute inset-y-0 right-0 hidden h-full w-[72%] object-cover object-[50%_center] md:block"
-        />
+       {/* DESKTOP VIDEO */}
+<video
+  autoPlay
+  muted
+  loop
+  playsInline
+  preload="auto"
+  className="absolute inset-y-0 right-0 hidden h-full w-[72%] object-cover object-center md:block"
+>
+  <source
+    src="/videos/loc7-hero-drone-v1.mp4"
+    type="video/mp4"
+  />
+</video>
 
-        {/* MOBILE CLEAN (SEM IMAGEM) */}
-        <div className="absolute inset-0 block bg-black md:hidden" />
+{/* MOBILE VIDEO */}
+<video
+  autoPlay
+  muted
+  loop
+  playsInline
+  preload="auto"
+  className="absolute inset-0 block h-full w-full object-cover md:hidden"
+>
+  <source
+    src="/videos/loc7-hero-mobi_vert-v1.mp4"
+    type="video/mp4"
+  />
+</video>
+
+{/* OVERLAY MOBILE */}
+<div className="absolute inset-0 bg-black/55 md:hidden" />
+
+{/* OVERLAY DESKTOP */}
+<div className="absolute inset-0 hidden bg-black/15 md:block" />
 
         {/* GRADIENT DESKTOP */}
         <div className="absolute inset-y-0 left-0 hidden w-[58%] bg-gradient-to-r from-black via-black/85 to-transparent md:block" />
