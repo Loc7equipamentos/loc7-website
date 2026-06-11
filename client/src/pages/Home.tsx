@@ -584,6 +584,75 @@ export default function Home() {
         </div>
       </section>
 
+          {/* ===== TRABALHOS REALIZADOS ===== */}
+      <section
+        id="trabalhos-realizados"
+        ref={setSectionRef("trabalhos-realizados")}
+        className="bg-black py-8 md:py-10"
+      >
+        <div className="container">
+          <div className="mb-6">
+            <div className="flex items-center gap-3">
+              <span className="text-[13px] uppercase tracking-[0.2em] text-white/80">
+                ALGUNS TRABALHOS REALIZADOS
+              </span>
+
+              <div className="h-[1px] flex-1 bg-white/15" />
+            </div>
+
+            <div className="mt-2 h-[2px] w-10 bg-red-700" />
+          </div>
+
+          <div
+            ref={trabalhosMobileScrollRef}
+            className="flex gap-4 overflow-x-auto pb-1 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible"
+          >
+            {[
+              {
+                img: "/images/trabalhos/the-voice-globo.jpg",
+                title: "The Voice Brasil — TV Globo",
+              },
+              {
+                img: "/images/trabalhos/esquadrao-moda-sbt.jpg",
+                title: "Esquadrão da Moda — SBT",
+              },
+              {
+                img: "/images/trabalhos/pesadelo-cozinha-band.jpg",
+                title: "Pesadelo na Cozinha — Band",
+              },
+              {
+                img: "/images/trabalhos/bbb-globo.jpg",
+                title: "Big Brother Brasil — TV Globo",
+              },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className={`snap-start relative min-w-[88%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-0 transition-all duration-700 ease-out ${
+                  isVisible["trabalhos-realizados"]
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 translate-x-[-40px]"
+                }`}
+                style={{
+                  transitionDelay: `${index * 0.08}s`,
+                }}
+              >
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  className="h-[420px] md:h-[480px] w-full object-cover object-top transition-transform duration-700 ease-out hover:scale-[1.02]"
+                />
+
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-4">
+                  <span className="text-sm font-medium text-white">
+                    {item.title}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ===== COMO ALUGAR ===== */}
       <section
         id="como-alugar"
@@ -868,92 +937,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ===== TRABALHOS REALIZADOS ===== */}
-      <section
-        id="trabalhos-realizados"
-        ref={setSectionRef("trabalhos-realizados")}
-        className="bg-black py-8 md:py-10"
-      >
-        <div className="container">
-          <div className="mb-6">
-            <div className="flex items-center gap-3">
-              <span className="text-[13px] uppercase tracking-[0.2em] text-white/80">
-                ALGUNS TRABALHOS REALIZADOS
-              </span>
-
-              <div className="h-[1px] flex-1 bg-white/15" />
-            </div>
-
-            <div className="mt-2 h-[2px] w-10 bg-red-700" />
-          </div>
-
-          <div
-            ref={trabalhosMobileScrollRef}
-            className="flex gap-4 overflow-x-auto pb-1 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible"
-          >
-            {[
-              {
-                img: "/images/trabalhos/the-voice-globo.jpg",
-                title: "The Voice Brasil — TV Globo",
-              },
-              {
-                img: "/images/trabalhos/esquadrao-moda-sbt.jpg",
-                title: "Esquadrão da Moda — SBT",
-              },
-              {
-                img: "/images/trabalhos/pesadelo-cozinha-band.jpg",
-                title: "Pesadelo na Cozinha — Band",
-              },
-              {
-                img: "/images/trabalhos/bbb-globo.jpg",
-                title: "Big Brother Brasil — TV Globo",
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className={`snap-start relative min-w-[88%] overflow-hidden rounded-xl bg-neutral-900 md:min-w-0 transition-all duration-700 ease-out ${
-                  isVisible["trabalhos-realizados"]
-                    ? "opacity-100 translate-x-0"
-                    : "opacity-0 translate-x-[-40px]"
-                }`}
-                style={{
-                  transitionDelay: `${index * 0.08}s`,
-                }}
-              >
-                <img
-                  src={item.img}
-                  alt={item.title}
-                  className="h-[420px] md:h-[480px] w-full object-cover object-top transition-transform duration-700 ease-out hover:scale-[1.02]"
-                />
-
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-4">
-                  <span className="text-sm font-medium text-white">
-                    {item.title}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== MAPA ===== */}
-      <section className="bg-[oklch(0.95_0_0)] py-6 md:py-7">
-        <div className="container">
-          {/* Título padrão */}
-          <div className="mb-5">
-            <div className="flex items-center gap-3">
-              <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
-                LOCALIZAÇÃO
-              </span>
-
-              <div className="h-[1px] flex-1 bg-black/15" />
-            </div>
-
-            <div className="mt-2 h-[2px] w-10 bg-red-700" />
-          </div>
-
           {/* Mapa */}
           <div className="overflow-hidden rounded-xl border border-black/5">
             <iframe
