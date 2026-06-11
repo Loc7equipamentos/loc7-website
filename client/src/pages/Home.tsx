@@ -519,7 +519,7 @@ export default function Home() {
       {/* ===== DESTAQUES ===== */}
       <section className="bg-black py-10 md:py-12">
         <div className="container">
-       {/* Título */}
+    {/* Título */}
 <div className="relative z-30 mb-6 md:-translate-y-[72px] md:[margin-bottom:-40px]">
   <div className="flex items-center gap-3">
     <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
