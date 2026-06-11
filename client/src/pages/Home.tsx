@@ -464,411 +464,172 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
-      {/* ===== HERO SECTION ===== */}
-<section className="relative h-[360px] overflow-hidden bg-black md:h-[500px] lg:h-[560px]">
-  {/* DESKTOP VIDEO FULL */}
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="auto"
-    className="absolute inset-0 hidden h-full w-full object-cover object-center md:block"
-  >
-    <source src="/videos/loc7-hero-drone-v1.mp4" type="video/mp4" />
-  </video>
+          {/* ===== HERO SECTION E DESTAQUES CONDICIONAIS ===== */}
 
-  {/* MOBILE VIDEO */}
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="auto"
-    className="absolute inset-0 block h-full w-full object-cover object-center md:hidden"
-  >
-    <source src="/videos/loc7-hero-mobi_vert-v1.mp4" type="video/mp4" />
-  </video>
-
-  {/* OVERLAY GERAL */}
-  <div className="absolute inset-0 bg-black/35" />
-
-  {/* GRADIENT DESKTOP — invade o vídeo, sem corte reto */}
-  <div className="absolute inset-y-0 left-0 hidden w-[70%] bg-gradient-to-r from-black via-black/80 to-transparent md:block" />
-
-{/* GRADIENT INFERIOR */}
-<div className="absolute inset-x-0 bottom-0 hidden h-[90px] bg-gradient-to-t from-black/55 via-black/15 to-transparent md:block" />
-  
-  {/* GRADIENT MOBILE — protege texto */}
-  <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/40 md:hidden" />
-
-  {/* CONTENT */}
-  <div className="container relative z-10 flex h-full items-start pt-[42px] md:pt-32 lg:pt-36">
-    <div className="max-w-[560px]">
-      <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
-        LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
-      </p>
-
-      <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
-        CINE · FOTO · BROADCAST
-      </h1>
-    </div>
-  </div>
-</section>
-
-      {/* ===== DESTAQUES ===== */}
-      <section className="bg-black py-10 md:py-12">
-        <div className="container">
-          {/* Título */}
-          <div className="relative z-30 mb-6 md:mb-8 md:-translate-y-[52px]">
-            <div className="flex items-center gap-3">
-              <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
-                EQUIPAMENTOS EM DESTAQUE
-              </span>
-
-              <div className="h-[1px] flex-1 bg-white/15" />
-            </div>
-
-            <div className="mt-2 h-[2px] w-10 bg-red-700" />
-          </div>
-
-          {/* Categorias */}
-          <div className="mb-6 sm:hidden">
-            <div className="overflow-x-auto">
-              <div className="flex gap-2 pb-1">
-                {featuredCategoryOptions.map((category) =>
-                  category.value === "todas" ? (
-                    <button
-                      key={category.value}
-                      type="button"
-                      className="whitespace-nowrap rounded-full border border-black bg-black px-4 py-2 text-[12px] font-medium text-white transition-colors"
-                    >
-                      {category.label}
-                    </button>
-                  ) : (
-                    <Link
-                      key={category.value}
-                      href={`/catalogo/${category.value}`}
-                      className="whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-[12px] font-medium text-neutral-700 transition-colors hover:border-black hover:text-black"
-                    >
-                      {category.label}
-                    </Link>
-                  )
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* GRID */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-4 md:gap-5 lg:grid-cols-4 lg:gap-5">
-            {featuredProducts.slice(0, 4).map((product) => (
-              <HomeFeaturedCard key={product.id} product={product} />
-            ))}
-          </div>
-
-          {/* CTA */}
-          <div className="mt-10 flex justify-center">
-            <Link
-              href="/catalogo"
-              onClick={() => {
-                window.scrollTo({
-                  top: 0,
-                  behavior: "auto",
-                });
-              }}
-             className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
-            >
-              Ver catálogo completo
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== COMO ALUGAR ===== */}
-      <section
-        id="como-alugar"
-        ref={setSectionRef("como-alugar")}
-        className="bg-[oklch(0.95_0_0)] pb-10 pt-2 md:pb-14 md:pt-4"
-      >
-        <div className="container">
-          <div
-            className={`transition-all duration-700 ease-out ${
-              isVisible["como-alugar"]
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8"
-            }`}
+      {/* MOBILE — PRESERVADO */}
+      <div className="block md:hidden">
+        <section className="relative h-[360px] overflow-hidden bg-black">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="absolute inset-0 block h-full w-full object-cover object-center"
           >
-            <div className="grid gap-8 lg:grid-cols-[0.72fr_42px_1.28fr] lg:items-start">
-              {/* TEXTO */}
-              <div className="pt-2 lg:pt-7">
-                <div className="mb-6 flex items-center gap-3">
-                  <span className="text-[12px] font-semibold uppercase tracking-[0.24em] text-red-700">
-                    COMO ALUGAR
-                  </span>
-                  <div className="h-[1px] w-10 bg-red-700/70" />
-                </div>
+            <source src="/videos/loc7-hero-mobi_vert-v1.mp4" type="video/mp4" />
+          </video>
 
-                <h2 className="max-w-[430px] text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-neutral-950 md:text-[40px] lg:text-[40px]">
-                  Locação simples, ágil e sem burocracia.
-                </h2>
+          <div className="absolute inset-0 bg-black/35" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/40" />
 
-                <div className="mt-6 h-[1px] w-10 bg-black/20" />
+          <div className="container relative z-10 flex h-full items-start pt-[42px]">
+            <div className="max-w-[560px]">
+              <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
+                LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
+              </p>
 
-                <p className="mt-6 max-w-[390px] text-[16px] font-semibold leading-7 text-neutral-900">
-                  Na LOC7, alugar equipamentos é rápido, seguro e sem complicação.
-                </p>
+              <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white">
+                CINE · FOTO · BROADCAST
+              </h1>
+            </div>
+          </div>
+        </section>
 
-                <p className="mt-5 text-[17px] font-semibold leading-7 text-neutral-900">
-                  Funciona assim:
-                </p>
+        <section className="bg-black py-10">
+          <div className="container">
+            <div className="relative z-30 mb-6">
+              <div className="flex items-center gap-3">
+                <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
+                  EQUIPAMENTOS EM DESTAQUE
+                </span>
+                <div className="h-[1px] flex-1 bg-white/15" />
               </div>
+              <div className="mt-2 h-[2px] w-10 bg-red-700" />
+            </div>
 
-              {/* TIMELINE DESKTOP */}
-              <div className="relative hidden h-full min-h-[380px] justify-center lg:flex">
-                <div className="absolute left-1/2 top-10 h-[315px] w-[1px] -translate-x-1/2 bg-black/12" />
-                {[
-                  "bg-red-700/25",
-                  "bg-red-700/45",
-                  "bg-red-700/70",
-                  "bg-red-700",
-                ].map((dotClass, index) => (
-                  <span
-                    key={dotClass}
-                    className={`absolute left-1/2 h-5 w-5 -translate-x-1/2 rounded-full shadow-[0_8px_22px_rgba(185,28,28,0.16)] ${dotClass}`}
-                    style={{ top: `${40 + index * 94}px` }}
-                  />
-                ))}
-              </div>
-
-              {/* CARDS DESKTOP */}
-              <div className="hidden lg:flex lg:flex-col lg:gap-2.5">
-                {[
-                  {
-                    number: "01",
-                    title: "Escolha os equipamentos",
-                    text: "Navegue pelo catálogo e selecione os equipamentos desejados.",
-                    className: "bg-white text-neutral-950",
-                    numberClass: "text-red-700/35",
-                    arrowClass: "text-black",
-                  },
-                  {
-                    number: "02",
-                    title: "Solicite um orçamento",
-                    text: "Nossa equipe verificará a disponibilidade e enviará uma proposta personalizada.",
-                    className: "bg-neutral-100 text-neutral-950",
-                    numberClass: "text-red-700/55",
-                    arrowClass: "text-black",
-                  },
-                  {
-                    number: "03",
-                    title: "Cadastro e aprovação",
-                    text: "Na primeira locação, realizamos um cadastro simples e de fácil preenchimento.",
-                    cta: "Inicie seu cadastro",
-                    href: "/cadastro-locacao",
-                    className: "bg-neutral-200 text-neutral-950",
-                    numberClass: "text-red-700/75",
-                    arrowClass: "text-black",
-                  },
-                  {
-                    number: "04",
-                    title: "Retirada na LOC7",
-                    text: "Após a aprovação, os equipamentos ficam disponíveis para retirada na data combinada.",
-                    className: "bg-neutral-950 text-white",
-                    numberClass: "text-red-700",
-                    arrowClass: "text-white",
-                  },
-                ].map((step, index) => (
-                  <div
-                    key={step.number}
-                    className={`group relative overflow-hidden rounded-2xl border border-black/[0.04] px-8 py-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-all duration-500 ease-out hover:-translate-y-[2px] hover:shadow-[0_24px_60px_rgba(0,0,0,0.12)] ${step.className} ${
-                      isVisible["como-alugar"]
-                        ? "opacity-100 translate-y-0"
-                        : "opacity-0 translate-y-5"
-                    }`}
-                    style={{ transitionDelay: `${index * 0.08}s` }}
-                  >
-                    <div className="grid grid-cols-[120px_1fr_32px] items-center gap-6">
-                      <div className="flex items-center gap-7">
-                        <span
-                          className={`text-[52px] font-semibold leading-none tracking-[-0.08em] ${step.numberClass}`}
-                        >
-                          {step.number}
-                        </span>
-                        <div className="h-14 w-[1px] bg-black/10 group-last:bg-white/15" />
-                      </div>
-
-                      <div>
-                        <h3 className="text-[20px] font-semibold leading-[1.12] tracking-[-0.035em]">
-                          {step.title}
-                        </h3>
-
-                        <p
-                          className={`mt-1.5 max-w-[520px] text-[14.5px] leading-6 ${
-                            step.number === "04"
-                              ? "text-white/78"
-                              : "text-neutral-650"
-                          }`}
-                        >
-                          {step.text}
-                        </p>
-
-                        {step.href && step.cta && (
-                          <Link
-                            href={step.href}
-                            className="mt-2 inline-flex w-fit items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-700 transition-all duration-300 hover:gap-3 hover:text-red-800"
-                          >
-                            {step.cta}
-                            <ArrowRight className="h-3.5 w-3.5" />
-                          </Link>
-                        )}
-                      </div>
-
-                      <ArrowRight
-                        className={`h-6 w-6 rotate-90 transition-transform duration-300 group-hover:translate-y-1 ${step.arrowClass}`}
-                      />
-                    </div>
-                  </div>
-                ))}
-
-                <div className="mt-1 flex items-center justify-between gap-5 rounded-2xl bg-black px-7 py-4 text-white shadow-[0_18px_48px_rgba(0,0,0,0.14)]">
-                  <p className="text-[16px] font-medium leading-6 text-white/90">
-                    Fale com nosso time e alugue com agilidade.
-                  </p>
-
-                  <Link
-                    href="/orcamento"
-                    className="inline-flex shrink-0 items-center justify-center gap-3 rounded-lg border border-white/45 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
-                  >
-                    Solicitar orçamento
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </div>
-
-              {/* CARDS MOBILE */}
-              <div className="lg:hidden">
-                <div
-                  ref={howToMobileScrollRef}
-                  className="-mx-4 mt-2 flex gap-4 overflow-x-auto pb-5 snap-x snap-mandatory px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                >
-                  {[
-                    {
-                      number: "01",
-                      title: "Escolha os equipamentos",
-                      text: "Navegue pelo catálogo e selecione os equipamentos desejados.",
-                      className: "bg-white text-neutral-950",
-                      numberClass: "text-red-700/35",
-                    },
-                    {
-                      number: "02",
-                      title: "Solicite um orçamento",
-                      text: "Nossa equipe verificará a disponibilidade e enviará uma proposta personalizada.",
-                      className: "bg-neutral-100 text-neutral-950",
-                      numberClass: "text-red-700/55",
-                    },
-                    {
-                      number: "03",
-                      title: "Cadastro e aprovação",
-                      text: "Na primeira locação, realizamos um cadastro simples e de fácil preenchimento.",
-                      cta: "Inicie seu cadastro",
-                      href: "/cadastro-locacao",
-                      className: "bg-neutral-200 text-neutral-950",
-                      numberClass: "text-red-700/75",
-                    },
-                    {
-                      number: "04",
-                      title: "Retirada na LOC7",
-                      text: "Após a aprovação, os equipamentos ficam disponíveis para retirada na data combinada.",
-                      className: "bg-neutral-950 text-white",
-                      numberClass: "text-red-700",
-                    },
-                  ].map((step, index) => (
-                    <div
-                      key={step.number}
-                      className={`snap-start min-h-[250px] min-w-[82%] shrink-0 overflow-hidden rounded-2xl border border-black/[0.04] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-all duration-700 ease-out ${step.className} ${
-                        isVisible["como-alugar"]
-                          ? "opacity-100 translate-x-0"
-                          : "opacity-0 translate-x-[-40px]"
-                      }`}
-                      style={{
-                        transitionDelay: `${index * 0.08}s`,
-                      }}
-                    >
-                      <div className="flex items-start justify-between gap-5">
-                        <span
-                          className={`text-[52px] font-semibold leading-none tracking-[-0.08em] ${step.numberClass}`}
-                        >
-                          {step.number}
-                        </span>
-                        <ArrowRight
-                          className={`mt-2 h-5 w-5 ${
-                            step.number === "04" ? "text-white" : "text-black"
-                          }`}
-                        />
-                      </div>
-
-                      <div className="mt-6 h-[1px] w-10 bg-black/15" />
-
-                      <h3 className="mt-6 max-w-[230px] text-[22px] font-semibold leading-[1.08] tracking-[-0.04em]">
-                        {step.title}
-                      </h3>
-
-                      <p
-                        className={`mt-4 max-w-[260px] text-[15px] leading-6 ${
-                          step.number === "04"
-                            ? "text-white/78"
-                            : "text-neutral-650"
-                        }`}
+            <div className="mb-6 sm:hidden">
+              <div className="overflow-x-auto">
+                <div className="flex gap-2 pb-1">
+                  {featuredCategoryOptions.map((category) =>
+                    category.value === "todas" ? (
+                      <button
+                        key={category.value}
+                        type="button"
+                        className="whitespace-nowrap rounded-full border border-black bg-black px-4 py-2 text-[12px] font-medium text-white transition-colors"
                       >
-                        {step.text}
-                      </p>
+                        {category.label}
+                      </button>
+                    ) : (
+                      <Link
+                        key={category.value}
+                        href={`/catalogo/${category.value}`}
+                        className="whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-[12px] font-medium text-neutral-700 transition-colors hover:border-black hover:text-black"
+                      >
+                        {category.label}
+                      </Link>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
 
-                      {step.href && step.cta && (
-                        <Link
-                          href={step.href}
-                          className="mt-5 inline-flex w-fit items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-700 transition-all duration-300 hover:gap-3 hover:text-red-800"
-                        >
-                          {step.cta}
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </Link>
-                      )}
-                    </div>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5">
+              {featuredProducts.slice(0, 4).map((product) => (
+                <HomeFeaturedCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            <div className="mt-10 flex justify-center">
+              <Link
+                href="/catalogo"
+                onClick={() => {
+                  window.scrollTo({
+                    top: 0,
+                    behavior: "auto",
+                  });
+                }}
+                className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+              >
+                Ver catálogo completo
+              </Link>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* DESKTOP — STAGE STICKY */}
+      <div className="hidden md:block">
+        <section className="relative w-full bg-black md:h-[220vh]">
+          {/* VIDEO LAYER — STICKY SOMENTE NO VÍDEO */}
+          <div className="relative w-full overflow-hidden z-0 md:sticky md:top-0 md:h-screen">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="absolute inset-0 h-full w-full object-cover object-center"
+            >
+              <source src="/videos/loc7-hero-drone-v1.mp4" type="video/mp4" />
+            </video>
+
+            <div className="absolute inset-0 bg-black/35" />
+            <div className="absolute inset-y-0 left-0 w-[70%] bg-gradient-to-r from-black via-black/80 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-[90px] bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
+          </div>
+
+          {/* CONTENT LAYER — ROLA SOBRE O VÍDEO */}
+          <div className="relative z-10 w-full md:mt-[-100vh]">
+            <section className="container flex h-screen items-center">
+              <div className="max-w-[560px]">
+                <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
+                  LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
+                </p>
+
+                <h1 className="mt-3 font-display text-[30px] font-medium leading-none tracking-[0.1em] text-white lg:text-[32px]">
+                  CINE · FOTO · BROADCAST
+                </h1>
+              </div>
+            </section>
+
+            <section className="min-h-screen bg-gradient-to-b from-transparent via-black/90 to-black pb-24 pt-4">
+              <div className="container">
+                <div className="relative z-30 mb-8">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
+                      EQUIPAMENTOS EM DESTAQUE
+                    </span>
+                    <div className="h-[1px] flex-1 bg-white/15" />
+                  </div>
+                  <div className="mt-2 h-[2px] w-10 bg-red-700" />
+                </div>
+
+                <div className="grid gap-5 md:grid-cols-4 lg:grid-cols-4">
+                  {featuredProducts.slice(0, 4).map((product) => (
+                    <HomeFeaturedCard key={product.id} product={product} />
                   ))}
                 </div>
 
-                <div className="mt-1 flex justify-center gap-3">
-                  <span className="h-3 w-3 rounded-full bg-red-700/25" />
-                  <span className="h-3 w-3 rounded-full bg-red-700/45" />
-                  <span className="h-3 w-3 rounded-full bg-red-700/70" />
-                  <span className="h-3 w-3 rounded-full bg-red-700" />
+                <div className="mt-12 flex justify-center">
+                  <Link
+                    href="/catalogo"
+                    onClick={() => {
+                      window.scrollTo({
+                        top: 0,
+                        behavior: "auto",
+                      });
+                    }}
+                    className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+                  >
+                    Ver catálogo completo
+                  </Link>
                 </div>
-
-                <p className="mt-4 text-center text-[13px] text-neutral-500">
-                  Deslize para ver todas as etapas
-                </p>
               </div>
-            </div>
-
-            {/* CTA FINAL MOBILE */}
-            <div className="mt-4 overflow-hidden rounded-2xl bg-black px-6 py-4 text-white shadow-[0_22px_60px_rgba(0,0,0,0.16)] md:mt-6 md:px-10 md:py-5 lg:hidden">
-              <div className="flex flex-col items-center justify-center gap-3 text-center md:flex-row md:gap-6">
-                <p className="text-[17px] leading-7 text-white/90 md:text-[18px]">
-                  Fale com nosso time e alugue com agilidade.
-                </p>
-
-                <Link
-                  href="/orcamento"
-                  className="inline-flex w-full max-w-[280px] items-center justify-center gap-3 rounded-lg border border-white/45 px-6 py-3.5 text-[12px] font-semibold uppercase tracking-[0.18em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black md:w-auto"
-                >
-                  Solicitar orçamento
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
+            </section>
           </div>
-        </div>
-      </section>
-
+        </section>
+      </div>
       {/* ===== TRABALHOS REALIZADOS ===== */}
       <section
         id="trabalhos-realizados"
