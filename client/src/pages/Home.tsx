@@ -520,7 +520,7 @@ export default function Home() {
       <section className="bg-black py-10 md:py-12">
         <div className="container">
           {/* Título */}
-          <div className="relative z-30 mb-6 md:mb-8 md:-translate-y-[36px]">
+          <div className="relative z-30 mb-6 md:mb-8 md:-translate-y-[52px]">
             <div className="flex items-center gap-3">
               <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
                 EQUIPAMENTOS EM DESTAQUE
