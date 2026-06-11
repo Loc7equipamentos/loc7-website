@@ -465,75 +465,52 @@ export default function Home() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
       {/* ===== HERO SECTION ===== */}
-<section className="relative h-[360px] overflow-hidden bg-black md:h-[500px] lg:h-[560px]">
-  {/* DESKTOP VIDEO FULL */}
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="auto"
-    className="absolute inset-0 hidden h-full w-full object-cover object-center md:block"
-  >
-    <source src="/videos/loc7-hero-drone-v1.mp4" type="video/mp4" />
-  </video>
+      {/* ===== HERO + DESTAQUES — MOBILE ===== */}
+      <section className="relative h-[360px] overflow-hidden bg-black md:hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        >
+          <source src="/videos/loc7-hero-mobi_vert-v1.mp4" type="video/mp4" />
+        </video>
 
-  {/* MOBILE VIDEO */}
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="auto"
-    className="absolute inset-0 block h-full w-full object-cover object-center md:hidden"
-  >
-    <source src="/videos/loc7-hero-mobi_vert-v1.mp4" type="video/mp4" />
-  </video>
+        <div className="absolute inset-0 bg-black/35" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/40" />
 
-  {/* OVERLAY GERAL */}
-  <div className="absolute inset-0 bg-black/35" />
+        <div className="container relative z-10 flex h-full items-start pt-[42px]">
+          <div className="max-w-[560px]">
+            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
+              LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
+            </p>
 
-  {/* GRADIENT DESKTOP — invade o vídeo, sem corte reto */}
-  <div className="absolute inset-y-0 left-0 hidden w-[70%] bg-gradient-to-r from-black via-black/80 to-transparent md:block" />
+            <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white">
+              CINE · FOTO · BROADCAST
+            </h1>
+          </div>
+        </div>
+      </section>
 
-{/* GRADIENT INFERIOR */}
-<div className="absolute inset-x-0 bottom-0 hidden h-[90px] bg-gradient-to-t from-black/55 via-black/15 to-transparent md:block" />
-  
-  {/* GRADIENT MOBILE — protege texto */}
-  <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/40 md:hidden" />
-
-  {/* CONTENT */}
-  <div className="container relative z-10 flex h-full items-start pt-[42px] md:pt-32 lg:pt-36">
-    <div className="max-w-[560px]">
-      <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
-        LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
-      </p>
-
-      <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
-        CINE · FOTO · BROADCAST
-      </h1>
-    </div>
-  </div>
-</section>
-
-      {/* ===== DESTAQUES ===== */}
-      <section className="bg-black py-10 md:py-12">
+      <section className="bg-black py-10 md:hidden">
         <div className="container">
-    {/* Título */}
-<div className="mb-6 md:mb-8">
-  <div className="flex items-center gap-3">
-    <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
-      EQUIPAMENTOS EM DESTAQUE
-    </span>
+          {/* Título */}
+          <div className="mb-6">
+            <div className="flex items-center gap-3">
+              <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
+                EQUIPAMENTOS EM DESTAQUE
+              </span>
 
-    <div className="h-[1px] flex-1 bg-white/15" />
-  </div>
+              <div className="h-[1px] flex-1 bg-white/15" />
+            </div>
 
-  <div className="mt-2 h-[2px] w-10 bg-red-700" />
-</div>
+            <div className="mt-2 h-[2px] w-10 bg-red-700" />
+          </div>
 
           {/* Categorias */}
-          <div className="mb-6 sm:hidden">
+          <div className="mb-6">
             <div className="overflow-x-auto">
               <div className="flex gap-2 pb-1">
                 {featuredCategoryOptions.map((category) =>
@@ -560,7 +537,7 @@ export default function Home() {
           </div>
 
           {/* GRID */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-4 md:gap-5 lg:grid-cols-4 lg:gap-5">
+          <div className="grid grid-cols-2 gap-4">
             {featuredProducts.slice(0, 4).map((product) => (
               <HomeFeaturedCard key={product.id} product={product} />
             ))}
@@ -576,7 +553,7 @@ export default function Home() {
                   behavior: "auto",
                 });
               }}
-             className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+              className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
             >
               Ver catálogo completo
             </Link>
@@ -584,6 +561,81 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===== HERO + DESTAQUES — DESKTOP PALCO ===== */}
+      <section className="relative hidden bg-black md:block">
+        {/* VÍDEO COMO CENÁRIO */}
+        <div className="sticky top-0 h-[500px] overflow-hidden lg:h-[560px]">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="absolute inset-0 h-full w-full object-cover object-center"
+          >
+            <source src="/videos/loc7-hero-drone-v1.mp4" type="video/mp4" />
+          </video>
+
+          <div className="absolute inset-0 bg-black/35" />
+          <div className="absolute inset-y-0 left-0 w-[70%] bg-gradient-to-r from-black via-black/80 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-[120px] bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+        </div>
+
+        {/* CONTEÚDO PASSANDO SOBRE O CENÁRIO */}
+        <div className="relative z-10 -mt-[500px] lg:-mt-[560px]">
+          {/* HERO CONTENT */}
+          <div className="container flex h-[500px] items-start pt-32 lg:h-[560px] lg:pt-36">
+            <div className="max-w-[560px]">
+              <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
+                LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
+              </p>
+
+              <h1 className="mt-3 font-display text-[30px] font-medium leading-none tracking-[0.1em] text-white lg:text-[32px]">
+                CINE · FOTO · BROADCAST
+              </h1>
+            </div>
+          </div>
+
+          {/* DESTAQUES CONTENT */}
+          <div className="container pb-12">
+            {/* Título */}
+            <div className="mb-8">
+              <div className="flex items-center gap-3">
+                <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
+                  EQUIPAMENTOS EM DESTAQUE
+                </span>
+
+                <div className="h-[1px] flex-1 bg-white/15" />
+              </div>
+
+              <div className="mt-2 h-[2px] w-10 bg-red-700" />
+            </div>
+
+            {/* GRID */}
+            <div className="grid grid-cols-4 gap-5">
+              {featuredProducts.slice(0, 4).map((product) => (
+                <HomeFeaturedCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="mt-10 flex justify-center">
+              <Link
+                href="/catalogo"
+                onClick={() => {
+                  window.scrollTo({
+                    top: 0,
+                    behavior: "auto",
+                  });
+                }}
+                className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-white hover:bg-white hover:text-black"
+              >
+                Ver catálogo completo
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
       {/* ===== COMO ALUGAR ===== */}
       <section
         id="como-alugar"
