@@ -517,7 +517,7 @@ export default function Home() {
 </section>
 
       {/* ===== DESTAQUES ===== */}
-      <section className="relative z-20 -mt-[55px] bg-black pt-10 pb-10 md:-mt-[70px] md:pt-12 md:pb-12">
+      <section className="bg-black py-10 md:py-12">
         <div className="container">
           {/* Título */}
           <div className="mb-6 md:mb-8">
