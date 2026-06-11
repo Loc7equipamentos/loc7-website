@@ -464,30 +464,31 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
-           {/* ===== HERO + DESTAQUES — DESKTOP LAYERED STAGE ===== */}
-      <section className="relative hidden min-h-[1180px] overflow-hidden bg-black md:block">
-        {/* VIDEO STICKY / CENÁRIO */}
-        <div className="sticky top-0 h-screen overflow-hidden bg-black">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            className="h-full w-full object-cover object-center"
-          >
-            <source src="/videos/loc7-hero-drone-v1.mp4" type="video/mp4" />
-          </video>
+                {/* ===== HERO + DESTAQUES — DESKTOP BACKGROUND STAGE ===== */}
+      <section className="relative hidden overflow-hidden bg-black md:block">
+        {/* VÍDEO COMO CENÁRIO INDEPENDENTE */}
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <div className="sticky top-0 h-screen overflow-hidden bg-black">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="h-full w-full object-cover object-center"
+            >
+              <source src="/videos/loc7-hero-drone-v1.mp4" type="video/mp4" />
+            </video>
 
-          <div className="absolute inset-0 bg-black/35" />
-          <div className="absolute inset-y-0 left-0 w-[70%] bg-gradient-to-r from-black via-black/80 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-[180px] bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+            <div className="absolute inset-0 bg-black/35" />
+            <div className="absolute inset-y-0 left-0 w-[70%] bg-gradient-to-r from-black via-black/80 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-[220px] bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
+          </div>
         </div>
 
-        {/* CONTEÚDO EM CAMADA */}
-        <div className="absolute inset-0 z-10">
-          {/* HERO LETTERING */}
-          <div className="container flex min-h-[560px] items-start pt-32 lg:pt-36">
+        {/* HERO — BLOCO PRÓPRIO */}
+        <section className="relative z-10 min-h-[560px]">
+          <div className="container flex h-full min-h-[560px] items-start pt-32 lg:pt-36">
             <div className="max-w-[560px]">
               <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
                 LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
@@ -498,9 +499,11 @@ export default function Home() {
               </h1>
             </div>
           </div>
+        </section>
 
-          {/* DESTAQUES TAKEOVER */}
-          <div className="container flex min-h-screen flex-col justify-center pb-16">
+        {/* DESTAQUES — BLOCO PRÓPRIO */}
+        <section className="relative z-10 min-h-screen pb-20 pt-8">
+          <div className="container">
             <div className="mb-10">
               <div className="flex items-center gap-3">
                 <span className="text-[13px] font-medium uppercase tracking-[0.2em] text-white/80">
@@ -534,7 +537,7 @@ export default function Home() {
               </Link>
             </div>
           </div>
-        </div>
+        </section>
       </section>
 
       {/* ===== HERO + DESTAQUES — MOBILE PRESERVADO ===== */}
@@ -580,32 +583,6 @@ export default function Home() {
               <div className="mt-2 h-[2px] w-10 bg-red-700" />
             </div>
 
-            <div className="mb-6 sm:hidden">
-              <div className="overflow-x-auto">
-                <div className="flex gap-2 pb-1">
-                  {featuredCategoryOptions.map((category) =>
-                    category.value === "todas" ? (
-                      <button
-                        key={category.value}
-                        type="button"
-                        className="whitespace-nowrap rounded-full border border-black bg-black px-4 py-2 text-[12px] font-medium text-white transition-colors"
-                      >
-                        {category.label}
-                      </button>
-                    ) : (
-                      <Link
-                        key={category.value}
-                        href={`/catalogo/${category.value}`}
-                        className="whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-[12px] font-medium text-neutral-700 transition-colors hover:border-black hover:text-black"
-                      >
-                        {category.label}
-                      </Link>
-                    )
-                  )}
-                </div>
-              </div>
-            </div>
-
             <div className="grid grid-cols-2 gap-4">
               {featuredProducts.slice(0, 4).map((product) => (
                 <HomeFeaturedCard key={product.id} product={product} />
@@ -629,7 +606,6 @@ export default function Home() {
           </div>
         </section>
       </div>
-
 {/* ===== TRABALHOS REALIZADOS ===== */}
       <section
         id="trabalhos-realizados"
