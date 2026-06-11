@@ -464,125 +464,170 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[oklch(0.08_0_0)]">
-      {/* ===== HERO SECTION ===== */}
-<section className="relative h-[360px] overflow-hidden bg-black md:h-[500px] lg:h-[560px]">
-  {/* DESKTOP VIDEO FULL */}
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="auto"
-    className="absolute inset-0 hidden h-full w-full object-cover object-center md:block"
-  >
-    <source src="/videos/loc7-hero-drone-v1.mp4" type="video/mp4" />
-  </video>
+    {/* ===== HERO + DESTAQUES — DESKTOP LAYERED EXPERIENCE ===== */}
+<div className="hidden bg-black md:block">
+  <section className="relative min-h-[760px] overflow-hidden bg-black">
+    {/* VÍDEO COMO CENÁRIO */}
+    <div className="absolute inset-x-0 top-0 h-[560px] overflow-hidden">
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        className="h-full w-full object-cover object-center"
+      >
+        <source src="/videos/loc7-hero-drone-v1.mp4" type="video/mp4" />
+      </video>
 
-  {/* MOBILE VIDEO */}
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="auto"
-    className="absolute inset-0 block h-full w-full object-cover object-center md:hidden"
-  >
-    <source src="/videos/loc7-hero-mobi_vert-v1.mp4" type="video/mp4" />
-  </video>
-
-  {/* OVERLAY GERAL */}
-  <div className="absolute inset-0 bg-black/35" />
-
-  {/* GRADIENT DESKTOP — invade o vídeo, sem corte reto */}
-  <div className="absolute inset-y-0 left-0 hidden w-[70%] bg-gradient-to-r from-black via-black/80 to-transparent md:block" />
-
-{/* GRADIENT INFERIOR */}
-<div className="absolute inset-x-0 bottom-0 hidden h-[90px] bg-gradient-to-t from-black/55 via-black/15 to-transparent md:block" />
-  
-  {/* GRADIENT MOBILE — protege texto */}
-  <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/40 md:hidden" />
-
-  {/* CONTENT */}
-  <div className="container relative z-10 flex h-full items-start pt-[42px] md:pt-32 lg:pt-36">
-    <div className="max-w-[560px]">
-      <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
-        LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
-      </p>
-
-      <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white md:text-[30px] lg:text-[32px]">
-        CINE · FOTO · BROADCAST
-      </h1>
+      <div className="absolute inset-0 bg-black/35" />
+      <div className="absolute inset-y-0 left-0 w-[70%] bg-gradient-to-r from-black via-black/80 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-[220px] bg-gradient-to-t from-black via-black/55 to-transparent" />
     </div>
-  </div>
-</section>
 
-      {/* ===== DESTAQUES ===== */}
-      <section className="bg-black py-10 md:py-12">
-        <div className="container">
-          {/* Título */}
-          <div className="relative z-30 mb-6 md:mb-8 md:-translate-y-[52px]">
-            <div className="flex items-center gap-3">
-              <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
-                EQUIPAMENTOS EM DESTAQUE
-              </span>
+    {/* CONTEÚDO HERO */}
+    <div className="container relative z-10 pt-32 lg:pt-36">
+      <div className="max-w-[560px]">
+        <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
+          LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
+        </p>
 
-              <div className="h-[1px] flex-1 bg-white/15" />
-            </div>
+        <h1 className="mt-3 font-display text-[30px] font-medium leading-none tracking-[0.1em] text-white lg:text-[32px]">
+          CINE · FOTO · BROADCAST
+        </h1>
+      </div>
+    </div>
 
-            <div className="mt-2 h-[2px] w-10 bg-red-700" />
-          </div>
+    {/* DESTAQUES EM CAMADA */}
+    <div className="container relative z-20 mt-[285px] pb-12">
+      <div className="mb-8">
+        <div className="flex items-center gap-3">
+          <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
+            EQUIPAMENTOS EM DESTAQUE
+          </span>
 
-          {/* Categorias */}
-          <div className="mb-6 sm:hidden">
-            <div className="overflow-x-auto">
-              <div className="flex gap-2 pb-1">
-                {featuredCategoryOptions.map((category) =>
-                  category.value === "todas" ? (
-                    <button
-                      key={category.value}
-                      type="button"
-                      className="whitespace-nowrap rounded-full border border-black bg-black px-4 py-2 text-[12px] font-medium text-white transition-colors"
-                    >
-                      {category.label}
-                    </button>
-                  ) : (
-                    <Link
-                      key={category.value}
-                      href={`/catalogo/${category.value}`}
-                      className="whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-[12px] font-medium text-neutral-700 transition-colors hover:border-black hover:text-black"
-                    >
-                      {category.label}
-                    </Link>
-                  )
-                )}
-              </div>
-            </div>
-          </div>
+          <div className="h-[1px] flex-1 bg-white/15" />
+        </div>
 
-          {/* GRID */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-4 md:gap-5 lg:grid-cols-4 lg:gap-5">
-            {featuredProducts.slice(0, 4).map((product) => (
-              <HomeFeaturedCard key={product.id} product={product} />
-            ))}
-          </div>
+        <div className="mt-2 h-[2px] w-10 bg-red-700" />
+      </div>
 
-          {/* CTA */}
-          <div className="mt-10 flex justify-center">
-            <Link
-              href="/catalogo"
-              onClick={() => {
-                window.scrollTo({
-                  top: 0,
-                  behavior: "auto",
-                });
-              }}
-             className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
-            >
-              Ver catálogo completo
-            </Link>
+      <div className="grid grid-cols-4 gap-5">
+        {featuredProducts.slice(0, 4).map((product) => (
+          <HomeFeaturedCard key={product.id} product={product} />
+        ))}
+      </div>
+
+      <div className="mt-10 flex justify-center">
+        <Link
+          href="/catalogo"
+          onClick={() => {
+            window.scrollTo({
+              top: 0,
+              behavior: "auto",
+            });
+          }}
+          className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-white hover:bg-white hover:text-black"
+        >
+          Ver catálogo completo
+        </Link>
+      </div>
+    </div>
+  </section>
+</div>
+
+{/* ===== HERO + DESTAQUES — MOBILE PRESERVADO ===== */}
+<div className="block md:hidden">
+  <section className="relative h-[360px] overflow-hidden bg-black">
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      className="absolute inset-0 h-full w-full object-cover object-center"
+    >
+      <source src="/videos/loc7-hero-mobi_vert-v1.mp4" type="video/mp4" />
+    </video>
+
+    <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/40" />
+
+    <div className="container relative z-10 flex h-full items-start pt-[42px]">
+      <div className="max-w-[560px]">
+        <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/65">
+          LOCAÇÃO DE EQUIPAMENTOS AUDIOVISUAIS
+        </p>
+
+        <h1 className="mt-3 font-display text-[28px] font-medium leading-none tracking-[0.1em] text-white">
+          CINE · FOTO · BROADCAST
+        </h1>
+      </div>
+    </div>
+  </section>
+
+  <section className="bg-black py-10">
+    <div className="container">
+      <div className="mb-6">
+        <div className="flex items-center gap-3">
+          <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
+            EQUIPAMENTOS EM DESTAQUE
+          </span>
+
+          <div className="h-[1px] flex-1 bg-white/15" />
+        </div>
+
+        <div className="mt-2 h-[2px] w-10 bg-red-700" />
+      </div>
+
+      <div className="mb-6 sm:hidden">
+        <div className="overflow-x-auto">
+          <div className="flex gap-2 pb-1">
+            {featuredCategoryOptions.map((category) =>
+              category.value === "todas" ? (
+                <button
+                  key={category.value}
+                  type="button"
+                  className="whitespace-nowrap rounded-full border border-black bg-black px-4 py-2 text-[12px] font-medium text-white transition-colors"
+                >
+                  {category.label}
+                </button>
+              ) : (
+                <Link
+                  key={category.value}
+                  href={`/catalogo/${category.value}`}
+                  className="whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-[12px] font-medium text-neutral-700 transition-colors hover:border-black hover:text-black"
+                >
+                  {category.label}
+                </Link>
+              )
+            )}
           </div>
         </div>
-      </section>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        {featuredProducts.slice(0, 4).map((product) => (
+          <HomeFeaturedCard key={product.id} product={product} />
+        ))}
+      </div>
+
+      <div className="mt-10 flex justify-center">
+        <Link
+          href="/catalogo"
+          onClick={() => {
+            window.scrollTo({
+              top: 0,
+              behavior: "auto",
+            });
+          }}
+          className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
+        >
+          Ver catálogo completo
+        </Link>
+      </div>
+    </div>
+  </section>
+</div>
 
       {/* ===== COMO ALUGAR ===== */}
       <section
