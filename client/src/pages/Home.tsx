@@ -496,6 +496,9 @@ export default function Home() {
   {/* GRADIENT DESKTOP — invade o vídeo, sem corte reto */}
   <div className="absolute inset-y-0 left-0 hidden w-[70%] bg-gradient-to-r from-black via-black/80 to-transparent md:block" />
 
+  {/* GRADIENT INFERIOR */}
+<div className="absolute inset-x-0 bottom-0 hidden h-[180px] bg-gradient-to-t from-black via-black/80 to-transparent md:block" />
+  
   {/* GRADIENT MOBILE — protege texto */}
   <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/40 md:hidden" />
 
