@@ -520,13 +520,13 @@ export default function Home() {
       <section className="bg-black py-10 md:py-12">
         <div className="container">
     {/* Título */}
-<div className="relative z-30 mb-6 md:-translate-y-[72px] md:[margin-bottom:-40px]">
+<div className="mb-6 md:mb-8">
   <div className="flex items-center gap-3">
     <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
       EQUIPAMENTOS EM DESTAQUE
     </span>
 
-    <div className="h-[1px] flex-1 bg-white/20" />
+    <div className="h-[1px] flex-1 bg-white/15" />
   </div>
 
   <div className="mt-2 h-[2px] w-10 bg-red-700" />
