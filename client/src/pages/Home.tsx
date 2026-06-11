@@ -519,18 +519,18 @@ export default function Home() {
       {/* ===== DESTAQUES ===== */}
       <section className="bg-black py-10 md:py-12">
         <div className="container">
-          {/* Título */}
-          <div className="relative z-30 mb-6 md:mb-8 md:-translate-y-[52px]">
-            <div className="flex items-center gap-3">
-              <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
-                EQUIPAMENTOS EM DESTAQUE
-              </span>
+         {/* Título */}
+<div className="relative z-30 mb-6 md:mb-8 md:-translate-y-[52px] md:[margin-bottom:-20px]">
+  <div className="flex items-center gap-3">
+    <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
+      EQUIPAMENTOS EM DESTAQUE
+    </span>
 
-              <div className="h-[1px] flex-1 bg-white/15" />
-            </div>
+    <div className="h-[1px] flex-1 bg-white/15" />
+  </div>
 
-            <div className="mt-2 h-[2px] w-10 bg-red-700" />
-          </div>
+  <div className="mt-2 h-[2px] w-10 bg-red-700" />
+</div>
 
           {/* Categorias */}
           <div className="mb-6 sm:hidden">
