@@ -36,6 +36,12 @@ type SubmenuCategory = {
   children?: SubmenuChild[];
 };
 
+type NavLink = {
+  name: string;
+  href?: string;
+  disabled?: boolean;
+};
+
 const submenuCategories: SubmenuCategory[] = [
   { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
   { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
@@ -59,22 +65,21 @@ const submenuCategories: SubmenuCategory[] = [
   { name: "Comunicadores", icon: Radio, href: "/catalogo/comunicadores" },
   { name: "Maquinária", icon: Flag, href: "/catalogo/maquinaria" },
   {
-  name: "Acessórios",
-  icon: Cog,
-  children: [
-    { name: "Flash", href: "/catalogo/flash" },
-    { name: "Tripés de Câmera", href: "/catalogo/tripes" },
-    { name: "Movimento", href: "/catalogo/movimento" },
-    { name: "Follow Focus", href: "/catalogo/follow-focus" },
-    { name: "Mattebox", href: "/catalogo/mattebox" },
-    { name: "Filtros", href: "/catalogo/filtros" },
-    { name: "Switchers", href: "/catalogo/switchers" },
-    { name: "Teleprompter", href: "/catalogo/teleprompter" },
-    { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
-  ],
-},
+    name: "Acessórios",
+    icon: Cog,
+    children: [
+      { name: "Flash", href: "/catalogo/flash" },
+      { name: "Tripés de Câmera", href: "/catalogo/tripes" },
+      { name: "Movimento", href: "/catalogo/movimento" },
+      { name: "Follow Focus", href: "/catalogo/follow-focus" },
+      { name: "Mattebox", href: "/catalogo/mattebox" },
+      { name: "Filtros", href: "/catalogo/filtros" },
+      { name: "Switchers", href: "/catalogo/switchers" },
+      { name: "Teleprompter", href: "/catalogo/teleprompter" },
+      { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
+    ],
+  },
 ];
-
 
 const mobileEquipmentLinks: SubmenuChild[] = [
   { name: "Câmeras", href: "/catalogo/cameras" },
@@ -99,10 +104,10 @@ const mobileEquipmentLinks: SubmenuChild[] = [
   { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
 ];
 
-const navLinks = [
+const navLinks: NavLink[] = [
   { name: "Home", href: "/" },
   { name: "Como alugar", href: "/#como-alugar" },
-  { name: "Produção", href: "/producao", disabled: true },
+  { name: "Produção", disabled: true },
 ];
 
 export default function Navbar() {
@@ -318,27 +323,40 @@ export default function Navbar() {
           <div className="relative flex flex-1 flex-col">
             <div className="flex h-20 flex-1 items-center justify-center md:h-[82px] md:translate-y-[48px]">
               <div className="relative hidden flex-1 items-center justify-center gap-10 overflow-visible md:flex lg:gap-12">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    onClick={(event) => {
-                      if (link.name === "Home") {
-                        handleHomeNavigation(event);
-                        return;
-                      }
+                {navLinks.map((link) =>
+                  link.disabled ? (
+                    <div
+                      key={link.name}
+                      className="group relative cursor-default text-sm font-medium text-white transition hover:text-gray-300"
+                    >
+                      <span>{link.name}</span>
 
-                      if (link.name === "Como alugar") {
-                        handleComoAlugarNavigation(event);
-                      }
-                    }}
-                    className={`text-sm font-medium text-white transition hover:text-gray-300 ${
-                      location === link.href ? "text-gray-300" : ""
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
+                      <span className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-black/90 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.14em] text-white/60 opacity-0 shadow-xl transition-opacity duration-200 group-hover:opacity-100">
+                        Em breve
+                      </span>
+                    </div>
+                  ) : (
+                    <Link
+                      key={link.name}
+                      href={link.href || "/"}
+                      onClick={(event) => {
+                        if (link.name === "Home") {
+                          handleHomeNavigation(event);
+                          return;
+                        }
+
+                        if (link.name === "Como alugar") {
+                          handleComoAlugarNavigation(event);
+                        }
+                      }}
+                      className={`text-sm font-medium text-white transition hover:text-gray-300 ${
+                        location === link.href ? "text-gray-300" : ""
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  )
+                )}
 
                 <div ref={searchRef} className="ml-6 hidden items-center md:flex">
                   {isSearchOpen ? (
@@ -509,9 +527,9 @@ export default function Navbar() {
                 Como alugar
               </button>
 
-             <div className="block px-4 py-3 text-sm font-medium text-white/60">
-  Produção (Em breve)
-</div>
+              <div className="block px-4 py-3 text-sm font-medium text-white/55">
+                Produção <span className="text-white/35">(Em breve)</span>
+              </div>
             </div>
           </div>
         )}
