@@ -102,7 +102,7 @@ const mobileEquipmentLinks: SubmenuChild[] = [
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Como alugar", href: "/#como-alugar" },
-  { name: "Produção", href: "/producao" },
+  { name: "Produção", href: "/producao", disabled: true },
 ];
 
 export default function Navbar() {
@@ -509,12 +509,9 @@ export default function Navbar() {
                 Como alugar
               </button>
 
-              <Link
-                href="/producao"
-                className="block px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-900"
-              >
-                Produção
-              </Link>
+             <div className="block px-4 py-3 text-sm font-medium text-white/60">
+  Produção (Em breve)
+</div>
             </div>
           </div>
         )}
