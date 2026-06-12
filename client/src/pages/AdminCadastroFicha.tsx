@@ -89,7 +89,14 @@ const [editingReferenceDraft, setEditingReferenceDraft] = useState({
 async function saveInternalReference() {
   if (!data?.id) return;
 
-  if (!internalReferenceDraft.company_name.trim()) {
+  const newReference = {
+    company_name: internalReferenceDraft.company_name.trim(),
+    contact_name: internalReferenceDraft.contact_name.trim() || null,
+    phone: internalReferenceDraft.phone.trim() || null,
+    notes: internalReferenceDraft.notes.trim() || null,
+  };
+
+  if (!newReference.company_name) {
     alert("Informe o nome da empresa da referência interna.");
     return;
   }
@@ -99,20 +106,29 @@ async function saveInternalReference() {
   const { error } = await supabase.from("registration_internal_references").insert([
     {
       registration_id: data.id,
-      company_name: internalReferenceDraft.company_name.trim(),
-      contact_name: internalReferenceDraft.contact_name.trim() || null,
-      phone: internalReferenceDraft.phone.trim() || null,
+      company_name: newReference.company_name,
+      contact_name: newReference.contact_name,
+      phone: newReference.phone,
       status: "Não verificada",
-      notes: internalReferenceDraft.notes.trim() || null,
+      notes: newReference.notes,
       created_by: userEmail || "admin",
     },
   ]);
 
   if (error) {
-    alert(`Erro ao salvar referência interna:\n\n${error.message}`);
+    alert(`Erro ao salvar referência interna:
+
+${error.message}`);
     setSaving(false);
     return;
   }
+
+  await createAnalysisLog(
+    "internal_reference",
+    null,
+    formatInternalReferenceSummary(newReference),
+    "Referência interna adicionada"
+  );
 
   setInternalReferenceDraft({
     company_name: "",
@@ -124,6 +140,7 @@ async function saveInternalReference() {
 
   setShowInternalReferenceForm(false);
   await loadInternalReferences(data.id);
+  await loadAnalysisLogs(data.id);
 
   setSaving(false);
 }
@@ -150,42 +167,67 @@ function cancelEditInternalReference() {
 }
 
 async function saveEditedInternalReference(referenceId: string) {
-  if (!editingReferenceDraft.company_name.trim()) {
+  const editedReference = {
+    company_name: editingReferenceDraft.company_name.trim(),
+    contact_name: editingReferenceDraft.contact_name.trim() || null,
+    phone: editingReferenceDraft.phone.trim() || null,
+    notes: editingReferenceDraft.notes.trim() || null,
+  };
+
+  if (!editedReference.company_name) {
     alert("Informe o nome da empresa da referência interna.");
     return;
   }
+
+  const previousReference = internalReferences.find((ref) => ref.id === referenceId) || null;
+  const oldValue = formatInternalReferenceSummary(previousReference);
+  const newValue = formatInternalReferenceSummary(editedReference);
 
   setSaving(true);
 
   const { error } = await supabase
     .from("registration_internal_references")
     .update({
-      company_name: editingReferenceDraft.company_name.trim(),
-      contact_name: editingReferenceDraft.contact_name.trim() || null,
-      phone: editingReferenceDraft.phone.trim() || null,
-      notes: editingReferenceDraft.notes.trim() || null,
+      company_name: editedReference.company_name,
+      contact_name: editedReference.contact_name,
+      phone: editedReference.phone,
+      notes: editedReference.notes,
     })
     .eq("id", referenceId);
 
   if (error) {
-    alert(`Erro ao editar referência:\n\n${error.message}`);
+    alert(`Erro ao editar referência:
+
+${error.message}`);
     setSaving(false);
     return;
   }
+
+  await createAnalysisLog(
+    "internal_reference",
+    oldValue,
+    newValue,
+    "Referência interna editada"
+  );
 
   cancelEditInternalReference();
 
   if (data?.id) {
     await loadInternalReferences(data.id);
+    await loadAnalysisLogs(data.id);
   }
 
   setSaving(false);
 }
+
   
 async function deleteInternalReference(referenceId: string) {
   if (!confirm("Deseja remover esta referência interna?")) {
     return;
   }
+
+  const previousReference = internalReferences.find((ref) => ref.id === referenceId) || null;
+  const oldValue = formatInternalReferenceSummary(previousReference);
 
   const { error } = await supabase
     .from("registration_internal_references")
@@ -193,14 +235,25 @@ async function deleteInternalReference(referenceId: string) {
     .eq("id", referenceId);
 
   if (error) {
-    alert(`Erro ao remover referência:\n\n${error.message}`);
+    alert(`Erro ao remover referência:
+
+${error.message}`);
     return;
   }
 
+  await createAnalysisLog(
+    "internal_reference",
+    oldValue,
+    "Removida",
+    "Referência interna removida"
+  );
+
   if (data?.id) {
     await loadInternalReferences(data.id);
+    await loadAnalysisLogs(data.id);
   }
 }
+
   
 async function loadInternalReferences(registrationId: string) {
   const { data, error } = await supabase
@@ -270,7 +323,9 @@ async function uploadInternalDocument() {
 
   setUploadingInternalDocument(true);
 
-  const extension = internalDocumentFile.name.split(".").pop();
+  const documentType = internalDocumentDraft.document_type;
+  const originalFileName = internalDocumentFile.name;
+  const extension = originalFileName.split(".").pop();
 
   const filename = `${Date.now()}-${Math.random()
     .toString(36)
@@ -283,7 +338,9 @@ async function uploadInternalDocument() {
     .upload(storagePath, internalDocumentFile);
 
   if (uploadError) {
-    alert(`Erro no upload:\n\n${uploadError.message}`);
+    alert(`Erro no upload:
+
+${uploadError.message}`);
     setUploadingInternalDocument(false);
     return;
   }
@@ -293,7 +350,7 @@ async function uploadInternalDocument() {
     .insert([
       {
         registration_id: data.id,
-        document_type: internalDocumentDraft.document_type,
+        document_type: documentType,
         notes: internalDocumentDraft.notes || null,
         file_path: storagePath,
         uploaded_by: userEmail || "admin",
@@ -301,10 +358,19 @@ async function uploadInternalDocument() {
     ]);
 
   if (insertError) {
-    alert(`Erro ao salvar documento:\n\n${insertError.message}`);
+    alert(`Erro ao salvar documento:
+
+${insertError.message}`);
     setUploadingInternalDocument(false);
     return;
   }
+
+  await createAnalysisLog(
+    "internal_document",
+    null,
+    `${documentType}: ${originalFileName}`,
+    "Documento interno anexado"
+  );
 
   setInternalDocumentFile(null);
 
@@ -314,9 +380,11 @@ async function uploadInternalDocument() {
   });
 
   await loadInternalDocuments(data.id);
+  await loadAnalysisLogs(data.id);
 
   setUploadingInternalDocument(false);
 }
+
   
   async function loadAnalysisLogs(registrationId: string) {
     const { data, error } = await supabase
@@ -330,6 +398,40 @@ async function uploadInternalDocument() {
       setAnalysisLogs(data as AnalysisLogItem[]);
     }
   }
+
+  async function createAnalysisLog(
+    fieldName: string,
+    oldValue: string | null,
+    newValue: string | null,
+    reason: string
+  ) {
+    if (!data?.id) return;
+
+    const { data: currentUserData } = await supabase.auth.getUser();
+    const actorEmail = currentUserData?.user?.email || userEmail || "admin";
+
+    const { error } = await supabase.from("registration_analysis_logs").insert([
+      {
+        registration_id: data.id,
+        field_name: fieldName,
+        old_value: oldValue,
+        new_value: newValue,
+        changed_by: actorEmail,
+        change_reason: reason,
+      },
+    ]);
+
+    if (error) {
+      alert(
+        `Alteração salva, mas houve erro ao registrar o log:
+
+${
+          error.message || "Erro desconhecido"
+        }`
+      );
+    }
+  }
+
 
   async function resolveDocuments(rawDocuments: unknown): Promise<DocumentItem[]> {
     const paths = normalizeDocuments(rawDocuments);
@@ -1177,6 +1279,8 @@ function getFieldLabel(field: string) {
   if (field === "risk_level") return "Risco";
   if (field === "internal_notes") return "Observações internas";
   if (field === "document_status") return "Status documental";
+  if (field === "internal_reference") return "Referência interna";
+  if (field === "internal_document") return "Documento interno";
 
   return field;
 }
@@ -1184,6 +1288,19 @@ function getFieldLabel(field: string) {
 function formatLogValue(value?: string | null) {
   const cleanValue = String(value || "").trim();
   return cleanValue || "—";
+}
+
+function formatInternalReferenceSummary(ref: any) {
+  if (!ref) return "—";
+
+  const parts = [
+    ref.company_name,
+    ref.contact_name ? `Contato: ${ref.contact_name}` : null,
+    ref.phone ? `Telefone: ${ref.phone}` : null,
+    ref.notes ? `Obs.: ${ref.notes}` : null,
+  ].filter(Boolean);
+
+  return parts.join(" | ") || "—";
 }
 
 function getDocumentStatus(documents: DocumentItem[], isPF: boolean) {
