@@ -221,9 +221,43 @@ async function loadInternalDocuments(registrationId: string) {
     .eq("registration_id", registrationId)
     .order("created_at", { ascending: false });
 
-  if (!error && data) {
-    setInternalDocuments(data);
+  if (error) {
+    alert(`Erro ao carregar documentos internos:\n\n${error.message}`);
+    return;
   }
+
+  if (!data) {
+    setInternalDocuments([]);
+    return;
+  }
+
+  const resolvedDocuments = await Promise.all(
+    data.map(async (doc) => {
+      if (!doc.file_path) {
+        return {
+          ...doc,
+          url: null,
+          file_name: "Arquivo não informado",
+        };
+      }
+
+      const { data: signedData, error: signedError } = await supabase.storage
+        .from("internal-documents")
+        .createSignedUrl(doc.file_path, 60 * 60);
+
+      if (signedError) {
+        console.error("Erro ao gerar link do documento interno:", signedError);
+      }
+
+      return {
+        ...doc,
+        url: signedData?.signedUrl || null,
+        file_name: getDocumentName(doc.file_path),
+      };
+    })
+  );
+
+  setInternalDocuments(resolvedDocuments);
 }
 
 async function uploadInternalDocument() {
@@ -919,12 +953,57 @@ async function uploadInternalDocument() {
           </div>
 
           <div className="break-all text-sm font-semibold text-gray-950">
-            {doc.file_path || "Arquivo não informado"}
+            {doc.file_name || getDocumentName(doc.file_path || "") || "Arquivo não informado"}
+          </div>
+
+          <div className="mt-1 break-all text-[11px] font-medium text-gray-400">
+            {doc.file_path || "Caminho não informado"}
           </div>
 
           {doc.notes && (
             <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 text-xs font-medium text-gray-700">
               {doc.notes}
+            </div>
+          )}
+
+          {doc.url ? (
+            <div className="mt-4 flex flex-col gap-2 md:flex-row md:items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  window.open(doc.url, "_blank", "noopener,noreferrer");
+                }}
+                className="inline-flex min-w-[150px] items-center justify-center whitespace-nowrap rounded-md border border-gray-900 bg-gray-900 px-4 py-2 text-sm font-bold text-white"
+              >
+                Abrir documento
+              </button>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  const response = await fetch(doc.url);
+                  const blob = await response.blob();
+
+                  const url = window.URL.createObjectURL(blob);
+
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `${getDisplayId(data.display_id, data.id)}_DOC_INTERNO.${getFileExtension(doc.file_name || doc.file_path || "arquivo")}`;
+
+                  document.body.appendChild(a);
+                  a.click();
+
+                  a.remove();
+                  window.URL.revokeObjectURL(url);
+                }}
+                className="inline-flex min-w-[86px] items-center justify-center whitespace-nowrap rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50"
+              >
+                Baixar
+              </button>
+            </div>
+          ) : (
+            <div className="mt-4 rounded-md border border-orange-200 bg-orange-50 px-4 py-2 text-xs font-bold text-orange-800">
+              Link indisponível
             </div>
           )}
 
