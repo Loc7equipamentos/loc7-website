@@ -6,16 +6,27 @@ type AdminProtectedProps = {
   children: React.ReactNode;
 };
 
+const ADMIN_SESSION_KEY = "loc7_admin_session_confirmed";
+
 export default function AdminProtected({ children }: AdminProtectedProps) {
   const [loading, setLoading] = useState(true);
   const [, setLocation] = useLocation();
 
   useEffect(() => {
     async function checkSession() {
+      const currentPath = window.location.pathname + window.location.search;
+      const sessionConfirmed = sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
+
+      if (!sessionConfirmed) {
+        await supabase.auth.signOut();
+        setLocation(`/admin-login?redirect=${encodeURIComponent(currentPath)}`);
+        return;
+      }
+
       const { data, error } = await supabase.auth.getSession();
 
       if (error || !data.session) {
-        const currentPath = window.location.pathname + window.location.search;
+        sessionStorage.removeItem(ADMIN_SESSION_KEY);
         setLocation(`/admin-login?redirect=${encodeURIComponent(currentPath)}`);
         return;
       }
