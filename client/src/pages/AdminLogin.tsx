@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Eye, EyeOff } from "lucide-react";
+
+const ADMIN_SESSION_KEY = "loc7_admin_session_confirmed";
 
 export default function AdminLogin() {
   const initialRedirect =
@@ -13,11 +15,18 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    supabase.auth.signOut();
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setLoading(true);
     setError("");
+
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -30,13 +39,14 @@ export default function AdminLogin() {
       return;
     }
 
+    sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
     window.location.href = redirectPath;
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black px-4">
       <div className="w-full max-w-md bg-white rounded-2xl p-8 shadow-xl">
-        <h1 className="text-2xl font-bold mb-6 text-center">
+        <h1 className="mb-6 text-center text-2xl font-black tracking-tight text-black">
           Acesso Interno Loc7
         </h1>
 
