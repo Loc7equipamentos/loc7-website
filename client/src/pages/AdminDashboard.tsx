@@ -38,6 +38,11 @@ import {
   buildChatGptSeoPrompt,
 } from '@/lib/admin/product-seo-prompt';
 import ProductFilterSelector from '@/lib/admin/ProductFilterSelector';
+import {
+  buildProductFilterOptionIdsToSaveWithBrandSync,
+  fetchProductFilterOptionIdsFromSupabase,
+  saveProductFilterOptionsToSupabase,
+} from '@/lib/admin/filter-relations-utils';
 
 type ProductWithImages = Product & {
   images?: string[] | null;
@@ -88,11 +93,6 @@ type FilterOption = {
   name: string;
   display_order: number | null;
   is_active?: boolean | null;
-};
-
-type ProductFilterOption = {
-  product_id: string;
-  filter_option_id: string;
 };
 
 type FilterGroup = {
@@ -526,127 +526,29 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     toggleProductFilterOption(option.id, isEditing);
   };
 
-  const getBrandGroupForCategoryName = (categoryName: string) => {
-    if (!categoryName) return null;
-
-    return (
-      filterGroups.find(
-        (group) =>
-          group.category?.name === categoryName && isBrandFilterGroup(group)
-      ) || null
-    );
-  };
-
-  const ensureBrandFilterOptionId = async (categoryName: string, brandName: string) => {
-    const cleanBrandName = brandName.trim();
-    if (!categoryName || !cleanBrandName) return null;
-
-    const brandGroup = getBrandGroupForCategoryName(categoryName);
-    if (!brandGroup) return null;
-
-    const existingOption = (brandGroup.options || []).find(
-      (option) => normalizeFilterName(option.name) === normalizeFilterName(cleanBrandName)
-    );
-
-    if (existingOption) return existingOption.id;
-
-    const nextOrder =
-      Math.max(
-        0,
-        ...(brandGroup.options || []).map((option) => option.display_order ?? 0)
-      ) + 1;
-
-    const { data, error: err } = await supabase
-      .from('filter_options')
-      .insert([
-        {
-          group_id: brandGroup.id,
-          name: cleanBrandName,
-          display_order: nextOrder,
-        },
-      ])
-      .select('id')
-      .single();
-
-    if (err) throw err;
-
-    await loadFilterArchitecture();
-
-    return data?.id || null;
-  };
-
   const buildProductFilterOptionIdsToSave = async (
     categoryName: string,
     brandName: string,
     optionIds: string[]
   ) => {
-    const brandGroup = getBrandGroupForCategoryName(categoryName);
-    const brandOptionIds = new Set(
-      (brandGroup?.options || []).map((option) => option.id)
-    );
-
-    const optionIdsWithoutBrand = optionIds.filter(
-      (optionId) => !brandOptionIds.has(optionId)
-    );
-
-    const brandOptionId = await ensureBrandFilterOptionId(categoryName, brandName);
-
-    return Array.from(
-      new Set([
-        ...optionIdsWithoutBrand,
-        ...(brandOptionId ? [brandOptionId] : []),
-      ])
-    );
+    return buildProductFilterOptionIdsToSaveWithBrandSync({
+      supabase,
+      categoryName,
+      brandName,
+      optionIds,
+      filterGroups,
+      isBrandFilterGroup,
+      normalizeFilterName,
+      reloadFilterArchitecture: loadFilterArchitecture,
+    });
   };
 
   const fetchProductFilterOptionIds = async (productId: string) => {
-    const { data, error: err } = await supabase
-      .from('product_filter_options')
-      .select('filter_option_id')
-      .eq('product_id', productId);
-
-    if (err) throw err;
-
-    return ((data as ProductFilterOption[]) || [])
-      .map((item) => item.filter_option_id)
-      .filter(Boolean);
+    return fetchProductFilterOptionIdsFromSupabase(supabase, productId);
   };
 
   const saveProductFilterOptions = async (productId: string, optionIds: string[]) => {
-    const uniqueOptionIds = Array.from(new Set(optionIds.filter(Boolean)));
-
-    const { error: deleteError } = await supabase
-      .from('product_filter_options')
-      .delete()
-      .eq('product_id', productId);
-
-    if (deleteError) throw deleteError;
-
-    if (uniqueOptionIds.length === 0) return;
-
-    const rows = uniqueOptionIds.map((optionId) => ({
-      product_id: productId,
-      filter_option_id: optionId,
-    }));
-
-    const { error: insertError } = await supabase
-      .from('product_filter_options')
-      .insert(rows);
-
-    if (insertError) throw insertError;
-
-    const savedOptionIds = await fetchProductFilterOptionIds(productId);
-
-    if (savedOptionIds.length !== uniqueOptionIds.length) {
-      throw new Error(
-        'Produto salvo, mas os filtros relacionados não foram confirmados no banco. Verifique as policies da tabela product_filter_options.'
-      );
-    }
-  };
-
-  const loadProductFilterOptions = async (productId: string) => {
-    const optionIds = await fetchProductFilterOptionIds(productId);
-    setEditingProductFilterOptionIds(optionIds);
+    return saveProductFilterOptionsToSupabase(supabase, productId, optionIds);
   };
 
   const saveProductFiscalProfile = async (productId: string) => {
