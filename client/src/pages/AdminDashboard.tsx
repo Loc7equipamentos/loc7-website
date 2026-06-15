@@ -32,6 +32,11 @@ import {
   moveFilterGroupOrder,
   moveFilterOptionOrder,
 } from '@/lib/admin/filter-utils';
+import {
+  getCombinedImages,
+  getImageUploadBaseName,
+  uploadProductImages,
+} from '@/lib/admin/image-utils';
 
 type ProductWithImages = Product & {
   images?: string[] | null;
@@ -906,10 +911,6 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
     );
   };
 
-  const getCombinedImages = (imageUrl?: string | null, images?: string[] | null) => {
-    return [imageUrl, ...(images || [])].filter(Boolean) as string[];
-  };
-
   const moveImage = (
     index: number,
     direction: 'left' | 'right',
@@ -1083,145 +1084,31 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
   }
 };
 
-  const getImageUploadBaseName = (isEditing: boolean = false) => {
-    const sourceProduct = isEditing && editingProduct ? editingProduct : newProduct;
-
-    const displayName = buildProductDisplayName(
-      sourceProduct.operational_type,
-      sourceProduct.category,
-      sourceProduct.name
-    );
-
-    const fallbackName = [
-      sourceProduct.operational_type,
-      sourceProduct.brand,
-      sourceProduct.name,
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    return slugify(displayName || fallbackName || `produto-${Date.now()}`) || `produto-${Date.now()}`;
-  };
-
-  const resizeImageToLoc7Pattern = async (file: File): Promise<Blob> => {
-    const imageUrl = URL.createObjectURL(file);
-
-    try {
-      const image = await new Promise<HTMLImageElement>((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = () => reject(new Error('Não foi possível ler a imagem.'));
-        img.src = imageUrl;
-      });
-
-      const canvasSize = 2000;
-      const maxImageSize = canvasSize * 0.9;
-      const scale = Math.min(
-        maxImageSize / image.naturalWidth,
-        maxImageSize / image.naturalHeight
-      );
-
-      const drawWidth = Math.round(image.naturalWidth * scale);
-      const drawHeight = Math.round(image.naturalHeight * scale);
-      const offsetX = Math.round((canvasSize - drawWidth) / 2);
-      const offsetY = Math.round((canvasSize - drawHeight) / 2);
-
-      const canvas = document.createElement('canvas');
-      canvas.width = canvasSize;
-      canvas.height = canvasSize;
-
-      const context = canvas.getContext('2d');
-
-      if (!context) {
-        throw new Error('Não foi possível processar a imagem.');
-      }
-
-      context.fillStyle = '#ffffff';
-      context.fillRect(0, 0, canvasSize, canvasSize);
-      context.imageSmoothingEnabled = true;
-      context.imageSmoothingQuality = 'high';
-      context.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
-
-      return await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(
-          (blob) => {
-            if (!blob) {
-              reject(new Error('Não foi possível converter a imagem para WebP.'));
-              return;
-            }
-
-            resolve(blob);
-          },
-          'image/webp',
-          0.85
-        );
-      });
-    } finally {
-      URL.revokeObjectURL(imageUrl);
-    }
-  };
-
   const processFiles = async (files: FileList, isEditing: boolean = false) => {
     if (!files || files.length === 0) return;
 
     setUploadingImage(true);
 
-    const uploadedUrls: string[] = [];
     const existingImages = isEditing && editingProduct
       ? getCombinedImages(editingProduct.image_url, editingProduct.images)
       : getCombinedImages(newProduct.image_url, newProduct.images);
-    const uploadBaseName = getImageUploadBaseName(isEditing);
-    const uploadVersion = Date.now();
-    const orderedFiles = Array.from(files)
-      .filter(Boolean)
-      .sort((a, b) =>
-        a.name.localeCompare(b.name, 'pt-BR', {
-          numeric: true,
-          sensitivity: 'base',
-        })
-      );
 
-    for (const file of orderedFiles) {
-      if (!file) continue;
+    const sourceProduct = isEditing && editingProduct ? editingProduct : newProduct;
+    const uploadBaseName = getImageUploadBaseName(sourceProduct);
 
-      try {
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-          throw new Error('Formato inválido. Use JPG, PNG ou WebP.');
-        }
-
-        const maxSize = 20 * 1024 * 1024;
-        if (file.size > maxSize) {
-          throw new Error('Arquivo muito grande (máximo 20MB)');
-        }
-
-        const imageNumber = existingImages.length + uploadedUrls.length + 1;
-        const fileName = `${uploadBaseName}-${String(imageNumber).padStart(2, '0')}-${uploadVersion}.webp`;
-        const filePath = `products/${uploadBaseName}/${fileName}`;
-        const processedImage = await resizeImageToLoc7Pattern(file);
-
-        const { error: uploadError } = await supabase.storage
-          .from('products')
-          .upload(filePath, processedImage, {
-            cacheControl: '3600',
-            contentType: 'image/webp',
-            upsert: false,
-          });
-
-        if (uploadError) {
-          throw new Error(`Erro ao fazer upload: ${uploadError.message}`);
-        }
-
-        const { data } = supabase.storage.from('products').getPublicUrl(filePath);
-        uploadedUrls.push(data.publicUrl);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
-        alert(`Erro ao fazer upload: ${errorMessage}`);
-        setError(errorMessage);
-      }
-    }
+    const { uploadedUrls, errors: uploadErrors } = await uploadProductImages({
+      files,
+      existingImages,
+      uploadBaseName,
+    });
 
     setUploadingImage(false);
+
+    if (uploadErrors.length > 0) {
+      const firstError = uploadErrors[0];
+      alert(`Erro ao fazer upload: ${firstError}`);
+      setError(firstError);
+    }
 
     if (uploadedUrls.length === 0) {
       alert('Nenhuma imagem foi enviada com sucesso');
