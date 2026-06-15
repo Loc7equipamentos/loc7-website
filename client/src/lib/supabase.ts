@@ -7,7 +7,17 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Variáveis de ambiente Supabase não configuradas");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(
+  supabaseUrl,
+  supabaseAnonKey,
+  {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  }
+);
 
 export interface Product {
   id: string;
