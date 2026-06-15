@@ -136,8 +136,7 @@ Especificações técnicas:
 ${source.technical_specs || '-'}
 
 Tags automáticas já geradas:
-${automaticTags.length > 0 ? automaticTags.join('
-') : '-'}
+${automaticTags.length > 0 ? automaticTags.join('\\n') : '-'}
 
 Gere somente as 8 melhores tags complementares, diferentes das automáticas, focadas no comportamento real de busca desta categoria.`;
 }
