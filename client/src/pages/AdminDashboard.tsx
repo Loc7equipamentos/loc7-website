@@ -37,7 +37,7 @@ import {
   buildAutomaticSeoTags,
   buildChatGptSeoPrompt,
 } from '@/lib/admin/product-seo-prompt';
-import ProductFilterSelector from '@/components/admin/ProductFilterSelector';
+import ProductFilterSelector from '@/lib/admin/ProductFilterSelector';
 
 type ProductWithImages = Product & {
   images?: string[] | null;
