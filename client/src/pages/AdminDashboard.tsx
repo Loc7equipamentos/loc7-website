@@ -1171,8 +1171,17 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
       ? getCombinedImages(editingProduct.image_url, editingProduct.images)
       : getCombinedImages(newProduct.image_url, newProduct.images);
     const uploadBaseName = getImageUploadBaseName(isEditing);
+    const uploadVersion = Date.now();
+    const orderedFiles = Array.from(files)
+      .filter(Boolean)
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, 'pt-BR', {
+          numeric: true,
+          sensitivity: 'base',
+        })
+      );
 
-    for (const file of Array.from(files)) {
+    for (const file of orderedFiles) {
       if (!file) continue;
 
       try {
@@ -1187,16 +1196,16 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
         }
 
         const imageNumber = existingImages.length + uploadedUrls.length + 1;
-        const fileName = `${uploadBaseName}-${String(imageNumber).padStart(2, '0')}.webp`;
+        const fileName = `${uploadBaseName}-${String(imageNumber).padStart(2, '0')}-${uploadVersion}.webp`;
         const filePath = `products/${uploadBaseName}/${fileName}`;
         const processedImage = await resizeImageToLoc7Pattern(file);
 
         const { error: uploadError } = await supabase.storage
           .from('products')
           .upload(filePath, processedImage, {
-            cacheControl: '31536000',
+            cacheControl: '3600',
             contentType: 'image/webp',
-            upsert: true,
+            upsert: false,
           });
 
         if (uploadError) {
@@ -1253,6 +1262,7 @@ Gere somente as 8 melhores tags complementares, diferentes das automáticas, foc
     const files = e.target.files;
     if (!files) return;
     await processFiles(files, isEditing);
+    e.target.value = '';
   };
 
   const handleDragEnter = (e: React.DragEvent, isEditing: boolean = false) => {
