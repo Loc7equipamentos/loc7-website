@@ -114,18 +114,15 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [mobileView, setMobileView] = useState<"main" | "equipment">("main");
-  const [activeMobileCategoryIndex, setActiveMobileCategoryIndex] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [location] = useLocation();
 
   const searchRef = useRef<HTMLDivElement | null>(null);
-  const mobileCategoryScrollRef = useRef<HTMLDivElement | null>(null);
 
   const closeMobileMenu = () => {
     setIsMobileOpen(false);
     setMobileView("main");
-    setActiveMobileCategoryIndex(0);
   };
 
   const scrollToHomeTop = () => {
@@ -184,7 +181,6 @@ export default function Navbar() {
   useEffect(() => {
     setIsMobileOpen(false);
     setMobileView("main");
-    setActiveMobileCategoryIndex(0);
     setIsSearchOpen(false);
 
     if (location === "/" && window.location.hash === "#como-alugar") {
@@ -210,34 +206,6 @@ export default function Navbar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  const handleMobileCategoryScroll = () => {
-    const container = mobileCategoryScrollRef.current;
-    if (!container) return;
-
-    const containerRect = container.getBoundingClientRect();
-    const containerCenter = containerRect.top + containerRect.height / 2;
-
-    const items = Array.from(
-      container.querySelectorAll<HTMLElement>("[data-mobile-category-index]")
-    );
-
-    let closestIndex = 0;
-    let closestDistance = Number.POSITIVE_INFINITY;
-
-    items.forEach((item) => {
-      const itemRect = item.getBoundingClientRect();
-      const itemCenter = itemRect.top + itemRect.height / 2;
-      const distance = Math.abs(containerCenter - itemCenter);
-
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestIndex = Number(item.dataset.mobileCategoryIndex || 0);
-      }
-    });
-
-    setActiveMobileCategoryIndex(closestIndex);
-  };
 
   const handleSearchSubmit = async () => {
     const rawQuery = searchQuery.trim();
@@ -274,7 +242,7 @@ export default function Navbar() {
     };
 
     const matchedCategory = Object.entries(categoryMap).find(([key]) =>
-      normalizedQuery.includes(key)
+      normalizedQuery.includes(key),
     );
 
     if (matchedCategory) {
@@ -387,10 +355,13 @@ export default function Navbar() {
                     >
                       {link.name}
                     </Link>
-                  )
+                  ),
                 )}
 
-                <div ref={searchRef} className="ml-6 hidden items-center md:flex">
+                <div
+                  ref={searchRef}
+                  className="ml-6 hidden items-center md:flex"
+                >
                   {isSearchOpen ? (
                     <div className="flex items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur-md transition-all duration-300">
                       <Search className="h-4 w-4 text-white/45" />
@@ -531,10 +502,6 @@ export default function Navbar() {
                   type="button"
                   onClick={() => {
                     setMobileView("equipment");
-                    setActiveMobileCategoryIndex(0);
-                    window.setTimeout(() => {
-                      handleMobileCategoryScroll();
-                    }, 80);
                   }}
                   className="group flex w-full items-center justify-between border-b border-white/10 py-5 text-left text-[24px] font-semibold uppercase tracking-[0.04em] text-white transition hover:border-white/25"
                 >
@@ -567,13 +534,13 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setMobileView("main")}
-                  className="mb-7 flex items-center gap-2 text-[14px] font-medium text-white/55 transition hover:text-white"
+                  className="mb-8 flex items-center gap-2 text-[14px] font-medium text-white/60 transition hover:text-white"
                 >
                   <span className="text-xl leading-none">←</span>
                   Voltar
                 </button>
 
-                <div className="mb-6">
+                <div className="mb-8">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/45">
                     Navegação
                   </p>
@@ -582,43 +549,22 @@ export default function Navbar() {
                   </h2>
                 </div>
 
-                <div
-                  ref={mobileCategoryScrollRef}
-                  onScroll={handleMobileCategoryScroll}
-                  className="max-h-[62vh] snap-y snap-mandatory overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch] [touch-action:pan-y]"
-                >
-                  <div className="space-y-0 py-6">
-                    {mobileEquipmentLinks.map((item, index) => {
-                      const isActive = index === activeMobileCategoryIndex;
-
-                      return (
-                        <button
-                          key={item.name}
-                          type="button"
-                          data-mobile-category-index={index}
-                          onClick={() => {
-                            window.location.href = item.href;
-                          }}
-                          className={`group block w-full snap-center border-b text-left transition-all duration-200 ${
-                            isActive
-                              ? "border-white/30 py-6 text-[30px] font-semibold uppercase tracking-[0.035em] text-white"
-                              : "border-white/10 py-5 text-[22px] font-medium uppercase tracking-[0.04em] text-white/48"
-                          }`}
-                        >
-                          <span className="flex items-center justify-between">
-                            <span>{item.name}</span>
-                            <span
-                              className={`h-px transition-all duration-200 ${
-                                isActive
-                                  ? "w-12 bg-red-600"
-                                  : "w-6 bg-white/15 group-hover:bg-white/30"
-                              }`}
-                            />
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                <div className="space-y-5 pb-8">
+                  {mobileEquipmentLinks.map((item) => (
+                    <button
+                      key={item.name}
+                      type="button"
+                      onClick={() => {
+                        window.location.href = item.href;
+                      }}
+                      className="group block w-full py-1 text-left"
+                    >
+                      <span className="block text-[24px] font-medium uppercase tracking-[0.045em] text-white/58 transition duration-200 group-hover:text-white group-active:text-white">
+                        {item.name}
+                      </span>
+                      <span className="mt-3 block h-px w-10 bg-white/12 transition-all duration-200 group-hover:w-20 group-hover:bg-red-600 group-active:w-20 group-active:bg-red-600" />
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
