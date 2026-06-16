@@ -434,7 +434,7 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <div className="absolute right-[-10px] top-1/2 flex -translate-y-1/2 translate-y-[4px] items-center gap-3 md:hidden">
+              <div className="absolute right-[-6px] top-1/2 flex -translate-y-1/2 translate-y-[4px] items-center gap-3 md:hidden">
                 <button
                   type="button"
                   onClick={() => {
