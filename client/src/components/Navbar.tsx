@@ -113,16 +113,21 @@ const navLinks: NavLink[] = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [mobileView, setMobileView] = useState<"main" | "equipment">("main");
+  const [mobileView, setMobileView] = useState<
+    "main" | "equipment" | "allCategories"
+  >("main");
+  const [activeAllCategoryIndex, setActiveAllCategoryIndex] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [location] = useLocation();
 
   const searchRef = useRef<HTMLDivElement | null>(null);
+  const allCategoriesScrollRef = useRef<HTMLDivElement | null>(null);
 
   const closeMobileMenu = () => {
     setIsMobileOpen(false);
     setMobileView("main");
+    setActiveAllCategoryIndex(0);
   };
 
   const scrollToHomeTop = () => {
@@ -181,6 +186,7 @@ export default function Navbar() {
   useEffect(() => {
     setIsMobileOpen(false);
     setMobileView("main");
+    setActiveAllCategoryIndex(0);
     setIsSearchOpen(false);
 
     if (location === "/" && window.location.hash === "#como-alugar") {
@@ -206,6 +212,34 @@ export default function Navbar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleAllCategoriesScroll = () => {
+    const container = allCategoriesScrollRef.current;
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const containerCenter = containerRect.top + containerRect.height / 2;
+
+    const items = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-all-category-index]"),
+    );
+
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    items.forEach((item) => {
+      const itemRect = item.getBoundingClientRect();
+      const itemCenter = itemRect.top + itemRect.height / 2;
+      const distance = Math.abs(containerCenter - itemCenter);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = Number(item.dataset.allCategoryIndex || 0);
+      }
+    });
+
+    setActiveAllCategoryIndex(closestIndex);
+  };
 
   const handleSearchSubmit = async () => {
     const rawQuery = searchQuery.trim();
@@ -481,21 +515,24 @@ export default function Navbar() {
 
         {isMobileOpen && (
           <div className="border-t border-white/10 bg-black/95 md:hidden">
-            {mobileView === "main" ? (
+            {mobileView === "main" && (
               <div className="px-6 pb-8 pt-5">
-                <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/45">
-                  Menu LOC7
-                </p>
+                <div className="mb-6">
+                  <p className="text-[13px] font-semibold uppercase tracking-[0.22em] text-white/70">
+                    Menu LOC7
+                  </p>
+                  <span className="mt-2 block h-[2px] w-10 bg-red-600" />
+                </div>
 
                 <button
                   type="button"
                   onClick={handleHomeNavigation}
-                  className="group flex w-full items-center justify-between border-b border-white/10 py-5 text-left text-[24px] font-semibold uppercase tracking-[0.04em] text-white transition hover:border-white/25"
+                  className="group block w-full py-3.5 text-left"
                 >
-                  <span>Home</span>
-                  <span className="text-base font-normal text-white/35 transition group-hover:text-white/70">
-                    →
+                  <span className="block text-[18px] font-medium tracking-[0.01em] text-white/85 transition duration-200 group-hover:text-white group-active:text-white">
+                    Home
                   </span>
+                  <span className="mt-2 block h-px w-8 bg-white/10 transition-all duration-200 group-hover:w-14 group-hover:bg-white/35 group-active:w-14 group-active:bg-white/35" />
                 </button>
 
                 <button
@@ -503,68 +540,153 @@ export default function Navbar() {
                   onClick={() => {
                     setMobileView("equipment");
                   }}
-                  className="group flex w-full items-center justify-between border-b border-white/10 py-5 text-left text-[24px] font-semibold uppercase tracking-[0.04em] text-white transition hover:border-white/25"
+                  className="group block w-full py-3.5 text-left"
                 >
-                  <span>Equipamentos</span>
-                  <span className="text-base font-normal text-white/35 transition group-hover:text-white/70">
-                    →
+                  <span className="block text-[18px] font-medium tracking-[0.01em] text-white/85 transition duration-200 group-hover:text-white group-active:text-white">
+                    Equipamentos
                   </span>
+                  <span className="mt-2 block h-px w-8 bg-white/10 transition-all duration-200 group-hover:w-14 group-hover:bg-white/35 group-active:w-14 group-active:bg-white/35" />
                 </button>
 
                 <button
                   type="button"
                   onClick={handleComoAlugarNavigation}
-                  className="group flex w-full items-center justify-between border-b border-white/10 py-5 text-left text-[24px] font-semibold uppercase tracking-[0.04em] text-white transition hover:border-white/25"
+                  className="group block w-full py-3.5 text-left"
                 >
-                  <span>Como alugar</span>
-                  <span className="text-base font-normal text-white/35 transition group-hover:text-white/70">
-                    →
+                  <span className="block text-[18px] font-medium tracking-[0.01em] text-white/85 transition duration-200 group-hover:text-white group-active:text-white">
+                    Como alugar
                   </span>
+                  <span className="mt-2 block h-px w-8 bg-white/10 transition-all duration-200 group-hover:w-14 group-hover:bg-white/35 group-active:w-14 group-active:bg-white/35" />
                 </button>
 
-                <div className="flex w-full items-center justify-between border-b border-white/10 py-5 text-left text-[24px] font-semibold uppercase tracking-[0.04em] text-white/45">
-                  <span>Produção</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">
-                    Em breve
-                  </span>
+                <div className="block w-full py-3.5 text-left">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <span className="block text-[18px] font-medium tracking-[0.01em] text-white/45">
+                      Produção
+                    </span>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/35">
+                      Em breve
+                    </span>
+                  </div>
+                  <span className="mt-2 block h-px w-8 bg-white/10" />
                 </div>
               </div>
-            ) : (
+            )}
+
+            {mobileView === "equipment" && (
               <div className="px-6 pb-8 pt-5">
                 <button
                   type="button"
                   onClick={() => setMobileView("main")}
-                  className="mb-8 flex items-center gap-2 text-[14px] font-medium text-white/60 transition hover:text-white"
+                  className="group mb-7 block text-left"
                 >
-                  <span className="text-xl leading-none">←</span>
-                  Voltar
+                  <span className="block text-[13px] font-semibold uppercase tracking-[0.22em] text-white/70 transition duration-200 group-hover:text-white group-active:text-white">
+                    Menu
+                  </span>
+                  <span className="mt-2 block h-[2px] w-7 bg-red-600" />
                 </button>
 
-                <div className="mb-8">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/45">
-                    Navegação
-                  </p>
-                  <h2 className="mt-2 text-[30px] font-semibold uppercase leading-none tracking-[0.04em] text-white">
-                    Equipamentos
-                  </h2>
-                </div>
-
-                <div className="space-y-5 pb-8">
-                  {mobileEquipmentLinks.map((item) => (
+                <div className="space-y-1">
+                  {[
+                    { name: "Câmeras", href: "/catalogo/cameras" },
+                    { name: "Lentes", href: "/catalogo/lentes" },
+                    { name: "Iluminação", href: "/catalogo/iluminacao" },
+                    { name: "Áudio", href: "/catalogo/audio" },
+                    { name: "Movimento", href: "/catalogo/movimento" },
+                  ].map((item) => (
                     <button
                       key={item.name}
                       type="button"
                       onClick={() => {
                         window.location.href = item.href;
                       }}
-                      className="group block w-full py-1 text-left"
+                      className="group block w-full py-3 text-left"
                     >
-                      <span className="block text-[24px] font-medium uppercase tracking-[0.045em] text-white/58 transition duration-200 group-hover:text-white group-active:text-white">
+                      <span className="block text-[18px] font-medium tracking-[0.01em] text-white/82 transition duration-200 group-hover:text-white group-active:text-white">
                         {item.name}
                       </span>
-                      <span className="mt-3 block h-px w-10 bg-white/12 transition-all duration-200 group-hover:w-20 group-hover:bg-red-600 group-active:w-20 group-active:bg-red-600" />
+                      <span className="mt-2 block h-px w-7 bg-white/10 transition-all duration-200 group-hover:w-14 group-hover:bg-white/35 group-active:w-14 group-active:bg-white/35" />
                     </button>
                   ))}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileView("allCategories");
+                      setActiveAllCategoryIndex(0);
+                      window.setTimeout(() => {
+                        handleAllCategoriesScroll();
+                      }, 80);
+                    }}
+                    className="group block w-full pt-5 pb-3 text-left"
+                  >
+                    <span className="block text-[16px] font-medium tracking-[0.01em] text-white/62 transition duration-200 group-hover:text-white group-active:text-white">
+                      Todas as categorias +
+                    </span>
+                    <span className="mt-2 block h-px w-7 bg-white/10 transition-all duration-200 group-hover:w-14 group-hover:bg-white/35 group-active:w-14 group-active:bg-white/35" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {mobileView === "allCategories" && (
+              <div className="px-6 pb-7 pt-5">
+                <button
+                  type="button"
+                  onClick={handleHomeNavigation}
+                  className="group mb-5 block text-left"
+                >
+                  <span className="block text-[12px] font-semibold uppercase tracking-[0.22em] text-white/55 transition duration-200 group-hover:text-white group-active:text-white">
+                    Home
+                  </span>
+                </button>
+
+                <div className="mb-4">
+                  <p className="text-[13px] font-semibold uppercase tracking-[0.2em] text-white/72">
+                    Todas as categorias
+                  </p>
+                  <span className="mt-2 block h-[2px] w-24 bg-red-600" />
+                </div>
+
+                <div
+                  ref={allCategoriesScrollRef}
+                  onScroll={handleAllCategoriesScroll}
+                  className="max-h-[58vh] overflow-y-auto overscroll-contain pr-1 [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [touch-action:pan-y] [&::-webkit-scrollbar]:hidden"
+                >
+                  <div className="space-y-1 py-[18vh]">
+                    {mobileEquipmentLinks.map((item, index) => {
+                      const isActive = index === activeAllCategoryIndex;
+
+                      return (
+                        <button
+                          key={item.name}
+                          type="button"
+                          data-all-category-index={index}
+                          onClick={() => {
+                            window.location.href = item.href;
+                          }}
+                          className="group block w-full py-2.5 text-left"
+                        >
+                          <span
+                            className={`block font-medium tracking-[0.01em] transition duration-200 group-hover:text-white group-active:text-white ${
+                              isActive
+                                ? "text-[20px] text-white"
+                                : "text-[17px] text-white/58"
+                            }`}
+                          >
+                            {item.name}
+                          </span>
+                          <span
+                            className={`mt-2 block h-px transition-all duration-200 ${
+                              isActive
+                                ? "w-12 bg-white/38"
+                                : "w-7 bg-white/10 group-hover:w-12 group-hover:bg-white/30 group-active:w-12 group-active:bg-white/30"
+                            }`}
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}
