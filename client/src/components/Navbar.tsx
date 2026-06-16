@@ -113,16 +113,19 @@ const navLinks: NavLink[] = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isMobileEquipmentOpen, setIsMobileEquipmentOpen] = useState(false);
+  const [mobileView, setMobileView] = useState<"main" | "equipment">("main");
+  const [activeMobileCategoryIndex, setActiveMobileCategoryIndex] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [location] = useLocation();
 
   const searchRef = useRef<HTMLDivElement | null>(null);
+  const mobileCategoryScrollRef = useRef<HTMLDivElement | null>(null);
 
   const closeMobileMenu = () => {
     setIsMobileOpen(false);
-    setIsMobileEquipmentOpen(false);
+    setMobileView("main");
+    setActiveMobileCategoryIndex(0);
   };
 
   const scrollToHomeTop = () => {
@@ -180,7 +183,8 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsMobileOpen(false);
-    setIsMobileEquipmentOpen(false);
+    setMobileView("main");
+    setActiveMobileCategoryIndex(0);
     setIsSearchOpen(false);
 
     if (location === "/" && window.location.hash === "#como-alugar") {
@@ -206,6 +210,34 @@ export default function Navbar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleMobileCategoryScroll = () => {
+    const container = mobileCategoryScrollRef.current;
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const containerCenter = containerRect.top + containerRect.height / 2;
+
+    const items = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-mobile-category-index]")
+    );
+
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    items.forEach((item) => {
+      const itemRect = item.getBoundingClientRect();
+      const itemCenter = itemRect.top + itemRect.height / 2;
+      const distance = Math.abs(containerCenter - itemCenter);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = Number(item.dataset.mobileCategoryIndex || 0);
+      }
+    });
+
+    setActiveMobileCategoryIndex(closestIndex);
+  };
 
   const handleSearchSubmit = async () => {
     const rawQuery = searchQuery.trim();
@@ -477,59 +509,119 @@ export default function Navbar() {
         </div>
 
         {isMobileOpen && (
-          <div className="border-t border-gray-800 bg-gray-950 md:hidden">
-            <div className="flex flex-col">
-              <button
-                type="button"
-                onClick={handleHomeNavigation}
-                className="block w-full px-4 py-3 text-left text-sm font-medium text-white transition hover:bg-gray-900"
-              >
-                Home
-              </button>
+          <div className="md:hidden">
+            <div className="mx-3 mb-4 rounded-2xl border border-white/10 bg-black/95 shadow-2xl shadow-black/70 backdrop-blur-xl">
+              {mobileView === "main" ? (
+                <div className="px-4 py-4">
+                  <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">
+                    Menu LOC7
+                  </p>
 
-              <button
-                type="button"
-                onClick={() => setIsMobileEquipmentOpen((prev) => !prev)}
-                className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-white transition hover:bg-gray-900"
-              >
-                <span>Equipamentos</span>
-                <span
-                  className={`text-xs text-white/60 transition-transform duration-200 ${
-                    isMobileEquipmentOpen ? "rotate-180" : ""
-                  }`}
-                >
-                  ▼
-                </span>
-              </button>
+                  <button
+                    type="button"
+                    onClick={handleHomeNavigation}
+                    className="flex w-full items-center justify-between rounded-xl px-3 py-4 text-left text-[17px] font-medium text-white transition hover:bg-white/[0.06]"
+                  >
+                    Home
+                  </button>
 
-              {isMobileEquipmentOpen && (
-                <div className="border-y border-white/5 bg-black/35 py-2">
-                  {mobileEquipmentLinks.map((item) => (
-                    <button
-                      key={item.name}
-                      type="button"
-                      onClick={() => {
-                        window.location.href = item.href;
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileView("equipment");
+                      setActiveMobileCategoryIndex(0);
+                      window.setTimeout(() => {
+                        handleMobileCategoryScroll();
+                      }, 80);
+                    }}
+                    className="mt-1 flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.045] px-3 py-4 text-left text-[18px] font-semibold text-white transition hover:bg-white/[0.07]"
+                  >
+                    <span>Equipamentos</span>
+                    <span className="text-xl text-white/45">→</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleComoAlugarNavigation}
+                    className="mt-1 flex w-full items-center justify-between rounded-xl px-3 py-4 text-left text-[17px] font-medium text-white transition hover:bg-white/[0.06]"
+                  >
+                    Como alugar
+                  </button>
+
+                  <div className="mt-1 flex w-full items-center justify-between rounded-xl px-3 py-4 text-[17px] font-medium text-white/45">
+                    <span>Produção</span>
+                    <span className="rounded-full border border-white/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/35">
+                      Em breve
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="px-4 py-4">
+                  <button
+                    type="button"
+                    onClick={() => setMobileView("main")}
+                    className="mb-4 flex items-center gap-2 text-sm font-medium text-white/55 transition hover:text-white"
+                  >
+                    <span className="text-lg">←</span>
+                    Voltar
+                  </button>
+
+                  <div className="mb-5">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40">
+                      Equipamentos
+                    </p>
+                    <h2 className="mt-1 text-2xl font-semibold tracking-tight text-white">
+                      O que você procura?
+                    </h2>
+                  </div>
+
+                  <div className="mb-5 flex items-center rounded-full border border-white/10 bg-white/[0.045] px-4 py-3">
+                    <Search className="h-4 w-4 text-white/40" />
+                    <input
+                      type="text"
+                      placeholder="Buscar câmera, lente, luz..."
+                      value={searchQuery}
+                      onChange={(event) => setSearchQuery(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          handleSearchSubmit();
+                        }
                       }}
-                      className="block w-full px-6 py-2.5 text-left text-sm font-medium text-white/85 transition hover:bg-white/5 hover:text-white"
-                    >
-                      {item.name}
-                    </button>
-                  ))}
+                      className="ml-3 w-full bg-transparent text-[15px] text-white placeholder:text-white/35 focus:outline-none"
+                    />
+                  </div>
+
+                  <div
+                    ref={mobileCategoryScrollRef}
+                    onScroll={handleMobileCategoryScroll}
+                    className="max-h-[58vh] snap-y snap-mandatory overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch] [touch-action:pan-y]"
+                  >
+                    <div className="space-y-2 py-[22vh]">
+                      {mobileEquipmentLinks.map((item, index) => {
+                        const isActive = index === activeMobileCategoryIndex;
+
+                        return (
+                          <button
+                            key={item.name}
+                            type="button"
+                            data-mobile-category-index={index}
+                            onClick={() => {
+                              window.location.href = item.href;
+                            }}
+                            className={`block w-full snap-center rounded-2xl border px-4 py-4 text-left transition-all duration-200 ${
+                              isActive
+                                ? "scale-[1.02] border-white/20 bg-white/[0.075] text-[22px] font-semibold text-white"
+                                : "border-white/5 bg-white/[0.025] text-[17px] font-medium text-white/55"
+                            }`}
+                          >
+                            {item.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               )}
-
-              <button
-                type="button"
-                onClick={handleComoAlugarNavigation}
-                className="block w-full px-4 py-3 text-left text-sm font-medium text-white transition hover:bg-gray-900"
-              >
-                Como alugar
-              </button>
-
-              <div className="block px-4 py-3 text-sm font-medium text-white/55">
-                Produção <span className="text-white/35">(Em breve)</span>
-              </div>
             </div>
           </div>
         )}
