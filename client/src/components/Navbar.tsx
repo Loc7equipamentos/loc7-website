@@ -614,9 +614,7 @@ export default function Navbar() {
                     onClick={() => {
                       setMobileView("allCategories");
                       setActiveAllCategoryIndex(0);
-                      window.setTimeout(() => {
-                        handleAllCategoriesScroll();
-                      }, 80);
+                    
                     }}
                     className="group block w-full pt-5 pb-3 text-left"
                   >
@@ -653,7 +651,7 @@ export default function Navbar() {
                   onScroll={handleAllCategoriesScroll}
                   className="max-h-[58vh] overflow-y-auto overscroll-contain pr-1 [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [touch-action:pan-y] [&::-webkit-scrollbar]:hidden"
                 >
-                  <div className="space-y-1 pt-1 pb-[18vh]">
+                  <div className="space-y-1 pb-8">
                     {mobileEquipmentLinks.map((item, index) => {
                       const isActive = index === activeAllCategoryIndex;
 
