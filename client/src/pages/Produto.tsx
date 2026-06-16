@@ -411,7 +411,7 @@ const keywordContent = finalSeoTags.join(", ");
   }
 
   return (
-    <main className="min-h-screen bg-[#f3f3f1] pt-18 lg:pt-24 text-neutral-900">
+    <main className="min-h-screen bg-[#f3f3f1] pt-14 lg:pt-20 text-neutral-900">
       <div className="mx-auto max-w-[1240px] px-4 pb-10 sm:px-6 lg:px-8">
         <div className="mb-3 flex items-center gap-2 text-xs text-neutral-500">
           <Link href="/catalogo" className="hover:text-neutral-900">
