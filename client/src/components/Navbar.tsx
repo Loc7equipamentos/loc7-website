@@ -575,7 +575,7 @@ export default function Navbar() {
                     </h2>
                   </div>
 
-                  <div className="mb-5 flex items-center rounded-full border border-white/10 bg-white/[0.045] px-4 py-3">
+                  <div className="mb-4 flex items-center rounded-full border border-white/20 bg-white/[0.08] px-4 py-3 shadow-[0_0_30px_rgba(255,255,255,0.04)]">
                     <Search className="h-4 w-4 text-white/40" />
                     <input
                       type="text"
@@ -596,7 +596,7 @@ export default function Navbar() {
                     onScroll={handleMobileCategoryScroll}
                     className="max-h-[58vh] snap-y snap-mandatory overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch] [touch-action:pan-y]"
                   >
-                    <div className="space-y-2 py-[22vh]">
+                    <div className="space-y-3 py-4">
                       {mobileEquipmentLinks.map((item, index) => {
                         const isActive = index === activeMobileCategoryIndex;
 
@@ -608,11 +608,11 @@ export default function Navbar() {
                             onClick={() => {
                               window.location.href = item.href;
                             }}
-                            className={`block w-full snap-center rounded-2xl border px-4 py-4 text-left transition-all duration-200 ${
-                              isActive
-                                ? "scale-[1.02] border-white/20 bg-white/[0.075] text-[22px] font-semibold text-white"
-                                : "border-white/5 bg-white/[0.025] text-[17px] font-medium text-white/55"
-                            }`}
+                           className={`block w-full snap-center rounded-2xl border px-5 py-5 text-left transition-all duration-200 ${
+  isActive
+    ? "scale-[1.015] border-white/35 bg-white/[0.12] text-[23px] font-semibold text-white shadow-[0_0_28px_rgba(255,255,255,0.06)]"
+    : "border-white/14 bg-white/[0.055] text-[18px] font-medium text-white/72"
+}`}
                           >
                             {item.name}
                           </button>
