@@ -350,7 +350,7 @@ export default function Navbar() {
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
-              className="absolute left-[-6px] top-[62%] origin-left -translate-y-1/2 scale-[1.25] transition-transform duration-300 md:left-[-12px] md:top-[108%] md:scale-[1.35]"
+             className="absolute left-[-6px] top-[56%] origin-left -translate-y-1/2 scale-[1.25] transition-transform duration-300 md:left-[-12px] md:top-[108%] md:scale-[1.35]"
             />
           </Link>
 
@@ -434,7 +434,7 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <div className="absolute right-[-10px] top-1/2 flex -translate-y-1/2 translate-y-[10px] items-center gap-3 md:hidden">
+              <div className="absolute right-[-10px] top-1/2 flex -translate-y-1/2 translate-y-[4px] items-center gap-3 md:hidden">
                 <button
                   type="button"
                   onClick={() => {
