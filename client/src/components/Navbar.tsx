@@ -653,7 +653,7 @@ export default function Navbar() {
                   onScroll={handleAllCategoriesScroll}
                   className="max-h-[58vh] overflow-y-auto overscroll-contain pr-1 [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [touch-action:pan-y] [&::-webkit-scrollbar]:hidden"
                 >
-                  <div className="space-y-1 py-[18vh]">
+                  <div className="space-y-1 pt-1 pb-[18vh]">
                     {mobileEquipmentLinks.map((item, index) => {
                       const isActive = index === activeAllCategoryIndex;
 
