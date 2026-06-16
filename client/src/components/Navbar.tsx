@@ -434,16 +434,59 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <button
-                onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="translate-x-6 translate-y-[10px] p-2 text-white md:hidden"
-                aria-label="Abrir menu"
-              >
-                {isMobileOpen ? <X size={34} /> : <Menu size={34} />}
-              </button>
+              <div className="absolute right-[-10px] top-1/2 flex -translate-y-1/2 translate-y-[10px] items-center gap-3 md:hidden">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSearchOpen((prev) => !prev);
+                    setIsMobileOpen(false);
+                    setMobileView("main");
+                    setActiveAllCategoryIndex(0);
+                  }}
+                  className="flex h-10 w-10 items-center justify-center text-white/75 transition hover:text-white active:text-white"
+                  aria-label={isSearchOpen ? "Fechar busca" : "Abrir busca"}
+                >
+                  {isSearchOpen ? <X size={24} /> : <Search size={22} />}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSearchOpen(false);
+                    setIsMobileOpen((prev) => !prev);
+                  }}
+                  className="flex h-11 w-11 items-center justify-center text-white"
+                  aria-label="Abrir menu"
+                >
+                  {isMobileOpen ? <X size={34} /> : <Menu size={34} />}
+                </button>
+              </div>
             </div>
           </div>
         </div>
+
+
+        {isSearchOpen && !isMobileOpen && (
+          <div className="px-3 pb-3 md:hidden">
+            <div className="flex h-10 items-center rounded-full border border-white/15 bg-white/[0.055] px-4 backdrop-blur-md">
+              <Search className="h-4 w-4 text-white/45" />
+
+              <input
+                type="text"
+                placeholder="Buscar equipamento, marca ou categoria"
+                autoFocus
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    handleSearchSubmit();
+                  }
+                }}
+                className="ml-3 w-full bg-transparent text-[14px] text-white placeholder:text-white/35 focus:outline-none"
+              />
+            </div>
+          </div>
+        )}
 
         <div className="hidden w-full pt-[76px] pb-8 md:block">
           <div className="mx-auto w-full max-w-[1240px] px-6">
@@ -614,7 +657,9 @@ export default function Navbar() {
                     onClick={() => {
                       setMobileView("allCategories");
                       setActiveAllCategoryIndex(0);
-                    
+                      window.setTimeout(() => {
+                        handleAllCategoriesScroll();
+                      }, 80);
                     }}
                     className="group block w-full pt-5 pb-3 text-left"
                   >
@@ -651,7 +696,7 @@ export default function Navbar() {
                   onScroll={handleAllCategoriesScroll}
                   className="max-h-[58vh] overflow-y-auto overscroll-contain pr-1 [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [touch-action:pan-y] [&::-webkit-scrollbar]:hidden"
                 >
-                  <div className="space-y-1 pb-8">
+                  <div className="space-y-1 py-[18vh]">
                     {mobileEquipmentLinks.map((item, index) => {
                       const isActive = index === activeAllCategoryIndex;
 
