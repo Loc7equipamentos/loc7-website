@@ -509,122 +509,119 @@ export default function Navbar() {
         </div>
 
         {isMobileOpen && (
-          <div className="md:hidden">
-            <div className="mx-3 mb-4 rounded-2xl border border-white/20 bg-black/95 shadow-2xl shadow-black/70 backdrop-blur-xl">
-              {mobileView === "main" ? (
-                <div className="px-4 py-4">
-                  <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">
-                    Menu LOC7
+          <div className="border-t border-white/10 bg-black/95 md:hidden">
+            {mobileView === "main" ? (
+              <div className="px-6 pb-8 pt-5">
+                <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/45">
+                  Menu LOC7
+                </p>
+
+                <button
+                  type="button"
+                  onClick={handleHomeNavigation}
+                  className="group flex w-full items-center justify-between border-b border-white/10 py-5 text-left text-[24px] font-semibold uppercase tracking-[0.04em] text-white transition hover:border-white/25"
+                >
+                  <span>Home</span>
+                  <span className="text-base font-normal text-white/35 transition group-hover:text-white/70">
+                    →
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileView("equipment");
+                    setActiveMobileCategoryIndex(0);
+                    window.setTimeout(() => {
+                      handleMobileCategoryScroll();
+                    }, 80);
+                  }}
+                  className="group flex w-full items-center justify-between border-b border-white/10 py-5 text-left text-[24px] font-semibold uppercase tracking-[0.04em] text-white transition hover:border-white/25"
+                >
+                  <span>Equipamentos</span>
+                  <span className="text-base font-normal text-white/35 transition group-hover:text-white/70">
+                    →
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleComoAlugarNavigation}
+                  className="group flex w-full items-center justify-between border-b border-white/10 py-5 text-left text-[24px] font-semibold uppercase tracking-[0.04em] text-white transition hover:border-white/25"
+                >
+                  <span>Como alugar</span>
+                  <span className="text-base font-normal text-white/35 transition group-hover:text-white/70">
+                    →
+                  </span>
+                </button>
+
+                <div className="flex w-full items-center justify-between border-b border-white/10 py-5 text-left text-[24px] font-semibold uppercase tracking-[0.04em] text-white/45">
+                  <span>Produção</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">
+                    Em breve
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="px-6 pb-8 pt-5">
+                <button
+                  type="button"
+                  onClick={() => setMobileView("main")}
+                  className="mb-7 flex items-center gap-2 text-[14px] font-medium text-white/55 transition hover:text-white"
+                >
+                  <span className="text-xl leading-none">←</span>
+                  Voltar
+                </button>
+
+                <div className="mb-6">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/45">
+                    Navegação
                   </p>
+                  <h2 className="mt-2 text-[30px] font-semibold uppercase leading-none tracking-[0.04em] text-white">
+                    Equipamentos
+                  </h2>
+                </div>
 
-                  <button
-                    type="button"
-                    onClick={handleHomeNavigation}
-                    className="flex w-full items-center justify-between rounded-xl px-3 py-4 text-left text-[18px] font-medium text-white transition hover:bg-white/[0.07]"
-                  >
-                    Home
-                  </button>
+                <div
+                  ref={mobileCategoryScrollRef}
+                  onScroll={handleMobileCategoryScroll}
+                  className="max-h-[62vh] snap-y snap-mandatory overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch] [touch-action:pan-y]"
+                >
+                  <div className="space-y-0 py-6">
+                    {mobileEquipmentLinks.map((item, index) => {
+                      const isActive = index === activeMobileCategoryIndex;
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileView("equipment");
-                      setActiveMobileCategoryIndex(0);
-                      window.setTimeout(() => {
-                        handleMobileCategoryScroll();
-                      }, 80);
-                    }}
-                    className="mt-1 flex w-full items-center justify-between rounded-xl border border-white/25 bg-white/[0.075] px-3 py-4 text-left text-[19px] font-semibold text-white shadow-[0_0_26px_rgba(255,255,255,0.04)] transition hover:bg-white/[0.1]"
-                  >
-                    <span>Equipamentos</span>
-                    <span className="text-xl text-white/65">→</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleComoAlugarNavigation}
-                    className="mt-1 flex w-full items-center justify-between rounded-xl px-3 py-4 text-left text-[18px] font-medium text-white transition hover:bg-white/[0.07]"
-                  >
-                    Como alugar
-                  </button>
-
-                  <div className="mt-1 flex w-full items-center justify-between rounded-xl px-3 py-4 text-[18px] font-medium text-white/60">
-                    <span>Produção</span>
-                    <span className="rounded-full border border-white/20 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/45">
-                      Em breve
-                    </span>
+                      return (
+                        <button
+                          key={item.name}
+                          type="button"
+                          data-mobile-category-index={index}
+                          onClick={() => {
+                            window.location.href = item.href;
+                          }}
+                          className={`group block w-full snap-center border-b text-left transition-all duration-200 ${
+                            isActive
+                              ? "border-white/30 py-6 text-[30px] font-semibold uppercase tracking-[0.035em] text-white"
+                              : "border-white/10 py-5 text-[22px] font-medium uppercase tracking-[0.04em] text-white/48"
+                          }`}
+                        >
+                          <span className="flex items-center justify-between">
+                            <span>{item.name}</span>
+                            <span
+                              className={`h-px transition-all duration-200 ${
+                                isActive
+                                  ? "w-12 bg-red-600"
+                                  : "w-6 bg-white/15 group-hover:bg-white/30"
+                              }`}
+                            />
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
-              ) : (
-                <div className="px-4 py-4">
-                  <button
-                    type="button"
-                    onClick={() => setMobileView("main")}
-                    className="mb-4 flex items-center gap-2 rounded-full border border-white/25 bg-white/[0.04] px-3 py-2 text-sm font-medium text-white/70 transition hover:bg-white/[0.06] hover:text-white"
-                  >
-                    <span className="text-lg">←</span>
-                    Voltar
-                  </button>
-
-                  <div className="mb-4">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">
-                      Equipamentos
-                    </p>
-                    <h2 className="mt-1 text-2xl font-semibold tracking-tight text-white">
-                      O que você procura?
-                    </h2>
-                  </div>
-
-                  <div className="mb-4">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        window.location.href = "/catalogo";
-                      }}
-                      className="w-full rounded-xl border border-white/25 bg-white/[0.12] px-4 py-4 text-center text-[15px] font-semibold tracking-[0.02em] text-white shadow-[0_0_24px_rgba(255,255,255,0.05)] transition hover:bg-white/[0.16]"
-                    >
-                      VER CATÁLOGO COMPLETO
-                    </button>
-
-                    <p className="mt-3 text-center text-[13px] font-medium text-white/60">
-                      Ou navegue pelas categorias
-                    </p>
-
-                    <div className="mx-auto mt-3 h-px w-20 bg-white/15" />
-                  </div>
-
-                  <div
-                    ref={mobileCategoryScrollRef}
-                    onScroll={handleMobileCategoryScroll}
-                    className="max-h-[58vh] snap-y snap-mandatory overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch] [touch-action:pan-y]"
-                  >
-                    <div className="space-y-3 py-2">
-                      {mobileEquipmentLinks.map((item, index) => {
-                        const isActive = index === activeMobileCategoryIndex;
-
-                        return (
-                          <button
-                            key={item.name}
-                            type="button"
-                            data-mobile-category-index={index}
-                            onClick={() => {
-                              window.location.href = item.href;
-                            }}
-                            className={`block w-full snap-center rounded-2xl border px-5 py-5 text-left transition-all duration-200 ${
-                              isActive
-                                ? "scale-[1.015] border-white/35 bg-white/[0.12] text-[23px] font-semibold text-white shadow-[0_0_28px_rgba(255,255,255,0.06)]"
-                                : "border-white/20 bg-white/[0.075] text-[18px] font-medium text-white/85"
-                            }`}
-                          >
-                            {item.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
       </div>
