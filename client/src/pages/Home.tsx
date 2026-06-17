@@ -719,7 +719,7 @@ export default function Home() {
                       }`}
                       style={{ transitionDelay: `${index * 0.45}s` }}
                     >
-                      <span className="block text-[24px] font-semibold uppercase tracking-[0.16em] text-red-700">
+                      <span className="block text-[24px] font-bold uppercase tracking-[0.16em] text-red-700">
                         {step.number}
                       </span>
 
@@ -734,7 +734,7 @@ export default function Home() {
                           </h3>
                         )}
 
-                        <p className="mt-4 max-w-[265px] text-[16px] leading-6 text-neutral-600">
+                        <p className="mt-4 max-w-[265px] text-[16px] leading-6 text-black/75">
                           {step.text}
                         </p>
                       </div>
@@ -745,9 +745,10 @@ export default function Home() {
               <div className="mt-8 flex justify-center">
                 <Link
                   href="/cadastro-locacao"
-                  className="inline-flex items-center justify-center border border-black/35 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
+                  className="inline-flex items-center justify-center gap-3 border border-black/45 px-9 py-4 text-[13px] font-semibold uppercase tracking-[0.26em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
                 >
                   Iniciar cadastro
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </div>
@@ -790,7 +791,7 @@ export default function Home() {
                     }`}
                     style={{ transitionDelay: `${index * 0.45}s` }}
                   >
-                    <span className="block text-[22px] font-semibold uppercase tracking-[0.16em] text-red-700">
+                    <span className="block text-[22px] font-bold uppercase tracking-[0.16em] text-red-700">
                       {step.number}
                     </span>
 
@@ -805,7 +806,7 @@ export default function Home() {
                         </h3>
                       )}
 
-                      <p className="mt-4 max-w-[260px] text-[15.5px] leading-6 text-neutral-600">
+                      <p className="mt-4 max-w-[260px] text-[15.5px] leading-6 text-black/75">
                         {step.text}
                       </p>
                     </div>
@@ -816,9 +817,10 @@ export default function Home() {
               <div className="mt-4 flex justify-center">
                 <Link
                   href="/cadastro-locacao"
-                  className="inline-flex w-full max-w-[280px] items-center justify-center border border-black/35 px-6 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
+                  className="inline-flex w-full max-w-[300px] items-center justify-center gap-3 border border-black/45 px-7 py-4 text-[13px] font-semibold uppercase tracking-[0.26em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
                 >
                   Iniciar cadastro
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </div>
