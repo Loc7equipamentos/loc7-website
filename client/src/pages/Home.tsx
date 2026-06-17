@@ -670,14 +670,14 @@ export default function Home() {
             {/* Título padrão da Home */}
             <div className="mb-7 md:mb-8">
               <div className="flex items-center gap-3">
-                <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
+                <span className="text-[13px] uppercase tracking-[0.2em] text-black/90">
                   COMO ALUGAR
                 </span>
 
-                <div className="h-[1px] flex-1 bg-black/15" />
+                <div className="h-[1px] flex-1 bg-black/25" />
               </div>
 
-              <div className="mt-2 h-[2px] w-10 bg-red-700" />
+              <div className="mt-2 h-[2px] w-12 bg-red-700" />
             </div>
 
             <h2 className="max-w-[720px] text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-neutral-950 md:text-[42px] lg:text-[48px]">
@@ -734,7 +734,7 @@ export default function Home() {
                           </h3>
                         )}
 
-                        <p className="mt-4 max-w-[265px] text-[16px] leading-6 text-black/75">
+                        <p className="mt-4 max-w-[265px] text-[16px] leading-6 text-black/90">
                           {step.text}
                         </p>
                       </div>
@@ -834,22 +834,23 @@ export default function Home() {
           {/* Título padrão */}
           <div className="mb-5">
             <div className="flex items-center gap-3">
-              <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
+              <span className="text-[13px] uppercase tracking-[0.2em] text-black/90">
                 LOCALIZAÇÃO
               </span>
 
-              <div className="h-[1px] flex-1 bg-black/15" />
+              <div className="h-[1px] flex-1 bg-black/25" />
             </div>
 
-            <div className="mt-2 h-[2px] w-10 bg-red-700" />
+            <div className="mt-2 h-[2px] w-12 bg-red-700" />
           </div>
 
           {/* Mapa */}
-          <div className="overflow-hidden rounded-xl border border-black/5">
-            <iframe
+         <div className="overflow-hidden rounded-xl border border-black/10 bg-black">
+  <iframe
               src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
               width="100%"
               height="380"
+    className="grayscale invert-[0.9] hue-rotate-180"
               style={{ border: 0 }}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
