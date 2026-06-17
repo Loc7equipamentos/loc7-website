@@ -169,7 +169,9 @@ export default function Navbar() {
     closeMobileMenu();
 
     if (location === "/") {
-      scrollToComoAlugar();
+      window.setTimeout(() => {
+        scrollToComoAlugar();
+      }, 260);
       return;
     }
 
