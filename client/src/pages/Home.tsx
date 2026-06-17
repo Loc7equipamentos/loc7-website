@@ -686,8 +686,7 @@ export default function Home() {
 
             {/* DESKTOP — faixa editorial */}
             <div className="mt-10 hidden lg:block">
-              <div className="border-y border-black/15">
-                <div className="grid grid-cols-4 divide-x divide-black/10">
+              <div className="grid grid-cols-4 divide-x divide-black/15">
                   {[
                     {
                       number: "01",
@@ -718,34 +717,44 @@ export default function Home() {
                           ? "opacity-100 translate-y-0"
                           : "opacity-0 translate-y-5"
                       }`}
-                      style={{ transitionDelay: `${index * 0.08}s` }}
+                      style={{ transitionDelay: `${index * 0.25}s` }}
                     >
-                      <span className="block text-[13px] font-medium uppercase tracking-[0.22em] text-red-700">
+                      <span className="block text-[24px] font-semibold uppercase tracking-[0.16em] text-red-700">
                         {step.number}
                       </span>
 
                       <div className="mt-8">
                         {step.href ? (
-                          <Link
-                            href={step.href}
-                            className="group inline-flex items-center gap-2 text-[22px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950 transition-colors duration-300 hover:text-red-700"
-                          >
+                          <h3 className="text-[26px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950">
                             {step.title}
-                            <ArrowRight className="h-4 w-4 opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100" />
-                          </Link>
+                          </h3>
                         ) : (
-                          <h3 className="text-[22px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950">
+                          <h3 className="text-[26px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950">
                             {step.title}
                           </h3>
                         )}
 
-                        <p className="mt-4 max-w-[250px] text-[15px] leading-6 text-neutral-600">
+                        <p className="mt-4 max-w-[265px] text-[16px] leading-6 text-neutral-600">
                           {step.text}
                         </p>
+
+                        {step.href && (
+                          <Link
+                            href={step.href}
+                            className={`mt-6 inline-flex translate-y-2 items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-700 transition-all duration-500 ease-out hover:text-red-800 ${
+                              isVisible["como-alugar"]
+                                ? "opacity-100 translate-y-0"
+                                : "opacity-0"
+                            }`}
+                            style={{ transitionDelay: "1.15s" }}
+                          >
+                            Iniciar cadastro
+                            <ArrowRight className="h-3.5 w-3.5" />
+                          </Link>
+                        )}
                       </div>
                     </div>
                   ))}
-                </div>
               </div>
 
               <div className="mt-8 flex justify-center">
@@ -794,30 +803,41 @@ export default function Home() {
                         ? "opacity-100 translate-x-0"
                         : "opacity-0 translate-x-[-40px]"
                     }`}
-                    style={{ transitionDelay: `${index * 0.08}s` }}
+                    style={{ transitionDelay: `${index * 0.25}s` }}
                   >
-                    <span className="block text-[13px] font-medium uppercase tracking-[0.22em] text-red-700">
+                    <span className="block text-[22px] font-semibold uppercase tracking-[0.16em] text-red-700">
                       {step.number}
                     </span>
 
                     <div className="mt-8">
                       {step.href ? (
-                        <Link
-                          href={step.href}
-                          className="inline-flex items-center gap-2 text-[24px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950"
-                        >
+                        <h3 className="text-[25px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950">
                           {step.title}
-                          <ArrowRight className="h-4 w-4" />
-                        </Link>
+                        </h3>
                       ) : (
-                        <h3 className="text-[24px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950">
+                        <h3 className="text-[25px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950">
                           {step.title}
                         </h3>
                       )}
 
-                      <p className="mt-4 max-w-[250px] text-[15px] leading-6 text-neutral-600">
+                      <p className="mt-4 max-w-[260px] text-[15.5px] leading-6 text-neutral-600">
                         {step.text}
                       </p>
+
+                      {step.href && (
+                        <Link
+                          href={step.href}
+                          className={`mt-6 inline-flex translate-y-2 items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-700 transition-all duration-500 ease-out active:text-red-800 ${
+                            isVisible["como-alugar"]
+                              ? "opacity-100 translate-y-0"
+                              : "opacity-0"
+                          }`}
+                          style={{ transitionDelay: "1.15s" }}
+                        >
+                          Iniciar cadastro
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Link>
+                      )}
                     </div>
                   </div>
                 ))}
