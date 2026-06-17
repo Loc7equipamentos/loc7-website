@@ -667,21 +667,26 @@ export default function Home() {
                 : "opacity-0 translate-y-8"
             }`}
           >
-            <div className="grid gap-7 lg:grid-cols-[0.78fr_1.22fr] lg:items-start lg:gap-10">
+            <div className="grid gap-7 lg:grid-cols-[0.65fr_1.35fr] lg:items-start lg:gap-10">
               {/* TEXTO */}
               <div className="pt-2 lg:pt-7">
-                <div className="mb-6 flex items-center gap-3">
-                  <span className="text-[12px] font-semibold uppercase tracking-[0.24em] text-red-700">
-                    COMO ALUGAR
-                  </span>
-                  <div className="h-[1px] w-10 bg-red-700/70" />
-                </div>
+               <div className="mb-5">
+  <div className="flex items-center gap-3">
+    <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
+      COMO ALUGAR
+    </span>
+
+    <div className="h-[1px] flex-1 bg-black/15" />
+  </div>
+
+  <div className="mt-2 h-[2px] w-10 bg-red-700" />
+</div>
 
                 <h2 className="max-w-[430px] text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-neutral-950 md:text-[40px] lg:text-[40px]">
                   Locação simples, ágil e sem burocracia.
                 </h2>
 
-                <div className="mt-6 h-[1px] w-10 bg-black/20" />
+          
               </div>
 
               {/* ETAPAS DESKTOP */}
