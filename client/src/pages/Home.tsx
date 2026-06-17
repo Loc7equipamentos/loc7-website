@@ -397,7 +397,7 @@ export default function Home() {
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.35 }
     );
 
     Object.values(sectionRefs.current).forEach((ref) => {
@@ -712,12 +712,12 @@ export default function Home() {
                   ].map((step, index) => (
                     <div
                       key={step.number}
-                      className={`relative min-h-[235px] px-7 py-8 transition-all duration-500 ease-out ${
+                      className={`relative min-h-[235px] px-7 py-8 transition-all duration-700 ease-out ${
                         isVisible["como-alugar"]
                           ? "opacity-100 translate-y-0"
                           : "opacity-0 translate-y-5"
                       }`}
-                      style={{ transitionDelay: `${index * 0.25}s` }}
+                      style={{ transitionDelay: `${index * 0.45}s` }}
                     >
                       <span className="block text-[24px] font-semibold uppercase tracking-[0.16em] text-red-700">
                         {step.number}
@@ -737,21 +737,6 @@ export default function Home() {
                         <p className="mt-4 max-w-[265px] text-[16px] leading-6 text-neutral-600">
                           {step.text}
                         </p>
-
-                        {step.href && (
-                          <Link
-                            href={step.href}
-                            className={`mt-6 inline-flex translate-y-2 items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-700 transition-all duration-500 ease-out hover:text-red-800 ${
-                              isVisible["como-alugar"]
-                                ? "opacity-100 translate-y-0"
-                                : "opacity-0"
-                            }`}
-                            style={{ transitionDelay: "1.15s" }}
-                          >
-                            Iniciar cadastro
-                            <ArrowRight className="h-3.5 w-3.5" />
-                          </Link>
-                        )}
                       </div>
                     </div>
                   ))}
@@ -759,10 +744,10 @@ export default function Home() {
 
               <div className="mt-8 flex justify-center">
                 <Link
-                  href="/orcamento"
+                  href="/cadastro-locacao"
                   className="inline-flex items-center justify-center border border-black/35 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
                 >
-                  Iniciar locação
+                  Iniciar cadastro
                 </Link>
               </div>
             </div>
@@ -803,7 +788,7 @@ export default function Home() {
                         ? "opacity-100 translate-x-0"
                         : "opacity-0 translate-x-[-40px]"
                     }`}
-                    style={{ transitionDelay: `${index * 0.25}s` }}
+                    style={{ transitionDelay: `${index * 0.45}s` }}
                   >
                     <span className="block text-[22px] font-semibold uppercase tracking-[0.16em] text-red-700">
                       {step.number}
@@ -823,21 +808,6 @@ export default function Home() {
                       <p className="mt-4 max-w-[260px] text-[15.5px] leading-6 text-neutral-600">
                         {step.text}
                       </p>
-
-                      {step.href && (
-                        <Link
-                          href={step.href}
-                          className={`mt-6 inline-flex translate-y-2 items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-700 transition-all duration-500 ease-out active:text-red-800 ${
-                            isVisible["como-alugar"]
-                              ? "opacity-100 translate-y-0"
-                              : "opacity-0"
-                          }`}
-                          style={{ transitionDelay: "1.15s" }}
-                        >
-                          Iniciar cadastro
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </Link>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -845,10 +815,10 @@ export default function Home() {
 
               <div className="mt-4 flex justify-center">
                 <Link
-                  href="/orcamento"
+                  href="/cadastro-locacao"
                   className="inline-flex w-full max-w-[280px] items-center justify-center border border-black/35 px-6 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
                 >
-                  Iniciar locação
+                  Iniciar cadastro
                 </Link>
               </div>
             </div>
