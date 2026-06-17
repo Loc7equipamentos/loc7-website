@@ -657,7 +657,7 @@ export default function Home() {
       <section
         id="como-alugar"
         ref={setSectionRef("como-alugar")}
-        className="bg-[oklch(0.95_0_0)] pb-10 pt-2 md:pb-14 md:pt-4"
+        className="bg-[oklch(0.95_0_0)] py-8 md:py-10"
       >
         <div className="container">
           <div
@@ -667,106 +667,27 @@ export default function Home() {
                 : "opacity-0 translate-y-8"
             }`}
           >
-            <div className="grid gap-7 lg:grid-cols-[0.65fr_1.35fr] lg:items-start lg:gap-10">
-              {/* TEXTO */}
-              <div className="pt-2 lg:pt-7">
-               <div className="mb-5">
-  <div className="flex items-center gap-3">
-    <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
-      COMO ALUGAR
-    </span>
+            {/* Título padrão da Home */}
+            <div className="mb-7 md:mb-8">
+              <div className="flex items-center gap-3">
+                <span className="text-[13px] uppercase tracking-[0.2em] text-black/75">
+                  COMO ALUGAR
+                </span>
 
-    <div className="h-[1px] flex-1 bg-black/15" />
-  </div>
-
-  <div className="mt-2 h-[2px] w-10 bg-red-700" />
-</div>
-
-                <h2 className="max-w-[430px] text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-neutral-950 md:text-[40px] lg:text-[40px]">
-                  Locação simples, ágil e sem burocracia.
-                </h2>
-
-          
+                <div className="h-[1px] flex-1 bg-black/15" />
               </div>
 
-              {/* ETAPAS DESKTOP */}
-              <div className="hidden lg:flex lg:flex-col lg:gap-3">
-                {[
-                  {
-                    number: "01",
-                    title: "Escolha os equipamentos",
-                    text: "Monte seu setup e envie sua solicitação.",
-                  },
-                  {
-                    number: "02",
-                    title: "Solicite seu orçamento",
-                    text: "Verificamos disponibilidade e condições para sua produção.",
-                  },
-                  {
-                    number: "03",
-                    title: "Cadastre-se",
-                    text: "Preencha algumas informações para conhecermos melhor você.",
-                    cta: "Fazer cadastro",
-                    href: "/cadastro-locacao",
-                  },
-                  {
-                    number: "04",
-                    title: "Agende a retirada",
-                    text: "Escolha a melhor data para retirar seus equipamentos.",
-                  },
-                ].map((step, index) => (
-                  <div
-                    key={step.number}
-                    className={`rounded-2xl border border-white/10 bg-neutral-950 px-7 py-5 text-white transition-all duration-500 ease-out hover:-translate-y-[2px] hover:bg-black ${
-                      isVisible["como-alugar"]
-                        ? "opacity-100 translate-y-0"
-                        : "opacity-0 translate-y-5"
-                    }`}
-                    style={{ transitionDelay: `${index * 0.08}s` }}
-                  >
-                    <div className="grid grid-cols-[82px_1fr] gap-6">
-                      <span className="text-[48px] font-semibold leading-none tracking-[-0.08em] text-white/16">
-                        {step.number}
-                      </span>
+              <div className="mt-2 h-[2px] w-10 bg-red-700" />
+            </div>
 
-                      <div>
-                        <h3 className="text-[19px] font-semibold uppercase leading-[1.12] tracking-[0.03em] text-white">
-                          {step.title}
-                        </h3>
+            <h2 className="max-w-[720px] text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-neutral-950 md:text-[42px] lg:text-[48px]">
+              Locação simples, ágil e sem burocracia.
+            </h2>
 
-                        <p className="mt-2 max-w-[520px] text-[14.5px] leading-6 text-white/68">
-                          {step.text}
-                        </p>
-
-                        {step.href && step.cta && (
-                          <Link
-                            href={step.href}
-                            className="mt-4 inline-flex w-fit border border-white/30 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
-                          >
-                            {step.cta}
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="mt-4 flex justify-center">
-                  <Link
-                    href="/orcamento"
-                    className="inline-flex items-center justify-center border border-black/35 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
-                  >
-                    Iniciar locação
-                  </Link>
-                </div>
-              </div>
-
-              {/* ETAPAS MOBILE */}
-              <div className="lg:hidden">
-                <div
-                  ref={howToMobileScrollRef}
-                  className="-mx-4 mt-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                >
+            {/* DESKTOP — faixa editorial */}
+            <div className="mt-10 hidden lg:block">
+              <div className="border-y border-black/15">
+                <div className="grid grid-cols-4 divide-x divide-black/10">
                   {[
                     {
                       number: "01",
@@ -782,7 +703,6 @@ export default function Home() {
                       number: "03",
                       title: "Cadastre-se",
                       text: "Preencha algumas informações para conhecermos melhor você.",
-                      cta: "Fazer cadastro",
                       href: "/cadastro-locacao",
                     },
                     {
@@ -793,47 +713,123 @@ export default function Home() {
                   ].map((step, index) => (
                     <div
                       key={step.number}
-                      className={`snap-start min-h-[245px] min-w-[76%] shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 p-5 text-white transition-all duration-700 ease-out ${
+                      className={`relative min-h-[235px] px-7 py-8 transition-all duration-500 ease-out ${
                         isVisible["como-alugar"]
-                          ? "opacity-100 translate-x-0"
-                          : "opacity-0 translate-x-[-40px]"
+                          ? "opacity-100 translate-y-0"
+                          : "opacity-0 translate-y-5"
                       }`}
                       style={{ transitionDelay: `${index * 0.08}s` }}
                     >
-                      <span className="block text-[50px] font-semibold leading-none tracking-[-0.08em] text-white/16">
+                      <span className="block text-[13px] font-medium uppercase tracking-[0.22em] text-red-700">
                         {step.number}
                       </span>
 
-                      <div className="mt-5 h-[1px] w-10 bg-white/18" />
+                      <div className="mt-8">
+                        {step.href ? (
+                          <Link
+                            href={step.href}
+                            className="group inline-flex items-center gap-2 text-[22px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950 transition-colors duration-300 hover:text-red-700"
+                          >
+                            {step.title}
+                            <ArrowRight className="h-4 w-4 opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100" />
+                          </Link>
+                        ) : (
+                          <h3 className="text-[22px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950">
+                            {step.title}
+                          </h3>
+                        )}
 
-                      <h3 className="mt-6 max-w-[230px] text-[21px] font-semibold uppercase leading-[1.08] tracking-[0.025em] text-white">
-                        {step.title}
-                      </h3>
-
-                      <p className="mt-4 max-w-[250px] text-[14.5px] leading-6 text-white/68">
-                        {step.text}
-                      </p>
-
-                      {step.href && step.cta && (
-                        <Link
-                          href={step.href}
-                          className="mt-5 inline-flex w-fit border border-white/30 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
-                        >
-                          {step.cta}
-                        </Link>
-                      )}
+                        <p className="mt-4 max-w-[250px] text-[15px] leading-6 text-neutral-600">
+                          {step.text}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
+              </div>
 
-                <div className="mt-4 flex justify-center">
-                  <Link
-                    href="/orcamento"
-                    className="inline-flex w-full max-w-[280px] items-center justify-center border border-black/35 px-6 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
+              <div className="mt-8 flex justify-center">
+                <Link
+                  href="/orcamento"
+                  className="inline-flex items-center justify-center border border-black/35 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
+                >
+                  Iniciar locação
+                </Link>
+              </div>
+            </div>
+
+            {/* MOBILE — swipe com vazamento */}
+            <div className="mt-8 lg:hidden">
+              <div
+                ref={howToMobileScrollRef}
+                className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {[
+                  {
+                    number: "01",
+                    title: "Escolha os equipamentos",
+                    text: "Monte seu setup e envie sua solicitação.",
+                  },
+                  {
+                    number: "02",
+                    title: "Solicite seu orçamento",
+                    text: "Verificamos disponibilidade e condições para sua produção.",
+                  },
+                  {
+                    number: "03",
+                    title: "Cadastre-se",
+                    text: "Preencha algumas informações para conhecermos melhor você.",
+                    href: "/cadastro-locacao",
+                  },
+                  {
+                    number: "04",
+                    title: "Agende a retirada",
+                    text: "Escolha a melhor data para retirar seus equipamentos.",
+                  },
+                ].map((step, index) => (
+                  <div
+                    key={step.number}
+                    className={`snap-start min-h-[235px] min-w-[76%] shrink-0 border-l border-black/15 px-5 py-4 transition-all duration-700 ease-out ${
+                      isVisible["como-alugar"]
+                        ? "opacity-100 translate-x-0"
+                        : "opacity-0 translate-x-[-40px]"
+                    }`}
+                    style={{ transitionDelay: `${index * 0.08}s` }}
                   >
-                    Iniciar locação
-                  </Link>
-                </div>
+                    <span className="block text-[13px] font-medium uppercase tracking-[0.22em] text-red-700">
+                      {step.number}
+                    </span>
+
+                    <div className="mt-8">
+                      {step.href ? (
+                        <Link
+                          href={step.href}
+                          className="inline-flex items-center gap-2 text-[24px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950"
+                        >
+                          {step.title}
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      ) : (
+                        <h3 className="text-[24px] font-semibold uppercase leading-[1.05] tracking-[0.02em] text-neutral-950">
+                          {step.title}
+                        </h3>
+                      )}
+
+                      <p className="mt-4 max-w-[250px] text-[15px] leading-6 text-neutral-600">
+                        {step.text}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 flex justify-center">
+                <Link
+                  href="/orcamento"
+                  className="inline-flex w-full max-w-[280px] items-center justify-center border border-black/35 px-6 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
+                >
+                  Iniciar locação
+                </Link>
               </div>
             </div>
           </div>
