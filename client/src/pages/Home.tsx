@@ -657,7 +657,7 @@ export default function Home() {
       <section
         id="como-alugar"
         ref={setSectionRef("como-alugar")}
-        className="bg-[oklch(0.95_0_0)] py-8 md:py-10"
+       className="scroll-mt-28 bg-[oklch(0.95_0_0)] py-8 md:scroll-mt-0 md:py-10"
       >
         <div className="container">
           <div
