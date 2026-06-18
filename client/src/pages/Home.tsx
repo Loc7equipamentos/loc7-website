@@ -846,15 +846,14 @@ export default function Home() {
 
           {/* Mapa */}
           <div className="overflow-hidden rounded-xl border border-white/10 bg-black shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
-            <iframe
-              src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
-              width="100%"
-              height="380"
-              className="invert-[0.9] hue-rotate-180 brightness-[0.72] contrast-[1.25] saturate-[1.55]"
-              style={{ border: 0 }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+           <iframe
+  src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
+  width="100%"
+  height="380"
+  style={{ border: 0 }}
+  loading="lazy"
+  referrerPolicy="no-referrer-when-downgrade"
+/>
           </div>
         </div>
       </section>
