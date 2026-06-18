@@ -831,18 +831,18 @@ export default function Home() {
     {/* ===== MAPA ===== */}
 <section className="relative overflow-hidden bg-black pt-10 pb-0 md:pt-12">
   <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="auto"
-    className="absolute inset-0 h-full w-full object-cover opacity-[0.38]"
-  >
+  autoPlay
+  muted
+  loop
+  playsInline
+  preload="auto"
+  className="absolute inset-0 h-full w-full object-cover opacity-[0.75]"
+>
     <source src="/video-expedicao-loc7.mp4" type="video/mp4" />
   </video>
 
-  <div className="absolute inset-0 bg-black/42" />
-  <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-black/85" />
+ <div className="absolute inset-0 bg-black/12" />
+<div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/35" />
 
   <div className="container relative z-10 pb-12 md:pb-14">
     {/* Título padrão */}
