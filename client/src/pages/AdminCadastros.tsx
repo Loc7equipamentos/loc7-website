@@ -36,7 +36,7 @@ export default function AdminCadastros() {
 
     load();
 
-    const interval = setInterval(load, 5000);
+    const interval = setInterval(load, 30000);
 
     return () => clearInterval(interval);
   }, []);
@@ -84,6 +84,23 @@ export default function AdminCadastros() {
     riskFilter,
   ]);
 
+
+  const operationalSummary = useMemo(() => {
+    const received = cadastros.filter((c) => normalize(c.internal_status).includes("recebido")).length;
+    const inAnalysis = cadastros.filter((c) => normalize(c.internal_status).includes("analise")).length;
+    const pendingDocs = cadastros.filter((c) => normalize(c.internal_status).includes("pendente documentacao")).length;
+    const released = cadastros.filter((c) => normalize(c.internal_status).includes("liberado")).length;
+    const newToday = cadastros.filter((c) => isNewCadastro(c.created_at)).length;
+
+    return {
+      received,
+      inAnalysis,
+      pendingDocs,
+      released,
+      newToday,
+    };
+  }, [cadastros]);
+
   return (
     <div className="h-screen overflow-hidden bg-[#f3f4f6] px-4 py-6">
       <div className="mx-auto flex h-full max-w-7xl flex-col overflow-hidden">
@@ -110,6 +127,14 @@ export default function AdminCadastros() {
             <p className="text-xs text-gray-500">
               {filteredCadastros.length} de {cadastros.length} registro(s)
             </p>
+
+            <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-5">
+              <SummaryBadge label="Novos 24h" value={operationalSummary.newToday} tone="border-red-200 bg-red-50 text-red-800" />
+              <SummaryBadge label="Recebidos" value={operationalSummary.received} tone="border-gray-300 bg-gray-50 text-gray-800" />
+              <SummaryBadge label="Em análise" value={operationalSummary.inAnalysis} tone="border-yellow-300 bg-yellow-50 text-yellow-800" />
+              <SummaryBadge label="Pend. doc." value={operationalSummary.pendingDocs} tone="border-orange-300 bg-orange-50 text-orange-800" />
+              <SummaryBadge label="Liberados" value={operationalSummary.released} tone="border-green-300 bg-green-50 text-green-800" />
+            </div>
           </div>
 
           <div className="shrink-0 border-b bg-gray-50 px-6 py-4">
@@ -233,9 +258,17 @@ export default function AdminCadastros() {
                     className="border-b hover:bg-gray-50 transition"
                   >
                     <td className="px-6 py-4">
-                      <span className="whitespace-nowrap text-[11px] font-bold tracking-[0.08em] text-gray-500">
-                        {c.display_id || "SEM ID"}
-                      </span>
+                      <div className="flex items-center gap-2 whitespace-nowrap">
+                        <span className="text-[11px] font-bold tracking-[0.08em] text-gray-500">
+                          {c.display_id || "SEM ID"}
+                        </span>
+
+                        {isNewCadastro(c.created_at) && (
+                          <span className="rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-red-700">
+                            Novo
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     <td className="px-6 py-4">
@@ -324,6 +357,40 @@ export default function AdminCadastros() {
       </div>
     </div>
   );
+}
+
+function SummaryBadge({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: string;
+}) {
+  return (
+    <div className={`rounded-md border px-3 py-2 ${tone}`}>
+      <div className="text-[10px] font-black uppercase tracking-wide opacity-75">
+        {label}
+      </div>
+
+      <div className="mt-1 text-lg font-black leading-none">
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function isNewCadastro(createdAt?: string) {
+  if (!createdAt) return false;
+
+  const createdTime = new Date(createdAt).getTime();
+  if (Number.isNaN(createdTime)) return false;
+
+  const diffMs = Date.now() - createdTime;
+  const oneDayMs = 24 * 60 * 60 * 1000;
+
+  return diffMs >= 0 && diffMs <= oneDayMs;
 }
 
 function FilterSelect({
