@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Link } from "wouter";
 
@@ -21,6 +21,10 @@ export default function AdminCadastros() {
   const [statusInternalFilter, setStatusInternalFilter] = useState("Todos");
   const [statusPublicFilter, setStatusPublicFilter] = useState("Todos");
   const [riskFilter, setRiskFilter] = useState("Todos");
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [newCadastroAlert, setNewCadastroAlert] = useState<string | null>(null);
+  const knownCadastroIdsRef = useRef<Set<string>>(new Set());
+  const initialLoadDoneRef = useRef(false);
 
   useEffect(() => {
     const load = async () => {
@@ -30,6 +34,29 @@ export default function AdminCadastros() {
         .order("created_at", { ascending: false });
 
       if (!error && data) {
+        const incomingIds = new Set(data.map((item) => item.id));
+        const previousIds = knownCadastroIdsRef.current;
+        const newItems = data.filter((item) => !previousIds.has(item.id));
+
+        if (initialLoadDoneRef.current && newItems.length > 0) {
+          const newestItem = newItems[0];
+          setNewCadastroAlert(
+            `${newItems.length} novo cadastro${newItems.length > 1 ? "s" : ""} recebido${newItems.length > 1 ? "s" : ""}${
+              newestItem?.full_name ? `: ${newestItem.full_name}` : ""
+            }`
+          );
+
+          if (soundEnabled) {
+            playNotificationSound();
+          }
+
+          window.setTimeout(() => {
+            setNewCadastroAlert(null);
+          }, 9000);
+        }
+
+        knownCadastroIdsRef.current = incomingIds;
+        initialLoadDoneRef.current = true;
         setCadastros(data);
       }
     };
@@ -39,7 +66,7 @@ export default function AdminCadastros() {
     const interval = setInterval(load, 30000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [soundEnabled]);
 
   async function fetchCadastros() {
     const { data } = await supabase
@@ -116,6 +143,40 @@ export default function AdminCadastros() {
           <p className="text-gray-600 mt-1 text-sm">
             Análise interna de clientes, risco e liberação de locação.
           </p>
+
+          <div className="mt-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            {newCadastroAlert ? (
+              <div className="rounded-md border border-red-200 bg-red-50 px-4 py-2 text-xs font-black uppercase tracking-wide text-red-800">
+                {newCadastroAlert}
+              </div>
+            ) : (
+              <div className="rounded-md border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-gray-500">
+                Atualização automática ativa a cada 30s
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                setSoundEnabled((current) => {
+                  const next = !current;
+
+                  if (!current) {
+                    playNotificationSound();
+                  }
+
+                  return next;
+                });
+              }}
+              className={`rounded-md border px-4 py-2 text-xs font-black uppercase tracking-wide transition ${
+                soundEnabled
+                  ? "border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
+                  : "border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              {soundEnabled ? "Som ativado" : "Ativar som"}
+            </button>
+          </div>
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -357,6 +418,34 @@ export default function AdminCadastros() {
       </div>
     </div>
   );
+}
+
+function playNotificationSound() {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+
+    if (!AudioContextClass) return;
+
+    const audioContext = new AudioContextClass();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(660, audioContext.currentTime + 0.12);
+
+    gainNode.gain.setValueAtTime(0.0001, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.16, audioContext.currentTime + 0.02);
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.32);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.34);
+  } catch (error) {
+    console.error("Erro ao tocar alerta sonoro:", error);
+  }
 }
 
 function SummaryBadge({
