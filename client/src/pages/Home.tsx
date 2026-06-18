@@ -836,13 +836,13 @@ export default function Home() {
   loop
   playsInline
   preload="auto"
-  className="absolute inset-0 h-full w-full object-cover opacity-[0.75]"
+  className="absolute inset-0 hidden h-full w-full object-cover opacity-[0.75] md:block"
 >
     <source src="/video-expedicao-loc7.mp4" type="video/mp4" />
   </video>
 
- <div className="absolute inset-0 bg-black/12" />
-<div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/35" />
+<div className="absolute inset-0 bg-black md:bg-black/12" />
+<div className="absolute inset-0 hidden bg-gradient-to-b from-black/20 via-transparent to-black/35 md:block" />
 
   <div className="container relative z-10 pb-12 md:pb-14">
     {/* Título padrão */}
