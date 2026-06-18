@@ -541,7 +541,7 @@ export default function Home() {
                     <button
                       key={category.value}
                       type="button"
-                      className="whitespace-nowrap rounded-full border border-black bg-black px-4 py-2 text-[12px] font-medium text-white transition-colors"
+                      className="whitespace-nowrap rounded-full border border-black bg-black px-4 py-2 text-[12px] font-semibold tracking-[0.01em] text-white transition-colors"
                     >
                       {category.label}
                     </button>
@@ -549,7 +549,7 @@ export default function Home() {
                     <Link
                       key={category.value}
                       href={`/catalogo/${category.value}`}
-                      className="whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-[12px] font-medium text-neutral-700 transition-colors hover:border-black hover:text-black"
+                      className="whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 py-2 text-[12px] font-semibold tracking-[0.01em] text-neutral-800 transition-colors hover:border-black hover:text-black"
                     >
                       {category.label}
                     </Link>
