@@ -557,6 +557,24 @@ ${
 
   const form = data.form_data || {};
   const isPF = data.registration_type === "pf";
+  const registrationName = isPF
+    ? form.nomeCompleto || data.full_name
+    : form.razaoSocial || data.full_name;
+  const registrationPhone = form.telefone || data.phone;
+  const registrationCnpj = form.cnpj || "";
+  const registrationCity = form.cidade || "";
+  const clientWhatsAppUrl = buildWhatsAppUrl(
+    registrationPhone,
+    buildClientWhatsAppMessage(registrationName)
+  );
+  const receitaFederalUrl = "https://solucoes.receita.fazenda.gov.br/servicos/cnpjreva/cnpjreva_solicitacao.asp";
+  const googleSearchUrl = buildGoogleSearchUrl(
+    [registrationName, registrationCity].filter(Boolean).join(" ")
+  );
+  const instagramSearchUrl = buildGoogleSearchUrl(
+    `${registrationName || ""} Instagram`
+  );
+  const serasaUrl = "https://www.serasaexperian.com.br/";
 
   return (
     <div className="min-h-screen bg-[#f3f4f6] px-4 py-8 text-gray-900 print:bg-white print:p-0">
@@ -699,6 +717,73 @@ ${
               )}
             </div>
           </Section>
+
+          <div className="no-print">
+            <Section title="Ações rápidas">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
+                {clientWhatsAppUrl ? (
+                  <a
+                    href={clientWhatsAppUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-md border border-emerald-700 bg-emerald-600 px-4 py-2 text-xs font-black uppercase tracking-wide text-white transition hover:bg-emerald-700"
+                  >
+                    WhatsApp cliente
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-gray-100 px-4 py-2 text-xs font-black uppercase tracking-wide text-gray-400"
+                  >
+                    WhatsApp cliente
+                  </button>
+                )}
+
+                <a
+                  href={receitaFederalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-gray-800 transition hover:bg-gray-50"
+                >
+                  Receita Federal
+                </a>
+
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (registrationCnpj) {
+                      await copyToClipboard(registrationCnpj);
+                      alert("CNPJ copiado. Cole no portal da Serasa para consultar.");
+                    }
+
+                    window.open(serasaUrl, "_blank", "noopener,noreferrer");
+                  }}
+                  className="inline-flex items-center justify-center rounded-md border border-gray-900 bg-black px-4 py-2 text-xs font-black uppercase tracking-wide text-white transition hover:bg-gray-800"
+                >
+                  Serasa
+                </button>
+
+                <a
+                  href={googleSearchUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-gray-800 transition hover:bg-gray-50"
+                >
+                  Google
+                </a>
+
+                <a
+                  href={instagramSearchUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-gray-800 transition hover:bg-gray-50"
+                >
+                  Instagram
+                </a>
+              </div>
+            </Section>
+          </div>
 <Section title="Documentos enviados">
             {documents.length > 0 ? (
               <div className="space-y-3">
@@ -812,6 +897,19 @@ ${
                     <div className="text-sm font-medium text-gray-800">
                       <strong>Telefone:</strong> {telefone || "—"}
                     </div>
+
+                    {telefone && buildWhatsAppUrl(telefone, buildReferenceWhatsAppMessage(registrationName, empresa)) && (
+                      <div className="no-print mt-4">
+                        <a
+                          href={buildWhatsAppUrl(telefone, buildReferenceWhatsAppMessage(registrationName, empresa)) || "#"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex w-full items-center justify-center rounded-md border border-emerald-700 bg-emerald-600 px-4 py-2 text-xs font-black uppercase tracking-wide text-white transition hover:bg-emerald-700"
+                        >
+                          WhatsApp referência
+                        </a>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -1241,6 +1339,67 @@ ${
       `}</style>
     </div>
   );
+}
+
+function onlyDigits(value?: string | null) {
+  return String(value || "").replace(/\D/g, "");
+}
+
+function normalizeBrazilPhoneForWhatsApp(value?: string | null) {
+  const digits = onlyDigits(value);
+
+  if (!digits) return "";
+
+  if (digits.startsWith("55") && digits.length >= 12) {
+    return digits;
+  }
+
+  if (digits.length === 10 || digits.length === 11) {
+    return `55${digits}`;
+  }
+
+  return digits;
+}
+
+function buildWhatsAppUrl(phone: string | null | undefined, message: string) {
+  const normalizedPhone = normalizeBrazilPhoneForWhatsApp(phone);
+
+  if (normalizedPhone.length < 12) return null;
+
+  return `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(message)}`;
+}
+
+function buildClientWhatsAppMessage(clientName?: string) {
+  const name = clientName || "seu cadastro";
+
+  return `Olá, tudo bem? Aqui é da LOC7 Equipamentos. Recebemos sua solicitação de cadastro em nome de ${name} e estamos fazendo a conferência das informações para agilizar sua locação.`;
+}
+
+function buildReferenceWhatsAppMessage(clientName?: string, referenceCompany?: string) {
+  const name = clientName || "um cliente";
+  const companyPart = referenceCompany ? ` (${referenceCompany})` : "";
+
+  return `Olá, tudo bem? Aqui é da LOC7 Equipamentos. Recebemos uma solicitação de cadastro em nome de ${name} e seu contato${companyPart} foi informado como referência comercial. Poderia confirmar se já realizou negociações com essa pessoa/empresa e se a experiência foi positiva? Agradecemos pela ajuda.`;
+}
+
+function buildGoogleSearchUrl(query: string) {
+  return `https://www.google.com/search?q=${encodeURIComponent(query.trim())}`;
+}
+
+async function copyToClipboard(value: string) {
+  try {
+    await navigator.clipboard.writeText(value);
+  } catch {
+    const textarea = document.createElement("textarea");
+    textarea.value = value;
+    textarea.setAttribute("readonly", "true");
+    textarea.style.position = "absolute";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+  }
 }
 
 function normalizeDocuments(rawDocuments: unknown): string[] {
