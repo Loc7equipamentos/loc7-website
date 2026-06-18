@@ -850,7 +850,7 @@ export default function Home() {
               src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
               width="100%"
               height="380"
-              className="grayscale invert-[1] contrast-[1.2] brightness-[0.75]"
+              className="invert-[0.9] hue-rotate-180 brightness-[0.72] contrast-[1.25] saturate-[1.55]"
               style={{ border: 0 }}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
