@@ -279,6 +279,55 @@ async function loadInternalDocuments(registrationId: string) {
     return;
   }
 
+  async function updateCommercialReferenceStatus(referenceNumber: number, status: string) {
+    if (!data?.id) return;
+
+    const currentFormData = data.form_data || {};
+    const currentStatuses = currentFormData.reference_check_statuses || {};
+    const referenceKey = `reference${referenceNumber}`;
+    const oldValue = currentStatuses[referenceKey] || "Não contatada";
+
+    if (oldValue === status) return;
+
+    const updatedFormData = {
+      ...currentFormData,
+      reference_check_statuses: {
+        ...currentStatuses,
+        [referenceKey]: status,
+      },
+    };
+
+    setSaving(true);
+
+    const { error } = await supabase
+      .from("rental_registrations")
+      .update({ form_data: updatedFormData })
+      .eq("id", data.id);
+
+    if (error) {
+      alert(`Erro ao atualizar status da referência:
+
+${error.message || "Erro desconhecido"}`);
+      setSaving(false);
+      return;
+    }
+
+    await createAnalysisLog(
+      "commercial_reference_status",
+      oldValue,
+      status,
+      `Status da referência comercial ${referenceNumber} atualizado`
+    );
+
+    setData((prev: any) => ({
+      ...prev,
+      form_data: updatedFormData,
+    }));
+
+    await loadAnalysisLogs(data.id);
+    setSaving(false);
+  }
+
   if (!data) {
     setInternalDocuments([]);
     return;
@@ -544,6 +593,55 @@ ${
       alert(`Erro ao salvar alteração:\n\n${error.message || "Erro desconhecido"}`);
     }
 
+    setSaving(false);
+  }
+
+  async function updateCommercialReferenceStatus(referenceNumber: number, status: string) {
+    if (!data?.id) return;
+
+    const currentFormData = data.form_data || {};
+    const currentStatuses = currentFormData.reference_check_statuses || {};
+    const referenceKey = `reference${referenceNumber}`;
+    const oldValue = currentStatuses[referenceKey] || "Não contatada";
+
+    if (oldValue === status) return;
+
+    const updatedFormData = {
+      ...currentFormData,
+      reference_check_statuses: {
+        ...currentStatuses,
+        [referenceKey]: status,
+      },
+    };
+
+    setSaving(true);
+
+    const { error } = await supabase
+      .from("rental_registrations")
+      .update({ form_data: updatedFormData })
+      .eq("id", data.id);
+
+    if (error) {
+      alert(`Erro ao atualizar status da referência:
+
+${error.message || "Erro desconhecido"}`);
+      setSaving(false);
+      return;
+    }
+
+    await createAnalysisLog(
+      "commercial_reference_status",
+      oldValue,
+      status,
+      `Status da referência comercial ${referenceNumber} atualizado`
+    );
+
+    setData((prev: any) => ({
+      ...prev,
+      form_data: updatedFormData,
+    }));
+
+    await loadAnalysisLogs(data.id);
     setSaving(false);
   }
 
@@ -897,6 +995,43 @@ ${
                     <div className="text-sm font-medium text-gray-800">
                       <strong>Telefone:</strong> {telefone || "—"}
                     </div>
+
+                    {(() => {
+                      const referenceStatus =
+                        form.reference_check_statuses?.[`reference${n}`] || "Não contatada";
+
+                      return (
+                        <div className="mt-4">
+                          <div
+                            className={`rounded-md border px-3 py-2 text-xs font-black uppercase tracking-wide ${getReferenceCheckTone(
+                              referenceStatus
+                            )}`}
+                          >
+                            Status: {referenceStatus}
+                          </div>
+
+                          <label className="no-print mt-2 block">
+                            <span className="mb-1 block text-[10px] font-black uppercase tracking-wide text-gray-500">
+                              Checagem da referência
+                            </span>
+
+                            <select
+                              value={referenceStatus}
+                              onChange={(e) =>
+                                updateCommercialReferenceStatus(n, e.target.value)
+                              }
+                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-bold text-gray-900 outline-none focus:border-[#b91c1c]"
+                            >
+                              <option>Não contatada</option>
+                              <option>Contatada</option>
+                              <option>Positiva</option>
+                              <option>Negativa</option>
+                              <option>Sem retorno</option>
+                            </select>
+                          </label>
+                        </div>
+                      );
+                    })()}
 
                     {telefone && buildWhatsAppUrl(telefone, buildReferenceWhatsAppMessage(registrationName, empresa)) && (
                       <div className="no-print mt-4">
@@ -1440,6 +1575,7 @@ function getFieldLabel(field: string) {
   if (field === "document_status") return "Status documental";
   if (field === "internal_reference") return "Referência interna";
   if (field === "internal_document") return "Documento interno";
+  if (field === "commercial_reference_status") return "Status da referência comercial";
 
   return field;
 }
@@ -1522,6 +1658,18 @@ function formatDocumentStatusLabel(value?: string) {
   if (v === "reprovado") return "Reprovado";
 
   return value || "—";
+}
+
+
+function getReferenceCheckTone(value?: string) {
+  const v = normalize(value);
+
+  if (v.includes("positiva")) return "border-green-300 bg-green-50 text-green-800";
+  if (v.includes("negativa")) return "border-red-300 bg-red-50 text-red-800";
+  if (v.includes("sem retorno")) return "border-orange-300 bg-orange-50 text-orange-800";
+  if (v.includes("contatada")) return "border-blue-300 bg-blue-50 text-blue-800";
+
+  return "border-gray-300 bg-gray-50 text-gray-800";
 }
 
 function getDocumentStatusTone(value?: string) {
