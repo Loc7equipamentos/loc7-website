@@ -836,34 +836,35 @@ export default function Home() {
     loop
     playsInline
     preload="metadata"
-    className="absolute inset-0 h-full w-full object-cover opacity-[0.22]"
+    className="absolute inset-0 h-full w-full object-cover opacity-[0.42]"
   >
     <source src="/video-expedicao-loc7.mp4" type="video/mp4" />
   </video>
 
-  <div className="absolute inset-0 bg-black/82" />
+  <div className="absolute inset-0 bg-black/58" />
+  <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/35 to-black/90" />
 
   <div className="container relative z-10">
     {/* Título padrão */}
     <div className="mb-5">
       <div className="flex items-center gap-3">
-        <span className="text-[13px] uppercase tracking-[0.22em] text-white/85">
+        <span className="text-[13px] uppercase tracking-[0.22em] text-white/90">
           LOCALIZAÇÃO
         </span>
 
-        <div className="h-[1px] flex-1 bg-white/20" />
+        <div className="h-[1px] flex-1 bg-white/25" />
       </div>
 
       <div className="mt-2 h-[2px] w-12 bg-red-700" />
     </div>
 
     {/* Mapa */}
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-black/70 shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
+    <div className="overflow-hidden rounded-xl border border-white/15 bg-black/55 shadow-[0_18px_45px_rgba(0,0,0,0.45)]">
       <iframe
         src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
         width="100%"
         height="380"
-        className="opacity-[0.88]"
+        className="opacity-[0.72]"
         style={{ border: 0 }}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
