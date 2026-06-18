@@ -742,7 +742,7 @@ export default function Home() {
                   ))}
               </div>
 
-              <div className="mt-8 flex justify-center">
+              <div className="mt-10 mb-6 flex justify-center">
                 <Link
                   href="/cadastro-locacao"
                   className="inline-flex items-center justify-center gap-3 border border-black/45 px-9 py-4 text-[13px] font-semibold uppercase tracking-[0.26em] text-black transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white"
@@ -828,8 +828,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== MAPA ===== */}
-      <section className="bg-[oklch(0.95_0_0)] py-6 md:py-7">
+     {/* ===== MAPA ===== */}
+<section className="border-t border-black/15 bg-[oklch(0.95_0_0)] pt-12 pb-8 md:pt-14 md:pb-10">
         <div className="container">
           {/* Título padrão */}
           <div className="mb-5">
