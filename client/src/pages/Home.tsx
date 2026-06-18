@@ -857,6 +857,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <div className="h-16 bg-black" />
     </div>
   );
 }
