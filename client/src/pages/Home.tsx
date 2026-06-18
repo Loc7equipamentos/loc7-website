@@ -828,34 +828,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== OPERAÇÃO LOC7 ===== */}
-<section className="relative h-[260px] overflow-hidden bg-black md:h-[340px]">
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="metadata"
-    className="absolute inset-0 h-full w-full object-cover"
-  >
-    <source src="/video-expedicao-loc7.mp4" type="video/mp4" />
-  </video>
-
-  <div className="absolute inset-0 bg-black/65" />
-
-  <div className="relative z-10 flex h-full items-center justify-center">
-    <div className="text-center">
-      <p className="text-[13px] uppercase tracking-[0.22em] text-white/70">
-        LOC7 EQUIPAMENTOS
-      </p>
-
-      <h2 className="mt-3 text-[30px] font-semibold tracking-[-0.03em] text-white md:text-[42px]">
-        Estrutura pronta para atender sua produção.
-      </h2>
-    </div>
-  </div>
-</section>
-
     {/* ===== MAPA ===== */}
 <section className="relative overflow-hidden bg-black py-10 md:py-12">
   <video
