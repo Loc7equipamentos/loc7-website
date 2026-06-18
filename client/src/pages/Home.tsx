@@ -487,7 +487,7 @@ export default function Home() {
     preload="auto"
     className="absolute inset-0 block h-full w-full object-cover object-center md:hidden"
   >
-    <source src="/videos/loc7-hero-mobi_vert-v2.mp4" type="video/mp4" />
+    <source src="/videos/loc7-hero-mobi-vert-v1.mp4" type="video/mp4" />
   </video>
 
   {/* OVERLAY GERAL */}
