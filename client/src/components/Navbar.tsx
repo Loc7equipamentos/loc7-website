@@ -363,7 +363,7 @@ export default function Navbar() {
                   link.disabled ? (
                     <div
                       key={link.name}
-                      className="group relative cursor-default text-sm font-medium text-white transition hover:text-gray-300"
+                      className="group relative cursor-default text-sm font-semibold text-white/95 transition hover:text-white"
                     >
                       <span>{link.name}</span>
 
@@ -385,8 +385,8 @@ export default function Navbar() {
                           handleComoAlugarNavigation(event);
                         }
                       }}
-                      className={`text-sm font-medium text-white transition hover:text-gray-300 ${
-                        location === link.href ? "text-gray-300" : ""
+                      className={`text-sm font-semibold text-white/95 transition hover:text-white ${
+                        location === link.href ? "text-white" : ""
                       }`}
                     >
                       {link.name}
@@ -419,7 +419,7 @@ export default function Navbar() {
                   ) : (
                     <button
                       onClick={() => setIsSearchOpen(true)}
-                      className="group flex items-center text-white/70 transition-all duration-200 hover:text-white"
+                      className="group flex items-center text-white/80 transition-all duration-200 hover:text-white"
                       aria-label="Abrir busca"
                     >
                       <Search className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
@@ -502,11 +502,11 @@ export default function Navbar() {
                     {hasChildren ? (
                       <button
                         type="button"
-                        className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 group-hover:scale-[1.035] group-hover:text-white"
+                        className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/65 transition-transform duration-200 group-hover:scale-[1.035] group-hover:text-white"
                       >
-                        <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
+                        <Icon className="h-[19px] w-[19px] shrink-0 text-white/58 transition-colors duration-200 group-hover:text-white" />
 
-                        <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
+                        <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/74 transition-colors duration-200 group-hover:text-white">
                           {cat.name}
                         </span>
                       </button>
@@ -516,11 +516,11 @@ export default function Navbar() {
                         onClick={() => {
                           window.location.href = cat.href || "/catalogo";
                         }}
-                        className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/78 transition-transform duration-200 hover:scale-[1.035] hover:text-white"
+                        className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/65 transition-transform duration-200 hover:scale-[1.035] hover:text-white"
                       >
-                        <Icon className="h-[19px] w-[19px] shrink-0 text-white/75 transition-colors duration-200 group-hover:text-white" />
+                        <Icon className="h-[19px] w-[19px] shrink-0 text-white/58 transition-colors duration-200 group-hover:text-white" />
 
-                        <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/90 transition-colors duration-200 group-hover:text-white">
+                        <span className="block text-[14px] font-medium leading-tight tracking-[0.025em] text-white/74 transition-colors duration-200 group-hover:text-white">
                           {cat.name}
                         </span>
                       </button>
