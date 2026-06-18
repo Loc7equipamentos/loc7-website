@@ -357,7 +357,7 @@ export default function Navbar() {
           </Link>
 
           <div className="relative flex flex-1 flex-col">
-            <div className="flex h-20 flex-1 items-center justify-center md:h-[82px] md:translate-y-[48px]">
+            <div className="flex h-20 flex-1 items-center justify-center md:h-[82px] md:translate-y-[38px]">
               <div className="relative hidden flex-1 items-center justify-center gap-10 overflow-visible md:flex lg:gap-12">
                 {navLinks.map((link) =>
                   link.disabled ? (
@@ -489,7 +489,7 @@ export default function Navbar() {
           </div>
         )}
 
-        <div className="hidden w-full pt-[76px] pb-8 md:block">
+        <div className="hidden w-full pt-[62px] pb-6 md:block">
           <div className="mx-auto w-full max-w-[1240px] px-6">
             <div className="flex w-full items-start justify-center gap-4 xl:gap-5">
               {submenuCategories.map((cat) => {
