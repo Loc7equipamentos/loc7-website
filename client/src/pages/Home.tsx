@@ -829,7 +829,7 @@ export default function Home() {
       </section>
 
      {/* ===== MAPA ===== */}
-<section className="border-t border-black/15 bg-[oklch(0.95_0_0)] pt-12 pb-8 md:pt-14 md:pb-10">
+<section className="bg-[oklch(0.95_0_0)] pt-14 pb-10 md:pt-16 md:pb-12">
         <div className="container">
           {/* Título padrão */}
           <div className="mb-5">
@@ -850,7 +850,7 @@ export default function Home() {
               src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
               width="100%"
               height="380"
-    className="grayscale invert-[0.9] hue-rotate-180"
+    className="brightness-[0.72] contrast-[1.15] saturate-[1.25] invert-[0.88] hue-rotate-180"
               style={{ border: 0 }}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
