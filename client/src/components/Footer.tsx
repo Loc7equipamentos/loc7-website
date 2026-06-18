@@ -8,11 +8,11 @@ export default function Footer() {
 
           {/* MARCA */}
           <div>
-            <p className="text-[13px] uppercase tracking-[0.22em] text-white/80">
+            <p className="text-[14px] uppercase tracking-[0.26em] text-white">
               Loc7 Equipamentos
             </p>
 
-            <p className="mt-3 max-w-[360px] text-sm leading-relaxed text-white/50">
+            <p className="mt-3 max-w-[360px] text-sm leading-relaxed text-white/65">
               Locação profissional de equipamentos audiovisuais para cinema,
               foto, broadcast e produções corporativas em São Paulo.
             </p>
@@ -20,7 +20,7 @@ export default function Footer() {
 
           {/* CONTATO */}
           <div className="space-y-3 text-sm text-white/65 text-left md:mx-auto">
-            <p className="text-[12px] uppercase tracking-[0.2em] text-white/85">
+            <p className="text-[12px] uppercase tracking-[0.2em] text-white">
               Contato
             </p>
 
@@ -43,7 +43,7 @@ export default function Footer() {
           {/* HORÁRIO / REDES */}
           <div className="space-y-4 text-sm text-white/65 text-left md:ml-auto md:w-fit md:text-left">
             <div>
-              <p className="text-[12px] uppercase tracking-[0.2em] text-white/85">
+              <p className="text-[12px] uppercase tracking-[0.2em] text-white">
                 Atendimento
               </p>
 
