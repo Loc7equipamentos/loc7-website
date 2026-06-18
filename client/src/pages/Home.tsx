@@ -856,35 +856,49 @@ export default function Home() {
   </div>
 </section>
 
-      {/* ===== MAPA ===== */}
-      <section className="bg-black py-10 md:py-12">
-        <div className="container">
-          {/* Título padrão */}
-          <div className="mb-5">
-            <div className="flex items-center gap-3">
-              <span className="text-[13px] uppercase tracking-[0.22em] text-white/85">
-                LOCALIZAÇÃO
-              </span>
+    {/* ===== MAPA ===== */}
+<section className="relative overflow-hidden bg-black py-10 md:py-12">
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="metadata"
+    className="absolute inset-0 h-full w-full object-cover opacity-[0.22]"
+  >
+    <source src="/video-expedicao-loc7.mp4" type="video/mp4" />
+  </video>
 
-              <div className="h-[1px] flex-1 bg-white/20" />
-            </div>
+  <div className="absolute inset-0 bg-black/82" />
 
-            <div className="mt-2 h-[2px] w-12 bg-red-700" />
-          </div>
+  <div className="container relative z-10">
+    {/* Título padrão */}
+    <div className="mb-5">
+      <div className="flex items-center gap-3">
+        <span className="text-[13px] uppercase tracking-[0.22em] text-white/85">
+          LOCALIZAÇÃO
+        </span>
 
-          {/* Mapa */}
-          <div className="overflow-hidden rounded-xl border border-white/10 bg-black shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
-           <iframe
-  src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
-  width="100%"
-  height="380"
-  style={{ border: 0 }}
-  loading="lazy"
-  referrerPolicy="no-referrer-when-downgrade"
-/>
-          </div>
-        </div>
-      </section>
+        <div className="h-[1px] flex-1 bg-white/20" />
+      </div>
+
+      <div className="mt-2 h-[2px] w-12 bg-red-700" />
+    </div>
+
+    {/* Mapa */}
+    <div className="overflow-hidden rounded-xl border border-white/10 bg-black/70 shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
+      <iframe
+        src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20S%C3%A3o%20Paulo%20-%20SP&output=embed"
+        width="100%"
+        height="380"
+        className="opacity-[0.88]"
+        style={{ border: 0 }}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+      />
+    </div>
+  </div>
+</section>
 
       <div className="h-16 bg-black" />
     </div>
