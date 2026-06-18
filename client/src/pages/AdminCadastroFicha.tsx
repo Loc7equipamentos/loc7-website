@@ -838,14 +838,24 @@ ${error.message || "Erro desconhecido"}`);
                   </button>
                 )}
 
-                <a
-                  href={receitaFederalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-gray-800 transition hover:bg-gray-50"
-                >
-                  Receita Federal
-                </a>
+                <button
+  type="button"
+  onClick={async () => {
+    if (registrationCnpj) {
+      await copyToClipboard(registrationCnpj);
+      alert("CNPJ copiado. Cole na consulta da Receita Federal.");
+    }
+
+    window.open(
+      receitaFederalUrl,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }}
+  className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-gray-800 transition hover:bg-gray-50"
+>
+  Receita Federal
+</button>
 
                 <button
                   type="button"
