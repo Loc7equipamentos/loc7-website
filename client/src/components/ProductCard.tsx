@@ -99,13 +99,13 @@ export default function ProductCard({ product }: Props) {
         </div>
 
         <div className="flex flex-col px-3 pb-3 pt-3.5 sm:px-3.5 sm:pb-3.5 sm:pt-4">
-          <div className="mb-1 flex items-center overflow-hidden text-[9px] font-bold uppercase tracking-[0.12em] text-neutral-500">
+          <div className="mb-1.5 flex items-center overflow-hidden text-[10px] font-semibold uppercase tracking-[0.11em] text-neutral-700">
             <span className="truncate">{product.category}</span>
 
             {product.subcategory && (
               <>
-                <span className="mx-1.5 text-neutral-300">/</span>
-                <span className="truncate text-neutral-600">
+                <span className="mx-1.5 text-neutral-400">/</span>
+                <span className="truncate text-neutral-800">
                   {product.subcategory}
                 </span>
               </>
@@ -118,10 +118,10 @@ export default function ProductCard({ product }: Props) {
 
           {product.price ? (
             <div className="mt-1.5 flex items-baseline gap-1">
-              <span className="text-[13px] font-semibold text-neutral-850 sm:text-[13.5px]">
+              <span className="text-[13.5px] font-bold text-neutral-900 sm:text-[14px]">
                 R$ {Number(product.price).toLocaleString("pt-BR")}
               </span>
-              <span className="text-[10px] font-medium text-neutral-500">
+              <span className="text-[10px] font-medium text-neutral-700">
                 / dia
               </span>
             </div>
