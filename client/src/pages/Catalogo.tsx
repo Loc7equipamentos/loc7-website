@@ -496,7 +496,7 @@ export default function Catalogo() {
     <div className="space-y-8">
       {!isCategoryPage && (
         <div>
-          <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+          <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[0.16em] text-neutral-700">
             Categorias
           </h3>
           <div className="space-y-2">
@@ -520,7 +520,7 @@ export default function Catalogo() {
                 className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                   selectedCategory === cat
                     ? "bg-neutral-900 text-white"
-                    : "text-neutral-700 hover:bg-neutral-100"
+                    : "font-medium text-neutral-900 hover:bg-neutral-100"
                 }`}
               >
                 <span>{cat}</span>
@@ -544,7 +544,7 @@ export default function Catalogo() {
 
           {selectedCategoryFilterGroups.map((group) => (
             <div key={group.id}>
-              <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+              <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[0.16em] text-neutral-700">
                 {group.name}
               </h3>
 
@@ -559,7 +559,7 @@ export default function Catalogo() {
                       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                         active
                           ? "bg-neutral-900 text-white"
-                          : "text-neutral-700 hover:bg-neutral-100"
+                          : "font-medium text-neutral-900 hover:bg-neutral-100"
                       }`}
                     >
                       <span
@@ -583,7 +583,7 @@ export default function Catalogo() {
         <>
           {uniqueSubcategories.length > 0 && (
             <div>
-              <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+              <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[0.16em] text-neutral-700">
                 Refinar Busca
               </h3>
               <div className="space-y-2">
@@ -595,7 +595,7 @@ export default function Catalogo() {
                   className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                     selectedSubcategory === "Todas"
                       ? "bg-neutral-900 text-white"
-                      : "text-neutral-700 hover:bg-neutral-100"
+                      : "font-medium text-neutral-900 hover:bg-neutral-100"
                   }`}
                 >
                   <span>Todas</span>
@@ -612,7 +612,7 @@ export default function Catalogo() {
                     className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                       selectedSubcategory === subcat
                         ? "bg-neutral-900 text-white"
-                        : "text-neutral-700 hover:bg-neutral-100"
+                        : "font-medium text-neutral-900 hover:bg-neutral-100"
                     }`}
                   >
                     <span>{subcat}</span>
@@ -624,7 +624,7 @@ export default function Catalogo() {
           )}
 
           <div>
-            <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+            <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[0.16em] text-neutral-700">
               Marca
             </h3>
             <div className="space-y-2">
@@ -633,7 +633,7 @@ export default function Catalogo() {
                 className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                   selectedBrand === "Todas"
                     ? "bg-neutral-900 text-white"
-                    : "text-neutral-700 hover:bg-neutral-100"
+                    : "font-medium text-neutral-900 hover:bg-neutral-100"
                 }`}
               >
                 <span>Todas</span>
@@ -647,7 +647,7 @@ export default function Catalogo() {
                   className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                     selectedBrand === brand
                       ? "bg-neutral-900 text-white"
-                      : "text-neutral-700 hover:bg-neutral-100"
+                      : "font-medium text-neutral-900 hover:bg-neutral-100"
                   }`}
                 >
                   <span>{brand}</span>
@@ -697,9 +697,9 @@ export default function Catalogo() {
   return (
     <main className="min-h-screen bg-[#f3f3f1] text-neutral-900">
       <section className="border-b border-neutral-200 bg-[#f3f3f1]">
-        <div className="mx-auto max-w-[1600px] px-4 pb-2 pt-12 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1600px] px-4 pb-1 pt-8 sm:px-6 lg:px-10">
           <div className="flex flex-col gap-3">
-            <div className="hidden items-start justify-between gap-16 border-b border-neutral-200 pb-6 lg:flex">
+            <div className="hidden items-start justify-between gap-16 border-b border-neutral-200 pb-4 lg:flex">
               <div className="w-[180px] shrink-0 pt-2">
                 <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
                   01 / CATÁLOGO
@@ -714,9 +714,7 @@ export default function Catalogo() {
 
               <div className="flex flex-1 justify-start">
                 <div className="max-w-[620px]">
-                  <div className="h-[32px]" aria-hidden="true" />
-
-                  <p className="mt-2 text-[15px] font-medium leading-relaxed text-neutral-700">
+                  <p className="text-[15px] font-medium leading-relaxed text-neutral-700">
                     {activeCategorySeo?.description
                       ? activeCategorySeo.description
                       : searchQuery
@@ -819,8 +817,8 @@ export default function Catalogo() {
         <div className="grid gap-8 lg:grid-cols-[220px_1fr] xl:grid-cols-[240px_1fr]">
           <aside className="hidden self-start rounded-2xl border border-neutral-200 bg-white p-6 lg:block">
             <div className="mb-6 flex items-center gap-2">
-              <Menu className="h-4 w-4 text-neutral-500" />
-              <span className="text-sm font-semibold uppercase tracking-[0.14em] text-neutral-700">
+              <Menu className="h-4 w-4 text-neutral-700" />
+              <span className="text-sm font-black uppercase tracking-[0.16em] text-neutral-900">
                 Filtros
               </span>
             </div>
@@ -870,7 +868,7 @@ export default function Catalogo() {
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="h-4 w-4 text-neutral-500" />
-                <span className="text-sm font-semibold uppercase tracking-[0.14em] text-neutral-700">
+                <span className="text-sm font-black uppercase tracking-[0.16em] text-neutral-900">
                   Filtros
                 </span>
               </div>
