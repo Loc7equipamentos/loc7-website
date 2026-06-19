@@ -117,19 +117,19 @@ export default function ProductCard({ product }: Props) {
           </h3>
 
           {product.price ? (
-            <div className="mt-1.5 flex items-baseline gap-1">
-              <span className="text-[13.5px] font-bold text-neutral-900 sm:text-[14px]">
-                R$ {Number(product.price).toLocaleString("pt-BR")}
-              </span>
-              <span className="text-[10px] font-medium text-neutral-700">
-                / dia
-              </span>
-            </div>
-          ) : (
-            <div className="mt-1.5 text-[12px] font-semibold text-neutral-700">
-              Sob consulta
-            </div>
-          )}
+  <div className="mt-1.5 flex items-baseline gap-1.5">
+    <span className="text-[13.5px] font-bold text-neutral-900 sm:text-[14px]">
+      R$ {Number(product.price).toLocaleString("pt-BR")}
+    </span>
+    <span className="text-[10.5px] font-semibold text-neutral-700">
+      / dia
+    </span>
+  </div>
+) : (
+  <div className="mt-1.5 text-[12px] font-semibold text-neutral-700">
+    Sob consulta
+  </div>
+)}
         </div>
       </div>
     </Link>
