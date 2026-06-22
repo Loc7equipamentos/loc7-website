@@ -547,60 +547,51 @@ const keywordContent = finalSeoTags.join(", ");
               </a>
             </div>
 
-            {product.price ? (
-              <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4 lg:mt-4 lg:px-3.5 lg:py-3.5">
-                <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                  Diária
-                </span>
+         {Number(product.price) > 0 && (
+  <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4 lg:mt-4 lg:px-3.5 lg:py-3.5">
+    <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+      Diária
+    </span>
 
-                <div className="mt-1 flex items-end gap-2">
-                  <span className="text-2xl font-semibold text-neutral-950">
-                    R$ {Number(product.price).toLocaleString("pt-BR")}
-                  </span>
-                  <span className="pb-[2px] text-xs text-neutral-400">/ dia</span>
-                </div>
+    <div className="mt-1 flex items-end gap-2">
+      <span className="text-2xl font-semibold text-neutral-950">
+        R$ {Number(product.price).toLocaleString("pt-BR")}
+      </span>
+      <span className="pb-[2px] text-xs text-neutral-400">/ dia</span>
+    </div>
 
-                {(product as Product & { is_featured_special?: boolean | null }).is_featured_special && (
-                  <a
-                    href={getWhatsAppLink({
-                      context: "product_special",
-                      productName: productTitle,
-                    })}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-flex text-[12px] font-medium text-red-700/80 underline decoration-red-700/25 underline-offset-4 transition hover:text-red-800 hover:decoration-red-800/60"
-                  >
-                    Condições diferenciadas
-                  </a>
-                )}
+    {(product as Product & { is_featured_special?: boolean | null }).is_featured_special && (
+      <a
+        href={getWhatsAppLink({
+          context: "product_special",
+          productName: productTitle,
+        })}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 inline-flex text-[12px] font-medium text-red-700/80 underline decoration-red-700/25 underline-offset-4 transition hover:text-red-800 hover:decoration-red-800/60"
+      >
+        Condições diferenciadas
+      </a>
+    )}
 
-                <div className="mt-4 flex flex-col gap-1.5 text-[12px] lg:mt-3">
-                  <div className="flex items-center gap-2 text-neutral-800">
-                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-800" />
-                    <span>Liberação ágil de equipamentos</span>
-                  </div>
+    <div className="mt-4 flex flex-col gap-1.5 text-[12px] lg:mt-3">
+      <div className="flex items-center gap-2 text-neutral-800">
+        <span className="h-1.5 w-1.5 rounded-full bg-neutral-800" />
+        <span>Liberação ágil de equipamentos</span>
+      </div>
 
-                  <div className="flex items-center gap-2 text-neutral-600">
-                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-400" />
-                    <span>Consultoria técnica especializada</span>
-                  </div>
+      <div className="flex items-center gap-2 text-neutral-600">
+        <span className="h-1.5 w-1.5 rounded-full bg-neutral-400" />
+        <span>Consultoria técnica especializada</span>
+      </div>
 
-                  <div className="flex items-center gap-2 text-neutral-600">
-                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-400" />
-                    <span>Desenvolvimento de projetos especiais</span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-5 rounded-xl border border-neutral-200 bg-white px-4 py-4 lg:mt-4 lg:px-3.5 lg:py-3.5">
-                <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                  Diária
-                </span>
-                <div className="mt-1 text-2xl font-semibold text-neutral-950">
-                  Sob consulta
-                </div>
-              </div>
-            )}
+      <div className="flex items-center gap-2 text-neutral-600">
+        <span className="h-1.5 w-1.5 rounded-full bg-neutral-400" />
+        <span>Desenvolvimento de projetos especiais</span>
+      </div>
+    </div>
+  </div>
+)}
           </aside>
         </section>
 
