@@ -26,23 +26,58 @@
       "permanent": true
     },
     {
+      "source": "/equipamentos/still",
+      "destination": "/catalogo/flash",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
       "source": "/equipamentos/lentes-ef-mount",
       "destination": "/catalogo/lentes",
       "permanent": true
     },
     {
+      "source": "/equipamentos/lentes-e-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-pl-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-rf-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-broadcast",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
       "source": "/equipamentos/conversores",
-      "destination": "/catalogo/infraestrutura-tecnica",
+      "destination": "/catalogo",
       "permanent": true
     },
     {
       "source": "/equipamentos/computadores-e-tablets",
-      "destination": "/catalogo/dit",
+      "destination": "/catalogo",
       "permanent": true
     },
     {
       "source": "/equipamentos/hds-e-cartoes-de-memoria",
-      "destination": "/catalogo/cartoes-armazenamento",
+      "destination": "/catalogo",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/gravadores",
+      "destination": "/catalogo",
       "permanent": true
     },
     {
@@ -61,13 +96,38 @@
       "permanent": true
     },
     {
+      "source": "/equipamentos/lentes-ef-mount/:slug",
+      "destination": "/equipamentos/lentes/:slug",
+      "permanent": true
+    },
+    {
       "source": "/equipamentos/lentes-pl-mount/:slug",
       "destination": "/equipamentos/lentes/:slug",
       "permanent": true
     },
     {
+      "source": "/equipamentos/lentes-rf-mount/:slug",
+      "destination": "/equipamentos/lentes/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-broadcast/:slug",
+      "destination": "/equipamentos/lentes/:slug",
+      "permanent": true
+    },
+    {
       "source": "/equipamentos/tripes/:slug",
-      "destination": "/equipamentos/maquinaria/:slug",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/still/:slug",
+      "destination": "/catalogo/flash",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/:slug",
+      "destination": "/catalogo/movimento",
       "permanent": true
     }
   ],
