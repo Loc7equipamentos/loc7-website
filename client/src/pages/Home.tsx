@@ -301,14 +301,18 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
             </h3>
           </div>
 
-          <div className="mt-2 flex items-end justify-between">
-            <span className="text-[13px] font-medium text-neutral-900">
-              R$ {formatProductPrice(product.price)}
-              <span className="ml-1 text-[10px] text-neutral-500">/dia</span>
-            </span>
+        <div className="mt-2 flex items-end justify-between">
+  {Number(product.price) > 0 ? (
+    <span className="text-[13px] font-medium text-neutral-900">
+      R$ {formatProductPrice(product.price)}
+      <span className="ml-1 text-[10px] text-neutral-500">/dia</span>
+    </span>
+  ) : (
+    <span />
+  )}
 
-            <span className="text-[11px] text-neutral-400">Ver item</span>
-          </div>
+  <span className="text-[11px] text-neutral-400">Ver item</span>
+</div>
         </div>
       </div>
     </Link>
