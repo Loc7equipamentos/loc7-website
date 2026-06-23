@@ -22,7 +22,7 @@ import NotFound from "./pages/NotFound";
 
 import AdminProtected from "./components/AdminProtected";
 
-const SITE_URL = "https://loc7-website-iota.vercel.app";
+const SITE_URL = "https://www.loc7equipamentos.com.br";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-loc7.jpg?v=1`;
 
 function AdminPanelRedirect() {
