@@ -106,6 +106,7 @@ export default function Produto() {
   const [mobileTab, setMobileTab] = useState<"overview" | "technical" | "includes">("overview");
   const [desktopDetailTab, setDesktopDetailTab] = useState<"technical" | "includes">("technical");
   const [showAllOverview, setShowAllOverview] = useState(false);
+  const [zoomOrigin, setZoomOrigin] = useState("50% 50%");
 
 useEffect(() => {
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -464,13 +465,28 @@ const keywordContent = finalSeoTags.join(", ");
             <div className="flex h-[320px] w-full items-center justify-center overflow-hidden rounded-xl bg-white sm:h-[380px] lg:h-[560px]">
               {currentImage ? (
              <>
-  <div className="group hidden h-[96%] w-[96%] items-center justify-center overflow-hidden cursor-zoom-in lg:flex">
-    <img
-      src={currentImage}
-      alt={productTitle}
-      className="h-full w-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.6]"
-    />
-  </div>
+  <div
+  className="group hidden h-[96%] w-[96%] items-center justify-center overflow-hidden cursor-zoom-in lg:flex"
+  onMouseMove={(event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    const x =
+      ((event.clientX - rect.left) / rect.width) * 100;
+
+    const y =
+      ((event.clientY - rect.top) / rect.height) * 100;
+
+    setZoomOrigin(`${x}% ${y}%`);
+  }}
+  onMouseLeave={() => setZoomOrigin("50% 50%")}
+>
+  <img
+    src={currentImage}
+    alt={productTitle}
+    style={{ transformOrigin: zoomOrigin }}
+    className="h-full w-full object-contain transition-transform duration-150 ease-out group-hover:scale-[2.4]"
+  />
+</div>
 
   <div className="flex h-[96%] w-[96%] items-center justify-center lg:hidden">
     <img
