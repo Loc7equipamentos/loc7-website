@@ -463,21 +463,23 @@ const keywordContent = finalSeoTags.join(", ");
           <div className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 lg:p-3">
             <div className="flex h-[320px] w-full items-center justify-center overflow-hidden rounded-xl bg-white sm:h-[380px] lg:h-[560px]">
               {currentImage ? (
-                <div className="group hidden h-[96%] w-[96%] items-center justify-center lg:flex cursor-zoom-in overflow-hidden">
-  <img
-    src={currentImage}
-    alt={productTitle}
-    className="h-full w-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.9]"
-  />
-</div>
+             <>
+  <div className="group hidden h-[96%] w-[96%] items-center justify-center overflow-hidden cursor-zoom-in lg:flex">
+    <img
+      src={currentImage}
+      alt={productTitle}
+      className="h-full w-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.6]"
+    />
+  </div>
 
-<div className="flex h-[96%] w-[96%] items-center justify-center lg:hidden">
-  <img
-    src={currentImage}
-    alt={productTitle}
-    className="h-full w-full object-contain"
-  />
-</div>
+  <div className="flex h-[96%] w-[96%] items-center justify-center lg:hidden">
+    <img
+      src={currentImage}
+      alt={productTitle}
+      className="h-full w-full object-contain"
+    />
+  </div>
+</>
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-sm text-neutral-500">
                   Sem imagem
