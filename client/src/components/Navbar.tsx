@@ -528,9 +528,7 @@ export default function Navbar() {
 
                     {hasChildren && (
                       <div
-                        className={`absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 pointer-events-none translate-y-2 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 ${
-                       ""
-                        }`}
+                       className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 pointer-events-none translate-y-2 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0"
                       >
                         {cat.name === "Acessórios" || cat.name === "Iluminação" ? (
                           <div className="w-[240px] bg-[#050505] px-3 py-4 shadow-[0_18px_45px_rgba(0,0,0,0.42)] backdrop-blur-md">
