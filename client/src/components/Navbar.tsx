@@ -527,27 +527,56 @@ export default function Navbar() {
                     )}
 
                     {hasChildren && (
-                      <div className="absolute left-1/2 top-full z-50 hidden -translate-x-1/2 pt-3 group-hover:block">
-                        <div
-                          className={`rounded-xl border border-white/10 bg-black/95 p-2 shadow-2xl backdrop-blur-md ${
-                            dropdownIsLarge
-                              ? "grid min-w-[360px] grid-cols-2 gap-1"
-                              : "min-w-[210px]"
-                          }`}
-                        >
-                          {cat.children?.map((child) => (
-                            <button
-                              key={child.name}
-                              type="button"
-                              onClick={() => {
-                                window.location.href = child.href;
-                              }}
-                              className="block w-full rounded-md px-4 py-2.5 text-center text-[12px] font-medium tracking-[0.06em] text-white/75 transition hover:bg-white/5 hover:text-white"
-                            >
-                              {child.name}
-                            </button>
-                          ))}
-                        </div>
+                      <div
+                        className={`absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 pointer-events-none translate-y-2 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 ${
+                          cat.name === "Acessórios" ? "left-auto right-0 translate-x-0 group-hover:translate-x-0" : ""
+                        }`}
+                      >
+                        {cat.name === "Acessórios" ? (
+                          <div className="w-[290px] bg-black/98 px-3 py-4 shadow-[0_18px_45px_rgba(0,0,0,0.42)] backdrop-blur-md">
+                            <div className="mb-3 px-3">
+                              <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/38">
+                                Acessórios
+                              </span>
+                            </div>
+
+                            <div className="space-y-1">
+                              {cat.children?.map((child) => (
+                                <button
+                                  key={child.name}
+                                  type="button"
+                                  onClick={() => {
+                                    window.location.href = child.href;
+                                  }}
+                                  className="block w-full rounded-md px-3 py-3 text-left text-[13px] font-medium tracking-[0.045em] text-white/72 transition duration-150 hover:bg-white/[0.04] hover:text-white"
+                                >
+                                  {child.name}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <div
+                            className={`rounded-xl border border-white/10 bg-black/95 p-2 shadow-2xl backdrop-blur-md ${
+                              dropdownIsLarge
+                                ? "grid min-w-[360px] grid-cols-2 gap-1"
+                                : "min-w-[210px]"
+                            }`}
+                          >
+                            {cat.children?.map((child) => (
+                              <button
+                                key={child.name}
+                                type="button"
+                                onClick={() => {
+                                  window.location.href = child.href;
+                                }}
+                                className="block w-full rounded-md px-4 py-2.5 text-center text-[12px] font-medium tracking-[0.06em] text-white/75 transition hover:bg-white/5 hover:text-white"
+                              >
+                                {child.name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
