@@ -292,27 +292,31 @@ function HomeFeaturedCard({ product }: HomeFeaturedCardProps) {
         {/* CONTEÚDO */}
         <div className="flex flex-col gap-2 px-4 pb-4 pt-3">
           <div>
-            <p className="mb-1 text-[10px] uppercase tracking-[0.18em] text-neutral-400">
+            <p className="mb-1.5 text-[10.5px] font-bold uppercase tracking-[0.16em] text-neutral-600 sm:text-[11px]">
               {product.category}
             </p>
 
-            <h3 className="line-clamp-2 min-h-[38px] text-[13.5px] sm:text-[14.5px] font-semibold leading-[1.18] tracking-[-0.01em] text-neutral-950">
+            <h3 className="line-clamp-2 min-h-[38px] text-[13.5px] font-semibold leading-[1.18] tracking-[-0.01em] text-neutral-950 sm:text-[14.5px]">
               {product.name}
             </h3>
           </div>
 
-        <div className="mt-2 flex items-end justify-between">
-  {Number(product.price) > 0 ? (
-    <span className="text-[13px] font-medium text-neutral-900">
-      R$ {formatProductPrice(product.price)}
-      <span className="ml-1 text-[10px] text-neutral-500">/dia</span>
-    </span>
-  ) : (
-    <span />
-  )}
+          <div className="mt-2 flex items-end justify-between gap-3">
+            {Number(product.price) > 0 ? (
+              <span className="text-[13px] font-semibold text-neutral-950">
+                R$ {formatProductPrice(product.price)}
+                <span className="ml-1 text-[10px] font-medium text-neutral-600">
+                  /dia
+                </span>
+              </span>
+            ) : (
+              <span />
+            )}
 
-  <span className="text-[11px] text-neutral-400">Ver item</span>
-</div>
+            <span className="shrink-0 text-[10.5px] font-bold uppercase tracking-[0.1em] text-neutral-700 transition-colors duration-300 group-hover:text-neutral-950 sm:text-[11px]">
+              Ver item
+            </span>
+          </div>
         </div>
       </div>
     </Link>
