@@ -533,9 +533,9 @@ export default function Navbar() {
                         }`}
                       >
                         {cat.name === "Acessórios" ? (
-                          <div className="w-[290px] bg-black/98 px-3 py-4 shadow-[0_18px_45px_rgba(0,0,0,0.42)] backdrop-blur-md">
+                          <div className="w-[290px] bg-[#050505] px-3 py-4 shadow-[0_18px_45px_rgba(0,0,0,0.42)] backdrop-blur-md">
                             <div className="mb-3 px-3">
-                              <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/38">
+                              <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/55">
                                 Acessórios
                               </span>
                             </div>
@@ -548,7 +548,7 @@ export default function Navbar() {
                                   onClick={() => {
                                     window.location.href = child.href;
                                   }}
-                                  className="block w-full rounded-md px-3 py-3 text-left text-[13px] font-medium tracking-[0.045em] text-white/72 transition duration-150 hover:bg-white/[0.04] hover:text-white"
+                                  className="block w-full rounded-md px-3 py-3 text-left text-[14px] font-medium tracking-[0.02em] text-white transition-all duration-200 hover:bg-white/[0.04] hover:translate-x-[2px]"
                                 >
                                   {child.name}
                                 </button>
