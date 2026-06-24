@@ -580,7 +580,7 @@ export default function Home() {
                   behavior: "auto",
                 });
               }}
-             className="inline-flex items-center justify-center border border-white/40 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-black hover:bg-black hover:text-white hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+             className="inline-flex items-center justify-center border border-white/45 px-7 py-3.5 text-[12px] font-medium uppercase tracking-[0.22em] text-white transition-all duration-300 ease-out hover:border-white hover:bg-white hover:text-black hover:shadow-[0_10px_30px_rgba(255,255,255,0.12)]"
             >
               Ver catálogo completo
             </Link>
