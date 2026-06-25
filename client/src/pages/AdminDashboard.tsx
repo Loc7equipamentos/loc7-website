@@ -361,6 +361,41 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   }, [activeTab]);
 
   useEffect(() => {
+    if (loading || products.length === 0 || normalizingCatalogOrderRef.current) return;
+
+    const categoriesToNormalize = Array.from(
+      new Set(
+        products
+          .map((product) => product.category)
+          .filter((category): category is string => Boolean(category))
+      )
+    ).filter((categoryName) =>
+      categoryNeedsCatalogOrderNormalization(categoryName, products)
+    );
+
+    if (categoriesToNormalize.length === 0) return;
+
+    normalizingCatalogOrderRef.current = true;
+
+    Promise.all(
+      categoriesToNormalize.map((categoryName) =>
+        normalizeCategoryCatalogOrder(categoryName, products)
+      )
+    )
+      .then(() => loadProducts())
+      .catch((err) => {
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Erro ao normalizar ordem do catálogo'
+        );
+      })
+      .finally(() => {
+        normalizingCatalogOrderRef.current = false;
+      });
+  }, [products, loading]);
+
+  useEffect(() => {
     setNewProduct((prev) => ({ ...prev, subcategory: '' }));
     setNewProductFilterOptionIds([]);
   }, [newProduct.category]);
@@ -678,6 +713,149 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }));
   };
 
+  const getProductOrderValue = (product: ProductWithImages) => {
+    return typeof product.catalog_order === 'number'
+      ? product.catalog_order
+      : Number.POSITIVE_INFINITY;
+  };
+
+  const getProductsSortedForCategoryOrder = (
+    categoryName: string,
+    sourceProducts: ProductWithImages[] = products
+  ) => {
+    const originalIndexById = new Map(
+      sourceProducts.map((product, index) => [product.id, index])
+    );
+
+    return [...sourceProducts]
+      .filter((product) => product.category === categoryName)
+      .sort((a, b) => {
+        const orderA = getProductOrderValue(a);
+        const orderB = getProductOrderValue(b);
+
+        if (orderA !== orderB) return orderA - orderB;
+
+        return (originalIndexById.get(a.id) ?? 0) - (originalIndexById.get(b.id) ?? 0);
+      });
+  };
+
+  const categoryNeedsCatalogOrderNormalization = (
+    categoryName: string,
+    sourceProducts: ProductWithImages[] = products
+  ) => {
+    const orderedProducts = getProductsSortedForCategoryOrder(categoryName, sourceProducts);
+
+    if (orderedProducts.length === 0) return false;
+
+    const seenOrders = new Set<number>();
+
+    return orderedProducts.some((product, index) => {
+      const expectedOrder = index + 1;
+      const currentOrder = product.catalog_order;
+      const hasInvalidOrder = typeof currentOrder !== 'number' || currentOrder < 1;
+      const isDuplicateOrder = typeof currentOrder === 'number' && seenOrders.has(currentOrder);
+
+      if (typeof currentOrder === 'number') {
+        seenOrders.add(currentOrder);
+      }
+
+      return hasInvalidOrder || isDuplicateOrder || currentOrder !== expectedOrder;
+    });
+  };
+
+  const normalizeCategoryCatalogOrder = async (
+    categoryName: string,
+    sourceProducts: ProductWithImages[] = products
+  ) => {
+    const orderedProducts = getProductsSortedForCategoryOrder(categoryName, sourceProducts);
+
+    if (orderedProducts.length === 0) return [];
+
+    const updates = orderedProducts
+      .map((product, index) => ({ product, catalog_order: index + 1 }))
+      .filter(({ product, catalog_order }) => product.catalog_order !== catalog_order);
+
+    if (updates.length > 0) {
+      const results = await Promise.all(
+        updates.map(({ product, catalog_order }) =>
+          supabase
+            .from('products')
+            .update({ catalog_order })
+            .eq('id', product.id)
+        )
+      );
+
+      const firstError = results.find((result) => result.error)?.error;
+      if (firstError) throw firstError;
+    }
+
+    return orderedProducts.map((product, index) => ({
+      ...product,
+      catalog_order: index + 1,
+    }));
+  };
+
+  const prepareCategoryOrderForNewProduct = async (categoryName: string) => {
+    const orderedProducts = getProductsSortedForCategoryOrder(categoryName);
+
+    if (orderedProducts.length === 0) return;
+
+    const results = await Promise.all(
+      orderedProducts.map((product, index) =>
+        supabase
+          .from('products')
+          .update({ catalog_order: index + 2 })
+          .eq('id', product.id)
+      )
+    );
+
+    const firstError = results.find((result) => result.error)?.error;
+    if (firstError) throw firstError;
+  };
+
+  const moveProductInCatalogOrder = async (
+    product: ProductWithImages,
+    direction: 'up' | 'down'
+  ) => {
+    if (!product.category) return;
+
+    try {
+      setError(null);
+      const orderedProducts = await normalizeCategoryCatalogOrder(product.category);
+      const currentIndex = orderedProducts.findIndex((item) => item.id === product.id);
+      const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+
+      if (
+        currentIndex < 0 ||
+        targetIndex < 0 ||
+        targetIndex >= orderedProducts.length
+      ) {
+        return;
+      }
+
+      const currentProduct = orderedProducts[currentIndex];
+      const targetProduct = orderedProducts[targetIndex];
+
+      const results = await Promise.all([
+        supabase
+          .from('products')
+          .update({ catalog_order: targetProduct.catalog_order })
+          .eq('id', currentProduct.id),
+        supabase
+          .from('products')
+          .update({ catalog_order: currentProduct.catalog_order })
+          .eq('id', targetProduct.id),
+      ]);
+
+      const firstError = results.find((result) => result.error)?.error;
+      if (firstError) throw firstError;
+
+      await loadProducts();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao alterar ordem do produto');
+    }
+  };
+
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -917,6 +1095,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
     try {
       const slug = await generateUniqueSlug(newProduct.name);
+      await prepareCategoryOrderForNewProduct(newProduct.category);
       const publicSubcategory = getPublicSubcategoryForProduct(
         newProduct,
         newProductFilterOptionIds
@@ -946,7 +1125,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
             seo_tags: normalizeSeoTags(newProduct.seo_tags) || null,
             badge: newProduct.badge || null,
             slug,
-            catalog_order: newProduct.catalog_order || null,
+            catalog_order: 1,
             is_featured: newProduct.is_featured,
             featured_order: newProduct.is_featured ? newProduct.featured_order : null,
           },
@@ -1552,17 +1731,36 @@ const deleteSubcategory = async (id: string) => {
     a.name.localeCompare(b.name, 'pt-BR')
   );
 
-  const filteredProducts = products.filter((product) => {
-  const categoryMatch = selectedCategoryFilter
-    ? product.category === selectedCategoryFilter
-    : true;
+  const filteredProducts = products
+  .filter((product) => {
+    const categoryMatch = selectedCategoryFilter
+      ? product.category === selectedCategoryFilter
+      : true;
 
-  const brandMatch = selectedBrandFilter
-    ? product.brand === selectedBrandFilter
-    : true;
+    const brandMatch = selectedBrandFilter
+      ? product.brand === selectedBrandFilter
+      : true;
 
-  return categoryMatch && brandMatch;
-});
+    return categoryMatch && brandMatch;
+  })
+  .sort((a, b) => {
+    const categoryA = a.category || '';
+    const categoryB = b.category || '';
+
+    if (categoryA !== categoryB) {
+      return categoryA.localeCompare(categoryB, 'pt-BR');
+    }
+
+    const orderA = getProductOrderValue(a);
+    const orderB = getProductOrderValue(b);
+
+    if (orderA !== orderB) return orderA - orderB;
+
+    return (a.display_name || a.name || '').localeCompare(
+      b.display_name || b.name || '',
+      'pt-BR'
+    );
+  });
 const filteredSubcategories = [...subcategories]
   .filter((subcat) =>
     selectedSubcategoryCategoryFilter
@@ -2016,22 +2214,6 @@ lente para astrofotografia`}
                   </p>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ordem no Catálogo</label>
-                  <input
-                    type="number"
-                    placeholder="1, 2, 3..."
-                    value={newProduct.catalog_order ?? ''}
-                    onChange={(e) =>
-                      setNewProduct((prev) => ({
-                        ...prev,
-                        catalog_order: e.target.value ? Number(e.target.value) : null,
-                      }))
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                  />
-                </div>
-
 
 <div className="md:col-span-2">
   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -2275,7 +2457,19 @@ lente para astrofotografia`}
                         </td>
                       </tr>
                     ) : (
-                      filteredProducts.map((product) => (
+                      filteredProducts.map((product) => {
+                        const categoryOrderedProducts = getProductsSortedForCategoryOrder(
+                          product.category || '',
+                          products
+                        );
+                        const productOrderIndex = categoryOrderedProducts.findIndex(
+                          (item) => item.id === product.id
+                        );
+                        const isFirstInCategory = productOrderIndex <= 0;
+                        const isLastInCategory =
+                          productOrderIndex === categoryOrderedProducts.length - 1;
+
+                        return (
                         <tr key={product.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 text-gray-900 font-medium">
                             {product.display_name || product.name}
@@ -2317,11 +2511,35 @@ lente para astrofotografia`}
                               <span className="text-gray-400">—</span>
                             )}
                           </td>
-                         <td className="px-4 py-3 text-gray-900">
-  {product.catalog_order !== null && product.catalog_order !== undefined
-    ? product.catalog_order
-    : '—'}
-</td>
+                          <td className="px-4 py-3 text-gray-900">
+                            <div className="flex items-center gap-2">
+                              <span className="min-w-[28px] text-sm font-semibold text-gray-900">
+                                {product.catalog_order ?? '—'}
+                              </span>
+
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => moveProductInCatalogOrder(product, 'up')}
+                                  disabled={isFirstInCategory}
+                                  className="p-1 hover:bg-gray-200 rounded disabled:cursor-not-allowed disabled:opacity-30"
+                                  title="Mover produto para cima"
+                                >
+                                  <ArrowUp size={15} className="text-gray-600" />
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => moveProductInCatalogOrder(product, 'down')}
+                                  disabled={isLastInCategory}
+                                  className="p-1 hover:bg-gray-200 rounded disabled:cursor-not-allowed disabled:opacity-30"
+                                  title="Mover produto para baixo"
+                                >
+                                  <ArrowDown size={15} className="text-gray-600" />
+                                </button>
+                              </div>
+                            </div>
+                          </td>
                           <td className="px-4 py-3">
                             <div className="flex gap-2">
                               <button
@@ -2341,7 +2559,8 @@ lente para astrofotografia`}
                             </div>
                           </td>
                         </tr>
-                      ))
+                        );
+                      })
                     )}
                   </tbody>
                 </table>
@@ -3147,26 +3366,6 @@ lente para astrofotografia`}
                   </p>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ordem no Catálogo</label>
-                  <input
-                    type="number"
-                    value={editingProduct.catalog_order ?? ''}
-                    onChange={(e) =>
-                      setEditingProduct((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              catalog_order: e.target.value ? Number(e.target.value) : null,
-                            }
-                          : prev
-                      )
-                    }
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
-                  />
-                </div>
-
-              
 
 <div className="md:col-span-2">
   <label className="block text-sm font-medium text-gray-700 mb-1">
