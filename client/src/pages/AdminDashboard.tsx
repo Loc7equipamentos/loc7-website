@@ -196,7 +196,6 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const [savingFiscalProfile, setSavingFiscalProfile] = useState(false);
   const normalizingCatalogOrderRef = useRef(false);
   const [draggedCatalogProductId, setDraggedCatalogProductId] = useState<string | null>(null);
-  const [updatingHomeProductId, setUpdatingHomeProductId] = useState<string | null>(null);
 
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR').format(value);
@@ -1327,98 +1326,6 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
   };
 
-  const isProductHomeActive = (product: ProductWithImages) => {
-    const rawIsFeatured = (product as { is_featured?: boolean | string | number | null }).is_featured;
-    const normalizedIsFeatured =
-      rawIsFeatured === true ||
-      rawIsFeatured === 'true' ||
-      rawIsFeatured === 1 ||
-      rawIsFeatured === '1';
-
-    const normalizedFeaturedOrder =
-      typeof product.featured_order === 'number'
-        ? product.featured_order
-        : Number(product.featured_order);
-
-    return normalizedIsFeatured || normalizedFeaturedOrder > 0;
-  };
-
-  const getNextFeaturedOrder = () => {
-    const featuredOrders = products
-      .filter((item) => isProductHomeActive(item))
-      .map((item) => Number(item.featured_order))
-      .filter((order) => Number.isFinite(order) && order > 0);
-
-    return featuredOrders.length > 0 ? Math.max(...featuredOrders) + 1 : 1;
-  };
-
-  const toggleProductHomeStatus = async (product: ProductWithImages) => {
-    if (updatingHomeProductId) return;
-
-    const currentIsFeatured = isProductHomeActive(product);
-    const nextIsFeatured = !currentIsFeatured;
-    const existingFeaturedOrder = Number(product.featured_order);
-    const nextFeaturedOrder = nextIsFeatured
-      ? Number.isFinite(existingFeaturedOrder) && existingFeaturedOrder > 0
-        ? existingFeaturedOrder
-        : getNextFeaturedOrder()
-      : null;
-
-    try {
-      setError(null);
-      setUpdatingHomeProductId(product.id);
-
-      setProducts((prev) =>
-        prev.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                is_featured: nextIsFeatured,
-                featured_order: nextFeaturedOrder,
-              }
-            : item
-        )
-      );
-
-      const { data: updatedProduct, error: err } = await supabase
-        .from('products')
-        .update({
-          is_featured: nextIsFeatured,
-          featured_order: nextFeaturedOrder,
-        })
-        .eq('id', product.id)
-        .select('id, is_featured, featured_order')
-        .single();
-
-      if (err) throw err;
-
-      if (updatedProduct) {
-        setProducts((prev) =>
-          prev.map((item) =>
-            item.id === product.id
-              ? {
-                  ...item,
-                  is_featured: updatedProduct.is_featured,
-                  featured_order: updatedProduct.featured_order,
-                }
-              : item
-          )
-        );
-      }
-
-      await loadProducts();
-    } catch (err) {
-      await loadProducts();
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Erro ao alterar status do produto na Home'
-      );
-    } finally {
-      setUpdatingHomeProductId(null);
-    }
-  };
-
   const addCategory = async () => {
     if (!newCategory.trim()) {
       setError('Digite o nome da categoria');
@@ -2419,6 +2326,45 @@ lente para astrofotografia`}
                   />
                 </div>
 
+                <div className="md:col-span-2 border-t border-gray-200 pt-4">
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={newProduct.is_featured}
+                        onChange={(e) =>
+                          setNewProduct((prev) => ({
+                            ...prev,
+                            is_featured: e.target.checked,
+                            featured_order: e.target.checked ? prev.featured_order : null,
+                          }))
+                        }
+                        className="w-4 h-4 border border-gray-300 rounded"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Destaque na Home</span>
+                    </label>
+
+                    {newProduct.is_featured && (
+                      <div className="flex items-center gap-2">
+                        <label className="text-sm text-gray-600">Ordem:</label>
+                        <input
+                          type="number"
+                          placeholder="1"
+                          value={newProduct.featured_order ?? ''}
+                          onChange={(e) =>
+                            setNewProduct((prev) => ({
+                              ...prev,
+                              featured_order: e.target.value ? Number(e.target.value) : null,
+                            }))
+                          }
+                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                        />
+                        <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Imagens</label>
                   <div
@@ -2558,7 +2504,7 @@ lente para astrofotografia`}
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">SEO</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">NCM</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Home</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Destaque</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ordem</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ações</th>
                     </tr>
@@ -2582,7 +2528,6 @@ lente para astrofotografia`}
                         const isFirstInCategory = productOrderIndex <= 0;
                         const isLastInCategory =
                           productOrderIndex === categoryOrderedProducts.length - 1;
-                        const isHomeActive = isProductHomeActive(product);
 
                         return (
                         <tr
@@ -2629,32 +2574,11 @@ lente para astrofotografia`}
                             R$ {formatPrice(product.price)}
                           </td>
                           <td className="px-4 py-3">
-                            <button
-                              type="button"
-                              disabled={updatingHomeProductId === product.id}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toggleProductHomeStatus(product);
-                              }}
-                              className={`rounded-full px-2.5 py-1 text-xs font-semibold transition disabled:cursor-wait disabled:opacity-60 ${
-                                isHomeActive
-                                  ? 'bg-gray-900 text-white hover:bg-gray-800'
-                                  : 'border border-gray-300 bg-white text-gray-500 hover:border-gray-500 hover:text-gray-900'
-                              }`}
-                              title={
-                                isHomeActive
-                                  ? 'Produto ativo na Home. Clique para desativar.'
-                                  : 'Produto inativo na Home. Clique para ativar.'
-                              }
-                              aria-pressed={isHomeActive}
-                            >
-                              {updatingHomeProductId === product.id
-                                ? 'Salvando'
-                                : isHomeActive
-                                  ? 'Ativo'
-                                  : 'Não ativo'}
-                            </button>
+                            {product.is_featured ? (
+                              <span className="text-sm text-gray-900 font-medium">Sim</span>
+                            ) : (
+                              <span className="text-gray-400">—</span>
+                            )}
                           </td>
                           <td className="px-4 py-3 text-gray-900">
                             <div className="flex items-center gap-2">
@@ -3828,6 +3752,53 @@ lente para astrofotografia`}
                       </div>
                     </div>
                   )}
+                </div>
+
+                <div className="md:col-span-2 border-t border-gray-200 pt-4">
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={editingProduct.is_featured || false}
+                        onChange={(e) =>
+                          setEditingProduct((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  is_featured: e.target.checked,
+                                  featured_order: e.target.checked ? prev.featured_order : null,
+                                }
+                              : prev
+                          )
+                        }
+                        className="w-4 h-4 border border-gray-300 rounded"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Destaque na Home</span>
+                    </label>
+
+                    {editingProduct.is_featured && (
+                      <div className="flex items-center gap-2">
+                        <label className="text-sm text-gray-600">Ordem:</label>
+                        <input
+                          type="number"
+                          placeholder="1"
+                          value={editingProduct.featured_order ?? ''}
+                          onChange={(e) =>
+                            setEditingProduct((prev) =>
+                              prev
+                                ? {
+                                    ...prev,
+                                    featured_order: e.target.value ? Number(e.target.value) : null,
+                                  }
+                                : prev
+                            )
+                          }
+                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                        />
+                        <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="md:col-span-2">
