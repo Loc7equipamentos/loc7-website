@@ -196,6 +196,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const [savingFiscalProfile, setSavingFiscalProfile] = useState(false);
   const normalizingCatalogOrderRef = useRef(false);
   const [draggedCatalogProductId, setDraggedCatalogProductId] = useState<string | null>(null);
+  const [updatingHomeProductId, setUpdatingHomeProductId] = useState<string | null>(null);
 
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR').format(value);
@@ -1327,30 +1328,45 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   };
 
   const isProductHomeActive = (product: ProductWithImages) => {
-    return (
-      product.is_featured === true ||
-      (typeof product.featured_order === 'number' && product.featured_order > 0)
-    );
+    const rawIsFeatured = (product as { is_featured?: boolean | string | number | null }).is_featured;
+    const normalizedIsFeatured =
+      rawIsFeatured === true ||
+      rawIsFeatured === 'true' ||
+      rawIsFeatured === 1 ||
+      rawIsFeatured === '1';
+
+    const normalizedFeaturedOrder =
+      typeof product.featured_order === 'number'
+        ? product.featured_order
+        : Number(product.featured_order);
+
+    return normalizedIsFeatured || normalizedFeaturedOrder > 0;
   };
 
   const getNextFeaturedOrder = () => {
     const featuredOrders = products
       .filter((item) => isProductHomeActive(item))
-      .map((item) => item.featured_order)
-      .filter((order): order is number => typeof order === 'number' && order > 0);
+      .map((item) => Number(item.featured_order))
+      .filter((order) => Number.isFinite(order) && order > 0);
 
     return featuredOrders.length > 0 ? Math.max(...featuredOrders) + 1 : 1;
   };
 
   const toggleProductHomeStatus = async (product: ProductWithImages) => {
+    if (updatingHomeProductId) return;
+
     const currentIsFeatured = isProductHomeActive(product);
     const nextIsFeatured = !currentIsFeatured;
+    const existingFeaturedOrder = Number(product.featured_order);
     const nextFeaturedOrder = nextIsFeatured
-      ? product.featured_order ?? getNextFeaturedOrder()
+      ? Number.isFinite(existingFeaturedOrder) && existingFeaturedOrder > 0
+        ? existingFeaturedOrder
+        : getNextFeaturedOrder()
       : null;
 
     try {
       setError(null);
+      setUpdatingHomeProductId(product.id);
 
       setProducts((prev) =>
         prev.map((item) =>
@@ -1364,15 +1380,31 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         )
       );
 
-      const { error: err } = await supabase
+      const { data: updatedProduct, error: err } = await supabase
         .from('products')
         .update({
           is_featured: nextIsFeatured,
           featured_order: nextFeaturedOrder,
         })
-        .eq('id', product.id);
+        .eq('id', product.id)
+        .select('id, is_featured, featured_order')
+        .single();
 
       if (err) throw err;
+
+      if (updatedProduct) {
+        setProducts((prev) =>
+          prev.map((item) =>
+            item.id === product.id
+              ? {
+                  ...item,
+                  is_featured: updatedProduct.is_featured,
+                  featured_order: updatedProduct.featured_order,
+                }
+              : item
+          )
+        );
+      }
 
       await loadProducts();
     } catch (err) {
@@ -1382,6 +1414,8 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
           ? err.message
           : 'Erro ao alterar status do produto na Home'
       );
+    } finally {
+      setUpdatingHomeProductId(null);
     }
   };
 
@@ -2597,12 +2631,13 @@ lente para astrofotografia`}
                           <td className="px-4 py-3">
                             <button
                               type="button"
+                              disabled={updatingHomeProductId === product.id}
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 toggleProductHomeStatus(product);
                               }}
-                              className={`rounded-full px-2.5 py-1 text-xs font-semibold transition ${
+                              className={`rounded-full px-2.5 py-1 text-xs font-semibold transition disabled:cursor-wait disabled:opacity-60 ${
                                 isHomeActive
                                   ? 'bg-gray-900 text-white hover:bg-gray-800'
                                   : 'border border-gray-300 bg-white text-gray-500 hover:border-gray-500 hover:text-gray-900'
@@ -2612,8 +2647,13 @@ lente para astrofotografia`}
                                   ? 'Produto ativo na Home. Clique para desativar.'
                                   : 'Produto inativo na Home. Clique para ativar.'
                               }
+                              aria-pressed={isHomeActive}
                             >
-                              {isHomeActive ? 'Ativo' : 'Não ativo'}
+                              {updatingHomeProductId === product.id
+                                ? 'Salvando'
+                                : isHomeActive
+                                  ? 'Ativo'
+                                  : 'Não ativo'}
                             </button>
                           </td>
                           <td className="px-4 py-3 text-gray-900">
