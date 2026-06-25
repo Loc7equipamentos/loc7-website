@@ -1326,9 +1326,16 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
   };
 
+  const isProductHomeActive = (product: ProductWithImages) => {
+    return (
+      product.is_featured === true ||
+      (typeof product.featured_order === 'number' && product.featured_order > 0)
+    );
+  };
+
   const getNextFeaturedOrder = () => {
     const featuredOrders = products
-      .filter((item) => item.is_featured)
+      .filter((item) => isProductHomeActive(item))
       .map((item) => item.featured_order)
       .filter((order): order is number => typeof order === 'number' && order > 0);
 
@@ -1336,18 +1343,32 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   };
 
   const toggleProductHomeStatus = async (product: ProductWithImages) => {
-    const nextIsFeatured = !product.is_featured;
+    const currentIsFeatured = isProductHomeActive(product);
+    const nextIsFeatured = !currentIsFeatured;
+    const nextFeaturedOrder = nextIsFeatured
+      ? product.featured_order ?? getNextFeaturedOrder()
+      : null;
 
     try {
       setError(null);
+
+      setProducts((prev) =>
+        prev.map((item) =>
+          item.id === product.id
+            ? {
+                ...item,
+                is_featured: nextIsFeatured,
+                featured_order: nextFeaturedOrder,
+              }
+            : item
+        )
+      );
 
       const { error: err } = await supabase
         .from('products')
         .update({
           is_featured: nextIsFeatured,
-          featured_order: nextIsFeatured
-            ? product.featured_order ?? getNextFeaturedOrder()
-            : null,
+          featured_order: nextFeaturedOrder,
         })
         .eq('id', product.id);
 
@@ -1355,6 +1376,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
       await loadProducts();
     } catch (err) {
+      await loadProducts();
       setError(
         err instanceof Error
           ? err.message
@@ -2526,6 +2548,7 @@ lente para astrofotografia`}
                         const isFirstInCategory = productOrderIndex <= 0;
                         const isLastInCategory =
                           productOrderIndex === categoryOrderedProducts.length - 1;
+                        const isHomeActive = isProductHomeActive(product);
 
                         return (
                         <tr
@@ -2574,19 +2597,23 @@ lente para astrofotografia`}
                           <td className="px-4 py-3">
                             <button
                               type="button"
-                              onClick={() => toggleProductHomeStatus(product)}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleProductHomeStatus(product);
+                              }}
                               className={`rounded-full px-2.5 py-1 text-xs font-semibold transition ${
-                                product.is_featured
+                                isHomeActive
                                   ? 'bg-gray-900 text-white hover:bg-gray-800'
                                   : 'border border-gray-300 bg-white text-gray-500 hover:border-gray-500 hover:text-gray-900'
                               }`}
                               title={
-                                product.is_featured
+                                isHomeActive
                                   ? 'Produto ativo na Home. Clique para desativar.'
                                   : 'Produto inativo na Home. Clique para ativar.'
                               }
                             >
-                              {product.is_featured ? 'Ativo' : 'Não ativo'}
+                              {isHomeActive ? 'Ativo' : 'Não ativo'}
                             </button>
                           </td>
                           <td className="px-4 py-3 text-gray-900">
