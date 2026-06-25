@@ -1326,6 +1326,15 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
   };
 
+  const getNextFeaturedOrder = () => {
+    const featuredOrders = products
+      .filter((item) => item.is_featured)
+      .map((item) => item.featured_order)
+      .filter((order): order is number => typeof order === 'number' && order > 0);
+
+    return featuredOrders.length > 0 ? Math.max(...featuredOrders) + 1 : 1;
+  };
+
   const toggleProductHomeStatus = async (product: ProductWithImages) => {
     const nextIsFeatured = !product.is_featured;
 
@@ -1336,7 +1345,9 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         .from('products')
         .update({
           is_featured: nextIsFeatured,
-          featured_order: nextIsFeatured ? product.featured_order ?? null : null,
+          featured_order: nextIsFeatured
+            ? product.featured_order ?? getNextFeaturedOrder()
+            : null,
         })
         .eq('id', product.id);
 
@@ -2350,45 +2361,6 @@ lente para astrofotografia`}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
                     rows={2}
                   />
-                </div>
-
-                <div className="md:col-span-2 border-t border-gray-200 pt-4">
-                  <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={newProduct.is_featured}
-                        onChange={(e) =>
-                          setNewProduct((prev) => ({
-                            ...prev,
-                            is_featured: e.target.checked,
-                            featured_order: e.target.checked ? prev.featured_order : null,
-                          }))
-                        }
-                        className="w-4 h-4 border border-gray-300 rounded"
-                      />
-                      <span className="text-sm font-medium text-gray-700">Home Ativo</span>
-                    </label>
-
-                    {newProduct.is_featured && (
-                      <div className="flex items-center gap-2">
-                        <label className="text-sm text-gray-600">Ordem:</label>
-                        <input
-                          type="number"
-                          placeholder="1"
-                          value={newProduct.featured_order ?? ''}
-                          onChange={(e) =>
-                            setNewProduct((prev) => ({
-                              ...prev,
-                              featured_order: e.target.value ? Number(e.target.value) : null,
-                            }))
-                          }
-                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                        />
-                        <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
-                      </div>
-                    )}
-                  </div>
                 </div>
 
                 <div className="md:col-span-2">
@@ -3789,53 +3761,6 @@ lente para astrofotografia`}
                       </div>
                     </div>
                   )}
-                </div>
-
-                <div className="md:col-span-2 border-t border-gray-200 pt-4">
-                  <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={editingProduct.is_featured || false}
-                        onChange={(e) =>
-                          setEditingProduct((prev) =>
-                            prev
-                              ? {
-                                  ...prev,
-                                  is_featured: e.target.checked,
-                                  featured_order: e.target.checked ? prev.featured_order : null,
-                                }
-                              : prev
-                          )
-                        }
-                        className="w-4 h-4 border border-gray-300 rounded"
-                      />
-                      <span className="text-sm font-medium text-gray-700">Home Ativo</span>
-                    </label>
-
-                    {editingProduct.is_featured && (
-                      <div className="flex items-center gap-2">
-                        <label className="text-sm text-gray-600">Ordem:</label>
-                        <input
-                          type="number"
-                          placeholder="1"
-                          value={editingProduct.featured_order ?? ''}
-                          onChange={(e) =>
-                            setEditingProduct((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    featured_order: e.target.value ? Number(e.target.value) : null,
-                                  }
-                                : prev
-                            )
-                          }
-                          className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-                        />
-                        <span className="text-xs text-gray-500">(menor número aparece primeiro)</span>
-                      </div>
-                    )}
-                  </div>
                 </div>
 
                 <div className="md:col-span-2">
