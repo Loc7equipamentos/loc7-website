@@ -194,6 +194,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const [editingFiscalProfile, setEditingFiscalProfile] = useState<ProductFiscalProfile>(getEmptyFiscalProfile());
   const [loadingEditingFiscalProfile, setLoadingEditingFiscalProfile] = useState(false);
   const [savingFiscalProfile, setSavingFiscalProfile] = useState(false);
+  const normalizingCatalogOrderRef = useRef(false);
 
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR').format(value);
