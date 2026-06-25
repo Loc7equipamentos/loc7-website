@@ -546,7 +546,7 @@ export default function Navbar() {
                                   onClick={() => {
                                     window.location.href = child.href;
                                   }}
-                                  className="block w-full rounded-md px-3 py-3 text-center text-[14px] font-semibold tracking-[0.015em] text-white/95 transition-all duration-200 hover:bg-white/[0.06] hover:text-white"
+                                  className="block w-full rounded-md px-3 py-3 text-center text-[14px] font-semibold tracking-[0.015em] text-white/90 transform-gpu transition-all duration-200 ease-out hover:scale-[1.035] hover:bg-white/[0.05] hover:text-white"
                                 >
                                   {child.name}
                                 </button>
