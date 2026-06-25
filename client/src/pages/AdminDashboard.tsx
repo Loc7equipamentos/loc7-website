@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase, type Product, type Category } from '@/lib/supabase';
-import { Trash2, Plus, Edit2, X, Upload, Loader, ArrowUp, ArrowDown } from 'lucide-react';
+import { Trash2, Plus, Edit2, X, Upload, Loader, ArrowUp, ArrowDown, GripVertical } from 'lucide-react';
 import {
   normalizeFilterName,
   buildProductName,
@@ -195,6 +195,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const [loadingEditingFiscalProfile, setLoadingEditingFiscalProfile] = useState(false);
   const [savingFiscalProfile, setSavingFiscalProfile] = useState(false);
   const normalizingCatalogOrderRef = useRef(false);
+  const [draggedCatalogProductId, setDraggedCatalogProductId] = useState<string | null>(null);
 
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR').format(value);
@@ -855,6 +856,64 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao alterar ordem do produto');
     }
+  };
+
+  const reorderProductByDragAndDrop = async (
+    draggedProductId: string,
+    targetProduct: ProductWithImages
+  ) => {
+    const draggedProduct = products.find((product) => product.id === draggedProductId);
+
+    if (!draggedProduct || !targetProduct.category) return;
+
+    if (draggedProduct.category !== targetProduct.category) {
+      setError('A ordenação por arrastar funciona apenas dentro da mesma categoria.');
+      return;
+    }
+
+    if (draggedProduct.id === targetProduct.id) return;
+
+    try {
+      setError(null);
+
+      const orderedProducts = await normalizeCategoryCatalogOrder(targetProduct.category);
+      const draggedIndex = orderedProducts.findIndex((product) => product.id === draggedProduct.id);
+      const targetIndex = orderedProducts.findIndex((product) => product.id === targetProduct.id);
+
+      if (draggedIndex < 0 || targetIndex < 0 || draggedIndex === targetIndex) return;
+
+      const nextOrder = [...orderedProducts];
+      const [removedProduct] = nextOrder.splice(draggedIndex, 1);
+      nextOrder.splice(targetIndex, 0, removedProduct);
+
+      const results = await Promise.all(
+        nextOrder.map((product, index) =>
+          supabase
+            .from('products')
+            .update({ catalog_order: index + 1 })
+            .eq('id', product.id)
+        )
+      );
+
+      const firstError = results.find((result) => result.error)?.error;
+      if (firstError) throw firstError;
+
+      await loadProducts();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao reordenar produto');
+    }
+  };
+
+  const handleCatalogProductDrop = async (
+    e: React.DragEvent<HTMLTableRowElement>,
+    targetProduct: ProductWithImages
+  ) => {
+    e.preventDefault();
+
+    if (!draggedCatalogProductId) return;
+
+    await reorderProductByDragAndDrop(draggedCatalogProductId, targetProduct);
+    setDraggedCatalogProductId(null);
   };
 
   const loadProducts = async () => {
@@ -2471,7 +2530,16 @@ lente para astrofotografia`}
                           productOrderIndex === categoryOrderedProducts.length - 1;
 
                         return (
-                        <tr key={product.id} className="hover:bg-gray-50">
+                        <tr
+                          key={product.id}
+                          onDragOver={(e) => {
+                            if (draggedCatalogProductId) e.preventDefault();
+                          }}
+                          onDrop={(e) => handleCatalogProductDrop(e, product)}
+                          className={`hover:bg-gray-50 ${
+                            draggedCatalogProductId === product.id ? 'opacity-50' : ''
+                          }`}
+                        >
                           <td className="px-4 py-3 text-gray-900 font-medium">
                             {product.display_name || product.name}
                           </td>
@@ -2514,6 +2582,20 @@ lente para astrofotografia`}
                           </td>
                           <td className="px-4 py-3 text-gray-900">
                             <div className="flex items-center gap-2">
+                              <span
+                                draggable={Boolean(product.category)}
+                                onDragStart={(e) => {
+                                  setDraggedCatalogProductId(product.id);
+                                  e.dataTransfer.effectAllowed = 'move';
+                                  e.dataTransfer.setData('text/plain', product.id);
+                                }}
+                                onDragEnd={() => setDraggedCatalogProductId(null)}
+                                className="inline-flex h-7 w-7 cursor-grab items-center justify-center rounded text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 active:cursor-grabbing"
+                                title="Arraste para reorganizar a ordem dentro da categoria"
+                              >
+                                <GripVertical size={16} />
+                              </span>
+
                               <span className="min-w-[28px] text-sm font-semibold text-gray-900">
                                 {product.catalog_order ?? '—'}
                               </span>
