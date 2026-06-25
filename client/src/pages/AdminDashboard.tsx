@@ -1326,6 +1326,32 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
   };
 
+  const toggleProductHomeStatus = async (product: ProductWithImages) => {
+    const nextIsFeatured = !product.is_featured;
+
+    try {
+      setError(null);
+
+      const { error: err } = await supabase
+        .from('products')
+        .update({
+          is_featured: nextIsFeatured,
+          featured_order: nextIsFeatured ? product.featured_order ?? null : null,
+        })
+        .eq('id', product.id);
+
+      if (err) throw err;
+
+      await loadProducts();
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Erro ao alterar status do produto na Home'
+      );
+    }
+  };
+
   const addCategory = async () => {
     if (!newCategory.trim()) {
       setError('Digite o nome da categoria');
@@ -2341,7 +2367,7 @@ lente para astrofotografia`}
                         }
                         className="w-4 h-4 border border-gray-300 rounded"
                       />
-                      <span className="text-sm font-medium text-gray-700">Destaque na Home</span>
+                      <span className="text-sm font-medium text-gray-700">Home Ativo</span>
                     </label>
 
                     {newProduct.is_featured && (
@@ -2504,7 +2530,7 @@ lente para astrofotografia`}
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">SEO</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">NCM</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
-                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Destaque</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Home</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ordem</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ações</th>
                     </tr>
@@ -2574,11 +2600,22 @@ lente para astrofotografia`}
                             R$ {formatPrice(product.price)}
                           </td>
                           <td className="px-4 py-3">
-                            {product.is_featured ? (
-                              <span className="text-sm text-gray-900 font-medium">Sim</span>
-                            ) : (
-                              <span className="text-gray-400">—</span>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() => toggleProductHomeStatus(product)}
+                              className={`rounded-full px-2.5 py-1 text-xs font-semibold transition ${
+                                product.is_featured
+                                  ? 'bg-gray-900 text-white hover:bg-gray-800'
+                                  : 'border border-gray-300 bg-white text-gray-500 hover:border-gray-500 hover:text-gray-900'
+                              }`}
+                              title={
+                                product.is_featured
+                                  ? 'Produto ativo na Home. Clique para desativar.'
+                                  : 'Produto inativo na Home. Clique para ativar.'
+                              }
+                            >
+                              {product.is_featured ? 'Ativo' : 'Não ativo'}
+                            </button>
                           </td>
                           <td className="px-4 py-3 text-gray-900">
                             <div className="flex items-center gap-2">
@@ -3773,7 +3810,7 @@ lente para astrofotografia`}
                         }
                         className="w-4 h-4 border border-gray-300 rounded"
                       />
-                      <span className="text-sm font-medium text-gray-700">Destaque na Home</span>
+                      <span className="text-sm font-medium text-gray-700">Home Ativo</span>
                     </label>
 
                     {editingProduct.is_featured && (
