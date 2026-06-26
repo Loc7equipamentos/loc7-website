@@ -205,6 +205,7 @@ export default function Catalogo() {
         const { data: productsData, error: prodError } = await supabase
           .from("products")
           .select("*")
+          .or("is_visible.is.null,is_visible.eq.true")
           .order("name", { ascending: true });
 
         if (prodError) throw prodError;
