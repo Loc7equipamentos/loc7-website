@@ -57,6 +57,7 @@ type ProductWithImages = Product & {
   catalog_order?: number | null;
   is_featured?: boolean | null;
   featured_order?: number | null
+  is_visible?: boolean | null;
   brand?: string | null;
   display_name?: string | null;
   operational_type?: string | null;
@@ -152,6 +153,7 @@ export default function AdminDashboard() {
     catalog_order: null as number | null,
     is_featured: false,
     featured_order: null as number | null,
+    is_visible: true,
   });
 
   const [newProductFiscalProfile, setNewProductFiscalProfile] = useState<ProductFiscalProfile>(getEmptyFiscalProfile());
@@ -1186,6 +1188,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
             badge: newProduct.badge || null,
             slug,
             catalog_order: 1,
+            is_visible: newProduct.is_visible,
             is_featured: newProduct.is_featured,
             featured_order: newProduct.is_featured ? newProduct.featured_order : null,
           },
@@ -1228,6 +1231,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
         catalog_order: null,
         is_featured: false,
         featured_order: null,
+        is_visible: true,
       });
       setNewProductFilterOptionIds([]);
       setNewProductFiscalProfile(getEmptyFiscalProfile());
@@ -1281,6 +1285,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
           badge: editingProduct.badge || null,
           slug,
           catalog_order: editingProduct.catalog_order || null,
+          is_visible: editingProduct.is_visible !== false,
           is_featured: editingProduct.is_featured,
           featured_order: editingProduct.is_featured ? editingProduct.featured_order : null,
         })
@@ -1323,6 +1328,40 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
       alert('Produto deletado com sucesso!');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao deletar produto');
+    }
+  };
+
+  const isProductCatalogVisible = (product: ProductWithImages) => {
+    return product.is_visible !== false;
+  };
+
+  const toggleProductCatalogVisibility = async (product: ProductWithImages) => {
+    const nextIsVisible = !isProductCatalogVisible(product);
+
+    try {
+      setError(null);
+
+      setProducts((prev) =>
+        prev.map((item) =>
+          item.id === product.id ? { ...item, is_visible: nextIsVisible } : item
+        )
+      );
+
+      const { error: err } = await supabase
+        .from('products')
+        .update({ is_visible: nextIsVisible })
+        .eq('id', product.id);
+
+      if (err) throw err;
+
+      await loadProducts();
+    } catch (err) {
+      await loadProducts();
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Erro ao alterar visibilidade do produto no catálogo'
+      );
     }
   };
 
@@ -2327,6 +2366,27 @@ lente para astrofotografia`}
                 </div>
 
                 <div className="md:col-span-2 border-t border-gray-200 pt-4">
+                  <div className="mb-4 flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={newProduct.is_visible}
+                        onChange={(e) =>
+                          setNewProduct((prev) => ({
+                            ...prev,
+                            is_visible: e.target.checked,
+                          }))
+                        }
+                        className="w-4 h-4 border border-gray-300 rounded"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Exibir no catálogo</span>
+                    </label>
+
+                    <p className="text-xs text-gray-500">
+                      Desmarque para ocultar do catálogo sem apagar cadastro, URL, SEO ou ficha técnica.
+                    </p>
+                  </div>
+
                   <div className="flex items-center gap-4">
                     <label className="flex items-center gap-2">
                       <input
@@ -2504,6 +2564,7 @@ lente para astrofotografia`}
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">SEO</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">NCM</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Preço</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Catálogo</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Destaque</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ordem</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ações</th>
@@ -2512,7 +2573,7 @@ lente para astrofotografia`}
                   <tbody className="divide-y divide-gray-200">
                     {filteredProducts.length === 0 ? (
                       <tr>
-                        <td colSpan={10} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={11} className="px-4 py-8 text-center text-gray-500">
                           Nenhum produto cadastrado
                         </td>
                       </tr>
@@ -2572,6 +2633,24 @@ lente para astrofotografia`}
                           </td>
                           <td className="px-4 py-3 text-gray-900">
                             R$ {formatPrice(product.price)}
+                          </td>
+                          <td className="px-4 py-3">
+                            <button
+                              type="button"
+                              onClick={() => toggleProductCatalogVisibility(product)}
+                              className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold transition ${
+                                isProductCatalogVisible(product)
+                                  ? 'border-green-200 bg-green-50 text-green-700 hover:border-green-300 hover:bg-green-100'
+                                  : 'border-gray-300 bg-gray-50 text-gray-500 hover:border-gray-400 hover:bg-gray-100'
+                              }`}
+                              title={
+                                isProductCatalogVisible(product)
+                                  ? 'Produto visível no catálogo. Clique para ocultar.'
+                                  : 'Produto oculto do catálogo. Clique para exibir.'
+                              }
+                            >
+                              {isProductCatalogVisible(product) ? 'Visível' : 'Oculto'}
+                            </button>
                           </td>
                           <td className="px-4 py-3">
                             {product.is_featured ? (
@@ -3755,6 +3834,31 @@ lente para astrofotografia`}
                 </div>
 
                 <div className="md:col-span-2 border-t border-gray-200 pt-4">
+                  <div className="mb-4 flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={editingProduct.is_visible !== false}
+                        onChange={(e) =>
+                          setEditingProduct((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  is_visible: e.target.checked,
+                                }
+                              : prev
+                          )
+                        }
+                        className="w-4 h-4 border border-gray-300 rounded"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Exibir no catálogo</span>
+                    </label>
+
+                    <p className="text-xs text-gray-500">
+                      Desmarque para ocultar do catálogo sem apagar cadastro, URL, SEO ou ficha técnica.
+                    </p>
+                  </div>
+
                   <div className="flex items-center gap-4">
                     <label className="flex items-center gap-2">
                       <input
