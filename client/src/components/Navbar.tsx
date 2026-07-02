@@ -93,7 +93,6 @@ const mobileEquipmentLinks: SubmenuChild[] = [
   { name: "Comunicadores", href: "/catalogo/comunicadores" },
   { name: "Maquinária", href: "/catalogo/maquinaria" },
   { name: "Flash", href: "/catalogo/flash" },
-  { name: "Acessórios", href: "/catalogo/acessorios" },
   { name: "Tripés de Câmera", href: "/catalogo/tripes" },
   { name: "Movimento", href: "/catalogo/movimento" },
   { name: "Follow Focus", href: "/catalogo/follow-focus" },
@@ -544,7 +543,13 @@ export default function Navbar() {
                               </span>
                             </div>
 
-                            <div className="space-y-1">
+                            <div
+                              className={`space-y-1 ${
+                                cat.name === "Mais Categorias"
+                                  ? "max-h-[390px] overflow-y-auto overscroll-contain pr-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                                  : ""
+                              }`}
+                            >
                               {cat.children?.map((child) => (
                                 <button
                                   key={child.name}
