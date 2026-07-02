@@ -41,7 +41,17 @@ type NavLink = {
   disabled?: boolean;
 };
 
-const submenuCategories: SubmenuCategory[] = [
+const slugifyCategoryPath = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+
+const mainSubmenuCategories: SubmenuCategory[] = [
   { name: "Câmeras", icon: Camera, href: "/catalogo/cameras" },
   { name: "Lentes", icon: Aperture, href: "/catalogo/lentes" },
   {
@@ -62,25 +72,9 @@ const submenuCategories: SubmenuCategory[] = [
   },
   { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
   { name: "Live & Broadcast", icon: Radio, href: "/catalogo/live-broadcast" },
-  {
-    name: "Mais Categorias",
-    icon: Menu,
-    children: [
-      { name: "Comunicadores", href: "/catalogo/comunicadores" },
-      { name: "Maquinária", href: "/catalogo/maquinaria" },
-      { name: "Flash", href: "/catalogo/flash" },
-      { name: "Tripés de Câmera", href: "/catalogo/tripes-de-camera" },
-      { name: "Movimento", href: "/catalogo/movimento" },
-      { name: "Follow Focus", href: "/catalogo/follow-focus" },
-      { name: "Mattebox", href: "/catalogo/mattebox" },
-      { name: "Filtros", href: "/catalogo/filtros" },
-      { name: "Switchers", href: "/catalogo/switchers" },
-      { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
-    ],
-  },
 ];
 
-const mobileEquipmentLinks: SubmenuChild[] = [
+const mainMobileEquipmentLinks: SubmenuChild[] = [
   { name: "Câmeras", href: "/catalogo/cameras" },
   { name: "Lentes", href: "/catalogo/lentes" },
   { name: "Iluminação", href: "/catalogo/iluminacao" },
@@ -90,17 +84,18 @@ const mobileEquipmentLinks: SubmenuChild[] = [
   { name: "Estabilizadores", href: "/catalogo/estabilizadores" },
   { name: "Áudio", href: "/catalogo/audio" },
   { name: "Live & Broadcast", href: "/catalogo/live-broadcast" },
-  { name: "Comunicadores", href: "/catalogo/comunicadores" },
-  { name: "Maquinária", href: "/catalogo/maquinaria" },
-  { name: "Flash", href: "/catalogo/flash" },
-  { name: "Tripés de Câmera", href: "/catalogo/tripes-de-camera" },
-  { name: "Movimento", href: "/catalogo/movimento" },
-  { name: "Follow Focus", href: "/catalogo/follow-focus" },
-  { name: "Mattebox", href: "/catalogo/mattebox" },
-  { name: "Filtros", href: "/catalogo/filtros" },
-  { name: "Switchers", href: "/catalogo/switchers" },
-  { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
 ];
+
+const mainCategoryNames = new Set(
+  mainSubmenuCategories.map((category) => category.name)
+);
+
+type NavigationCategoryRow = {
+  id: string;
+  name: string;
+  navbar_group?: "main" | "more" | "hidden" | null;
+  menu_order?: number | null;
+};
 
 const navLinks: NavLink[] = [
   { name: "Home", href: "/" },
@@ -118,6 +113,7 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [location] = useLocation();
+  const [moreCategoryLinks, setMoreCategoryLinks] = useState<SubmenuChild[]>([]);
 
   const searchRef = useRef<HTMLDivElement | null>(null);
   const allCategoriesScrollRef = useRef<HTMLDivElement | null>(null);
@@ -212,6 +208,59 @@ export default function Navbar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    const loadMoreCategories = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("categories")
+          .select("id, name, navbar_group, menu_order")
+          .order("menu_order", { ascending: true, nullsFirst: false })
+          .order("name", { ascending: true });
+
+        if (error) throw error;
+
+        const dynamicLinks = ((data as NavigationCategoryRow[]) || [])
+          .filter((category) => {
+            if (!category.name) return false;
+            if (mainCategoryNames.has(category.name)) return false;
+            return (category.navbar_group || "more") === "more";
+          })
+          .sort((a, b) => {
+            const orderA = a.menu_order ?? Number.POSITIVE_INFINITY;
+            const orderB = b.menu_order ?? Number.POSITIVE_INFINITY;
+
+            if (orderA !== orderB) return orderA - orderB;
+
+            return a.name.localeCompare(b.name, "pt-BR");
+          })
+          .map((category) => ({
+            name: category.name,
+            href: `/catalogo/${slugifyCategoryPath(category.name)}`,
+          }));
+
+        setMoreCategoryLinks(dynamicLinks);
+      } catch (err) {
+        console.error("Erro ao carregar Mais Categorias:", err);
+      }
+    };
+
+    loadMoreCategories();
+  }, []);
+
+  const submenuCategories: SubmenuCategory[] = [
+    ...mainSubmenuCategories,
+    {
+      name: "Mais Categorias",
+      icon: Menu,
+      children: moreCategoryLinks,
+    },
+  ];
+
+  const mobileEquipmentLinks: SubmenuChild[] = [
+    ...mainMobileEquipmentLinks,
+    ...moreCategoryLinks,
+  ];
 
   const handleAllCategoriesScroll = () => {
     const container = allCategoriesScrollRef.current;
