@@ -93,26 +93,6 @@ export default function Catalogo() {
   >({});
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  const slugToCategoryName: Record<string, string> = {
-    cameras: "Câmeras",
-    lentes: "Lentes",
-    iluminacao: "Iluminação",
-    audio: "Áudio",
-    monitores: "Monitores",
-    movimento: "Movimento",
-    transmissores: "Transmissores",
-    maquinaria: "Maquinária",
-
-    filtros: "Filtros",
-    mattebox: "Mattebox",
-    switchers: "Switchers",
-    teleprompter: "Teleprompter",
-    "follow-focus": "Follow Focus",
-    tripes: "Tripés de Câmera",
-    "suporte-de-camera": "Suporte de Câmera",
-    modificadores: "Modificadores",
-  };
-
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const search = params.get("search") || "";
@@ -121,8 +101,12 @@ export default function Catalogo() {
 
   useEffect(() => {
     if (activeCategorySlug) {
+      const categoryRow = categoryRows.find(
+        (cat) => slugifyPathSegment(cat.name) === activeCategorySlug
+      );
+
       const categoryName =
-        slugToCategoryName[activeCategorySlug] ||
+        categoryRow?.name ||
         activeCategorySlug
           .split("-")
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -138,7 +122,7 @@ export default function Catalogo() {
       setSelectedBrand("Todas");
       setSelectedFilterOptionIds({});
     }
-  }, [activeCategorySlug]);
+  }, [activeCategorySlug, categoryRows]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -241,14 +225,9 @@ export default function Catalogo() {
   const categoryExists =
     !activeCategorySlug ||
     loading ||
-    categoryRows.some((cat) => {
-      const mappedCategoryName = slugToCategoryName[activeCategorySlug || ""];
-
-      return (
-        slugifyPathSegment(cat.name) === activeCategorySlug ||
-        normalize(cat.name) === normalize(mappedCategoryName || "")
-      );
-    });
+    categoryRows.some(
+      (cat) => slugifyPathSegment(cat.name) === activeCategorySlug
+    );
 
   const searchScopedProducts = products.filter((p) => {
     if (!searchQuery.trim()) return true;
