@@ -9,9 +9,7 @@ import { Link, useLocation } from "wouter";
 import {
   Aperture,
   Camera,
-  Cog,
   Fan,
-  Flag,
   Menu,
   Mic,
   Monitor,
@@ -62,12 +60,12 @@ const submenuCategories: SubmenuCategory[] = [
     href: "/catalogo/estabilizadores",
   },
   { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
-  { name: "Comunicadores", icon: Radio, href: "/catalogo/comunicadores" },
-  { name: "Maquinária", icon: Flag, href: "/catalogo/maquinaria" },
   {
-    name: "Acessórios",
-    icon: Cog,
+    name: "Mais Categorias",
+    icon: Menu,
     children: [
+      { name: "Comunicadores", href: "/catalogo/comunicadores" },
+      { name: "Maquinária", href: "/catalogo/maquinaria" },
       { name: "Flash", href: "/catalogo/flash" },
       { name: "Tripés de Câmera", href: "/catalogo/tripes" },
       { name: "Movimento", href: "/catalogo/movimento" },
@@ -530,7 +528,7 @@ export default function Navbar() {
                       <div
                        className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 pointer-events-none translate-y-2 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0"
                       >
-                        {cat.name === "Acessórios" || cat.name === "Iluminação" ? (
+                        {cat.name === "Mais Categorias" || cat.name === "Iluminação" ? (
                           <div className="w-[240px] bg-[#050505] px-3 py-4 shadow-[0_18px_45px_rgba(0,0,0,0.42)] backdrop-blur-md">
                             <div className="mb-3 px-3">
                               <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/55">
