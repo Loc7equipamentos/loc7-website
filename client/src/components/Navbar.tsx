@@ -72,7 +72,7 @@ const mainSubmenuCategories: SubmenuCategory[] = [
     href: "/catalogo/estabilizadores",
   },
   { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
-  { name: "Live & Broadcast", icon: Tower, href: "/catalogo/live-broadcast" },
+  { name: "Live & Broadcast", icon: Radio, href: "/catalogo/live-broadcast" },
 ];
 
 const mainMobileEquipmentLinks: SubmenuChild[] = [
