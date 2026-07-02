@@ -9,6 +9,7 @@ import { Link, useLocation } from "wouter";
 import {
   Aperture,
   Camera,
+  ChevronDown,
   Fan,
   Menu,
   Mic,
@@ -68,13 +69,12 @@ const submenuCategories: SubmenuCategory[] = [
       { name: "Comunicadores", href: "/catalogo/comunicadores" },
       { name: "Maquinária", href: "/catalogo/maquinaria" },
       { name: "Flash", href: "/catalogo/flash" },
-      { name: "Tripés de Câmera", href: "/catalogo/tripes" },
+      { name: "Tripés de Câmera", href: "/catalogo/tripes-de-camera" },
       { name: "Movimento", href: "/catalogo/movimento" },
       { name: "Follow Focus", href: "/catalogo/follow-focus" },
       { name: "Mattebox", href: "/catalogo/mattebox" },
       { name: "Filtros", href: "/catalogo/filtros" },
       { name: "Switchers", href: "/catalogo/switchers" },
-      { name: "Teleprompter", href: "/catalogo/teleprompter" },
       { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
     ],
   },
@@ -93,13 +93,12 @@ const mobileEquipmentLinks: SubmenuChild[] = [
   { name: "Comunicadores", href: "/catalogo/comunicadores" },
   { name: "Maquinária", href: "/catalogo/maquinaria" },
   { name: "Flash", href: "/catalogo/flash" },
-  { name: "Tripés de Câmera", href: "/catalogo/tripes" },
+  { name: "Tripés de Câmera", href: "/catalogo/tripes-de-camera" },
   { name: "Movimento", href: "/catalogo/movimento" },
   { name: "Follow Focus", href: "/catalogo/follow-focus" },
   { name: "Mattebox", href: "/catalogo/mattebox" },
   { name: "Filtros", href: "/catalogo/filtros" },
   { name: "Switchers", href: "/catalogo/switchers" },
-  { name: "Teleprompter", href: "/catalogo/teleprompter" },
   { name: "Suporte de Câmera", href: "/catalogo/suporte-de-camera" },
 ];
 
@@ -272,8 +271,8 @@ export default function Navbar() {
       transmissor: "/catalogo/transmissores",
       transmissores: "/catalogo/transmissores",
       maquinaria: "/catalogo/maquinaria",
-      tripe: "/catalogo/maquinaria",
-      tripes: "/catalogo/maquinaria",
+      tripe: "/catalogo/tripes-de-camera",
+      tripes: "/catalogo/tripes-de-camera",
     };
 
     const matchedCategory = Object.entries(categoryMap).find(([key]) =>
@@ -536,7 +535,7 @@ export default function Navbar() {
                        className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 pointer-events-none translate-y-2 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0"
                       >
                         {cat.name === "Mais Categorias" || cat.name === "Iluminação" ? (
-                          <div className="w-[240px] bg-[#050505] px-3 py-4 shadow-[0_18px_45px_rgba(0,0,0,0.42)] backdrop-blur-md">
+                          <div className="relative w-[240px] bg-[#050505] px-3 py-4 shadow-[0_18px_45px_rgba(0,0,0,0.42)] backdrop-blur-md">
                             <div className="mb-3 px-3">
                               <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/55">
                                 {cat.name}
@@ -563,6 +562,12 @@ export default function Navbar() {
                                 </button>
                               ))}
                             </div>
+
+                            {cat.name === "Mais Categorias" && (
+                              <div className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 text-white/30 transition-colors duration-200 group-hover:text-white/45">
+                                <ChevronDown size={15} strokeWidth={2} />
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div
