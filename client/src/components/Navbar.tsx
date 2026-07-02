@@ -60,6 +60,7 @@ const submenuCategories: SubmenuCategory[] = [
     href: "/catalogo/estabilizadores",
   },
   { name: "Áudio", icon: Mic, href: "/catalogo/audio" },
+  { name: "Live & Broadcast", icon: Radio, href: "/catalogo/live-broadcast" },
   {
     name: "Mais Categorias",
     icon: Menu,
@@ -88,6 +89,7 @@ const mobileEquipmentLinks: SubmenuChild[] = [
   { name: "Drones", href: "/catalogo/drones" },
   { name: "Estabilizadores", href: "/catalogo/estabilizadores" },
   { name: "Áudio", href: "/catalogo/audio" },
+  { name: "Live & Broadcast", href: "/catalogo/live-broadcast" },
   { name: "Comunicadores", href: "/catalogo/comunicadores" },
   { name: "Maquinária", href: "/catalogo/maquinaria" },
   { name: "Flash", href: "/catalogo/flash" },
@@ -494,13 +496,19 @@ export default function Navbar() {
                 const Icon = cat.icon;
                 const hasChildren = !!cat.children?.length;
                 const dropdownIsLarge = (cat.children?.length || 0) > 4;
+                const categoryButtonWidth =
+                  cat.name === "Live & Broadcast"
+                    ? "w-[132px]"
+                    : cat.name === "Mais Categorias"
+                      ? "w-[96px]"
+                      : "w-[80px]";
 
                 return (
                   <div key={cat.name} className="relative group">
                     {hasChildren ? (
                       <button
                         type="button"
-                        className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/86 transition-transform duration-200 group-hover:scale-[1.035] group-hover:text-white"
+                        className={`flex ${categoryButtonWidth} shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/86 transition-transform duration-200 group-hover:scale-[1.035] group-hover:text-white`}
                       >
                         <Icon className="h-[19px] w-[19px] shrink-0 text-white/82 transition-colors duration-200 group-hover:text-white" />
 
@@ -514,7 +522,7 @@ export default function Navbar() {
                         onClick={() => {
                           window.location.href = cat.href || "/catalogo";
                         }}
-                        className="flex w-[88px] shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/86 transition-transform duration-200 hover:scale-[1.035] hover:text-white"
+                        className={`flex ${categoryButtonWidth} shrink-0 flex-col items-center justify-start gap-2 rounded-md py-1 text-center text-white/86 transition-transform duration-200 hover:scale-[1.035] hover:text-white`}
                       >
                         <Icon className="h-[19px] w-[19px] shrink-0 text-white/82 transition-colors duration-200 group-hover:text-white" />
 
