@@ -78,6 +78,8 @@ type CategoryWithSeo = Category & {
   seo_applications?: string | null;
   seo_brands?: string | null;
   seo_meta_description?: string | null;
+  navbar_group?: 'main' | 'more' | 'hidden' | null;
+  menu_order?: number | null;
 };
 
 type OperationalType = {
@@ -978,7 +980,11 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
 
   const loadCategories = async () => {
     try {
-      const { data, error: err } = await supabase.from('categories').select('*').order('name');
+      const { data, error: err } = await supabase
+        .from('categories')
+        .select('*')
+        .order('menu_order', { ascending: true, nullsFirst: false })
+        .order('name');
 
       if (err) throw err;
       setCategories((data as CategoryWithSeo[]) || []);
@@ -1372,7 +1378,7 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
     }
 
     try {
-      const { error: err } = await supabase.from('categories').insert([{ name: newCategory.trim() }]);
+      const { error: err } = await supabase.from('categories').insert([{ name: newCategory.trim(), navbar_group: 'more' }]);
 
       if (err) throw err;
       setNewCategory('');
@@ -1406,6 +1412,8 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   seo_applications: category.seo_applications || '',
   seo_brands: category.seo_brands || '',
   seo_meta_description: category.seo_meta_description || '',
+  navbar_group: category.navbar_group || 'more',
+  menu_order: category.menu_order ?? null,
 });
     setShowCategorySeoModal(true);
   };
@@ -1424,6 +1432,11 @@ const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   seo_applications: editingCategory.seo_applications?.trim() || null,
   seo_brands: editingCategory.seo_brands?.trim() || null,
   seo_meta_description: editingCategory.seo_meta_description?.trim() || null,
+  navbar_group: editingCategory.navbar_group || 'more',
+  menu_order:
+    typeof editingCategory.menu_order === 'number'
+      ? editingCategory.menu_order
+      : null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', editingCategory.id);
@@ -2764,6 +2777,7 @@ lente para astrofotografia`}
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Categoria</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-900">Menu</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">SEO Editorial</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-900">Ações</th>
                     </tr>
@@ -2771,7 +2785,7 @@ lente para astrofotografia`}
                   <tbody className="divide-y divide-gray-200">
                     {categories.length === 0 ? (
                       <tr>
-                        <td colSpan={3} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={4} className="px-4 py-8 text-center text-gray-500">
                           Nenhuma categoria cadastrada
                         </td>
                       </tr>
@@ -2787,6 +2801,22 @@ lente para astrofotografia`}
                         return (
                           <tr key={cat.id} className="hover:bg-gray-50">
                             <td className="px-4 py-3 text-gray-900 font-medium">{cat.name}</td>
+                            <td className="px-4 py-3">
+                              <div className="flex flex-col gap-1">
+                                <span className="inline-flex w-fit rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-700">
+                                  {cat.navbar_group === 'main'
+                                    ? 'Navbar'
+                                    : cat.navbar_group === 'hidden'
+                                      ? 'Oculta'
+                                      : 'Mais Categorias'}
+                                </span>
+                                {typeof cat.menu_order === 'number' && (
+                                  <span className="text-xs text-gray-500">
+                                    Ordem {cat.menu_order}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
                             <td className="px-4 py-3">
                               {hasCategorySeo ? (
                                 <span className="inline-flex rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">
@@ -2852,6 +2882,64 @@ lente para astrofotografia`}
                   <p className="mt-1 text-xs text-gray-500">
                     Estes campos alimentam a página da categoria, meta description, Open Graph e JSON-LD. Use texto editorial, discreto e sem excesso promocional.
                   </p>
+                </div>
+
+                <div className="rounded border border-gray-200 bg-white p-4">
+                  <h3 className="text-sm font-semibold text-gray-900">Navegação</h3>
+                  <p className="mt-1 text-xs leading-5 text-gray-500">
+                    Controla apenas onde a categoria aparece no menu. Não altera URL, SEO, slug ou página pública.
+                  </p>
+
+                  <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Grupo da Navbar
+                      </label>
+                      <select
+                        value={editingCategory.navbar_group || 'more'}
+                        onChange={(e) =>
+                          setEditingCategory((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  navbar_group: e.target.value as CategoryWithSeo['navbar_group'],
+                                }
+                              : prev
+                          )
+                        }
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
+                      >
+                        <option value="main">Navbar principal</option>
+                        <option value="more">Mais Categorias</option>
+                        <option value="hidden">Oculta nos menus</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Ordem no menu
+                      </label>
+                      <input
+                        type="number"
+                        value={editingCategory.menu_order ?? ''}
+                        onChange={(e) =>
+                          setEditingCategory((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  menu_order: e.target.value ? Number(e.target.value) : null,
+                                }
+                              : prev
+                          )
+                        }
+                        placeholder="Ex: 10"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
+                      />
+                      <p className="mt-1 text-xs text-gray-500">
+                        Menor número aparece primeiro. Em branco vai para o final em ordem alfabética.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
