@@ -238,7 +238,7 @@ export default function App() {
     <>
       {hasPublicNavbar && <Navbar />}
 
-      <div className={hasPublicNavbar ? "lg:pt-[190px]" : ""}>
+      <main className={hasPublicNavbar ? "lg:pt-[190px]" : ""}>
         <Switch>
           {/* SITE */}
           <Route path="/" component={Home} />
@@ -287,7 +287,7 @@ export default function App() {
           {/* GLOBAL 404 */}
           <Route component={NotFound} />
         </Switch>
-      </div>
+     </main>
 
       {hasPublicNavbar && <Footer />}
       {hasPublicNavbar && <WhatsAppFloat />}
