@@ -478,7 +478,10 @@ export default function Navbar() {
               </div>
 
               <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 md:flex">
-                <Link href="/admin-panel">
+                <Link
+  href="/admin-panel"
+  aria-label="Área administrativa"
+>
                   <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-white/10 transition hover:border-white/25 hover:bg-white/5">
                     <User className="h-4 w-4 text-white/45 hover:text-white/70" />
                   </div>
