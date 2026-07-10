@@ -868,14 +868,15 @@ export default function Home() {
 
     {/* Mapa */}
     <div className="overflow-hidden rounded-xl border border-white/15 bg-black shadow-[0_18px_45px_rgba(0,0,0,0.45)]">
-      <iframe
-        src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20São%20Paulo%20-%20SP&output=embed"
-        width="100%"
-        height="380"
-        style={{ border: 0 }}
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-      />
+     <iframe
+  title="Mapa da Loc7 Equipamentos - Vila Leopoldina, São Paulo"
+  src="https://www.google.com/maps?q=Av.%20Imperatriz%20Leopoldina,%20957,%20Vila%20Leopoldina,%20São%20Paulo%20-%20SP&output=embed"
+  width="100%"
+  height="380"
+  style={{ border: 0 }}
+  loading="lazy"
+  referrerPolicy="no-referrer-when-downgrade"
+/>
     </div>
   </div>
 </section>
