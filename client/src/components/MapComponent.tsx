@@ -9,6 +9,7 @@ export default function MapComponent() {
     <div className="w-full rounded-lg border border-[oklch(0.15_0_0)] overflow-hidden relative">
       {/* Map iframe - centered on Loc 7 address with higher zoom */}
       <iframe
+        title="Mapa da Loc7 Equipamentos"
         width="100%"
         height="400"
         style={{ 
