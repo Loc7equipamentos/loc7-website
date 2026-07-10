@@ -393,10 +393,11 @@ export default function Navbar() {
       <div className="container md:min-h-[195px]">
         <div className="flex items-stretch justify-between overflow-visible">
           <Link
-            href="/"
-            onClick={handleHomeNavigation}
-            className="relative flex h-[92px] w-[150px] shrink-0 items-center overflow-visible md:h-[72px] md:w-[180px]"
-          >
+  href="/"
+  onClick={handleHomeNavigation}
+  aria-label="Página inicial da Loc7 Equipamentos"
+  className="relative flex h-[92px] w-[150px] shrink-0 items-center overflow-visible md:h-[72px] md:w-[180px]"
+>
             <img
               src="/loc7-logo-header.png"
               alt="Loc 7 Equipamentos"
