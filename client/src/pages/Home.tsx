@@ -530,9 +530,9 @@ export default function Home() {
           {/* Título */}
           <div className="relative z-30 mb-6 md:mb-8 md:-translate-y-[52px]">
             <div className="flex items-center gap-3">
-              <span className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
+              <h2 className="text-[13px] uppercase tracking-[0.2em] text-white/80 font-medium">
                 EQUIPAMENTOS EM DESTAQUE
-              </span>
+              </h2>
 
               <div className="h-[1px] flex-1 bg-white/15" />
             </div>
