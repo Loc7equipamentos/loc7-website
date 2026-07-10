@@ -16,6 +16,7 @@ import {
   Monitor,
   Move,
   Radio,
+  SatelliteDish,
   Search,
   User,
   X,
