@@ -112,3 +112,9 @@ temp/
 
 # Manus version file (auto-generated, not part of source)
 client/public/__manus__/version.json
+
+# Auditoria do Supabase
+audit/
+
+# Arquivos temporários da CLI
+supabase/.temp/
