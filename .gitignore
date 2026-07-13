@@ -118,3 +118,6 @@ audit/
 
 # Arquivos temporários da CLI
 supabase/.temp/
+
+# Vídeos de trabalho (não utilizados pelo site)
+client/public/Video expedição Loc7.m4v
