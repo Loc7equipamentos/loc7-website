@@ -53,7 +53,7 @@ type ProductFilterOption = {
   filter_option_id: string;
 };
 
-const OFFICIAL_DOMAIN = "https://www.loc7equipamentos.com.br";
+const OFFICIAL_DOMAIN = "https://loc7equipamentos.com.br";
 
 type CategoryWithSeo = Category & {
   seo_title?: string | null;
