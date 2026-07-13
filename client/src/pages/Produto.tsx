@@ -3,7 +3,7 @@ import { Link, useParams } from "wouter";
 import { supabase, type Product } from "@/lib/supabase";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
-const OFFICIAL_DOMAIN = "https://www.loc7equipamentos.com.br";
+const OFFICIAL_DOMAIN = "https://loc7equipamentos.com.br";
 
 type ProductImage = string;
 
