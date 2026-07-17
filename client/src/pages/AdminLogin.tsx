@@ -29,15 +29,18 @@ export default function AdminLogin() {
     sessionStorage.removeItem(ADMIN_SESSION_KEY);
 
     const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  email,
+  password,
+});
 
-    if (error || !data.session) {
-      setError("E-mail ou senha inválidos.");
-      setLoading(false);
-      return;
-    }
+console.log("SUPABASE LOGIN:", error, data);
+
+if (error || !data.session) {
+  alert(error?.message || "Erro desconhecido");
+  setError(error?.message || "E-mail ou senha inválidos.");
+  setLoading(false);
+  return;
+}
 
     sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
     window.location.href = redirectPath;
