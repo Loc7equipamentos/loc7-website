@@ -1,8 +1,1838 @@
 {
   "redirects": [
     {
-      "source": "/equipamentos/cameras",
+      "source": "/equipamentos//adaptador-de-lente-fujinon-acm-21-1/2-para-2/3",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-/-distribuidores/conversor-blackmagic-sdi-para-fibra-otica",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//adaptador-de-lente-metabones-ef-e-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//adaptador-de-lente-metabones-ef-e-mount-speed-booster",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//adaptador-de-lente-metabones-ef-e-mount-t-smart-mk-iv",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//adaptador-de-lente-wooden-e-mount-pl-mount-",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//fonte-e-carregador-sony-ac-dn10-v-mount",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//gerador-ryobi-ryi-2200",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//leitor-de-cartoes-cfast-20-thunderbolt-2-e-usb3-",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//leitor-de-cartoes-sdxc-dual-slot-lexar-usb3",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//leitor-de-cartoes-sxs-sony-sbac-us10",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//leitor-de-cartoes-universal-sandisk-",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//leitor-de-cartoes-xqd-lexar-",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//leitor-de-midias-ssd-dock-newer-tech-voyager-q",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//leitor-de-midias-ssd-rocketstor-rs5212-thunderbolt",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//leitor-xqd-sony-qda-sb1",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//midia-ssd-sandisk-extreme-ii-240gb",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//moldura-go-pro-",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos//placa-de-bateria-v-mount-zacuto-zwissplate",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/aputure-light-dome-ii",
+      "destination": "/equipamentos/modificadores/aputure-light-dome-ii",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/cine-saddle-filma!-",
+      "destination": "/catalogo",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/dji-ronin-rs3-pro-combo",
+      "destination": "/equipamentos/estabilizadores/dji-ronin-rs3-pro-combo",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/grua-cammate-t25-(7,62mts)",
+      "destination": "/equipamentos/movimento/cammate-t25-7-62m",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/hd-externo-lacie-6-tb-thunderbolt-2",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/hd-externo-lacie-rugged-2tb-thunderbolt",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/imac-27-retina-4a-geracao",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/intercom-eartec-ul5s-5-pontos",
+      "destination": "/catalogo/comunicadores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/lente-fujinon-mk-18-55mm-t29",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/microfone-de-lapela-lectrosonics-kit-smqv-e-ucr-411-",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/0/monitor-de-audio-genelec-8020c",
+      "destination": "/equipamentos/audio/genelec-8020c",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/adaptadores-de-lentes/",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/fone-beyerdynamic-dt-250",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/fone-sennheiser-hd-202",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/fone-sennheiser-hd-205",
+      "destination": "/equipamentos/audio/sennheiser-hd-206",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/fone-sennheiser-hd-280-pro",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/fone-sony-mdr-7506",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/gravador-de-audio-multipista-8-canais-sound-devices-788t",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/gravador-de-audio-multipista-tascam-dr-680",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/gravador-de-audio-zoom-h4n",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/gravador-de-audio-zoom-h6",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/kit-microfones-sennheiser-avx-mao-e-lapela-",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/mesa-de-audio-yamaha-mw12cx",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-lapela-hollyland-lark-150-duo",
+      "destination": "/equipamentos/audio/hollyland-lark-150",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-lapela-lectrosonics-kit-smqv-e-ucr-411-",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-lapela-sennheiser-avx-me-2",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-lapela-sennheiser-ew112-p-g2",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-lapela-sennheiser-ew112-p-g3",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-lapela-sony-ecm-77b",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-lapela-sony-ecm-88b",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-mao-sennheiser-ew135-p-g2",
+      "destination": "/equipamentos/audio/sennheiser-ew135-p-g3",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-mao-sennheiser-ew135-p-g3",
+      "destination": "/equipamentos/audio/sennheiser-ew135-p-g3",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-mao-sennheiser-md-431-ii",
+      "destination": "/equipamentos/audio/sennheiser-xs1",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-de-mao-shure-sm-58",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-direcional-rode-videomic-pro-dslr",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-direcional-sennheiser-me-66",
+      "destination": "/equipamentos/audio/sennheiser-me-66",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-direcional-sennheiser-me-67",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-direcional-sennheiser-mke-400-dslr",
+      "destination": "/equipamentos/audio/sennheiser-mke-400",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/microfone-direcional-sennheiser-mkh-60",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/mixer-de-audio-shure-fp-33",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/modulo-02-canais-xlr-zoom-exh6",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/monitor-de-audio-genelec-8020c",
+      "destination": "/equipamentos/audio/genelec-8020c",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/pa-de-audio-portatil-fender-passaporte-300",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/audio/transmissor-plug-on-sennheiser-skp-100-g3",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-/camera-blackmagic-broadcast-g2",
       "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-/camera-blackmagic-pocket-6k-pro",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-/camera-red-komodo-6k",
+      "destination": "/equipamentos/cameras/red-komodo",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-broadcast-/",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-cinema-digital/",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-ptz-/",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-ptz/camera-ptz-panasonic-aw-he130-full-hd",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-ptz/camera-ptz-panasonic-aw-ue150w-4k",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-ptz/kit-ptz-3-cameras",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-roboticas-ptz-/",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-arri-alexa-mini",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-blackmagic-broadcast-g2",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-blackmagic-cinema-4k-pl",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-blackmagic-pocket-6k-pro",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-canon-eos-5d-mk-iv",
+      "destination": "/equipamentos/cameras/canon-r6-mkii",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-canon-eos-c300-mkii",
+      "destination": "/equipamentos/cameras/canon-c300-mkii",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-gopro-hero-10-black",
+      "destination": "/equipamentos/cameras/gopro-hero-10-black",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-gopro-max-360",
+      "destination": "/equipamentos/cameras/gopro-max-360",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-red-komodo-6k",
+      "destination": "/equipamentos/cameras/red-komodo",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-red-v-raptor-8k-vv",
+      "destination": "/equipamentos/cameras/red-v-raptor-8k-vv",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-a7sii",
+      "destination": "/equipamentos/cameras/sony-a7s-ii",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-a7siii",
+      "destination": "/equipamentos/cameras/sony-fx3",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-burano-8k",
+      "destination": "/equipamentos/cameras/sony-burano",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-fx3",
+      "destination": "/equipamentos/cameras/sony-fx3",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-fx6",
+      "destination": "/equipamentos/cameras/sony-fx6",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-hxr-nx5",
+      "destination": "/equipamentos/cameras/sony-pxw-z150",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-pdw-700",
+      "destination": "/equipamentos/cameras/sony-pdw-700",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-pxw-fs7-mark-i-e-mark-ii-",
+      "destination": "/equipamentos/cameras/sony-fs7",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-pxw-fx9",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-pxw-z150",
+      "destination": "/equipamentos/cameras/sony-pxw-z150",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras/camera-sony-pxw-z280",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/ca¢meras-/camera-blackmagic-broadcast-g2",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/ca¢meras-/camera-blackmagic-pocket-6k-pro",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/computadores-e-tablets/macbook-pro-retina-133",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/computadores-e-tablets/tablet-grafico-wacom-intuos",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/comunicadores/intercom-eartec-ul5s-5-pontos",
+      "destination": "/catalogo/comunicadores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/comunicadores/intercom-hollyland-solidcom-c1-s6-6-pontos",
+      "destination": "/equipamentos/comunicadores/hollyland-solidcom-c1-6s",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-aja-hi5-sdi-para-hdmi",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-a-baterias-hdmi-para-sdi",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-a-baterias-sdi-para-hdmi",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-audio-para-sdi",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-fibra-para-sdi-atem-camera",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-fibra-para-sdi-studio-atem-",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-heavy-duty-hdmi-para-sdi",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-heavy-duty-sdi-para-hdmi-",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-sdi-multiplexador",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-sdi-para-audio",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-sdi-para-fibra-otica",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/conversor-blackmagic-up-down-cross",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores/distribuidor-de-video-composto-vitek-vta-d108-8-saidas",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/equipamentos-de-edicao-/imac-27-retina-4a-geracao",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/estabilizadores/cage-ikan-",
+      "destination": "/catalogo/estabilizadores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/estabilizadores/cine-saddle-filma-",
+      "destination": "/catalogo/estabilizadores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/estabilizadores/dji-ronin",
+      "destination": "/catalogo/estabilizadores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/estabilizadores/easyrig-vario-5-serene",
+      "destination": "/catalogo/estabilizadores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros-circulares/",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/anel-redutor-rosqueavel-cavision-82mm-67mm",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/anel-redutor-rosqueavel-cavision-82mm-72mm",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/anel-redutor-rosqueavel-cavision-82mm-77mm",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-0.3-72mm-",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-3-72mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-0.3-77mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-3-77mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-0.3-82mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-3-82mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-0.6-72mm-",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-6-72mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-0.6-77mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-6-77mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-0.6-82mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-6-82mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-0.9-72mm-",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-9-72mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-0.9-77mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-9-77mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-0.9-82mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-9-82mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-03-67mm-",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-3-67mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-06-67mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-6-67mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-09-67mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-0-9-67mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-1.2-72mm-",
+      "destination": "/equipamentos/filtros/tiffen-nd-1-2-72mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-1.2-77mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-1-2-77mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-1.2-82mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-1-2-82mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-nd-12-67mm",
+      "destination": "/equipamentos/filtros/tiffen-nd-1-2-67mm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-polarizador-67mm",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-polarizador-72mm",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-polarizador-77mm",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/filtros/filtro-tiffen-polarizador-82mm",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/flash/godox-ad-400-proii",
+      "destination": "/catalogo/flash",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/follow-focus/",
+      "destination": "/catalogo/follow-focus",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/follow-focus/comando-de-foco-eletronico-bartech-digital",
+      "destination": "/catalogo/follow-focus",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/follow-focus/comando-de-foco-eletronico-tilta-nucleus-m",
+      "destination": "/catalogo/follow-focus",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/follow-focus/follow-focus-arri-ff5-cine-set-pro",
+      "destination": "/catalogo/follow-focus",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/follow-focus/follow-focus-cavision-15mm-rfd15bc",
+      "destination": "/catalogo/follow-focus",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/follow-focus/follow-focus-redrock-",
+      "destination": "/catalogo/follow-focus",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/follow-focus/follow-focus-redrock--",
+      "destination": "/catalogo/follow-focus",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/follow-focus/follow-focus-zacuto-z-ff1",
+      "destination": "/equipamentos/follow-focus/tilta-follow-focus-tilta-ff-t04",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/gravadores/drive-xdcam-sony-pdw-u1-",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/gravadores/gravador-aja-ki-pro",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/gravadores/gravador-atomos-shogun-7-hdr",
+      "destination": "/equipamentos/monitores/atomos-shogun-7-hdr",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/gravadores/gravador-blackmagic-hyper-deck-studio-pro-4k-",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/gravadores/gravador-de-blue-ray-pioneerbdr-xu03",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/gravadores/gravador-pix-240-sound-devices",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/gravadores/vtr-sony-hvr-m25an",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/hds-e-cartoes-de-memoria/hd-externo-g-raid-500gb",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/hds-e-cartoes-de-memoria/hd-externo-lacie-6-tb-thunderbolt-2",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/hds-e-cartoes-de-memoria/hd-externo-lacie-rugged-1tb-thunderbolt",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/hds-e-cartoes-de-memoria/hd-externo-lacie-rugged-2tb-thunderbolt",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/hds-e-cartoes-de-memoria/imac-27-retina-4a-geracao",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/hds-e-cartoes-de-memoria/placa-de-captura-blackmagic-ultastudio-4k",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/hds-e-cartoes-de-memoria/storage-pegasus2-r4-promise-technology",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/iluminacao/",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/intercom/",
+      "destination": "/catalogo/comunicadores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/kits-/",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/kits-live/",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-broadcast/comando-de-zoom-varizoom-vz-rock-ex",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-broadcast/lente-canon-kj17ex77b-irse",
+      "destination": "/equipamentos/lentes/canon-kj17ex7-7b-irse",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-broadcast/lente-canon-yj20x85birs",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-broadcast/lente-fujinon-xs8x4as-xb8",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-broadcast/lente-sony-vcl308bwh",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-canon-l/",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-fujinon-mk-18-55mm-t29",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-fujinon-mk-50-135mm-t29",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-14mm-f18-gm",
+      "destination": "/equipamentos/lentes/sony-fe-14mm-f1-8-gm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-16-35mm-f28-gm",
+      "destination": "/equipamentos/lentes/sony-fe-16-35mm-f2-8-gm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-200-600mm-f56-63-oss",
+      "destination": "/equipamentos/lentes/sony-fe-200-600mm-f-5-6-6-3-g-oss",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-24-70mm-f28-gm",
+      "destination": "/equipamentos/lentes/sony-fe-24-70mm-f-2-8-gm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-24mm-f14-gm",
+      "destination": "/equipamentos/lentes/sony-fe-24mm-f-1-4-gm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-35mm-f14-gm",
+      "destination": "/equipamentos/lentes/sony-fe-35mm-f-1-4-gm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-50mm-f18",
+      "destination": "/equipamentos/lentes/sony-fe-50mm-f-1-8",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-70-200mm-f28-gm-oss",
+      "destination": "/equipamentos/lentes/sony-fe-70-200mm-f2-8-gm-oss-ii",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-70-200mm-f28-gm-oss-ii",
+      "destination": "/equipamentos/lentes/sony-fe-70-200mm-f2-8-gm-oss-ii",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-90mm-f28-macro-g-oss",
+      "destination": "/equipamentos/lentes/sony-fe-90mm-f2-8-macro-g-oss",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-fe-pz-28-135mm-f4-g-oss-full-frame-power-zoom",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-e-mount/lente-sony-planar-t-fe-50mm-f14-za",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/duplicador-canon-extender-ef-2x-iii",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-ef-14mm-f28l",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-ef-16-35mm-f28l",
+      "destination": "/equipamentos/lentes/canon-ef-16-35mm-f2-8l-ii-usm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-ef-24-105mm-f4l",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-ef-24-70mm-f28l",
+      "destination": "/equipamentos/lentes/canon-ef-24-70mm-f2-8-l",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-ef-24mm-f14l",
+      "destination": "/equipamentos/lentes/lente-canon-ef-24mm-f-1-4l-ii-usm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-ef-24mm-tilt-shift-f35l",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-ef-35mm-f14l",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-ef-50mm-f12l",
+      "destination": "/equipamentos/lentes/canon-ef-50mm-f1-2l-usm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-ef-8-15mm-f4l",
+      "destination": "/equipamentos/lentes/canon-ef-8-15mm-f4-l",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-ef-85mm-f12l",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-macro-is-ef-100mm-f28l",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-telefoto-ef-135mm-f20l",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount/lente-canon-telefoto-is-ef-70-200mm-f28l",
+      "destination": "/equipamentos/lentes/canon-ef-70-200mm-f2-8l-is-ii-usm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-pl-mount/lente-canon-cine-servo-15-120mm-t29-39",
+      "destination": "/equipamentos/lentes/canon-cine-servo-15-120mm-t2-95-3-9-zoom",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-pl-mount/lente-canon-cine-servo-25-250mm-t295-pl-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-pl-mount/lentes-arri-zeiss-ultra-prime-t19",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-pl-mount/lentes-cooke-panchro-i-classic",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-pl-mount/set-lentes-cooke-s4",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-pl-mount/set-lentes-dzo-arles-ff-vv-prime-cine-pl-e-ef-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-pl/",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-prime/",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-rf-mount/lente-canon-rf-24-70mm-f28l-is-usm",
+      "destination": "/equipamentos/lentes/canon-rf-24-70mm-f2-8-l-is-usm",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/loggagem/",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/loggagem/hd-externo-lacie-6-tb-thunderbolt-2",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/loggagem/imac-27-retina-4a-geracao",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/amaran-200x",
+      "destination": "/equipamentos/iluminacao/amaran-200x",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/amaran-300c",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/amaran-60x",
+      "destination": "/equipamentos/iluminacao/amaran-60x",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/amaran-pt2c-tubo-led-rgb",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/apture-ls-120d-ii",
+      "destination": "/equipamentos/iluminacao/aputure-aputure-ls-c300d-ii",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/aputure-barndoor",
+      "destination": "/equipamentos/modificadores/aputure-barndoors",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/aputure-fresnel-2x",
+      "destination": "/equipamentos/modificadores/aputure-fresnel-2x",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/aputure-lantern-65-balao-chines",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/aputure-light-dome-ii",
+      "destination": "/equipamentos/modificadores/aputure-light-dome-ii",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/aputure-ls-300x-",
+      "destination": "/equipamentos/iluminacao/aputure-aputure-ls-300x",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/aputure-ls-600d-pro",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/aputure-ls-c300d-ii",
+      "destination": "/equipamentos/iluminacao/aputure-aputure-ls-c300d-ii",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/aputure-storm-80c-blair",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/kit-arri-4x-650w",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/kit-lowel-ambi-to-95z-2x-tota-2x-omni",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/kit-lowel-go-all-pro-3x-pro-lights",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/luminaria-led-ulanzi-vl-120-rgb",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/painel-de-led-dracast-led-1000-kala-bi-color",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/painel-de-led-prolite-5000",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/painel-de-led-rgb-dracast-728-rgbw",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/rebatedores-impact-7-em-1",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/luz/ring-light-fotodiox-c-318rls",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/maquinaria/",
+      "destination": "/catalogo/maquinaria",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/maquinaria/butterfly-kit-18x18",
+      "destination": "/catalogo/maquinaria",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/maquinaria/magliner",
+      "destination": "/catalogo/maquinaria",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/maquinaria/pano-de-chroma-key-matthews-verde-e-azul-36-x-36-m",
+      "destination": "/catalogo/maquinaria",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/maquinaria/tripe-de-luz-manfrotto-1052bac",
+      "destination": "/catalogo/maquinaria",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/maquinaria/tripe-luva-pino-girafa-com-rodas-",
+      "destination": "/catalogo/maquinaria",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/mattebox/",
+      "destination": "/catalogo/mattebox",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/mattebox/donuts-redrock-para-mattebox",
+      "destination": "/catalogo/mattebox",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/mattebox/matte-box-tilta-mb-t12",
+      "destination": "/catalogo/mattebox",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/mattebox/mattebox-arri-lmb25-clip-on-",
+      "destination": "/catalogo/mattebox",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/mattebox/mattebox-cavision-mb4510",
+      "destination": "/catalogo/mattebox",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/mattebox/mattebox-digitaljuice-4x465",
+      "destination": "/catalogo/mattebox",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/mattebox/mattebox-redrock-deluxe",
+      "destination": "/equipamentos/mattebox/redrock-deluxe",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/mesas-de-corte/",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-apple-retina-27-thunderbolt",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-duplo-blackmagic-smartscope-duo-4k",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-duplo-hd-blackmagic-smartview-duo-8",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-gravador-switcher-atomos-sumo-19-se-",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-ikan-mr7",
+      "destination": "/equipamentos/monitores/ikan-mr7",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-ikan-vx17e-17",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-ikan-vx7e-hd",
+      "destination": "/equipamentos/monitores/ikan-vx7",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-ikan-vx9e-hd-",
+      "destination": "/equipamentos/monitores/ikan-vx9",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-panasonic-bt-lh1710-",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-smallhd-502-",
+      "destination": "/equipamentos/monitores/smallhd-502",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-smallhd-cine-18-4k-high-bright",
+      "destination": "/equipamentos/monitores/smallhd-cine-18-4k",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-smallhd-cine-5-touchscreen",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-smallhd-cine-7-touchscreen",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-sony-lmd-940w",
+      "destination": "/equipamentos/monitores/sony-lmd-940w",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-sony-oled-pvma170-",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/monitor-tvlogic-vfm-058w-55",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/viewfinder-cineroid-evf-metal-hd-sdi-",
+      "destination": "/equipamentos/monitores/cineroid-evf-metal-hd-sdi",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores/viewfinder-zacuto-z-finder-evf-pro-hdmi",
+      "destination": "/equipamentos/monitores/zacuto-z-finder-evf-pro-hdmi",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/still/",
+      "destination": "/catalogo/flash",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/still/flash-bolt-vx760c",
+      "destination": "/equipamentos/flash/bolt-vx760c",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/still/fotometro-sekonic-l-478dr",
+      "destination": "/catalogo/flash",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/still/intervalometro-canon-tc-80n3",
+      "destination": "/catalogo/flash",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/ballhead-manfrotto-q5",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/base-plate-zacuto-z-ub3",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/braco-articulado-manfrotto-magic-arm-143",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/braco-articulado-noga-cine-curto-acess-on-camera",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/braco-articulado-noga-cine-m-acessarios-on-camera",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/cage-ikan-",
+      "destination": "/catalogo/estabilizadores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/dana-dolly",
+      "destination": "/equipamentos/movimento/dana-dolly",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/grua-cammate-t25-(7,62mts)",
+      "destination": "/equipamentos/movimento/cammate-t25-7-62m",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/shoulder-shape-c300-mkii",
+      "destination": "/equipamentos/suporte-de-camera/shape-c300-mkii",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/shoulder-zacuto-evf-filmmaker",
+      "destination": "/equipamentos/suporte-de-camera/zacuto-evf-filmmaker",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/shoulder-zacuto-scorpion-dslr",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/slider-kicam-120-pro-orbit",
+      "destination": "/equipamentos/movimento/kicam-120-pro-orbit",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/suporte-de-lentes-zacuto",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento/suporte-de-lentes-zoom-tilta-ls-t05-15mm",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/switchers/",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/switchers/botoneira-de-video-hd-blackmagic-smart-videohub",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/switchers/switcher-blackmagic-atem-television-studio-pro-4k",
+      "destination": "/equipamentos/live-broadcast/blackmagic-atem-television-studio-pro-4k",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/switchers/switcher-neo-id-estudio-6-",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tele-prompter/",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tele-prompter/tele-prompter-telmax-ipad-",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/transmissores/video-link-hollyland-cosmo-c1",
+      "destination": "/equipamentos/transmissores/hollyland-cosmo-c1",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/transmissores/video-link-hollyland-pyro-s-4k",
+      "destination": "/equipamentos/transmissores/hollyland-pyro-s-4k",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/transmissores/video-link-monitor-hollyland-pyro-7",
+      "destination": "/equipamentos/transmissores/hollyland-pyro-7",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/transmissores/video-link-teradek-bolt",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/transmissores/video-link-teradek-bolt-1000-sdi-e-hdmi",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/transmissores/video-link-teradek-bolt-500-sdi-e-hdmi-",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/transmissores/video-link-teradek-bolt-600-sdi-e-hdmi",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/transmissores/video-link-teradek-sidekickii-3g-sdi-receptor",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes-e-suporte/",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/monope-manfroto-hidraulico-cabeca-serie-700-",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/tripe-cartoni-focus",
+      "destination": "/equipamentos/tripes-de-camera/cartoni-focus-f103",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/tripe-libec-ls-22",
+      "destination": "/equipamentos/tripes-de-camera/libec-ls-22",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/tripe-manfroto-501",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/tripe-sachtler-18-s1",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/tripe-sachtler-18-sb",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/tripe-sachtler-25-plus",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/tripe-sachtler-cine-30-hd-",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/tripe-sachtler-dv6-sb",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/tripe-sachtler-fsb8",
+      "destination": "/equipamentos/tripes-de-camera/sachtler-fsb-8",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/tripe-sachtler-video-14",
+      "destination": "/equipamentos/tripes-de-camera/sachtler-video-14",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/video-links/",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/video-links/video-link-hollyland-cosmo-c1",
+      "destination": "/equipamentos/transmissores/hollyland-cosmo-c1",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/video-links/video-link-hollyland-pyro-s-4k",
+      "destination": "/equipamentos/transmissores/hollyland-pyro-s-4k",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/video-links/video-link-teradek-bolt-1000-sdi-e-hdmi",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/video-links/video-link-teradek-bolt-500-sdi-e-hdmi-",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/video-links/video-link-teradek-bolt-600-sdi-e-hdmi",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/view-finders/",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/venda//",
+      "destination": "/catalogo",
+      "permanent": true
+    },
+    {
+      "source": "/venda/audio/",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/venda/cameras-/",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/venda/computadores-e-tablets/",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/venda/comunicadores/",
+      "destination": "/catalogo/comunicadores",
+      "permanent": true
+    },
+    {
+      "source": "/venda/estabilizadores/",
+      "destination": "/catalogo/estabilizadores",
+      "permanent": true
+    },
+    {
+      "source": "/venda/filtros-/",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/venda/kits-live/",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/venda/lentes-pl-mount/",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/venda/mattebox/",
+      "destination": "/catalogo/mattebox",
+      "permanent": true
+    },
+    {
+      "source": "/venda/monitores/",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/venda/still/",
+      "destination": "/catalogo/flash",
+      "permanent": true
+    },
+    {
+      "source": "/venda/suporte-e-movimento/",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/venda/transmissores/",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/venda/tripes/",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/venda/video-links/",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/audio",
+      "destination": "/catalogo/audio",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/cameras",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/cameras-ptz",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/computadores-e-tablets",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/comunicadores",
+      "destination": "/catalogo/comunicadores",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/conversores-distribuidores",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/estabilizadores",
+      "destination": "/catalogo/estabilizadores",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/filtros",
+      "destination": "/catalogo/filtros",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/follow-focus",
+      "destination": "/catalogo/follow-focus",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/gravadores",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/hds-e-cartoes-de-memoria",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/lentes-broadcast",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/lentes-e-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/lentes-ef-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/lentes-pl-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/lentes-rf-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/luz",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/maquinaria",
+      "destination": "/catalogo/maquinaria",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/mattebox",
+      "destination": "/catalogo/mattebox",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/monitores",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/still",
+      "destination": "/catalogo/flash",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/suporte-e-movimento",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/switchers",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/tele-prompter",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/transmissores",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/tripes",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/",
+      "destination": "/catalogo",
       "permanent": true
     },
     {
@@ -11,8 +1841,38 @@
       "permanent": true
     },
     {
-      "source": "/equipamentos/monitores",
-      "destination": "/catalogo/monitores",
+      "source": "/equipamentos/cameras",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/cameras-ptz",
+      "destination": "/catalogo/cameras",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/computadores-e-tablets",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/comunicadores",
+      "destination": "/catalogo/comunicadores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/conversores-distribuidores",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/estabilizadores",
+      "destination": "/catalogo/estabilizadores",
       "permanent": true
     },
     {
@@ -21,27 +1881,37 @@
       "permanent": true
     },
     {
-      "source": "/equipamentos/luz",
-      "destination": "/catalogo/iluminacao",
+      "source": "/equipamentos/follow-focus",
+      "destination": "/catalogo/follow-focus",
       "permanent": true
     },
     {
-      "source": "/equipamentos/still",
-      "destination": "/catalogo/flash",
+      "source": "/equipamentos/gravadores",
+      "destination": "/catalogo/live-broadcast",
       "permanent": true
     },
     {
-      "source": "/equipamentos/suporte-e-movimento",
-      "destination": "/catalogo/movimento",
+      "source": "/equipamentos/hds-e-cartoes-de-memoria",
+      "destination": "/catalogo/live-broadcast",
       "permanent": true
     },
     {
-      "source": "/equipamentos/lentes-ef-mount",
+      "source": "/equipamentos/intercom",
+      "destination": "/catalogo/comunicadores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-broadcast",
       "destination": "/catalogo/lentes",
       "permanent": true
     },
     {
       "source": "/equipamentos/lentes-e-mount",
+      "destination": "/catalogo/lentes",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/lentes-ef-mount",
       "destination": "/catalogo/lentes",
       "permanent": true
     },
@@ -56,27 +1926,72 @@
       "permanent": true
     },
     {
-      "source": "/equipamentos/lentes-broadcast",
-      "destination": "/catalogo/lentes",
+      "source": "/equipamentos/loggagem",
+      "destination": "/catalogo/live-broadcast",
       "permanent": true
     },
     {
-      "source": "/equipamentos/conversores",
+      "source": "/equipamentos/luz",
+      "destination": "/catalogo/iluminacao",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/maquinaria",
+      "destination": "/catalogo/maquinaria",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/mattebox",
+      "destination": "/catalogo/mattebox",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/monitores",
+      "destination": "/catalogo/monitores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/still",
+      "destination": "/catalogo/flash",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/suporte-e-movimento",
+      "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/switchers",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tele-prompter",
+      "destination": "/catalogo/live-broadcast",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/transmissores",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes",
+      "destination": "/catalogo/tripes-de-camera",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/video-links",
+      "destination": "/catalogo/transmissores",
+      "permanent": true
+    },
+    {
+      "source": "/venda/",
       "destination": "/catalogo",
       "permanent": true
     },
     {
-      "source": "/equipamentos/computadores-e-tablets",
-      "destination": "/catalogo",
-      "permanent": true
-    },
-    {
-      "source": "/equipamentos/hds-e-cartoes-de-memoria",
-      "destination": "/catalogo",
-      "permanent": true
-    },
-    {
-      "source": "/equipamentos/gravadores",
+      "source": "/venda",
       "destination": "/catalogo",
       "permanent": true
     },
@@ -86,8 +2001,8 @@
       "permanent": true
     },
     {
-      "source": "/equipamentos/luz/:slug",
-      "destination": "/equipamentos/iluminacao/:slug",
+      "source": "/equipamentos/lentes-broadcast/:slug",
+      "destination": "/equipamentos/lentes/:slug",
       "permanent": true
     },
     {
@@ -111,13 +2026,8 @@
       "permanent": true
     },
     {
-      "source": "/equipamentos/lentes-broadcast/:slug",
-      "destination": "/equipamentos/lentes/:slug",
-      "permanent": true
-    },
-    {
-      "source": "/equipamentos/tripes/:slug",
-      "destination": "/catalogo/tripes-de-camera",
+      "source": "/equipamentos/luz/:slug",
+      "destination": "/equipamentos/iluminacao/:slug",
       "permanent": true
     },
     {
@@ -128,6 +2038,11 @@
     {
       "source": "/equipamentos/suporte-e-movimento/:slug",
       "destination": "/catalogo/movimento",
+      "permanent": true
+    },
+    {
+      "source": "/equipamentos/tripes/:slug",
+      "destination": "/catalogo/tripes-de-camera",
       "permanent": true
     }
   ],
